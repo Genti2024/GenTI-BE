@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    group:
+      local:
+      deploy:
+    include:
+      - secret
+      - common
+    active: local

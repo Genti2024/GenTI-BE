@@ -35,3 +35,11 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### properties ###
+application-local.yaml
+application-local.yml
+application-deploy.yaml
+application-deploy.yml
+application-secret.yaml
+application-secret.yml

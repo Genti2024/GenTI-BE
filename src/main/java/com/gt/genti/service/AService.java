@@ -1,10 +1,10 @@
-package com.gt.genti.generate;
+package com.gt.genti.service;
 
 import org.springframework.stereotype.Service;
 
-import com.gt.genti.generate.domain.PictureGenerateRequest;
-import com.gt.genti.generate.domain.PictureGenerateRequestRepository;
-import com.gt.genti.generate.dto.PictureGenerateRequestResponseDto;
+import com.gt.genti.domain.PictureGenerateRequest;
+import com.gt.genti.domain.PictureGenerateRequestRepository;
+import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 
 import lombok.RequiredArgsConstructor;
 

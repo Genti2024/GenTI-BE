@@ -1,4 +1,6 @@
-package com.gt.genti.generate.domain;
+package com.gt.genti.domain;
+
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,8 @@ import lombok.RequiredArgsConstructor;
 public class PictureGenerateRequest {
 	@Id
 	private Long id;
-
+	private Long requesterId;
+	private Long creatorId;
+	private String prompt;
+	private List<>
 }

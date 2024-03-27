@@ -1,13 +1,16 @@
 package com.gt.genti.domain;
 
+import java.util.List;
+
 import com.gt.genti.domain.common.BaseTimeEntity;
+import com.gt.genti.domain.enums.CameraAngle;
+import com.gt.genti.domain.enums.ShotCoverage;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,10 +19,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PictureCreateResponse extends BaseTimeEntity {
+public class PictureCreateRequest extends BaseTimeEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "requester_id")
@@ -30,11 +32,20 @@ public class PictureCreateResponse extends BaseTimeEntity {
 	User creator;
 
 	@OneToOne
-	@JoinColumn(name = "picture_id")
-	Picture createdPicture;
+	@JoinColumn(name = "response_id")
+	PictureCreateResponse response;
+	String prompt;
 
-	@OneToOne(mappedBy = "response")
-	PictureCreateRequest request;
+	@OneToMany
+	@JoinColumn(name = "picture_id")
+	List<Picture> facePictureList;
+
+	@OneToOne
+	@JoinColumn(name = "picture_id")
+	Picture posePicture;
+
+	CameraAngle cameraAngle;
+	ShotCoverage shotCoverage;
 
 	Boolean success;
 }

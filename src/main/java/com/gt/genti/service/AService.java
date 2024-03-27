@@ -2,8 +2,8 @@ package com.gt.genti.service;
 
 import org.springframework.stereotype.Service;
 
-import com.gt.genti.domain.PictureGenerateRequest;
-import com.gt.genti.domain.PictureGenerateRequestRepository;
+import com.gt.genti.domain.PictureCreateRequest;
+import com.gt.genti.domain.repository.PictureCreateRequestRepository;
 import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -11,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AService {
-	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
+	private final PictureCreateRequestRepository pictureCreateRequestRepository;
 
 	public PictureGenerateRequestResponseDto getRequest(Long id) {
-		PictureGenerateRequest pictureGenerateRequest = pictureGenerateRequestRepository.findById(id).orElseThrow(
+		PictureCreateRequest pictureCreateRequest = pictureCreateRequestRepository.findById(id).orElseThrow(
 			RuntimeException::new);
-		return new PictureGenerateRequestResponseDto(pictureGenerateRequest);
+		return new PictureGenerateRequestResponseDto(pictureCreateRequest);
 	}
 }

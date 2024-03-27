@@ -1,15 +1,31 @@
 package com.gt.genti.domain;
 
-import jakarta.persistence.Entity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.gt.genti.domain.common.BaseTimeEntity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Table(name = "picture")
 @Entity
 @Getter
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Picture {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Picture extends BaseTimeEntity {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
 
+	String url;
+
+	@Builder
+	public Picture(Long id, String url) {
+		this.id = id;
+		this.url = url;
+	}
 }

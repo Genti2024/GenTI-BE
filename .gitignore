@@ -43,3 +43,6 @@ application-deploy.yaml
 application-deploy.yml
 application-secret.yaml
 application-secret.yml
+application-oauth.yaml
+application-oauth.yml
+

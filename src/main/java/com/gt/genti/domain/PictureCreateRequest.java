@@ -38,11 +38,11 @@ public class PictureCreateRequest extends BaseTimeEntity {
 
 	@OneToMany
 	@JoinColumn(name = "picture_id")
-	List<Picture> facePictureList;
+	List<ProfilePicture> facePictureList;
 
 	@OneToOne
 	@JoinColumn(name = "picture_id")
-	Picture posePicture;
+	ProfilePicture posePicture;
 
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;

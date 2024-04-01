@@ -29,9 +29,8 @@ public class Post extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	User user;
 
-	@OneToMany
-	@JoinColumn(name = "post_id")
-	List<Picture> pictureList;
+	@OneToMany(mappedBy = "post")
+	List<PostPicture> pictureList;
 
 	String content;
 

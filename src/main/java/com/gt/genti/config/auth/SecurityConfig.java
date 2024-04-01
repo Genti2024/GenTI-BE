@@ -13,7 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,7 +20,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.gt.genti.config.handler.CommonLoginFailHandler;
 import com.gt.genti.config.handler.CommonLoginSuccessHandler;
 import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.security.controller.JwtVerifyFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -87,6 +85,7 @@ public class SecurityConfig {
 				.requestMatchers("/**").permitAll()
 				.requestMatchers("/users/login").permitAll()
 				.requestMatchers("/oauth2/login").permitAll()
+				.requestMatchers("/api/**").permitAll()
 				.requestMatchers("/api/**").hasRole(UserRole.USER.getRole())
 			// .anyRequest().authenticated()
 		);
@@ -94,7 +93,6 @@ public class SecurityConfig {
 		http
 			.sessionManagement((session) -> session
 				.sessionCreationPolicy(SessionCreationPolicy.NEVER));
-
 		// http.addFilterBefore(jwtVerifyFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
@@ -106,4 +104,5 @@ public class SecurityConfig {
 		return http.build();
 	}
 }
+
 

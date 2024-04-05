@@ -17,6 +17,7 @@ public class OpenAIConfig {
 		RestClient restClient = RestClient.builder()
 			.baseUrl("https://api.openai.com")
 			.defaultHeader("Authorization", "Bearer " + secretKey)
+			.defaultHeader("Content-type", "application/json")
 			.build();
 		RestClientAdapter adapter = RestClientAdapter.create(restClient);
 		HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();

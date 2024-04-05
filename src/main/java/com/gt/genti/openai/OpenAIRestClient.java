@@ -10,5 +10,5 @@ import org.springframework.web.service.annotation.PostExchange;
 public interface OpenAIRestClient {
 
 	@PostExchange("/v1/chat/completions")
-	String getAdvancedPrompt(@RequestBody PromptAdvancementRequestDto dto);
+	String getAdvancedPrompt(@RequestBody String dto);
 }

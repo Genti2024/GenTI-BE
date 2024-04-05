@@ -10,7 +10,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
 
-
   redis:
     image: redis:7.2.4
     container_name: redis

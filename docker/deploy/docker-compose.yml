@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   genti:
-    image: byeongryeol/genti-server:1.0.4
+    image: byeongryeol/genti-deploy:latest
     container_name: genti
     ports:
       - ${SERVER_BINDING_PORT}:${SERVER_CONTAINER_PORT}

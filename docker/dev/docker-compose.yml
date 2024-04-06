@@ -1,15 +1,11 @@
 version: '3.8'
 
 services:
-  db:
-    image: mysql
-    container_name: mysql
-    command: --default-authentication-plugin=mysql_native_password
+  genti:
+    image: byeongryeol/genti-dev:latest
+    container_name: genti
     ports:
-      - ${MYSQL_BINDING_PORT}:${MYSQL_PORT}
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-
+      - ${SERVER_BINDING_PORT}:${SERVER_CONTAINER_PORT}
   redis:
     image: redis:7.2.4
     container_name: redis

@@ -159,7 +159,7 @@ jobs:
             sudo docker ps
             cd /home/ubuntu/workspace/docker/dev
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-dev
             sudo docker compose up -d
             sudo docker image prune -f
             

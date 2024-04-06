@@ -70,7 +70,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEPLOY }}
           username: ubuntu
-          key: ${{ secrets.EC2_KEYPAIR }}
+          key: ${{ secrets.EC2_KEY }}
           port: 22
           source: "./docker/deploy/*"
           target: "/home/ubuntu/workspace/docker/"
@@ -81,7 +81,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.EC2_KEYPAIR }}
+          key: ${{ secrets.EC2_KEY }}
           port: 22
           source: "./docker/dev/*"
           target: "/home/ubuntu/workspace/docker/"
@@ -111,7 +111,7 @@ jobs:
         with:
           host: ${{ secrets.HOST_DEPLOY }} # EC2 퍼블릭 IPv4 DNS
           username: ubuntu
-          key: ${{ secrets.EC2_KEYPAIR }}
+          key: ${{ secrets.EC2_KEY }}
           envs: GITHUB_SHA
           script: |
             sudo docker ps
@@ -131,7 +131,7 @@ jobs:
           username: ubuntu
           password: ${{ secrets.PASSWORD }}
           port: 22
-          key: ${{ secrets.EC2_KEYPAIR }}
+          key: ${{ secrets.EC2_KEY }}
           script: |
             sudo docker ps
             sudo cd /home/ubuntu/workspace/docker

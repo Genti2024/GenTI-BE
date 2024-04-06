@@ -97,7 +97,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           source: "./docker/deploy/*"
-          target: "/home/ubuntu/workspace/docker/"
+          target: "/home/ubuntu/workspace/"
 
       - name: Upload docker compose file to dev server
         if: contains(github.ref, 'dev')
@@ -108,7 +108,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           source: "./docker/dev/*"
-          target: "/home/ubuntu/workspace/docker/"
+          target: "/home/ubuntu/workspace/"
 
       # docker build & push to deploy server
       - name: Docker build & push to deploy

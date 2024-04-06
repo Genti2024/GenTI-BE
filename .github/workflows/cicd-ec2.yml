@@ -162,8 +162,6 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-dev
             sudo docker compose up -d
             sudo docker image prune -f
-            
-            - name: Remove Github Actions IP from security group
 
       - name: delete github actions ip from aws security group
         run: |

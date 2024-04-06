@@ -139,8 +139,8 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
-            sudo cd /home/ubuntu/workspace/docker
-            sudo pwd
+            cd /home/ubuntu/workspace/docker
+            pwd
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker compose up -d
             sudo docker image prune -f
@@ -158,8 +158,8 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             sudo docker ps
-            sudo cd /home/ubuntu/workspace/docker
-            sudo pwd
+            cd /home/ubuntu/workspace/docker
+            pwd
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker compose up -d
             sudo docker image prune -f

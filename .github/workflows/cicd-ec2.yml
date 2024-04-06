@@ -139,7 +139,7 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
-            cd /home/ubuntu/workspace/docker
+            cd /home/ubuntu/workspace/docker/deploy
             pwd
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker compose up -d
@@ -158,7 +158,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             sudo docker ps
-            cd /home/ubuntu/workspace/docker
+            cd /home/ubuntu/workspace/docker/dev
             pwd
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker compose up -d

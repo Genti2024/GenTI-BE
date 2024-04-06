@@ -54,14 +54,38 @@ jobs:
           echo "${{ secrets.APPLICATION_DEPLOY }}" > ./application-deploy.yml
         shell: bash
 
+      
       # gradle build
       - name: Build with Gradle
         run: ./gradlew build
+
+      - name: Upload docker compose file to deploy server
+        if: contains(github.ref, 'main')
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST_DEPLOY }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEYPAIR }}
+          port: 22
+          source: "./docker/deploy/*"
+          target: "/home/ubuntu/workspace/docker/"
+
+      - name: Upload docker compose file to dev server
+        if: contains(github.ref, 'dev')
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST_DEV }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEYPAIR }}
+          port: 22
+          source: "./docker/dev/*"
+          target: "/home/ubuntu/workspace/docker/"
 
       # docker build & push to deploy server
       - name: Docker build & push to deploy
         if: contains(github.ref, 'main')
         run: |
+          
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile-deploy -t ${{ secrets.DOCKER_USERNAME }}/genti-deploy .
           docker push ${{ secrets.DOCKER_USERNAME }}/genti-deploy
@@ -74,10 +98,10 @@ jobs:
           docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/genti-dev .
           docker push ${{ secrets.DOCKER_USERNAME }}/genti-dev
 
-      ## deploy to production
-      - name: Deploy to prod
+      ## deploy to deploy server
+      - name: Deploy to deploy server
         uses: appleboy/ssh-action@master
-        id: deploy-prod
+        id: deploy-deploy
         if: contains(github.ref, 'main')
         with:
           host: ${{ secrets.HOST_DEPLOY }} # EC2 퍼블릭 IPv4 DNS
@@ -86,12 +110,14 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
+            sudo cd /home/ubuntu/workspace/docker
+            sudo pwd
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/genti-deploy
+            sudo docker compose up -d
             sudo docker image prune -f
 
-      ## deploy to develop
-      - name: Deploy to dev
+      ## deploy to dev server
+      - name: Deploy to dev server
         uses: appleboy/ssh-action@master
         id: deploy-dev
         if: contains(github.ref, 'develop')
@@ -103,6 +129,8 @@ jobs:
           key: ${{ secrets.EC2_KEYPAIR }}
           script: |
             sudo docker ps
+            sudo cd /home/ubuntu/workspace/docker
+            sudo pwd
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/genti-deploy
+            sudo docker compose up -d
             sudo docker image prune -f

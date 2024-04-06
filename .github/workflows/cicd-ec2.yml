@@ -43,7 +43,7 @@ jobs:
           touch ./application-oauth.yml
           echo "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.yml
         shell: bash
-      
+
       # 환경별 yml 파일 생성(3) - deploy
       - name: make application-deploy.yml
         if: contains(github.ref, 'dev') || contains(github.ref, 'main')
@@ -53,11 +53,11 @@ jobs:
           echo "${{ secrets.APPLICATION_DEPLOY }}" > ./application-deploy.yml
         shell: bash
 
-      
+
       # gradle build
       - name: Setup Gradle Wrapper
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-  
+
       - name: Build with Gradle Wrapper
         run: |
           chmod +x ./gradlew
@@ -162,8 +162,6 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-dev
             sudo docker compose up -d
             sudo docker image prune -f
-            
-            - name: Remove Github Actions IP from security group
 
       - name: delete github actions ip from aws security group
         run: |
@@ -172,4 +170,3 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
-

@@ -3,12 +3,12 @@ version: '3.8'
 services:
   genti:
     image: byeongryeol/genti-dev:latest
-    container_name: genti
+    container_name: genti-dev
     ports:
       - ${SERVER_BINDING_PORT}:${SERVER_CONTAINER_PORT}
   redis:
     image: redis:7.2.4
-    container_name: redis
+    container_name: redis-dev
     ports:
       - ${REDIS_BINDING_PORT}:${REDIS_CONTAINER_PORT}
     command: redis-server /usr/local/etc/redis/redis.conf

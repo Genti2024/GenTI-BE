@@ -114,7 +114,6 @@ jobs:
       - name: Docker build & push to deploy
         if: contains(github.ref, 'main')
         run: |
-          
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile_deploy -t ${{ secrets.DOCKER_USERNAME }}/genti-deploy .
           docker push ${{ secrets.DOCKER_USERNAME }}/genti-deploy
@@ -140,7 +139,7 @@ jobs:
           script: |
             sudo docker ps
             cd /home/ubuntu/workspace/docker/deploy
-            pwd
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker compose up -d
             sudo docker image prune -f
@@ -159,7 +158,7 @@ jobs:
           script: |
             sudo docker ps
             cd /home/ubuntu/workspace/docker/dev
-            pwd
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker compose up -d
             sudo docker image prune -f

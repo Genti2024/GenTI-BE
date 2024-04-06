@@ -50,20 +50,20 @@ jobs:
         if: contains(github.ref, 'main')
         run: |
           cd ./src/main/resources
-          touch ./application-prod.yml
-          echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
+          touch ./application-deploy.yml
+          echo "${{ secrets.APPLICATION_DEPLOY }}" > ./application-deploy.yml
         shell: bash
 
       # gradle build
       - name: Build with Gradle
         run: ./gradlew build
 
-      # docker build & push to production
-      - name: Docker build & push to prod
+      # docker build & push to deploy server
+      - name: Docker build & push to deploy
         if: contains(github.ref, 'main')
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/genti-deploy .
+          docker build -f Dockerfile-deploy -t ${{ secrets.DOCKER_USERNAME }}/genti-deploy .
           docker push ${{ secrets.DOCKER_USERNAME }}/genti-deploy
 
       # docker build & push to develop
@@ -87,7 +87,7 @@ jobs:
           script: |
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
-            sudo docker run -d -p 8082:8082 ${{ secrets.DOCKER_USERNAME }}/genti-deploy
+            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker image prune -f
 
       ## deploy to develop
@@ -104,5 +104,5 @@ jobs:
           script: |
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-deploy
-            sudo docker run -d -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/genti-deploy
+            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/genti-deploy
             sudo docker image prune -f

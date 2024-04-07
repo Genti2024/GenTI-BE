@@ -5,7 +5,10 @@ import java.util.List;
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.ShotCoverage;
+import com.gt.genti.domain.enums.converter.CameraAngleConverter;
+import com.gt.genti.domain.enums.converter.ShotCoverageConverter;
 
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -37,14 +40,15 @@ public class PictureCreateRequest extends BaseTimeEntity {
 	String prompt;
 
 	@OneToMany
-	@JoinColumn(name = "picture_id")
-	List<ProfilePicture> facePictureList;
+	List<Picture> facePictureList;
 
 	@OneToOne
 	@JoinColumn(name = "picture_id")
-	ProfilePicture posePicture;
+	Picture posePicture;
 
+	@Convert(converter = CameraAngleConverter.class)
 	CameraAngle cameraAngle;
+	@Convert(converter = ShotCoverageConverter.class)
 	ShotCoverage shotCoverage;
 
 	Boolean success;

@@ -31,7 +31,7 @@ public class PictureCreateResponse extends BaseTimeEntity {
 
 	@OneToOne
 	@JoinColumn(name = "picture_id")
-	ProfilePicture createdPicture;
+	Picture createdPicture;
 
 	@OneToOne(mappedBy = "response")
 	PictureCreateRequest request;

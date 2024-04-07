@@ -2,7 +2,10 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.UserRole;
+import com.gt.genti.domain.enums.converter.UserRoleConverter;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +27,8 @@ public class User extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@OneToOne
+	// profile_picture는 완전히 user에 종속되어있다
+	@OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
 	@JoinColumn(name = "profile_picture_id")
 	ProfilePicture profilePicture;
 
@@ -39,6 +43,7 @@ public class User extends BaseTimeEntity {
 	String oauthPictureUrl;
 
 	@NotNull
+	@Convert(converter = UserRoleConverter.class)
 	UserRole userRole;
 
 	@Builder

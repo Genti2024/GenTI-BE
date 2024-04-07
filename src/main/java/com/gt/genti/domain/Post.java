@@ -4,9 +4,10 @@ import java.util.List;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.PostStatus;
+import com.gt.genti.domain.enums.converter.PostStatusConverter;
 
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +37,7 @@ public class Post extends BaseTimeEntity {
 
 	Integer likes;
 
-	@Enumerated
+	@Convert(converter = PostStatusConverter.class)
 	PostStatus postStatus;
 
 }

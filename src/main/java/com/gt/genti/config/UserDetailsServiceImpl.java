@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.gt.genti.domain.repository.UserRepository;
+import com.gt.genti.repository.UserRepository;
 import com.gt.genti.security.controller.PrincipalDetail;
 
 import lombok.RequiredArgsConstructor;

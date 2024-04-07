@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.gt.genti.domain.repository.PostRepository;
 import com.gt.genti.dto.PostResponseDto;
+import com.gt.genti.repository.PostRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

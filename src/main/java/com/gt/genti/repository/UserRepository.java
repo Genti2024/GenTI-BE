@@ -1,9 +1,10 @@
-package com.gt.genti.domain.repository;
+package com.gt.genti.repository;
 
 import java.util.Optional;
 
-import com.gt.genti.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.gt.genti.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email);

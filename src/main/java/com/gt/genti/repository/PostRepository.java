@@ -1,4 +1,4 @@
-package com.gt.genti.domain.repository;
+package com.gt.genti.repository;
 
 import java.util.List;
 
@@ -13,8 +13,10 @@ import com.gt.genti.dto.PostResponseDto;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("select new "
-		+ "com.gt.genti.dto.PostResponseDto(p.id, u.id, pi.url ,"
-		+ "(select pp.url from PostPicture pp where pp.post.id= p.id), "
+		+ "com.gt.genti.dto.PostResponseDto("
+		+ "p.id, u.id, "
+		+ "(select pic.url from Picture pic where pic.id=pi.picture.id) ,"
+		+ "(select pic.url from Picture pic inner join PostPicture pp where pic.id = pp.picture.id), "
 		+ "p.content, p.likes, p.createdAt) "
 		+ "from Post p inner join p.user u inner join u.profilePicture pi "
 		+ "where p.user.id = u.id and u.profilePicture.id = pi.id and "

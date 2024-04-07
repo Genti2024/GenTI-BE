@@ -1,12 +1,11 @@
 package com.gt.genti.domain.enums.converter;
 
 import com.gt.genti.domain.enums.CameraAngle;
-import com.gt.genti.domain.enums.PostStatus;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class CameraAngleConverter implements AttributeConverter<CameraAngle, String> {
 
 	@Override

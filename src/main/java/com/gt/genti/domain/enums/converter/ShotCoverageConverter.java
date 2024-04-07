@@ -1,15 +1,13 @@
 package com.gt.genti.domain.enums.converter;
 
-import com.gt.genti.domain.enums.PostStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 
 public class ShotCoverageConverter implements AttributeConverter<ShotCoverage, String> {
-
 
 	@Override
 	public String convertToDatabaseColumn(ShotCoverage enumValue) {

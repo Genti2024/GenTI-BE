@@ -27,13 +27,14 @@ public class PictureCreateResponse extends BaseTimeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "creator_id")
-	User creator;
+	Creator creator;
 
 	@OneToOne
 	@JoinColumn(name = "picture_id")
 	Picture createdPicture;
 
-	@OneToOne(mappedBy = "response")
+	@ManyToOne
+	@JoinColumn(name = "request_id")
 	PictureCreateRequest request;
 
 	Boolean success;

@@ -1,4 +1,4 @@
-package com.gt.genti.config;
+package com.gt.genti.config.auth;
 
 import java.util.Collections;
 
@@ -28,7 +28,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 		return userRepository.findByEmail(username)
 			.map(
-				user -> new PrincipalDetail(user, Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey()))))
+				findUser -> {
+					if (!findUser.isActivate()) {
+						throw new RuntimeException("탈퇴한 사용자입니다.");
+					}
+					return new PrincipalDetail(findUser,
+						Collections.singleton(new SimpleGrantedAuthority(findUser.getRoleKey())));
+				})
 			.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 사용자입니다"));
 	}
 }

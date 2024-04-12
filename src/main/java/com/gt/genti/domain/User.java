@@ -2,7 +2,10 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.UserRole;
+import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.UserRoleConverter;
+import com.gt.genti.domain.enums.converter.UserStatusConverter;
+import com.gt.genti.dto.UserInfoUpdateRequestDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
@@ -46,6 +49,14 @@ public class User extends BaseTimeEntity {
 	@Convert(converter = UserRoleConverter.class)
 	UserRole userRole;
 
+	@NotNull
+	@Convert(converter = UserStatusConverter.class)
+	UserStatus userStatus;
+
+	@OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
+	@JoinColumn(name = "creator_id")
+	Creator creator;
+
 	@Builder
 	public User(String email, String username, String oauthPictureUrl, UserRole userRole) {
 		this.email = email;
@@ -54,7 +65,7 @@ public class User extends BaseTimeEntity {
 		this.userRole = userRole;
 	}
 
-	public User update(String name, String oauthPictureUrl) {
+	public User updateByOauth(String name, String oauthPictureUrl) {
 		this.username = name;
 		this.oauthPictureUrl = oauthPictureUrl;
 		return this;
@@ -62,5 +73,18 @@ public class User extends BaseTimeEntity {
 
 	public String getRoleKey() {
 		return this.getUserRole().getRole();
+	}
+
+	public void update(UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
+		this.username = userInfoUpdateRequestDto.getUserName();
+		this.getProfilePicture().getPicture().setUrl(userInfoUpdateRequestDto.getProfilePictureUrl());
+	}
+
+	public void softDelete() {
+		this.userStatus = UserStatus.DEACTIVATED;
+	}
+
+	public Boolean isActivate() {
+		return this.userStatus == UserStatus.ACTIVATED;
 	}
 }

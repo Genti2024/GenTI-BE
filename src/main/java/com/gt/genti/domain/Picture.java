@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(name = "picture")
 @Entity
@@ -21,6 +22,7 @@ public class Picture extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
+	@Setter
 	String url;
 
 	@Builder

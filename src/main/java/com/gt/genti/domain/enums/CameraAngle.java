@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CameraAngle {
+public enum CameraAngle implements ConvertableEnum{
 	ABOVE("위에서 촬영"),
 	EYE_LEVEL("같은 높이에서 촬영"),
 	BELOW("아래에서 촬영");
 
-	private final String angle;
+	private final String stringValue;
 }

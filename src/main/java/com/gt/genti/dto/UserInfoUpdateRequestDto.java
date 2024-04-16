@@ -1,11 +1,12 @@
 package com.gt.genti.dto;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserInfoUpdateRequestDto {
 	String userName;
 	String profilePictureUrl;

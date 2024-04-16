@@ -9,13 +9,13 @@ import jakarta.persistence.Converter;
 public class UserStatusConverter implements AttributeConverter<UserStatus, String> {
 	@Override
 	public String convertToDatabaseColumn(UserStatus attribute) {
-		return attribute.getStatus();
+		return attribute.getStringValue();
 	}
 
 	@Override
 	public UserStatus convertToEntityAttribute(String value) {
 		for (UserStatus UserStatus : UserStatus.values()) {
-			if (UserStatus.getStatus().equals(value)) {
+			if (UserStatus.getStringValue().equals(value)) {
 				return UserStatus;
 			}
 		}

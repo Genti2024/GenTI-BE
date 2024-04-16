@@ -1,34 +1,34 @@
-package com.gt.genti.security.controller;
+package com.gt.genti.security;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.google.gson.Gson;
+import com.gt.genti.config.auth.SecurityConfig;
+import com.gt.genti.error.CustomJwtException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 public class JwtVerifyFilter extends OncePerRequestFilter {
 
+	private final JwtUtils jwtUtils;
 	// 상품 이미지가 보이지 않기에 상품 이미지를 출력하는 /api/items/view 경로를 추가
-	private static final String[] whitelist = {"/signUp", "/oauth2/login", "/refresh", "/", "/index", ""};
-
-
 
 	private static void checkAuthorizationHeader(String header) {
 		if (header == null) {
 			throw new CustomJwtException("토큰이 전달되지 않았습니다");
-		} else if (!header.startsWith(JwtConstants.JWT_TYPE)) {
+		} else if (!header.startsWith(JwtConstants.JWT_PREFIX)) {
 			throw new CustomJwtException("BEARER 로 시작하지 않는 올바르지 않은 토큰 형식입니다");
 		}
 	}
@@ -37,7 +37,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String requestURI = request.getRequestURI();
-		return PatternMatchUtils.simpleMatch(whitelist, requestURI);
+		return PatternMatchUtils.simpleMatch(SecurityConfig.ALLOWED_URLS, requestURI);
 	}
 
 	@Override
@@ -49,26 +49,20 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 
 		try {
 			checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
-			String token = JwtUtils.getTokenFromHeader(authHeader);
-			Authentication authentication = JwtUtils.getAuthentication(token);
-
+			String token = jwtUtils.getTokenFromHeader(authHeader);
+			Authentication authentication = jwtUtils.getAuthentication(token);
 			log.info("authentication = {}", authentication);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-
-			filterChain.doFilter(request, response);    // 다음 필터로 이동
+			SecurityContext context = SecurityContextHolder.createEmptyContext();
+			context.setAuthentication(authentication);
+			log.info("context : " + context);
+			SecurityContextHolder.setContext(context);
+			//SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (Exception e) {
-			Gson gson = new Gson();
-			String json = "";
-			if (e instanceof CustomExpiredJwtException) {
-				json = gson.toJson(Map.of("Token_Expired", e.getMessage()));
-			} else {
-				json = gson.toJson(Map.of("error", e.getMessage()));
-			}
-
-			response.setContentType("application/json; charset=UTF-8");
-			PrintWriter printWriter = response.getWriter();
-			printWriter.println(json);
-			printWriter.close();
+			log.info("CustomExpiredJwtException 발생");
+			log.info(e.getMessage());
 		}
+
+		filterChain.doFilter(request, response);    // 다음 필터로 이동
+
 	}
 }

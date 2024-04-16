@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.UserRole;
+import com.gt.genti.domain.enums.UserStatus;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -41,12 +42,14 @@ public class OAuthAttributes {
 			.build();
 	}
 
+	// oauth 신규가입
 	public User toEntity() {
 		return User.builder()
 			.username(name)
 			.email(email)
 			.oauthPictureUrl(picture)
 			.userRole(UserRole.USER)
+			.userStatus(UserStatus.ACTIVATED)
 			.build();
 	}
 }

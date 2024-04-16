@@ -11,13 +11,14 @@ public class PostStatusConverter implements AttributeConverter<PostStatus, Strin
 
 	@Override
 	public String convertToDatabaseColumn(PostStatus enumValue) {
-		return enumValue.getStatus();
+		return enumValue.getStringValue();
 	}
 
 	@Override
 	public PostStatus convertToEntityAttribute(String value) {
+
 		for (PostStatus postStatus : PostStatus.values()) {
-			if (postStatus.getStatus().equals(value)) {
+			if (postStatus.getStringValue().equals(value)) {
 				return postStatus;
 			}
 		}

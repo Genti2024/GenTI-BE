@@ -8,34 +8,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Table(name = "user_face_picture")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PictureCreateResponse extends BaseTimeEntity {
+public class UserFacePicture extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "requester_id")
-	User requester;
+	@JoinColumn(name = "user_id")
+	User user;
 
-	@ManyToOne
-	@JoinColumn(name = "creator_id")
-	Creator creator;
-
-	@OneToOne
-	@JoinColumn(name = "picture_id")
-	Picture createdPicture;
-
-	@ManyToOne
-	@JoinColumn(name = "request_id")
-	PictureCreateRequest request;
-
-	Boolean success;
+	String url;
 }

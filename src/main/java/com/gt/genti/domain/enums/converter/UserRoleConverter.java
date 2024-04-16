@@ -9,13 +9,13 @@ import jakarta.persistence.Converter;
 public class UserRoleConverter implements AttributeConverter<UserRole, String> {
 	@Override
 	public String convertToDatabaseColumn(UserRole enumValue) {
-		return enumValue.getRole();
+		return enumValue.getStringValue();
 	}
 
 	@Override
 	public UserRole convertToEntityAttribute(String value) {
 		for (UserRole userRole : UserRole.values()) {
-			if (userRole.getRole().equals(value)) {
+			if (userRole.getStringValue().equals(value)) {
 				return userRole;
 			}
 		}

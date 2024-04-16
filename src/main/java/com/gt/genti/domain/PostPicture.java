@@ -25,11 +25,11 @@ public class PostPicture extends BaseTimeEntity {
 	Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "post_id")
+	@JoinColumn(name = "post_id", nullable = false)
 	Post post;
 
 	@OneToOne
-	@JoinColumn(name = "picture_id", referencedColumnName = "id")
+	@JoinColumn(name = "picture_id", referencedColumnName = "id", nullable = false)
 	Picture picture;
 
 	@Builder

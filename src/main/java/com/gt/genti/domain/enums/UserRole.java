@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum UserRole {
+public enum UserRole implements ConvertableEnum{
 
 	ADMIN("ADMIN"),
 	CREATOR("CREATOR"),
 	USER("USER");
 
-	private final String role;
-
+	private final String stringValue;
+	public String getValueWithRole_Prefix(){
+		return "ROLE_" + getStringValue();
+	}
 }

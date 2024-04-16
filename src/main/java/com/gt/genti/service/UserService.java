@@ -51,4 +51,14 @@ public class UserService {
 		findUser.softDelete();
 		return true;
 	}
+
+	@Transactional
+	public Boolean restoreSoftDeletedUser(Long id) {
+		User findUser = userRepository.findById(id).orElseThrow();
+		if (findUser.isActivate()) {
+			throw new RuntimeException("삭제되지 않은 사용자에 대한 잘못된 요청");
+		}
+		findUser.restore();
+		return true;
+	}
 }

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
+	// AuthorizationHeaderNotGiven(HttpStatus.OK, "A001", "")
 	EmailAlreadyExists(HttpStatus.CONFLICT, "A001", "사용중인 이메일입니다."),
 	LoginIdAlreadyExists(HttpStatus.CONFLICT, "A002", "사용중인 아이디입니다."),
 	NicknameAlreadyExists(HttpStatus.CONFLICT, "A003", "사용중인 닉네임입니다."),

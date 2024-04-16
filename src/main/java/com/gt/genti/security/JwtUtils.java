@@ -1,4 +1,4 @@
-package com.gt.genti.security.controller;
+package com.gt.genti.security;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
@@ -9,34 +9,46 @@ import java.util.Set;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
+import com.gt.genti.config.auth.UserDetailsServiceImpl;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.UserRole;
+import com.gt.genti.domain.enums.converter.EnumUtil;
+import com.gt.genti.domain.enums.converter.UserRoleConverter;
+import com.gt.genti.error.CustomJwtException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 
+@Component
+@RequiredArgsConstructor
 public class JwtUtils {
+	private final UserDetailsServiceImpl userDetailsServiceImpl;
 
-	public static String secretKey = JwtConstants.key;
+	@Value("${jwt.secretKey}")
+	private String secretKey;
 
 	// 헤더에 "Bearer XXX" 형식으로 담겨온 토큰을 추출한다
-	public static String getTokenFromHeader(String header) {
+	public String getTokenFromHeader(String header) {
 		return header.split(" ")[1];
 	}
 
-	public static String generateToken(Map<String, Object> valueMap, int validTime) {
+	public String generateToken(Map<String, Object> valueMap, int validTime) {
 		SecretKey key = null;
 		try {
-			key = Keys.hmacShaKeyFor(JwtUtils.secretKey.getBytes(StandardCharsets.UTF_8));
+			key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
-		return Jwts.builder()
+		return JwtConstants.JWT_PREFIX + Jwts.builder()
 			.setHeader(Map.of("typ", "JWT"))
 			.setClaims(valueMap)
 			.setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
@@ -45,26 +57,22 @@ public class JwtUtils {
 			.compact();
 	}
 
-	public static Authentication getAuthentication(String token) {
+	public Authentication getAuthentication(String token) {
 		Map<String, Object> claims = validateToken(token);
-
 		String email = (String)claims.get("email");
-		String name = (String)claims.get("name");
-		String role = (String)claims.get("role");
-		UserRole UserRole = com.gt.genti.domain.enums.UserRole.valueOf(role);
+		UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
 
-		User User = com.gt.genti.domain.User.builder().email(email).username(name).userRole(UserRole).build();
-		Set<SimpleGrantedAuthority> authorities = Collections.singleton(
-			new SimpleGrantedAuthority(User.getRoleKey()));
-		PrincipalDetail principalDetail = new PrincipalDetail(User, authorities);
+		// Set<SimpleGrantedAuthority> authorities = Collections.singleton(
+		// 	new SimpleGrantedAuthority(user.getRole()));
+		// PrincipalDetail principalDetail = new PrincipalDetail(userDetails, );
 
-		return new UsernamePasswordAuthenticationToken(principalDetail, "", authorities);
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
-	public static Map<String, Object> validateToken(String token) {
+	public Map<String, Object> validateToken(String token) {
 		Map<String, Object> claim = null;
 		try {
-			SecretKey key = Keys.hmacShaKeyFor(JwtUtils.secretKey.getBytes(StandardCharsets.UTF_8));
+			SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 			claim = Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
@@ -79,7 +87,7 @@ public class JwtUtils {
 	}
 
 	// 토큰이 만료되었는지 판단하는 메서드
-	public static boolean isExpired(String token) {
+	public boolean isExpired(String token) {
 		try {
 			validateToken(token);
 		} catch (Exception e) {
@@ -89,7 +97,7 @@ public class JwtUtils {
 	}
 
 	// 토큰의 남은 만료시간 계산
-	public static long tokenRemainTime(Integer expTime) {
+	public long tokenRemainTime(Integer expTime) {
 		Date expDate = new Date((long)expTime * (1000));
 		long remainMs = expDate.getTime() - System.currentTimeMillis();
 		return remainMs / (1000 * 60);

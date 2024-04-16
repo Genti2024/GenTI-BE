@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum UserStatus implements ConvertableEnum{
-
-	ACTIVATED("ACTIVATED"),
-	DEACTIVATED("DEACTIVATED");
+public enum RequestStatus implements ConvertableEnum{
+	BEFORE_WORK("BEFORE_WORK"),
+	IN_PROGRESS("IN_PROGRESS"),
+	COMPLETED("COMPLETED"),
+	CANCELED("CANCELED");
 
 	private final String stringValue;
-
 }

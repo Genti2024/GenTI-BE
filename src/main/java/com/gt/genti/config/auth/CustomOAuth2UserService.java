@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.gt.genti.domain.User;
 import com.gt.genti.repository.UserRepository;
-import com.gt.genti.security.controller.PrincipalDetail;
+import com.gt.genti.security.PrincipalDetail;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AccessLevel;
@@ -47,7 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		return new PrincipalDetail(
 			user,
-			Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey()))
+			Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
 		);
 	}
 

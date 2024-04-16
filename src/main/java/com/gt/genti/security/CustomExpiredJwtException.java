@@ -1,4 +1,4 @@
-package com.gt.genti.security.controller;
+package com.gt.genti.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 

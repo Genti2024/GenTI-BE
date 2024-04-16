@@ -10,16 +10,18 @@ public class CameraAngleConverter implements AttributeConverter<CameraAngle, Str
 
 	@Override
 	public String convertToDatabaseColumn(CameraAngle enumValue) {
-		return enumValue.getAngle();
+		return enumValue.getStringValue();
 	}
+
 
 	@Override
 	public CameraAngle convertToEntityAttribute(String value) {
-		for (CameraAngle cameraAngle : CameraAngle.values()) {
-			if (cameraAngle.getAngle().equals(value)) {
-				return cameraAngle;
-			}
-		}
-		throw new RuntimeException("데이터에서 값을 읽어오는데 실패했습니다. " + value);
+		return EnumUtil.stringToEnum(CameraAngle.class, value);
+		// for (CameraAngle cameraAngle : CameraAngle.values()) {
+		// 	if (cameraAngle.getStringValue().equals(value)) {
+		// 		return cameraAngle;
+		// 	}
+		// }
+		// throw new RuntimeException("데이터에서 값을 읽어오는데 실패했습니다. " + value);
 	}
 }

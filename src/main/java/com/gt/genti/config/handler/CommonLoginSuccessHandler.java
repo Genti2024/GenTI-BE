@@ -8,17 +8,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gt.genti.security.controller.JwtConstants;
-import com.gt.genti.security.controller.JwtUtils;
-import com.gt.genti.security.controller.PrincipalDetail;
+import com.gt.genti.security.JwtConstants;
+import com.gt.genti.security.JwtUtils;
+import com.gt.genti.security.PrincipalDetail;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 public class CommonLoginSuccessHandler implements AuthenticationSuccessHandler {
+
+	private final JwtUtils jwtUtils;
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
@@ -29,8 +33,8 @@ public class CommonLoginSuccessHandler implements AuthenticationSuccessHandler {
 		log.info("authentication.getPrincipal() = {}", principal);
 
 		Map<String, Object> responseMap = principal.getMemberInfo();
-		responseMap.put("accessToken", JwtUtils.generateToken(responseMap, JwtConstants.ACCESS_EXP_TIME));
-		responseMap.put("refreshToken", JwtUtils.generateToken(responseMap, JwtConstants.REFRESH_EXP_TIME));
+		responseMap.put("accessToken", jwtUtils.generateToken(responseMap, JwtConstants.ACCESS_EXP_TIME));
+		responseMap.put("refreshToken", jwtUtils.generateToken(responseMap, JwtConstants.REFRESH_EXP_TIME));
 		ObjectMapper om = new ObjectMapper();
 		String json = om.writeValueAsString(responseMap);
 

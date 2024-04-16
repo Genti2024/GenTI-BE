@@ -2,6 +2,7 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,12 +23,16 @@ public class Picture extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@Setter
+	@Column(name = "url", nullable = false)
 	String url;
 
 	@Builder
 	public Picture(Long id, String url) {
 		this.id = id;
+		this.url = url;
+	}
+
+	public void modify(String url){
 		this.url = url;
 	}
 }

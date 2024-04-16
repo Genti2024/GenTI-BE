@@ -1,4 +1,4 @@
-package com.gt.genti.security.controller;
+package com.gt.genti.security;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class PrincipalDetail implements UserDetails, OAuth2User {
 		Map<String, Object> info = new HashMap<>();
 		info.put("username", user.getUsername());
 		info.put("email", user.getEmail());
-		info.put("userRole", user.getRoleKey());
+		info.put("userRole", user.getRole());
 		return info;
 	}
 
@@ -84,6 +84,6 @@ public class PrincipalDetail implements UserDetails, OAuth2User {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return this.getUser().isActivate();
 	}
 }

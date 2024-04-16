@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.gt.genti.domain.User;
 import com.gt.genti.dto.PostResponseDto;
 import com.gt.genti.repository.PostRepository;
 
@@ -16,11 +17,11 @@ public class PostService {
 
 	private final PostRepository postRepository;
 
-	public List<PostResponseDto> getPosts(Long cursor, int limit) {
+	public List<PostResponseDto> getPosts(User user, Long cursor, int limit) {
 		if (cursor == null) {
 			cursor = 0L;
 		}
-
-		return postRepository.findByIdBetween(cursor, cursor + limit);
+		List<PostResponseDto> d = postRepository.findByIdBetween(cursor, cursor + limit);
+		return null;
 	}
 }

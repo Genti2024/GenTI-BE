@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.gt.genti.repository.UserRepository;
-import com.gt.genti.security.controller.PrincipalDetail;
+import com.gt.genti.security.PrincipalDetail;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,19 +22,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	private final UserRepository userRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		log.info("--------------------------- UserDetailsServiceImpl ---------------------------");
-		log.info("username = {}", username);
+		log.info("email = {}", email);
 
-		return userRepository.findByEmail(username)
+		return userRepository.findByEmail(email)
 			.map(
-				findUser -> {
-					if (!findUser.isActivate()) {
-						throw new RuntimeException("탈퇴한 사용자입니다.");
-					}
-					return new PrincipalDetail(findUser,
-						Collections.singleton(new SimpleGrantedAuthority(findUser.getRoleKey())));
-				})
+				findUser -> new PrincipalDetail(findUser,
+					Collections.singleton(new SimpleGrantedAuthority(findUser.getRole()))))
 			.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 사용자입니다"));
 	}
 }

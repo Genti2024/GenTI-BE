@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum PostStatus {
+public enum PostStatus implements ConvertableEnum {
 	DELETED("DELETED"),
 	POSTED("POSTED");
 
-	private final String status;
+	private final String stringValue;
 
 }

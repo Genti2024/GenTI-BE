@@ -11,13 +11,13 @@ public class ShotCoverageConverter implements AttributeConverter<ShotCoverage, S
 
 	@Override
 	public String convertToDatabaseColumn(ShotCoverage enumValue) {
-		return enumValue.getCoverage();
+		return enumValue.getStringValue();
 	}
 
 	@Override
 	public ShotCoverage convertToEntityAttribute(String value) {
 		for (ShotCoverage shotCoverage : ShotCoverage.values()) {
-			if (shotCoverage.getCoverage().equals(value)) {
+			if (shotCoverage.getStringValue().equals(value)) {
 				return shotCoverage;
 			}
 		}

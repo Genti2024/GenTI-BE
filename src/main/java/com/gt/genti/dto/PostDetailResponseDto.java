@@ -3,13 +3,13 @@ package com.gt.genti.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PostResponseDto {
+public class PostDetailResponseDto {
 	Long postId;
 	Long userId;
 	String profileImageUrl;
@@ -18,7 +18,8 @@ public class PostResponseDto {
 	Integer likes;
 	LocalDateTime createdAt;
 
-	public PostResponseDto(Long postId, Long userId, String profileImageUrl, List<String> postImageUrl, String content,
+	@Builder
+	public PostDetailResponseDto(Long postId, Long userId, String profileImageUrl, List<String> postImageUrl, String content,
 		Integer likes, LocalDateTime createdAt) {
 		this.postId = postId;
 		this.userId = userId;

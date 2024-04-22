@@ -3,6 +3,7 @@ package com.gt.genti.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,8 @@ import com.gt.genti.domain.User;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
+import com.gt.genti.dto.PictureGenerateRequestResponseDto;
+import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.PosePictureRepository;
 
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class PictureGenerateRequestService {
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PosePictureRepository posePictureRepository;
+	private final CreatorRepository creatorRepository;
 
 	public List<PictureGenerateRequestDetailResponseDto> getMyActivePictureGenerateRequest(Long userId) {
 		return pictureGenerateRequestRepository.findByRequestStatusIsActiveAndUserId_JPQL(userId).stream().map(
@@ -31,7 +35,7 @@ public class PictureGenerateRequestService {
 	}
 
 	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long id) {
-		PictureGenerateRequest findPictureGenerateRequest =pictureGenerateRequestRepository.findById(id).orElseThrow();
+		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestRepository.findById(id).orElseThrow();
 		return PictureGenerateRequestDetailResponseDto.builder()
 			.pictureGenerateRequest(findPictureGenerateRequest)
 			.build();
@@ -45,7 +49,7 @@ public class PictureGenerateRequestService {
 	// 	return pictureGenerateRequestRepository.findAllByRequester(requester).stream().map(entity -> );
 	// }
 
-	public Boolean createPictureGenerateRequest(User requester,
+	public PictureGenerateRequestResponseDto createPictureGenerateRequest(User requester,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 		String posePictureUrl = pictureGenerateRequestRequestDto.getPosePictureUrl();
 		PosePicture findPosePicture = posePictureRepository.findByUrl(
@@ -53,13 +57,25 @@ public class PictureGenerateRequestService {
 			.or(() -> Optional.of(posePictureRepository.save(PosePicture.builder().url(
 				posePictureUrl).build()))).orElseThrow();
 
+		PictureGenerateRequest pgr = new PictureGenerateRequest(requester, pictureGenerateRequestRequestDto,
+			findPosePicture);
+
+		AtomicBoolean requestIsAssigned = new AtomicBoolean(false);
+		creatorRepository.findAvailableCreatorOrderById().ifPresentOrElse((creator) -> {
+			pgr.assign(creator);
+			requestIsAssigned.set(true);
+		}, () -> requestIsAssigned.set(false));
+
 		pictureGenerateRequestRepository.save(
 			new PictureGenerateRequest(requester, pictureGenerateRequestRequestDto, findPosePicture));
 
-		//TODO 공급자 선택 로직 + 공급자 앱에 푸시알림
-		// edited at 2024-04-13
-		// author 서병렬
-		return true;
+		if (requestIsAssigned.get()) {
+			return PictureGenerateRequestResponseDto.builder().message("매칭되었당").build();
+		} else {
+			return PictureGenerateRequestResponseDto.builder().message("현재 매칭 가능한 공급자 없음").build();
+		}
+
+		//TODO 공급자 앱에 푸시알림
 	}
 
 	@Transactional

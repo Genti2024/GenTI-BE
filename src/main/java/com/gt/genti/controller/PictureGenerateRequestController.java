@@ -17,11 +17,11 @@ import com.gt.genti.aop.CheckUserIsQuit;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
+import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 import com.gt.genti.security.PrincipalDetail;
 import com.gt.genti.service.PictureGenerateRequestService;
 
 import lombok.RequiredArgsConstructor;
-
 
 @RestController
 @RequestMapping("/api/requests")
@@ -39,7 +39,7 @@ public class PictureGenerateRequestController {
 
 	@CheckUserIsQuit
 	@PostMapping("")
-	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
+	public ResponseEntity<ApiResult<PictureGenerateRequestResponseDto>> createPictureGenerateRequest(
 		@AuthenticationPrincipal PrincipalDetail principalDetail,
 		@RequestBody PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 

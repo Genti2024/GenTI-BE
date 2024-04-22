@@ -2,8 +2,6 @@ package com.gt.genti.domain;
 
 import java.util.List;
 
-import org.yaml.snakeyaml.util.EnumUtils;
-
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.RequestStatus;
@@ -29,7 +27,9 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Table(name = "picture_generate_request")
 @Entity
 @Getter
@@ -85,5 +85,13 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.posePicture = posePicture;
 		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestModifyDto.getCameraAngle());
 		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class, pictureGenerateRequestModifyDto.getShotCoverage());
+	}
+
+	public void assign(Creator creator){
+		if(this.requestStatus != RequestStatus.BEFORE_WORK){
+			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
+			return;
+		}
+		this.creator = creator;
 	}
 }

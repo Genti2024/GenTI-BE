@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,6 +35,10 @@ public class Post extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "post")
 	List<PostPicture> pictureList;
+
+	@OneToOne
+	@JoinColumn(name = "main_picture_id")
+	Picture mainPicture;
 
 	String content;
 

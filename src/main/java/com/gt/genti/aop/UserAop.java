@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
-public class CheckUserIsQuitAop {
+public class UserAop {
 	@Before("@annotation(com.gt.genti.aop.CheckUserIsQuit) && args(principalDetail)")
-	public void calculateExecutionTime(final PrincipalDetail principalDetail) {
+	public void checkUserIsQuit(final PrincipalDetail principalDetail) {
 		log.info("유저탈퇴확인aop실행");
 		if (!principalDetail.isEnabled()) {
 			throw new RuntimeException("탈퇴한 사용자입니다.");

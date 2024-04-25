@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.aop.CheckUserIsQuit;
+import com.gt.genti.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;

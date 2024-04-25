@@ -33,14 +33,17 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtUtils jwtUtils;
+	public static final String oauthLoginPath = "/oauth2/login";
 
 	public static String[] ALLOWED_URLS = new String[] {
 		"/", "/login/testjwt",
 		"/index",
 		"/users/login",
 		"/oauth2/login",
+		"/login/**",
 		"/login",
-		"/error"
+		"/error",
+		"/test/**"
 	};
 
 	@Bean
@@ -90,12 +93,12 @@ public class SecurityConfig {
 			.httpBasic(AbstractHttpConfigurer::disable);
 
 		http.authorizeHttpRequests((authorizeHttpRequests) -> {
-			for (String url : ALLOWED_URLS) {
-				authorizeHttpRequests.requestMatchers(url).permitAll();
-			}
-			authorizeHttpRequests
+				for (String url : ALLOWED_URLS) {
+					authorizeHttpRequests.requestMatchers(url).permitAll();
+				}
+				authorizeHttpRequests
 					.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-					// .requestMatchers("/api/**").hasRole(UserRole.USER.getStringValue())
+					.requestMatchers("/api/**").hasRole(UserRole.USER.getStringValue())
 					.anyRequest().authenticated();
 			}
 		);
@@ -107,7 +110,7 @@ public class SecurityConfig {
 		http.addFilterBefore(jwtVerifyFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-			httpSecurityOAuth2LoginConfigurer.loginPage("/oauth2/login")
+			httpSecurityOAuth2LoginConfigurer.loginPage(oauthLoginPath)
 				.successHandler(commonLoginSuccessHandler())
 				.failureHandler(commonLoginFailHandler())
 				.userInfoEndpoint(userInfoEndpointConfig ->

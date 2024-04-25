@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class UserAop {
-	@Before("@annotation(com.gt.genti.aop.CheckUserIsQuit) && args(principalDetail)")
+	@Before("@annotation(com.gt.genti.aop.annotation.CheckUserIsQuit) && args(principalDetail)")
 	public void checkUserIsQuit(final PrincipalDetail principalDetail) {
 		log.info("유저탈퇴확인aop실행");
 		if (!principalDetail.isEnabled()) {

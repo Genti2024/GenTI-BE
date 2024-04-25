@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.gt.genti.aop.CheckUserIsQuit;
 import com.gt.genti.config.auth.SessionUserDto;
 import com.gt.genti.fortest.TestJwtResponseDto;
 import com.gt.genti.security.JwtUtils;
@@ -32,7 +31,7 @@ public class LoginController {
 		if (user != null) {
 			model.addAttribute("userName", user.getName());
 		}
-		return "index";
+		return "oauth";
 	}
 
 
@@ -44,8 +43,13 @@ public class LoginController {
 	}
 
 	@GetMapping("/oauth2/login")
-	public ResponseEntity<ApiResult<String>> test() {
-		return success("왜일로와?");
+	public String oauth() {
+		return "oauth";
+	}
+
+	@GetMapping("/login/success")
+	public String successRedirect(){
+		return "redirecttest";
 	}
 
 }

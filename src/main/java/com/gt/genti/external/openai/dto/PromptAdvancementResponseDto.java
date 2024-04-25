@@ -1,4 +1,4 @@
-package com.gt.genti.openai;
+package com.gt.genti.external.openai.dto;
 
 public record PromptAdvancementResponseDto(
 	String role,

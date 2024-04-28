@@ -29,7 +29,7 @@ public class S3Config {
 	}
 
 	@Bean
-	public AmazonS3 amazonS3Client() {
+	public AmazonS3 amazonS3() {
 		return AmazonS3ClientBuilder.standard()
 			.withRegion(region)
 			.withCredentials(new AWSStaticCredentialsProvider(awsCredentialsProvider()))

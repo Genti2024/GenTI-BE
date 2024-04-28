@@ -2,78 +2,97 @@ package com.gt.genti.security;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.gt.genti.config.auth.UserDetailsServiceImpl;
 import com.gt.genti.domain.User;
-import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.domain.enums.converter.EnumUtil;
-import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.error.CustomJwtException;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtUtils {
+public class JwtTokenProvider {
 	private final UserDetailsServiceImpl userDetailsServiceImpl;
+	public static final String AUTH = "auth";
+	public static final String ID = "sub";
+	public static final String TOKEN_TYPE = "typ";
+	public static final String JWT = "JWT";
 
 	@Value("${jwt.secretKey}")
 	private String secretKey;
+
+	private SecretKey key;
+
+	@PostConstruct
+	void init() {
+		key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+	}
 
 	// 헤더에 "Bearer XXX" 형식으로 담겨온 토큰을 추출한다
 	public String getTokenFromHeader(String header) {
 		return header.split(" ")[1];
 	}
 
-	public String generateToken(Map<String, Object> valueMap, int validTime) {
-		SecretKey key = null;
-		try {
-			key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+	public String generateToken(Map<String, Object> claims, int validTime) {
+		String authorities = (String)claims.get(AUTH);
 		return JwtConstants.JWT_PREFIX + Jwts.builder()
-			.setHeader(Map.of("typ", "JWT"))
-			.setClaims(valueMap)
+			.setHeader(Map.of(TOKEN_TYPE, "JWT"))
+			.setSubject((String)claims.get(ID))
+			.claim(AUTH, authorities)
 			.setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
 			.setExpiration(Date.from(ZonedDateTime.now().plusMinutes(validTime).toInstant()))
-			.signWith(key)
+			.signWith(key, SignatureAlgorithm.HS512)
+			.compact();
+	}
+
+	public String generateToken(Authentication authentication, int validTime) {
+		String authorities = authentication.getAuthorities().stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.joining());
+
+		return JwtConstants.JWT_PREFIX + Jwts.builder()
+			.setHeader(Map.of(TOKEN_TYPE, JWT))
+			.setSubject(authentication.getName())
+			.claim(AUTH, authorities)
+			.setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
+			.setExpiration(Date.from(ZonedDateTime.now().plusMinutes(validTime).toInstant()))
+			.signWith(key, SignatureAlgorithm.HS512)
 			.compact();
 	}
 
 	public Authentication getAuthentication(String token) {
-		Map<String, Object> claims = validateToken(token);
-		String email = (String)claims.get("email");
-		UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
-
-		// Set<SimpleGrantedAuthority> authorities = Collections.singleton(
-		// 	new SimpleGrantedAuthority(user.getRole()));
-		// PrincipalDetail principalDetail = new PrincipalDetail(userDetails, );
-
-		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+		Claims claims = validateToken(token);
+		String id = (String)claims.getSubject();
+		List<SimpleGrantedAuthority> authorities = Arrays.stream(claims.get(AUTH).toString().split(","))
+			.map(SimpleGrantedAuthority::new)
+			.toList();
+		User principal = User.createPrincipalOnlyUser(Long.parseLong(id));
+		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 	}
 
-	public Map<String, Object> validateToken(String token) {
-		Map<String, Object> claim = null;
+	public Claims validateToken(String token) {
 		try {
-			SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-			claim = Jwts.parserBuilder()
+			return Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(token) // 파싱 및 검증, 실패 시 에러
@@ -83,7 +102,6 @@ public class JwtUtils {
 		} catch (Exception e) {
 			throw new CustomJwtException("Error");
 		}
-		return claim;
 	}
 
 	// 토큰이 만료되었는지 판단하는 메서드

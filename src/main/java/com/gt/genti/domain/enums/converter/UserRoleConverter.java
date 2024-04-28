@@ -2,23 +2,25 @@ package com.gt.genti.domain.enums.converter;
 
 import com.gt.genti.domain.enums.UserRole;
 
-import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class UserRoleConverter implements AttributeConverter<UserRole, String> {
+public class UserRoleConverter extends DefaultStringAttributeConverter<UserRole> {
+	public UserRoleConverter() {
+		super(UserRole.class);
+	}
+
 	@Override
 	public String convertToDatabaseColumn(UserRole enumValue) {
-		return enumValue.getStringValue();
+		return enumValue.toString();
 	}
 
 	@Override
 	public UserRole convertToEntityAttribute(String value) {
-		for (UserRole userRole : UserRole.values()) {
-			if (userRole.getStringValue().equals(value)) {
-				return userRole;
-			}
+		try {
+			return UserRole.valueOf(value);
+		} catch (Exception e) {
+			throw new RuntimeException("데이터에서 값을 읽어오는데 실패했습니다. " + value);
 		}
-		throw new RuntimeException("데이터에서 값을 읽어오는데 실패했습니다. " + value);
 	}
 }

@@ -5,9 +5,12 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
+import com.gt.genti.config.auth.OAuthAttributes;
 import com.gt.genti.domain.common.BaseTimeEntity;
+import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
+import com.gt.genti.domain.enums.converter.OauthTypeConverter;
 import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
@@ -23,7 +26,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -55,11 +57,11 @@ public class User extends BaseTimeEntity {
 	@Column(name = "introduction")
 	String introduction;
 
-	@Column(name = "oauth_picture_url")
-	String oauthPictureUrl;
-
 	@Column(name = "username", nullable = false)
 	String username;
+
+	@Column(name = "nickname")
+	String nickname;
 
 	@Column(name = "user_role", nullable = false)
 	@Convert(converter = UserRoleConverter.class)
@@ -69,26 +71,63 @@ public class User extends BaseTimeEntity {
 	@Convert(converter = UserStatusConverter.class)
 	UserStatus userStatus;
 
-	@OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
+	@Column(name = "email_verified")
+	Boolean emailVerified;
+
+	@Column(name = "login_id")
+	String loginId;
+	@Column(name = "password")
+	String password;
+
+	@OneToOne
 	@JoinColumn(name = "creator_id")
 	Creator creator;
+
+	@Column(name = "last_login_social_platform")
+	@Convert(converter = OauthTypeConverter.class)
+	OauthType lastLoginSocialPlatform;
 
 	@Column(name = "deleted_at")
 	LocalDateTime deletedAt;
 
-	@Builder
-	public User(String email, String username, String oauthPictureUrl, UserRole userRole, UserStatus userStatus) {
-		this.email = email;
-		this.username = username;
-		this.oauthPictureUrl = oauthPictureUrl;
-		this.userRole = userRole;
-		this.userStatus = userStatus;
+	String roles;
+
+	public static User createPrincipalOnlyUser(Long id) {
+		return new User(id);
 	}
 
-	public User updateByOauth(String name, String oauthPictureUrl) {
-		this.username = name;
-		this.oauthPictureUrl = oauthPictureUrl;
-		return this;
+	public static User createNewSocialUser(String email, String username, OauthType oauthType) {
+		//TODO 최초가입자 이름 랜덤 생성
+		// edited at 2024-04-25
+		// author
+		return new User(email, username, "최초로그인시닉네임", oauthType, UserRole.USER);
+	}
+
+	/**
+	 * 소셜유저로그인
+	 */
+	private User(String email, String username, String nickname, OauthType oauthType, UserRole userRole) {
+		this.email = email;
+		this.username = username;
+		this.nickname = nickname;
+		this.userRole = userRole;
+		this.lastLoginSocialPlatform = oauthType;
+		this.userStatus = UserStatus.ACTIVATED;
+	}
+
+	private User(Long id) {
+		this.id = id;
+	}
+
+	public static User createNewSocialUser(OAuthAttributes attributes) {
+		String email = attributes.getEmail();
+		String username = attributes.getName();
+		//TODO 최초가입자 닉네임 랜덤 생성 && Oauth타입알아내기
+		// edited at 2024-04-25
+		// author
+		OauthType oauthType = OauthType.GOOGLE;
+		String nickname = "최초로그인시닉네임";
+		return new User(email, username, nickname, oauthType, UserRole.USER);
 	}
 
 	public String getRole() {
@@ -106,7 +145,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void restore() {
-		if(Period.between(this.deletedAt.toLocalDate(), LocalDate.now()).getMonths() >=1){
+		if (Period.between(this.deletedAt.toLocalDate(), LocalDate.now()).getMonths() >= 1) {
 			throw new RuntimeException("탈퇴한 지 한달이 지난 경우 재가입해야합니다.");
 		}
 		this.userStatus = UserStatus.ACTIVATED;

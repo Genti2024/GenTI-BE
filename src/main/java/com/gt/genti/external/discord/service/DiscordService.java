@@ -27,7 +27,7 @@ public class DiscordService {
 
 		int startIndex = sb.lastIndexOf("$1");
 		sb.replace(startIndex, startIndex + "$1".length(), message);
-		log.info(sb.toString());
 		discordRestClient.sendToDiscord(sb.toString());
+		init();
 	}
 }

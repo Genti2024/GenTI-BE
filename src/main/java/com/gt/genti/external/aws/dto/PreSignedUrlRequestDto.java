@@ -1,6 +1,6 @@
 package com.gt.genti.external.aws.dto;
 
-import com.gt.genti.dto.enums.PictureType;
+import com.gt.genti.dto.enums.FileType;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,13 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PreSignedUrlRequestDto {
-	PictureType pictureType;
-	String serverImageName;
+	FileType fileType;
+	String fileName;
 
 	@Builder
-
-	public PreSignedUrlRequestDto(PictureType pictureType, String serverImageName) {
-		this.pictureType = pictureType;
-		this.serverImageName = serverImageName;
+	public PreSignedUrlRequestDto(FileType fileType, String fileName) {
+		this.fileType = fileType;
+		this.fileName = fileName;
 	}
 }

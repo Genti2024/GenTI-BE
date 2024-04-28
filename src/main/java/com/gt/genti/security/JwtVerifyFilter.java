@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class JwtVerifyFilter extends OncePerRequestFilter {
 
-	private final JwtUtils jwtUtils;
+	private final JwtTokenProvider jwtTokenProvider;
 	// 상품 이미지가 보이지 않기에 상품 이미지를 출력하는 /api/items/view 경로를 추가
 
 	private static void checkAuthorizationHeader(String header) {
@@ -36,8 +36,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 	// 필터를 거치지 않을 URL 을 설정하고, true 를 return 하면 현재 필터를 건너뛰고 다음 필터로 이동
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		String requestURI = request.getRequestURI();
-		return PatternMatchUtils.simpleMatch(SecurityConfig.ALLOWED_URLS, requestURI);
+		return PatternMatchUtils.simpleMatch(SecurityConfig.COMMON_RESOURCE_AND_ALLOWED_URL, request.getRequestURI());
 	}
 
 	@Override
@@ -49,14 +48,13 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 
 		try {
 			checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
-			String token = jwtUtils.getTokenFromHeader(authHeader);
-			Authentication authentication = jwtUtils.getAuthentication(token);
+			String token = jwtTokenProvider.getTokenFromHeader(authHeader);
+			Authentication authentication = jwtTokenProvider.getAuthentication(token);
 			log.info("authentication = {}", authentication);
 			SecurityContext context = SecurityContextHolder.createEmptyContext();
 			context.setAuthentication(authentication);
 			log.info("context : " + context);
 			SecurityContextHolder.setContext(context);
-			//SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (Exception e) {
 			log.info("CustomExpiredJwtException 발생");
 			log.info(e.getMessage());

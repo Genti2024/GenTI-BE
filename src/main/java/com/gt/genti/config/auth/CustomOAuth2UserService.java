@@ -41,7 +41,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			// 	.getUserInfoEndpoint()
 			// 	.getUserNameAttributeName();
 
-			OauthAttributes oauthAttributes = OauthAttributeBuilder.of(registrationId, oAuth2User.getAttributes());
+			OAuthAttributes oauthAttributes = OAuthAttributeBuilder.of(registrationId, oAuth2User.getAttributes());
 			user = User.createNewSocialUser(oauthAttributes);
 
 			user = userRepository.save(user);

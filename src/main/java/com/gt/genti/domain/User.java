@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
-import com.gt.genti.config.auth.OauthAttributes;
+import com.gt.genti.config.auth.OAuthAttributes;
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.UserRole;
@@ -119,7 +119,7 @@ public class User extends BaseTimeEntity {
 		this.id = id;
 	}
 
-	public static User createNewSocialUser(OauthAttributes oauthAttributes) {
+	public static User createNewSocialUser(OAuthAttributes oauthAttributes) {
 		String email = oauthAttributes.getEmail();
 		String username = oauthAttributes.getUsername();
 		//TODO 최초가입자 닉네임 랜덤 생성 && Oauth타입알아내기

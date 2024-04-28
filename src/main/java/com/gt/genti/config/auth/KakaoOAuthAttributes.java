@@ -8,7 +8,7 @@ import com.gt.genti.domain.enums.OauthType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class KakaoOauthAttributes implements OauthAttributes {
+public class KakaoOAuthAttributes implements OAuthAttributes {
 
 	private Map<String, Object> attributes;
 	// private String nameAttributeKey;
@@ -16,7 +16,7 @@ public class KakaoOauthAttributes implements OauthAttributes {
 	private String email;
 	private final OauthType oauthType = OauthType.KAKAO;
 
-	public KakaoOauthAttributes(Map<String, Object> attributes) {
+	public KakaoOAuthAttributes(Map<String, Object> attributes) {
 		log.info("attributes.toString() : " + attributes.toString());
 		Map<String, Object> properties = (Map<String, Object>)attributes.get("properties");
 		this.nickname = (String)properties.get("nickname");

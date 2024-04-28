@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.gt.genti.domain.enums.OauthType;
 
-public class AppleOauthAttributes implements OauthAttributes {
+public class AppleOAuthAttributes implements OAuthAttributes {
 
 	private Map<String, Object> attributes;
 	// private String nameAttributeKey;
@@ -12,7 +12,7 @@ public class AppleOauthAttributes implements OauthAttributes {
 	private String email;
 	private final OauthType oauthType = OauthType.APPLE;
 
-	public AppleOauthAttributes(Map<String, Object> attributes) {
+	public AppleOAuthAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 		this.name = (String)attributes.get("name");
 		this.email = (String)attributes.get("email");

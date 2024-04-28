@@ -34,14 +34,12 @@ jobs:
             ${{ runner.os }}-gradle-
 
       # 공통 yml 파일 생성 - secret, oauth
-      - name: make application-secret.yml && application-oauth.yml
+      - name: make application-secret.yml
         if: contains(github.ref, 'dev') || contains(github.ref, 'main')
         run: |
           cd ./src/main/resources
           touch ./application-secret.yml
           echo "${{ secrets.APPLICATION_SECRET }}" > ./application-secret.yml
-          touch ./application-oauth.yml
-          echo "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.yml
         shell: bash
 
       # 환경별 yml 파일 생성(3) - deploy
@@ -61,7 +59,7 @@ jobs:
       - name: Build with Gradle Wrapper
         run: |
           chmod +x ./gradlew
-          ./gradlew build
+          ./gradlew clean build
 
 
       - name: Get Github action IP

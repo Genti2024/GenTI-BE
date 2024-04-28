@@ -59,6 +59,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 
     implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.2.0.Final'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -69,7 +70,7 @@ dependencies {
 
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
 

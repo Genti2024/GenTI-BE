@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DiscordLogTest {
 	@Test
-	void loggingError(){
+	void loggingError() {
 		log.error("오류");
 		log.warn("워닝");
 		log.info("정보");

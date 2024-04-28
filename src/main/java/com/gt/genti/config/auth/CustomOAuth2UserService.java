@@ -36,14 +36,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		User user;
 		if (optionalUser.isEmpty()) {
-			String userNameAttributeName = userRequest.getClientRegistration()
-				.getProviderDetails()
-				.getUserInfoEndpoint()
-				.getUserNameAttributeName();
+			// String userNameAttributeName = userRequest.getClientRegistration()
+			// 	.getProviderDetails()
+			// 	.getUserInfoEndpoint()
+			// 	.getUserNameAttributeName();
 
-			OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
-				oAuth2User.getAttributes());
-			user = User.createNewSocialUser(attributes);
+			OauthAttributes oauthAttributes = OauthAttributeBuilder.of(registrationId, oAuth2User.getAttributes());
+			user = User.createNewSocialUser(oauthAttributes);
+
 			user = userRepository.save(user);
 			roles = UserRole.addRole(UserRole.getAllRoles(user.getUserRole()), UserRole.OAUTH_FIRST_JOIN);
 		} else {

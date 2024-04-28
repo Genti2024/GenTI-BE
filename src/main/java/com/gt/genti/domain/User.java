@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
-import com.gt.genti.config.auth.OAuthAttributes;
+import com.gt.genti.config.auth.OauthAttributes;
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
-import com.gt.genti.domain.enums.converter.OauthTypeConverter;
+import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
 import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
@@ -84,7 +84,7 @@ public class User extends BaseTimeEntity {
 	Creator creator;
 
 	@Column(name = "last_login_social_platform")
-	@Convert(converter = OauthTypeConverter.class)
+	@Convert(converter = OauthTypeConverterIgnoreCase.class)
 	OauthType lastLoginSocialPlatform;
 
 	@Column(name = "deleted_at")
@@ -119,13 +119,13 @@ public class User extends BaseTimeEntity {
 		this.id = id;
 	}
 
-	public static User createNewSocialUser(OAuthAttributes attributes) {
-		String email = attributes.getEmail();
-		String username = attributes.getName();
+	public static User createNewSocialUser(OauthAttributes oauthAttributes) {
+		String email = oauthAttributes.getEmail();
+		String username = oauthAttributes.getUsername();
 		//TODO 최초가입자 닉네임 랜덤 생성 && Oauth타입알아내기
 		// edited at 2024-04-25
 		// author
-		OauthType oauthType = OauthType.GOOGLE;
+		OauthType oauthType = oauthAttributes.getOauthType();
 		String nickname = "최초로그인시닉네임";
 		return new User(email, username, nickname, oauthType, UserRole.USER);
 	}

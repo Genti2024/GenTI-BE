@@ -7,3 +7,6 @@ openai:
 schedule:
   delay:
     match-picture-generate-schedule: 600000
+
+logging:
+  config: classpath:logback.xml

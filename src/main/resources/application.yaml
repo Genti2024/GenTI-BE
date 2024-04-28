@@ -6,5 +6,4 @@ spring:
     include:
       - secret
       - common
-      - oauth
     active: local

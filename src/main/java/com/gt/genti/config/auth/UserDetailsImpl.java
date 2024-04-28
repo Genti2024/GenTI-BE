@@ -146,7 +146,6 @@ public class UserDetailsImpl implements UserDetails, OAuth2User, Serializable {
 
 	@Override
 	public String getName() {
-		String sub = attributes.get("sub").toString();
-		return sub;
+		return attributes.get("sub").toString();
 	}
 }

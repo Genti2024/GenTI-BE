@@ -23,7 +23,7 @@ public class CommonLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 	private final JwtTokenProvider jwtTokenProvider;
 	// private final CustomOAuth2UserService customOAuth2UserService;
 
-	@Value("${jwt.redirect-url}")
+	@Value("${spring.security.oauth2.redirect-url}")
 	private String redirectUrl;
 
 	@Override

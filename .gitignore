@@ -44,7 +44,9 @@ application-deploy.yml
 application-secret.yaml
 application-secret.yml
 
-/docker/db/
+docker/db/
+
+other/genti-sbl-iam_accessKeys.csv
 
 genti-keypair.pem
 

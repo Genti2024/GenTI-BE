@@ -1,13 +1,16 @@
-package com.gt.genti.openai;
+package com.gt.genti.external.openai.service;
 
 import org.springframework.stereotype.Service;
+
+import com.gt.genti.external.openai.restclient.OpenAIRestClient;
+import com.gt.genti.external.openai.dto.PromptAdvancementRequestDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChatGptService {
+public class OpenAIService {
 
 	private final OpenAIRestClient openAIRestClient;
 

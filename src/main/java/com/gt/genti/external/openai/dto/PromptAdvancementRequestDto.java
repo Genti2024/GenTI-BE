@@ -1,4 +1,4 @@
-package com.gt.genti.openai;
+package com.gt.genti.external.openai.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

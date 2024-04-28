@@ -1,19 +1,18 @@
 package com.gt.genti.config.auth;
 
-import java.util.Collections;
+import java.util.Optional;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.repository.UserRepository;
-import com.gt.genti.security.PrincipalDetail;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,39 +22,37 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private final UserRepository userRepository;
-	private final HttpSession httpSession;
 
 	@Override
+	@Transactional
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
 		log.info("---------OAuth2UserService---------");
 		OAuth2User oAuth2User = super.loadUser(userRequest);
-
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
+		String email = oAuth2User.getAttribute("email");
+		String roles;
 
-		String userNameAttributeName = userRequest.getClientRegistration()
-			.getProviderDetails()
-			.getUserInfoEndpoint()
-			.getUserNameAttributeName();
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+		User user;
+		if (optionalUser.isEmpty()) {
+			String userNameAttributeName = userRequest.getClientRegistration()
+				.getProviderDetails()
+				.getUserInfoEndpoint()
+				.getUserNameAttributeName();
 
-		OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
-			oAuth2User.getAttributes());
+			OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
+				oAuth2User.getAttributes());
+			user = User.createNewSocialUser(attributes);
+			user = userRepository.save(user);
+			roles = UserRole.addRole(UserRole.getAllRoles(user.getUserRole()), UserRole.OAUTH_FIRST_JOIN);
+		} else {
+			user = optionalUser.get();
+			roles = user.getUserRole().getStringValue();
+		}
 
-		User user = saveOrUpdate(attributes);
-
-		httpSession.setAttribute("user", new SessionUserDto(user));
-
-		return new PrincipalDetail(
-			user,
-			Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
-		);
+		return new UserDetailsImpl(
+			user, roles, oAuth2User.getAttributes());
 	}
 
-	private User saveOrUpdate(OAuthAttributes attributes) {
-		User user = userRepository.findByEmail(attributes.getEmail())
-			.map(entity -> entity.updateByOauth(attributes.getName(), attributes.getPicture()))
-			.orElse(attributes.toEntity());
-
-		return userRepository.save(user);
-	}
 }

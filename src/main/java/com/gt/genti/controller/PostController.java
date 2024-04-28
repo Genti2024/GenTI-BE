@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.aop.CheckUserIsQuit;
+import com.gt.genti.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.dto.PostBriefResponseDto;
 import com.gt.genti.dto.PostDetailResponseDto;
 import com.gt.genti.security.PrincipalDetail;

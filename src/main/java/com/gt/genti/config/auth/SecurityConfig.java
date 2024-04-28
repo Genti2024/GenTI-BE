@@ -1,8 +1,11 @@
 package com.gt.genti.config.auth;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.autoconfigure.security.StaticResourceLocation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,12 +21,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gt.genti.config.handler.CommonLoginFailHandler;
 import com.gt.genti.config.handler.CommonLoginSuccessHandler;
-import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.security.JwtUtils;
+import com.gt.genti.security.JwtTokenProvider;
 import com.gt.genti.security.JwtVerifyFilter;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -32,16 +36,38 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
-	private final JwtUtils jwtUtils;
-
-	public static String[] ALLOWED_URLS = new String[] {
-		"/", "/login/testjwt",
+	private final JwtTokenProvider jwtTokenProvider;
+	private final ObjectMapper objectMapper;
+	public static final String oauthLoginPath = "/oauth2/login";
+	public static final String ROLE_USER = "ROLE_USER";
+	public static final String ROLE_ADMIN = "ROLE_ADMIN";
+	public static final String ROLE_MANAGER = "ROLE_MANAGER";
+	public static final String ROLE_CREATOR = "ROLE_CREATOR";
+	private static final String[] PRIVATE_ALLOWED_URLS = new String[] {
+		"/login/testjwt",
 		"/index",
 		"/users/login",
 		"/oauth2/login",
+		"/login/**",
 		"/login",
-		"/error"
+		"/error",
+		"/test/**",
+		"/oauth2"
 	};
+
+	public static String[] COMMON_RESOURCE_AND_ALLOWED_URL;
+
+	@PostConstruct
+	void init() {
+		String[] enumPatterns = EnumSet.allOf(StaticResourceLocation.class).stream()
+			.flatMap(StaticResourceLocation::getPatterns)
+			.toArray(String[]::new);
+
+		// Combine both pattern arrays
+		COMMON_RESOURCE_AND_ALLOWED_URL = Stream.concat(Arrays.stream(enumPatterns),
+				Arrays.stream(PRIVATE_ALLOWED_URLS))
+			.toArray(String[]::new);
+	}
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -66,7 +92,7 @@ public class SecurityConfig {
 
 	@Bean
 	public CommonLoginSuccessHandler commonLoginSuccessHandler() {
-		return new CommonLoginSuccessHandler(jwtUtils);
+		return new CommonLoginSuccessHandler(jwtTokenProvider);
 	}
 
 	@Bean
@@ -76,7 +102,7 @@ public class SecurityConfig {
 
 	@Bean
 	public JwtVerifyFilter jwtVerifyFilter() {
-		return new JwtVerifyFilter(jwtUtils);
+		return new JwtVerifyFilter(jwtTokenProvider);
 	}
 
 	@Bean
@@ -89,15 +115,10 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable);
 
-		http.authorizeHttpRequests((authorizeHttpRequests) -> {
-			for (String url : ALLOWED_URLS) {
-				authorizeHttpRequests.requestMatchers(url).permitAll();
-			}
-			authorizeHttpRequests
-					.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-					// .requestMatchers("/api/**").hasRole(UserRole.USER.getStringValue())
-					.anyRequest().authenticated();
-			}
+		http.authorizeHttpRequests((authorizeHttpRequests) ->
+			authorizeHttpRequests.requestMatchers(COMMON_RESOURCE_AND_ALLOWED_URL).permitAll()
+				.requestMatchers("/api/**").hasAuthority(ROLE_USER) // not use hasRole
+				.anyRequest().authenticated()
 		);
 
 		http
@@ -107,7 +128,7 @@ public class SecurityConfig {
 		http.addFilterBefore(jwtVerifyFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-			httpSecurityOAuth2LoginConfigurer.loginPage("/oauth2/login")
+			httpSecurityOAuth2LoginConfigurer.loginPage(oauthLoginPath)
 				.successHandler(commonLoginSuccessHandler())
 				.failureHandler(commonLoginFailHandler())
 				.userInfoEndpoint(userInfoEndpointConfig ->

@@ -1,4 +1,4 @@
-package com.gt.genti.aop;
+package com.gt.genti.aop.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

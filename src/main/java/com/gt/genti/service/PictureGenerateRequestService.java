@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PosePicture;
 import com.gt.genti.domain.User;
@@ -18,6 +19,7 @@ import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.PosePictureRepository;
+import com.gt.genti.util.RandomUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,10 +63,14 @@ public class PictureGenerateRequestService {
 			findPosePicture);
 
 		AtomicBoolean requestIsAssigned = new AtomicBoolean(false);
-		creatorRepository.findAvailableCreatorOrderById().ifPresentOrElse((creator) -> {
-			pgr.assign(creator);
+		List<Creator> creatorList = creatorRepository.findAllAvailableCreator();
+		if (creatorList.isEmpty()) {
+			requestIsAssigned.set(false);
+		} else {
+			Creator randomSelectedCreator = RandomUtils.getRandomElement(creatorList);
+			pgr.assign(randomSelectedCreator);
 			requestIsAssigned.set(true);
-		}, () -> requestIsAssigned.set(false));
+		}
 
 		pictureGenerateRequestRepository.save(
 			new PictureGenerateRequest(requester, pictureGenerateRequestRequestDto, findPosePicture));

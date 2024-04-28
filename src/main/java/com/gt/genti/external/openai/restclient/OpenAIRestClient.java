@@ -1,4 +1,4 @@
-package com.gt.genti.openai;
+package com.gt.genti.external.openai.restclient;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;

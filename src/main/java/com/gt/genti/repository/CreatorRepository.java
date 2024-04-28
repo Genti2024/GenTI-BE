@@ -11,14 +11,10 @@ import com.gt.genti.domain.Creator;
 public interface CreatorRepository extends JpaRepository<Creator, Long> {
 
 	@Query("select c from Creator c "
+		+ "join c.pictureGenerateRequest pgr "
 		+ "where c.workable = true "
-		+ "and c.pictureGenerateRequest.size <3 "
-		+ "order by c.id")
+		+ "group by c "
+		+ "having count(pgr) < 3 "
+		+ "order by count(pgr) asc, c.id asc ")
 	List<Creator> findAllAvailableCreator();
-
-	@Query("select c from Creator c "
-		+ "where c.workable = true "
-		+ "and c.pictureGenerateRequest.size <3 "
-		+ "order by c.id")
-	Optional<Creator> findAvailableCreatorOrderById();
 }

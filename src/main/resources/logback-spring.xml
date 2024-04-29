@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-
     <springProperty name="DISCORD_WEBHOOK_URL" source="discord.webhook-url.error"/>
     <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
         <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
@@ -20,8 +19,17 @@
         </encoder>
     </appender>
 
+    <appender name="File" class="ch.qos.logback.core.FileAppender">
+        <file>/logs/app.log</file>
+        <encoder>
+            <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <append>true</append>
+    </appender>
+
     <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="DISCORD" />
+        <appender-ref ref="DISCORD"/>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>

@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.aop.annotation.CheckUserIsQuit;
+import com.gt.genti.config.auth.UserDetailsImpl;
 import com.gt.genti.dto.PostBriefResponseDto;
 import com.gt.genti.dto.PostDetailResponseDto;
-import com.gt.genti.security.PrincipalDetail;
 import com.gt.genti.service.PostService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,9 +37,9 @@ public class PostController {
 	@CheckUserIsQuit
 	@GetMapping("/detail/my")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getMyAllPostsDetailPagination(
-		@AuthenticationPrincipal PrincipalDetail principalDetail,
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestParam(value = "cursor", required = false) Long cursor) {
-		return success(postService.getPostDetailAllByUserIdPagination(principalDetail.getUser().getId(), cursor));
+		return success(postService.getPostDetailAllByUserIdPagination(userDetails.getId(), cursor));
 	}
 
 	@CheckUserIsQuit
@@ -60,8 +60,8 @@ public class PostController {
 	@CheckUserIsQuit
 	@GetMapping("/brief/my")
 	public ResponseEntity<ApiResult<List<PostBriefResponseDto>>> getUsersAllPostBrief(
-		@AuthenticationPrincipal PrincipalDetail principalDetail) {
-		return success(postService.getPostBriefAllByUserId(principalDetail.getUser().getId()));
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return success(postService.getPostBriefAllByUserId(userDetails.getId()));
 	}
 
 }

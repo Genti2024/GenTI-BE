@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import com.gt.genti.domain.User;
 
 import lombok.Builder;
+import lombok.Getter;
 
 public class UserDetailsImpl implements UserDetails, OAuth2User, Serializable {
 
@@ -28,10 +29,20 @@ public class UserDetailsImpl implements UserDetails, OAuth2User, Serializable {
 	private String nickname;    //닉네임
 	private Collection<GrantedAuthority> authorities;    //권한 목록
 
+	@Getter
 	private User user;
 	private Map<String, Object> attributes;
 
-	//Social Login 용
+	//non socical 용
+	@Builder
+	public UserDetailsImpl(User user, String roles) {
+		//PrincipalOauth2UserService 참고
+		this.user = user;
+		this.id = user.getId().toString();
+		this.authorities = createAuthorities(roles);
+	}
+
+	// social 용
 	@Builder
 	public UserDetailsImpl(User user, String roles, Map<String, Object> attributes) {
 		//PrincipalOauth2UserService 참고
@@ -39,6 +50,10 @@ public class UserDetailsImpl implements UserDetails, OAuth2User, Serializable {
 		this.id = user.getId().toString();
 		this.authorities = createAuthorities(roles);
 		this.attributes = attributes;
+	}
+
+	public Long getId() {
+		return Long.parseLong(this.id);
 	}
 
 	//Non Social + Employer 로그인 용도

@@ -26,6 +26,6 @@ public class S3Controller {
 	public ResponseEntity<ApiResult<PreSignedUrlResponseDto>> getPreSignedUrl(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody PreSignedUrlRequestDto preSignedUrlRequestDto) {
-		return success(s3Service.getPreSignedUrl(preSignedUrlRequestDto));
+		return success(s3Service.getPreSignedUrl(userDetails.getId(), preSignedUrlRequestDto));
 	}
 }

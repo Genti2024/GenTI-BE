@@ -45,7 +45,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 		log.info("--------------------------- JwtVerifyFilter ---------------------------");
 
 		String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
-
+		// log.info("authHeader : " + authHeader);
 		try {
 			checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
 			String token = jwtTokenProvider.getTokenFromHeader(authHeader);

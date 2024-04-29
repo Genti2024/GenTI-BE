@@ -26,7 +26,7 @@ public class S3Service {
 
 	private final AmazonS3 amazonS3;
 
-	public PreSignedUrlResponseDto getPreSignedUrl(PreSignedUrlRequestDto preSignedUrlRequestDto) {
+	public PreSignedUrlResponseDto getPreSignedUrl(Long userId, PreSignedUrlRequestDto preSignedUrlRequestDto) {
 		return getPreSignedUrl(preSignedUrlRequestDto.getFileType().getStringValue(), preSignedUrlRequestDto);
 	}
 

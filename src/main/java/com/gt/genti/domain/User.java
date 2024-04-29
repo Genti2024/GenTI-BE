@@ -130,10 +130,6 @@ public class User extends BaseTimeEntity {
 		return new User(email, username, nickname, oauthType, UserRole.USER);
 	}
 
-	public String getRole() {
-		return this.getUserRole().getStringValue();
-	}
-
 	public void update(UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		this.username = userInfoUpdateRequestDto.getUserName();
 		this.getProfilePicture().getPicture().modify(userInfoUpdateRequestDto.getProfilePictureUrl());

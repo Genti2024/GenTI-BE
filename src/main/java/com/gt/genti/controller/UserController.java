@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.aop.annotation.CheckUserIsQuit;
+import com.gt.genti.config.auth.UserDetailsImpl;
 import com.gt.genti.dto.UserInfoResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
-import com.gt.genti.security.PrincipalDetail;
 import com.gt.genti.service.UserService;
 import com.gt.genti.util.ApiUtils;
 
@@ -29,29 +29,29 @@ public class UserController {
 	@CheckUserIsQuit
 	@GetMapping("")
 	public ResponseEntity<ApiUtils.ApiResult<UserInfoResponseDto>> getUserInfo(
-		@AuthenticationPrincipal PrincipalDetail principalDetail) {
-		return success(userService.getUserInfo(principalDetail.getUser().getId()));
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return success(userService.getUserInfo(userDetails.getId()));
 	}
 
 	@CheckUserIsQuit
 	@PutMapping("")
 	public ResponseEntity<ApiUtils.ApiResult<UserInfoResponseDto>> updateUserInfo(
-		@AuthenticationPrincipal PrincipalDetail principalDetail,
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		return success(userService.updateUserInfo(principalDetail.getUser().getId(), userInfoUpdateRequestDto));
+		return success(userService.updateUserInfo(userDetails.getId(), userInfoUpdateRequestDto));
 	}
 
 	@CheckUserIsQuit
 	@DeleteMapping("")
 	public ResponseEntity<ApiUtils.ApiResult<Boolean>> deleteUserSoft(
-		@AuthenticationPrincipal PrincipalDetail principalDetail) {
-		return success(userService.deleteUserInfoSoft(principalDetail.getUser().getId()));
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return success(userService.deleteUserInfoSoft(userDetails.getId()));
 	}
 
 	@PutMapping("/restore")
 	public ResponseEntity<ApiUtils.ApiResult<Boolean>> restoreSoftDeletedUser(
-		@AuthenticationPrincipal PrincipalDetail principalDetail) {
-		return success(userService.restoreSoftDeletedUser(principalDetail.getUser().getId()));
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return success(userService.restoreSoftDeletedUser(userDetails.getId()));
 	}
 
 }

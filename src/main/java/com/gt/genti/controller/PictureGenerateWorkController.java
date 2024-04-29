@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.config.auth.UserDetailsImpl;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
-import com.gt.genti.security.PrincipalDetail;
 import com.gt.genti.service.PictureGenerateWorkService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ public class PictureGenerateWorkController {
 	@GetMapping("")
 	public ResponseEntity<ApiResult<PictureGenerateRequestBriefResponseDto>> getMyAssignedPictureGenerateRequest(
 		@AuthenticationPrincipal
-		PrincipalDetail principalDetail) {
+		UserDetailsImpl userDetails) {
 		return success(pictureGenerateWorkService.getCreatorAssignedPictureGenerateRequestBrief(
-			principalDetail.getUser().getId()));
+			userDetails.getId()));
 	}
 }

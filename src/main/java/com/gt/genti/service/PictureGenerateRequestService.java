@@ -19,6 +19,7 @@ import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.PosePictureRepository;
+import com.gt.genti.repository.UserRepository;
 import com.gt.genti.util.RandomUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class PictureGenerateRequestService {
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PosePictureRepository posePictureRepository;
 	private final CreatorRepository creatorRepository;
+	private final UserRepository userRepository;
 
 	public List<PictureGenerateRequestDetailResponseDto> getMyActivePictureGenerateRequest(Long userId) {
 		return pictureGenerateRequestRepository.findByRequestStatusIsActiveAndUserId_JPQL(userId).stream().map(
@@ -51,15 +53,17 @@ public class PictureGenerateRequestService {
 	// 	return pictureGenerateRequestRepository.findAllByRequester(requester).stream().map(entity -> );
 	// }
 
-	public PictureGenerateRequestResponseDto createPictureGenerateRequest(User requester,
+	public PictureGenerateRequestResponseDto createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
+
+		User findRequester = userRepository.findById(requesterId).orElseThrow();
 		String posePictureUrl = pictureGenerateRequestRequestDto.getPosePictureUrl();
 		PosePicture findPosePicture = posePictureRepository.findByUrl(
 				posePictureUrl)
 			.or(() -> Optional.of(posePictureRepository.save(PosePicture.builder().url(
 				posePictureUrl).build()))).orElseThrow();
 
-		PictureGenerateRequest pgr = new PictureGenerateRequest(requester, pictureGenerateRequestRequestDto,
+		PictureGenerateRequest pgr = new PictureGenerateRequest(findRequester, pictureGenerateRequestRequestDto,
 			findPosePicture);
 
 		AtomicBoolean requestIsAssigned = new AtomicBoolean(false);
@@ -73,7 +77,7 @@ public class PictureGenerateRequestService {
 		}
 
 		pictureGenerateRequestRepository.save(
-			new PictureGenerateRequest(requester, pictureGenerateRequestRequestDto, findPosePicture));
+			new PictureGenerateRequest(findRequester, pictureGenerateRequestRequestDto, findPosePicture));
 
 		if (requestIsAssigned.get()) {
 			return PictureGenerateRequestResponseDto.builder().message("매칭되었당").build();

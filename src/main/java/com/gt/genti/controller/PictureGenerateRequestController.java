@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.aop.annotation.CheckUserIsQuit;
+import com.gt.genti.config.auth.UserDetailsImpl;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
 import com.gt.genti.dto.PictureGenerateRequestResponseDto;
-import com.gt.genti.security.PrincipalDetail;
 import com.gt.genti.service.PictureGenerateRequestService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,29 +32,29 @@ public class PictureGenerateRequestController {
 	@CheckUserIsQuit
 	@GetMapping("/active")
 	public ResponseEntity<ApiResult<List<PictureGenerateRequestDetailResponseDto>>> getMyActivePictureGenerateRequest(
-		@AuthenticationPrincipal PrincipalDetail principalDetail) {
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(
-			pictureGenerateRequestService.getMyActivePictureGenerateRequest(principalDetail.getUser().getId()));
+			pictureGenerateRequestService.getMyActivePictureGenerateRequest(userDetails.getId()));
 	}
 
 	@CheckUserIsQuit
 	@PostMapping("")
 	public ResponseEntity<ApiResult<PictureGenerateRequestResponseDto>> createPictureGenerateRequest(
-		@AuthenticationPrincipal PrincipalDetail principalDetail,
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 
 		return success(
-			pictureGenerateRequestService.createPictureGenerateRequest(principalDetail.getUser(),
+			pictureGenerateRequestService.createPictureGenerateRequest(userDetails.getId(),
 				pictureGenerateRequestRequestDto));
 	}
 
 	@CheckUserIsQuit
 	@PutMapping("")
 	public ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
-		@AuthenticationPrincipal PrincipalDetail principalDetail,
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto) {
 		return success(
-			pictureGenerateRequestService.modifyPictureGenerateRequest(principalDetail.getUser().getId(),
+			pictureGenerateRequestService.modifyPictureGenerateRequest(userDetails.getId(),
 				pictureGenerateRequestModifyDto));
 	}
 

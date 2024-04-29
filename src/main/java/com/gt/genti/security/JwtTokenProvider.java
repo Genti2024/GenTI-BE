@@ -17,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import com.gt.genti.config.auth.UserDetailsImpl;
 import com.gt.genti.config.auth.UserDetailsServiceImpl;
 import com.gt.genti.domain.User;
 import com.gt.genti.error.CustomJwtException;
@@ -83,11 +84,14 @@ public class JwtTokenProvider {
 	public Authentication getAuthentication(String token) {
 		Claims claims = validateToken(token);
 		String id = (String)claims.getSubject();
-		List<SimpleGrantedAuthority> authorities = Arrays.stream(claims.get(AUTH).toString().split(","))
+		String roles = claims.get(AUTH).toString();
+		List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(","))
 			.map(SimpleGrantedAuthority::new)
 			.toList();
-		User principal = User.createPrincipalOnlyUser(Long.parseLong(id));
-		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+		UserDetailsImpl userDetails = UserDetailsImpl.builder()
+			.user(User.createPrincipalOnlyUser(Long.parseLong(id)))
+			.roles(roles).build();
+		return new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
 	}
 
 	public Claims validateToken(String token) {

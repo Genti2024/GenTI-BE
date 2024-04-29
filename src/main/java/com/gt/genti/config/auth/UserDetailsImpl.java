@@ -65,7 +65,7 @@ public class UserDetailsImpl implements UserDetails, OAuth2User, Serializable {
 		this.email = userEmail;
 		this.password = userPw;
 		this.emailVerified = emailVerified;
-		this.locked = !locked;
+		this.locked = locked;
 	}
 
 	private Collection<GrantedAuthority> createAuthorities(String roles) {
@@ -153,10 +153,7 @@ public class UserDetailsImpl implements UserDetails, OAuth2User, Serializable {
 	 */
 	@Override
 	public boolean isEnabled() {
-		//이메일이 인증되어 있고 계정이 잠겨있지 않으면 true
-		//상식과 조금 벗어나서, Customizing 하였음
-		return (emailVerified && locked);
-
+		return true;
 	}
 
 	@Override

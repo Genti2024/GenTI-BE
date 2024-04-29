@@ -12,14 +12,14 @@
         <tts>false</tts>
     </appender>
 
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
             <charset>utf8</charset>
         </encoder>
     </appender>
 
-    <appender name="File" class="ch.qos.logback.core.FileAppender">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>/logs/app.log</file>
         <encoder>
             <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
@@ -35,8 +35,19 @@
         </filter>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="ASYNC_DISCORD"/>
-        <appender-ref ref="Console"/>
-    </root>
+    <!--    <root level="INFO">-->
+    <!--        <appender-ref ref="CONSOLE"/>-->
+    <!--    </root>-->
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    <springProfile name="deploy">
+        <root level="INFO">
+            <appender-ref ref="ASYNC_DISCORD"/>
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
 </configuration>

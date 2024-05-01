@@ -1,6 +1,6 @@
 package com.gt.genti.external.openai.controller;
 
-import static com.gt.genti.util.ApiUtils.*;
+import static com.gt.genti.other.util.ApiUtils.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

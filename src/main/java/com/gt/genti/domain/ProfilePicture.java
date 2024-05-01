@@ -2,7 +2,6 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

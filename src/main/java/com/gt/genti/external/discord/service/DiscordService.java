@@ -2,7 +2,7 @@ package com.gt.genti.external.discord.service;
 
 import org.springframework.stereotype.Service;
 
-import com.gt.genti.aop.annotation.DeployOnly;
+import com.gt.genti.other.aop.annotation.DeployOnly;
 import com.gt.genti.external.discord.restclient.DiscordRestClient;
 
 import jakarta.annotation.PostConstruct;

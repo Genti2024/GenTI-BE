@@ -49,7 +49,7 @@ public class S3Service {
 
 		generatePresignedUrlRequest.addRequestParameter(
 			Headers.S3_CANNED_ACL,
-			CannedAccessControlList.PublicRead.toString()
+			CannedAccessControlList.PublicReadWrite.toString()
 		);
 
 		return generatePresignedUrlRequest;

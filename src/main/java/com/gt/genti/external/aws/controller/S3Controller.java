@@ -1,6 +1,6 @@
 package com.gt.genti.external.aws.controller;
 
-import static com.gt.genti.util.ApiUtils.*;
+import static com.gt.genti.other.util.ApiUtils.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.gt.genti.config.auth.UserDetailsImpl;
+import com.gt.genti.other.config.auth.UserDetailsImpl;
 import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
 import com.gt.genti.external.aws.dto.PreSignedUrlResponseDto;
 import com.gt.genti.external.aws.service.S3Service;

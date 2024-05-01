@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
-import com.gt.genti.config.auth.OAuthAttributes;
+import com.gt.genti.other.config.auth.OAuthAttributes;
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.UserRole;

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.gt.genti.application.port.in.PosePicturePort;
 import com.gt.genti.domain.PosePicture;
 import com.gt.genti.repository.PosePictureRepository;
 

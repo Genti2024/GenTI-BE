@@ -31,6 +31,10 @@ public class PosePicture extends BaseTimeEntity {
 		this.url = url;
 	}
 
+	public PosePicture(String url) {
+		this.url = url;
+	}
+
 	public void modify(String modifyPosePictureUrl) {
 		this.url = modifyPosePictureUrl;
 	}

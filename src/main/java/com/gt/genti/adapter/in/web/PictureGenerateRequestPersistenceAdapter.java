@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
 import com.gt.genti.repository.PictureGenerateRequestRepository;

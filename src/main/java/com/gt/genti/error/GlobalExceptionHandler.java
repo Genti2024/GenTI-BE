@@ -1,34 +1,54 @@
 package com.gt.genti.error;
 
-import java.util.Arrays;
+import static com.gt.genti.other.util.ApiUtils.*;
 
+import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExpectedException.class)
-	protected ResponseEntity<String> handleExpectedException(final ExpectedException exception) {
-		return ResponseEntity.status(exception.getStatus())
-			.body(exception.getErrorCode().getCode() + exception.getMessage());
+	protected ResponseEntity<ApiResult<?>> handleExpectedException(final ExpectedException exception) {
+		return error(exception.getErrorCode());
 	}
 
 	@ExceptionHandler(RuntimeException.class)
-	protected ResponseEntity<String> handleUnExpectedException(final RuntimeException exception) {
-		System.out.println(exception.getClass() + " exception occurred");
-		System.out.println("Cause : " + exception.getCause());
-		System.out.println("Message : " + exception.getMessage());
-		Arrays.stream(exception.getStackTrace()).forEach(System.out::println);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예기치 못한 문제가 발생했습니다.");
+	protected ResponseEntity<ApiResult<?>> handleUnExpectedException(final RuntimeException exception) {
+		String error = """
+			Class : %s
+			Cause : %s
+			Message : %s
+			StackTrace : %s
+			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
+			exception.getStackTrace());
+		log.error(error);
+		return error(ErrorCode.UnHandledException);
 	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
-	protected ResponseEntity<String> processValidationError(WebExchangeBindException exception) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(exception.getBindingResult().getFieldErrors().get(0).getDefaultMessage());
+	protected ResponseEntity<ApiResult<?>> processValidationError(WebExchangeBindException exception) {
+		String errorMessage = exception.getBindingResult().getFieldErrors().stream().map(
+			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
+
+		return error(new DynamicException("V001", errorMessage, HttpStatus.BAD_REQUEST));
+	}
+
+	@NotNull
+	private static String makeFieldErrorMessage(FieldError fieldError) {
+		return """
+			%s 은(는) %s
+			입력된 값 : %s
+			""".formatted(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue());
 	}
 }

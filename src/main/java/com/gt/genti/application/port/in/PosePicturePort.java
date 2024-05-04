@@ -1,4 +1,4 @@
-package com.gt.genti.adapter.in.web;
+package com.gt.genti.application.port.in;
 
 import java.util.Optional;
 

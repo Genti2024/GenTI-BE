@@ -1,6 +1,8 @@
-package com.gt.genti.adapter.in.web;
+package com.gt.genti.adapter.usecase;
 
 import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
@@ -16,9 +18,11 @@ public interface PictureGenerateRequestUseCase {
 
 	public List<PictureGenerateRequestSimplifiedResponseDto> getAllMyPictureGenerateRequests(User requester);
 
+	@Transactional
 	public PictureGenerateRequestResponseDto createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto);
 
+	@Transactional
 	public Boolean modifyPictureGenerateRequest(Long userId,
 		PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto);
 

@@ -28,7 +28,6 @@ public class PictureGenerateRequestDetailResponseDto {
 	RequestStatus requestStatus;
 	LocalDateTime createdAt;
 
-	@Builder
 	public PictureGenerateRequestDetailResponseDto(PictureGenerateRequest pictureGenerateRequest) {
 		this.id = pictureGenerateRequest.getId();
 		this.requesterId = pictureGenerateRequest.getRequester().getId();

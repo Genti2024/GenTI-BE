@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
-import com.gt.genti.other.config.auth.UserDetailsImpl;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
 import com.gt.genti.dto.PictureGenerateRequestResponseDto;
-import com.gt.genti.application.service.PictureGenerateRequestService;
+import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
+import com.gt.genti.other.config.auth.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,14 +26,14 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/requests")
 @RequiredArgsConstructor
 public class PictureGenerateRequestController {
-	private final PictureGenerateRequestService pictureGenerateRequestService;
+	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 
 	@CheckUserIsQuit
 	@GetMapping("/active")
 	public ResponseEntity<ApiResult<List<PictureGenerateRequestDetailResponseDto>>> getMyActivePictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(
-			pictureGenerateRequestService.getMyActivePictureGenerateRequest(userDetails.getId()));
+			pictureGenerateRequestUseCase.getMyActivePictureGenerateRequest(userDetails.getId()));
 	}
 
 	@CheckUserIsQuit
@@ -44,7 +43,7 @@ public class PictureGenerateRequestController {
 		@RequestBody PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 
 		return success(
-			pictureGenerateRequestService.createPictureGenerateRequest(userDetails.getId(),
+			pictureGenerateRequestUseCase.createPictureGenerateRequest(userDetails.getId(),
 				pictureGenerateRequestRequestDto));
 	}
 
@@ -54,7 +53,7 @@ public class PictureGenerateRequestController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto) {
 		return success(
-			pictureGenerateRequestService.modifyPictureGenerateRequest(userDetails.getId(),
+			pictureGenerateRequestUseCase.modifyPictureGenerateRequest(userDetails.getId(),
 				pictureGenerateRequestModifyDto));
 	}
 

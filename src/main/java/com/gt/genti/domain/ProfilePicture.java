@@ -1,5 +1,6 @@
 package com.gt.genti.domain;
 
+
 import com.gt.genti.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.Entity;

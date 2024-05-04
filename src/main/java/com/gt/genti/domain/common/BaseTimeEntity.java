@@ -1,4 +1,4 @@
-package com.gt.genti.domain_old.common;
+package com.gt.genti.domain.common;
 
 import java.time.LocalDateTime;
 

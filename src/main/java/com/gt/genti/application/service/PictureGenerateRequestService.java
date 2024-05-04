@@ -8,6 +8,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.adapter.in.web.PictureGenerateRequestPort;
+import com.gt.genti.adapter.in.web.PictureGenerateRequestUseCase;
+import com.gt.genti.adapter.in.web.PosePicturePort;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PosePicture;
@@ -16,30 +19,31 @@ import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
 import com.gt.genti.dto.PictureGenerateRequestResponseDto;
-import com.gt.genti.repository.CreatorRepository;
-import com.gt.genti.repository.PictureGenerateRequestRepository;
-import com.gt.genti.repository.PosePictureRepository;
-import com.gt.genti.repository.UserRepository;
+import com.gt.genti.dto.PictureGenerateRequestSimplifiedResponseDto;
 import com.gt.genti.other.util.RandomUtils;
+import com.gt.genti.repository.CreatorRepository;
+import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class PictureGenerateRequestService {
-	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
-	private final PosePictureRepository posePictureRepository;
+public class PictureGenerateRequestService implements PictureGenerateRequestUseCase {
+	private final PictureGenerateRequestPort pictureGenerateRequestPort;
+	private final PosePicturePort posePicturePort;
 	private final CreatorRepository creatorRepository;
 	private final UserRepository userRepository;
 
+	@Override
 	public List<PictureGenerateRequestDetailResponseDto> getMyActivePictureGenerateRequest(Long userId) {
-		return pictureGenerateRequestRepository.findByRequestStatusIsActiveAndUserId_JPQL(userId).stream().map(
+		return pictureGenerateRequestPort.findByRequestStatusIsActiveAndUserId_JPQL(userId).stream().map(
 			PictureGenerateRequestDetailResponseDto::new
 		).toList();
 	}
 
+	@Override
 	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long id) {
-		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestRepository.findById(id).orElseThrow();
+		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(id).orElseThrow();
 		return PictureGenerateRequestDetailResponseDto.builder()
 			.pictureGenerateRequest(findPictureGenerateRequest)
 			.build();
@@ -48,19 +52,21 @@ public class PictureGenerateRequestService {
 	//TODO 내가 생성한 요청 리스트 보기
 	// edited at 2024-04-13
 	// author 서병렬
+	@Override
+	public List<PictureGenerateRequestSimplifiedResponseDto> getAllMyPictureGenerateRequests(User requester) {
+		// return pictureGenerateRequestPersistenceAdapter.findAllByRequester(requester).stream().map(entity -> );
+		return null;
+	}
 
-	// public List<PictureGenerateRequestSimplifiedResponseDto> getAllMyPictureGenerateRequests(User requester){
-	// 	return pictureGenerateRequestRepository.findAllByRequester(requester).stream().map(entity -> );
-	// }
-
+	@Override
 	public PictureGenerateRequestResponseDto createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 
 		User findRequester = userRepository.findById(requesterId).orElseThrow();
 		String posePictureUrl = pictureGenerateRequestRequestDto.getPosePictureUrl();
-		PosePicture findPosePicture = posePictureRepository.findByUrl(
+		PosePicture findPosePicture = posePicturePort.findByUrl(
 				posePictureUrl)
-			.or(() -> Optional.of(posePictureRepository.save(PosePicture.builder().url(
+			.or(() -> Optional.of(posePicturePort.save(PosePicture.builder().url(
 				posePictureUrl).build()))).orElseThrow();
 
 		PictureGenerateRequest pgr = new PictureGenerateRequest(findRequester, pictureGenerateRequestRequestDto,
@@ -76,7 +82,7 @@ public class PictureGenerateRequestService {
 			requestIsAssigned.set(true);
 		}
 
-		pictureGenerateRequestRepository.save(
+		pictureGenerateRequestPort.save(
 			new PictureGenerateRequest(findRequester, pictureGenerateRequestRequestDto, findPosePicture));
 
 		if (requestIsAssigned.get()) {
@@ -88,10 +94,11 @@ public class PictureGenerateRequestService {
 		//TODO 공급자 앱에 푸시알림
 	}
 
+	@Override
 	@Transactional
 	public Boolean modifyPictureGenerateRequest(Long userId,
 		PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto) {
-		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestRepository.findById(
+		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(
 			pictureGenerateRequestModifyDto.getPictureGenerateRequestId()).orElseThrow();
 
 		if (!Objects.equals(userId, findPictureGenerateRequest.getRequester().getId())) {

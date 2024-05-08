@@ -7,32 +7,34 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Table(name = "picture")
+@Table(name = "post_picture")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Picture extends BaseTimeEntity {
+public class PicturePost extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
+
+	@ManyToOne
+	@JoinColumn(name = "post_id", nullable = false)
+	Post post;
 
 	@Column(name = "url", nullable = false)
 	String url;
 
 	@Builder
-	public Picture(Long id, String url) {
+	public PicturePost(Long id, String url) {
 		this.id = id;
-		this.url = url;
-	}
-
-	public void modify(String url){
 		this.url = url;
 	}
 }

@@ -12,7 +12,7 @@ import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestSimplifiedResponseDto;
 
 public interface PictureGenerateRequestUseCase {
-	public List<PictureGenerateRequestDetailResponseDto> getMyActivePictureGenerateRequest(Long userId);
+	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestByUserId(Long userId);
 
 	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long id);
 

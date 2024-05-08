@@ -18,6 +18,7 @@ public class KakaoOAuthAttributes implements OAuthAttributes {
 
 	public KakaoOAuthAttributes(Map<String, Object> attributes) {
 		log.info("attributes.toString() : " + attributes.toString());
+		@SuppressWarnings(value = "unchecked")
 		Map<String, Object> properties = (Map<String, Object>)attributes.get("properties");
 		this.nickname = (String)properties.get("nickname");
 		log.info("this.nickname : " + this.nickname);

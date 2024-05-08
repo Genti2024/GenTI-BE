@@ -2,6 +2,7 @@ package com.gt.genti.external.aws.service;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
 import com.gt.genti.external.aws.dto.PreSignedUrlResponseDto;
 
@@ -26,20 +29,23 @@ public class S3Service {
 
 	private final AmazonS3 amazonS3;
 
-	public PreSignedUrlResponseDto getPreSignedUrl(Long userId, PreSignedUrlRequestDto preSignedUrlRequestDto) {
-		return getPreSignedUrl(preSignedUrlRequestDto.getFileType().getStringValue(), preSignedUrlRequestDto);
+	public List<PreSignedUrlResponseDto> getPreSignedUrlMany(List<PreSignedUrlRequestDto> preSignedUrlRequestDtoList) {
+		return preSignedUrlRequestDtoList.stream()
+			.map(this::getPreSignedUrl)
+			.toList();
 	}
 
-	public PreSignedUrlResponseDto getPreSignedUrl(String prefix, PreSignedUrlRequestDto preSignedUrlRequestDto) {
+	public PreSignedUrlResponseDto getPreSignedUrl(PreSignedUrlRequestDto preSignedUrlRequestDto) {
 		String fileName = preSignedUrlRequestDto.getFileName();
-		if (!prefix.isEmpty()) {
-			fileName = createPath(prefix, fileName);
+		String fileType = preSignedUrlRequestDto.getFileType().getStringValue();
+		if (fileType == null) {
+			throw new ExpectedException(ErrorCode.ActivePictureGenerateRequestNotExists);
 		}
+		String s3Key = createPath(fileType, fileName);
 
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
+		GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, s3Key);
 		URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-
-		return PreSignedUrlResponseDto.builder().url(url).build();
+		return new PreSignedUrlResponseDto(fileName, url, s3Key);
 	}
 
 	private GeneratePresignedUrlRequest getGeneratePresignedUrlRequest(String bucket, String fileName) {

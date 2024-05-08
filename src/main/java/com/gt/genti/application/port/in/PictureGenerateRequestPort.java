@@ -3,8 +3,6 @@ package com.gt.genti.application.port.in;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.repository.query.Param;
-
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
 
@@ -19,6 +17,8 @@ public interface PictureGenerateRequestPort {
 	List<PictureGenerateRequest> findPendingRequests();
 
 	Optional<PictureGenerateRequest> findById(Long id);
+
+	Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, Long requesterId);
 
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 }

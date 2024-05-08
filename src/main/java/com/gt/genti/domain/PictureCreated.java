@@ -7,17 +7,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "pose_picture")
+@Table(name = "picture")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PosePicture extends BaseTimeEntity {
+public class PictureCreated extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
@@ -25,17 +27,18 @@ public class PosePicture extends BaseTimeEntity {
 	@Column(name = "url", nullable = false)
 	String url;
 
+	@ManyToOne
+	@JoinColumn(name = "picture_generate_response_id")
+	PictureGenerateResponse pictureGenerateResponse;
+
 	@Builder
-	public PosePicture(Long id, String url) {
-		this.id = id;
+	public PictureCreated(String url, PictureGenerateResponse pictureGenerateResponse) {
+
 		this.url = url;
+		this.pictureGenerateResponse = pictureGenerateResponse;
 	}
 
-	public PosePicture(String url) {
+	public void modify(String url) {
 		this.url = url;
-	}
-
-	public void modify(String modifyPosePictureUrl) {
-		this.url = modifyPosePictureUrl;
 	}
 }

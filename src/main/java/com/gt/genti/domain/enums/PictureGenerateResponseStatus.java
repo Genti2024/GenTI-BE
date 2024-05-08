@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum RequestStatus implements ConvertableEnum {
+public enum PictureGenerateResponseStatus implements ConvertableEnum {
 	BEFORE_WORK("BEFORE_WORK"),
-	IN_PROGRESS("IN_PROGRESS"),
-	CANCELED("CANCELED"),
+	SUBMITTED_FIRST("SUBMITTED_FIRST"),
+	SUBMITTED_FINAL("SUBMITTED_FINAL"),
 	REPORTED("REPORTED"),
 	COMPLETED("COMPLETED");
 
 	private final String stringValue;
+
 }

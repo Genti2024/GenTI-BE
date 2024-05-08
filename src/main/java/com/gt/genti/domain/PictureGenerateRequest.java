@@ -56,7 +56,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 
 	@OneToOne
 	@JoinColumn(name = "pose_picture_id", nullable = false)
-	PosePicture posePicture;
+	PicturePose picturePose;
 
 	@Column(name = "camera_angle", nullable = false)
 	@Convert(converter = CameraAngleConverter.class)
@@ -71,18 +71,18 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	RequestStatus requestStatus;
 
 	public PictureGenerateRequest(User requester, PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto,
-		PosePicture posePicture) {
+		PicturePose picturePose) {
 		this.requester = requester;
 		this.prompt = pictureGenerateRequestRequestDto.getPrompt();
-		this.posePicture = posePicture;
+		this.picturePose = picturePose;
 		this.requestStatus = RequestStatus.BEFORE_WORK;
 		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestRequestDto.getCameraAngle());
 		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class, pictureGenerateRequestRequestDto.getShotCoverage());
 	}
 
-	public void modify(PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto, PosePicture posePicture) {
+	public void modify(PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto, PicturePose picturePose) {
 		this.prompt = pictureGenerateRequestModifyDto.getPrompt();
-		this.posePicture = posePicture;
+		this.picturePose = picturePose;
 		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestModifyDto.getCameraAngle());
 		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class, pictureGenerateRequestModifyDto.getShotCoverage());
 	}

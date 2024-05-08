@@ -1,4 +1,4 @@
-package com.gt.genti.adapter.in.web;
+package com.gt.genti.application.adapter;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,9 +36,15 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	public List<PictureGenerateRequest> findPendingRequests() {
 		return pictureGenerateRequestRepository.findPendingRequests();
 	}
+
 	@Override
-	public Optional<PictureGenerateRequest> findById(Long id){
+	public Optional<PictureGenerateRequest> findById(Long id) {
 		return pictureGenerateRequestRepository.findById(id);
+	}
+
+	@Override
+	public Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, Long requesterId){
+		return pictureGenerateRequestRepository.findByIdAndRequesterId(id, requesterId);
 	}
 
 	@Override

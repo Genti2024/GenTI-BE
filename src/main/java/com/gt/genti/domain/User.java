@@ -41,15 +41,15 @@ public class User extends BaseTimeEntity {
 	// profile_picture는 완전히 user에 종속되어있다
 	@OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
 	@JoinColumn(name = "profile_picture_id")
-	ProfilePicture profilePicture;
+	PictureProfile pictureProfile;
 
 	@OneToMany
 	@JoinColumn(name = "user_id")
-	List<UserFacePicture> userFacePictureList;
+	List<PictureUserFace> pictureUserFaceList;
 
 	@OneToMany
 	@JoinColumn(name = "user_id")
-	List<Picture> createdPictureList;
+	List<PictureCreated> createdPictureList;
 
 	@Column(name = "email")
 	String email;
@@ -79,8 +79,7 @@ public class User extends BaseTimeEntity {
 	@Column(name = "password")
 	String password;
 
-	@OneToOne
-	@JoinColumn(name = "creator_id")
+	@OneToOne(mappedBy = "user")
 	Creator creator;
 
 	@Column(name = "last_login_social_platform")
@@ -132,7 +131,7 @@ public class User extends BaseTimeEntity {
 
 	public void update(UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		this.username = userInfoUpdateRequestDto.getUserName();
-		this.getProfilePicture().getPicture().modify(userInfoUpdateRequestDto.getProfilePictureUrl());
+		this.getPictureProfile().modify(userInfoUpdateRequestDto.getProfilePictureUrl());
 	}
 
 	public void softDelete() {

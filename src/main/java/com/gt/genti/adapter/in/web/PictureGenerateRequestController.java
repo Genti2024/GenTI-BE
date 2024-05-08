@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,7 @@ import com.gt.genti.other.config.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/requests")
+@RequestMapping("/api/picture-generate-requests")
 @RequiredArgsConstructor
 public class PictureGenerateRequestController {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
@@ -34,7 +35,13 @@ public class PictureGenerateRequestController {
 	public ResponseEntity<ApiResult<List<PictureGenerateRequestDetailResponseDto>>> getMyActivePictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(
-			pictureGenerateRequestUseCase.getMyActivePictureGenerateRequest(userDetails.getId()));
+			pictureGenerateRequestUseCase.getPictureGenerateRequestByUserId(userDetails.getId()));
+	}
+
+	@GetMapping("/{pictureGenerateRequestId}")
+	public ResponseEntity<ApiResult<PictureGenerateRequestDetailResponseDto>> getPictureGenerateDetail(
+		@PathVariable Long pictureGenerateRequestId) {
+		return success(pictureGenerateRequestUseCase.getPictureGenerateRequestById(pictureGenerateRequestId));
 	}
 
 	@CheckUserIsQuit

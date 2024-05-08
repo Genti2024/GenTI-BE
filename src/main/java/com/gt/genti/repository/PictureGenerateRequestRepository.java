@@ -38,4 +38,10 @@ public interface PictureGenerateRequestRepository
 		+ "and pgr.creator.id is null "
 		+ "order by pgr.createdAt desc")
 	List<PictureGenerateRequest> findPendingRequests();
+
+
+	@Query("select pgr from PictureGenerateRequest pgr "
+		+ "where pgr.id = :id "
+		+ "and pgr.requester.id = :requesterId ")
+	Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, Long requesterId);
 }

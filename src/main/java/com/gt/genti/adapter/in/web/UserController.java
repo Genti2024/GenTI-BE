@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.other.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.config.auth.UserDetailsImpl;
 import com.gt.genti.dto.UserInfoResponseDto;
@@ -26,32 +27,34 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 	private final UserService userService;
 
+	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("")
-	public ResponseEntity<ApiUtils.ApiResult<UserInfoResponseDto>> getUserInfo(
+	public ResponseEntity<ApiResult<UserInfoResponseDto>> getUserInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(userService.getUserInfo(userDetails.getId()));
 	}
 
+	@ToBeUpdated
 	@CheckUserIsQuit
 	@PutMapping("")
-	public ResponseEntity<ApiUtils.ApiResult<UserInfoResponseDto>> updateUserInfo(
+	public ResponseEntity<ApiResult<UserInfoResponseDto>> updateUserInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		return success(userService.updateUserInfo(userDetails.getId(), userInfoUpdateRequestDto));
 	}
 
+
 	@CheckUserIsQuit
 	@DeleteMapping("")
-	public ResponseEntity<ApiUtils.ApiResult<Boolean>> deleteUserSoft(
+	public ResponseEntity<ApiResult<Boolean>> deleteUserSoft(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(userService.deleteUserInfoSoft(userDetails.getId()));
 	}
 
 	@PutMapping("/restore")
-	public ResponseEntity<ApiUtils.ApiResult<Boolean>> restoreSoftDeletedUser(
+	public ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(userService.restoreSoftDeletedUser(userDetails.getId()));
 	}
-
 }

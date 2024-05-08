@@ -9,11 +9,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PreSignedUrlResponseDto {
+	String fileName;
 	URL url;
+	String s3Key;
 
-	@Builder
-
-	public PreSignedUrlResponseDto(URL url) {
+	public PreSignedUrlResponseDto(String fileName, URL url, String s3Key) {
+		this.fileName  = fileName;
 		this.url = url;
+		this.s3Key = s3Key;
 	}
 }

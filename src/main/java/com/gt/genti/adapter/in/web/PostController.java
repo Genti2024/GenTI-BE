@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.other.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.config.auth.UserDetailsImpl;
 import com.gt.genti.dto.PostBriefResponseDto;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 	private final PostService postService;
 
+	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/detail")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getAllPostsDetailPagination(
@@ -34,6 +36,7 @@ public class PostController {
 		return success(postService.getPostDetailAllPagination(cursor));
 	}
 
+	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/detail/my")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getMyAllPostsDetailPagination(
@@ -42,6 +45,8 @@ public class PostController {
 		return success(postService.getPostDetailAllByUserIdPagination(userDetails.getId(), cursor));
 	}
 
+
+	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/detail/users/{userId}")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getUsersAllPostsDetailPagination(
@@ -50,6 +55,7 @@ public class PostController {
 		return success(postService.getPostDetailAllByUserIdPagination(userId, cursor));
 	}
 
+	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/brief/users/{userId}")
 	public ResponseEntity<ApiResult<List<PostBriefResponseDto>>> getUsersAllPostBrief(
@@ -57,6 +63,7 @@ public class PostController {
 		return success(postService.getPostBriefAllByUserId(userId));
 	}
 
+	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/brief/my")
 	public ResponseEntity<ApiResult<List<PostBriefResponseDto>>> getUsersAllPostBrief(

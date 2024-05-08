@@ -3,10 +3,10 @@ use genti;
 select p.id,
        u.id,
        (select pic.url
-        from picture pic
+        from pictureCreated pic
         where pic.id = profp.picture_id),
        (select pic.url
-        from picture pic
+        from pictureCreated pic
                  inner join post_picture postp
         where pic.id = postp.picture_id),
        p.content,

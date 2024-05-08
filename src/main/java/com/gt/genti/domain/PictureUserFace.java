@@ -1,39 +1,32 @@
 package com.gt.genti.domain;
 
-
 import com.gt.genti.domain.common.BaseTimeEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "profile_picture")
+@Table(name = "user_face_picture")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProfilePicture extends BaseTimeEntity {
+public class PictureUserFace extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@OneToOne(mappedBy = "profilePicture")
+	@ManyToOne
+	@JoinColumn(name = "user_id")
 	User user;
 
-	@OneToOne
-	@JoinColumn(name = "picture_id", referencedColumnName = "id")
-	Picture picture;
-
-	@Builder
-	public ProfilePicture(Long id, Picture picture) {
-		this.id = id;
-		this.picture = picture;
-	}
+	@Column(name = "url", nullable = false)
+	String url;
 }

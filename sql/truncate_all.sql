@@ -2,7 +2,7 @@ use genti;
 
 set FOREIGN_KEY_CHECKS = 0;
 
-truncate table picture;
+truncate table pictureCreated;
 truncate table picture_create_request;
 truncate table picture_create_request_face_picture_list;
 truncate table picture_create_response;

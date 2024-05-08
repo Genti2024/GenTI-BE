@@ -5,14 +5,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.application.port.in.PosePicturePort;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
-import com.gt.genti.domain.PosePicture;
+import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
@@ -36,7 +35,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final UserRepository userRepository;
 
 	@Override
-	public List<PictureGenerateRequestDetailResponseDto> getMyActivePictureGenerateRequest(Long userId) {
+	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestByUserId(Long userId) {
 		List<PictureGenerateRequestDetailResponseDto> result = pictureGenerateRequestPort.findByRequestStatusIsActiveAndUserId_JPQL(
 			userId).stream().map(
 			PictureGenerateRequestDetailResponseDto::new
@@ -49,8 +48,9 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	@Override
 	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long id) {
-		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(id).orElseThrow(() ->
-			new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
+		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(id)
+			.orElseThrow(() ->
+				new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
 		return new PictureGenerateRequestDetailResponseDto(findPictureGenerateRequest);
 	}
 
@@ -64,7 +64,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-
 	public PictureGenerateRequestResponseDto createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 
@@ -72,11 +71,11 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 
 		String posePictureUrl = pictureGenerateRequestRequestDto.getPosePictureUrl();
-		PosePicture findPosePicture = posePicturePort.findByUrl(posePictureUrl)
-			.or(() -> Optional.of(posePicturePort.save(new PosePicture(posePictureUrl)))).get();
+		PicturePose findPicturePose = posePicturePort.findByUrl(posePictureUrl)
+			.or(() -> Optional.of(posePicturePort.save(new PicturePose(posePictureUrl)))).get();
 
 		PictureGenerateRequest pgr = new PictureGenerateRequest(findRequester, pictureGenerateRequestRequestDto,
-			findPosePicture);
+			findPicturePose);
 
 		matchCreatorIfAvailable(pgr);
 		pictureGenerateRequestPort.save(pgr);
@@ -89,29 +88,26 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	@Transactional
 	public Boolean modifyPictureGenerateRequest(Long userId,
 		PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto) {
-		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(
-			pictureGenerateRequestModifyDto.getPictureGenerateRequestId()).orElseThrow();
 
-		if (!Objects.equals(userId, findPictureGenerateRequest.getRequester().getId())) {
-			throw new RuntimeException("자신이 작성한 요청만 수정 가능");
-		}
+		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequesterId(
+				pictureGenerateRequestModifyDto.getPictureGenerateRequestId(), userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
 
 		if (findPictureGenerateRequest.getCreator() != null) {
-			throw new RuntimeException("이미 작업이 진행중인 요청은 수정이 불가합니다.");
+			throw new ExpectedException(ErrorCode.RequestAlreadyInProgress);
 		}
 
-		PosePicture posePicture = findPictureGenerateRequest.getPosePicture();
-		String modifyPosePictureUrl = findPictureGenerateRequest.getPosePicture().getUrl();
+		PicturePose picturePose = findPictureGenerateRequest.getPicturePose();
+		String modifyPosePictureUrl = findPictureGenerateRequest.getPicturePose().getUrl();
 
-		if (!Objects.equals(posePicture.getUrl(),
+		if (!Objects.equals(picturePose.getUrl(),
 			pictureGenerateRequestModifyDto.getPosePictureUrl())) {
-			posePicture.modify(modifyPosePictureUrl);
+			picturePose.modify(modifyPosePictureUrl);
 		}
 
-		findPictureGenerateRequest.modify(pictureGenerateRequestModifyDto, posePicture);
+		findPictureGenerateRequest.modify(pictureGenerateRequestModifyDto, picturePose);
 		return true;
 	}
 

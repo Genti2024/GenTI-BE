@@ -1,6 +1,7 @@
 package com.gt.genti.dto;
 
-import com.gt.genti.domain.Picture;
+import com.gt.genti.domain.PictureCreated;
+import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 
 import lombok.AccessLevel;
@@ -17,10 +18,10 @@ public class UserInfoResponseDto {
 	String url;
 
 	@Builder
-	public UserInfoResponseDto(User user, Picture picture){
+	public UserInfoResponseDto(User user, PictureProfile pictureProfile){
 		this.id = user.getId();
 		this.username = user.getUsername();
-		this.pictureId = picture.getId();
-		this.url = picture.getUrl();
+		this.pictureId = pictureProfile.getId();
+		this.url = pictureProfile.getUrl();
 	}
 }

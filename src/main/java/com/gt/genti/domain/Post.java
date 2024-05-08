@@ -34,11 +34,11 @@ public class Post extends BaseTimeEntity {
 	User user;
 
 	@OneToMany(mappedBy = "post")
-	List<PostPicture> pictureList;
+	List<PicturePost> pictureList;
 
 	@OneToOne
 	@JoinColumn(name = "main_picture_id")
-	Picture mainPicture;
+	PicturePost mainPicture;
 
 	String content;
 

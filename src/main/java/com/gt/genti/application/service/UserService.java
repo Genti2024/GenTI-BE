@@ -3,7 +3,7 @@ package com.gt.genti.application.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.domain.Picture;
+import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.UserInfoResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
@@ -22,10 +22,10 @@ public class UserService {
 		if (!findUser.isActivate()) {
 			throw new RuntimeException("탈퇴");
 		}
-		Picture picture = findUser.getProfilePicture().getPicture();
+		PictureProfile pictureProfile = findUser.getPictureProfile();
 		return UserInfoResponseDto.builder()
 			.user(findUser)
-			.picture(picture)
+			.pictureProfile(pictureProfile)
 			.build();
 	}
 
@@ -38,7 +38,7 @@ public class UserService {
 		findUser.update(userInfoUpdateRequestDto);
 		return UserInfoResponseDto.builder()
 			.user(findUser)
-			.picture(findUser.getProfilePicture().getPicture())
+			.pictureProfile(findUser.getPictureProfile())
 			.build();
 	}
 

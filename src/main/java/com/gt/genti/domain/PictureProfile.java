@@ -2,12 +2,11 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -15,26 +14,28 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "post_picture")
+@Table(name = "profile_picture")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostPicture extends BaseTimeEntity {
+public class PictureProfile extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "post_id", nullable = false)
-	Post post;
+	@OneToOne(mappedBy = "pictureProfile")
+	User user;
 
-	@OneToOne
-	@JoinColumn(name = "picture_id", referencedColumnName = "id", nullable = false)
-	Picture picture;
+	@Column(name = "url", nullable = false)
+	String url;
 
 	@Builder
-	public PostPicture(Long id, Picture picture) {
+	public PictureProfile(Long id, String url) {
 		this.id = id;
-		this.picture = picture;
+		this.url = url;
+	}
+
+	public void modify(String url){
+		this.url = url;
 	}
 }

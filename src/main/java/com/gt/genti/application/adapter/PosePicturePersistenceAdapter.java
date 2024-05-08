@@ -1,11 +1,11 @@
-package com.gt.genti.adapter.in.web;
+package com.gt.genti.application.adapter;
 
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
 import com.gt.genti.application.port.in.PosePicturePort;
-import com.gt.genti.domain.PosePicture;
+import com.gt.genti.domain.PicturePose;
 import com.gt.genti.repository.PosePictureRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ public class PosePicturePersistenceAdapter implements PosePicturePort {
 	private final PosePictureRepository posePictureRepository;
 
 	@Override
-	public Optional<PosePicture> findByUrl(String url) {
+	public Optional<PicturePose> findByUrl(String url) {
 		return posePictureRepository.findByUrl(url);
 	}
 
 	@Override
-	public PosePicture save(PosePicture posePicture) {
-		return posePictureRepository.save(posePicture);
+	public PicturePose save(PicturePose picturePose) {
+		return posePictureRepository.save(picturePose);
 	}
 }

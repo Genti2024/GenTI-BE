@@ -33,7 +33,10 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	Creator creator;
 
 	@OneToMany(mappedBy = "pictureGenerateResponse")
-	List<PictureCreated> createdPictureList;
+	List<PictureCompleted> completedPictureList;
+
+	@OneToMany(mappedBy = "pictureGenerateResponse")
+	List<PictureCreatedByCreator> createdByCreatorPictureList;
 
 	@ManyToOne
 	@JoinColumn(name = "request_id")

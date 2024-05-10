@@ -6,14 +6,13 @@ import java.time.Period;
 import java.util.List;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
-import com.gt.genti.other.config.auth.OAuthAttributes;
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
-import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
+import com.gt.genti.other.auth.OAuthAttributes;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -49,7 +48,7 @@ public class User extends BaseTimeEntity {
 
 	@OneToMany
 	@JoinColumn(name = "user_id")
-	List<PictureCreated> createdPictureList;
+	List<PictureCompleted> createdPictureList;
 
 	@Column(name = "email")
 	String email;
@@ -62,10 +61,6 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "nickname")
 	String nickname;
-
-	@Column(name = "user_role", nullable = false)
-	@Convert(converter = UserRoleConverter.class)
-	UserRole userRole;
 
 	@Column(name = "user_status", nullable = false)
 	@Convert(converter = UserStatusConverter.class)
@@ -109,7 +104,7 @@ public class User extends BaseTimeEntity {
 		this.email = email;
 		this.username = username;
 		this.nickname = nickname;
-		this.userRole = userRole;
+		this.roles = userRole.getStringValue();
 		this.lastLoginSocialPlatform = oauthType;
 		this.userStatus = UserStatus.ACTIVATED;
 	}

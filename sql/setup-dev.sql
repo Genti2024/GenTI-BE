@@ -3,56 +3,129 @@ use genti;
 set @adminId := 1;
 set @userId := 2;
 set @emptyUserId := 3;
-set @creatorId := 4;
+set @creatorUserId := 4;
 set @emptyCreatorId := 5;
 set @oauthFirstJoinUserId := 6;
+set @deactivatedUserId := 7;
+set @deactivatedCreatorId := 8;
 
-insert ignore into pictureCreated (id, url, created_at, modified_at)
-values (1, 'url1', localtime, localtime),
-       (2, 'url2', localtime, localtime),
-       (3, 'url3', localtime, localtime),
-       (4, 'url4', localtime, localtime),
-       (5, 'url5', localtime, localtime),
-       (6, 'url6', localtime, localtime),
-       (7, 'url7', localtime, localtime),
-       (8, 'url8', localtime, localtime),
-       (9, 'url9', localtime, localtime),
-       (10, 'url10', localtime, localtime),
-       (11, 'url11', localtime, localtime),
-       (12, 'url12', localtime, localtime),
-       (13, 'url13', localtime, localtime),
-       (14, 'url14', localtime, localtime),
-       (15, 'url15', localtime, localtime),
-       (16, 'url16', localtime, localtime),
-       (17, 'url17', localtime, localtime),
-       (18, 'url18', localtime, localtime),
-       (19, 'url19', localtime, localtime),
-       (20, 'url20', localtime, localtime),
-       (21, 'url21', localtime, localtime),
-       (22, 'url22', localtime, localtime),
-       (23, 'url23', localtime, localtime),
-       (24, 'url24', localtime, localtime),
-       (25, 'url25', localtime, localtime),
-       (26, 'url26', localtime, localtime),
-       (27, 'url27', localtime, localtime),
-       (28, 'url28', localtime, localtime),
-       (29, 'url29', localtime, localtime),
-       (30, 'url30', localtime, localtime);
+set @creatorId := 1;
 
-insert ignore into profile_picture (id, picture_id, created_at, modified_at)
-values (1, 5, '20030101', localtime),
-       (2, 6, '20030102', localtime);
+insert ignore into user (id, created_at, modified_at, deleted_at, email, email_verified, introduction,
+                         last_login_social_platform, login_id, nickname, password, roles, user_status,
+                         username, profile_picture_id)
+VALUES (:adminId, localtime, localtime, null, 'admin@gmail.com', true, null, 'GOOGLE', null, '어드민테스트1_닉네임', null,
+        'ROLE_ADMIN,ROLE_MANAGER,ROLE_CREATOR,ROLE_USER',
+        'ACTIVATED', '어드민이름', null),
+       (:userId, localtime, localtime, null, 'user@gmail.com', true, '유저_소개1', 'GOOGLE', null, '유저테스트1_닉네임', null,
+        'ROLE_USER',
+        'ACTIVATED', '유저이름1', null),
+       (:emptyUserId, localtime, localtime, null, 'emptyUser@gmail.com', true, '유저_소개2', 'GOOGLE', null, '유저테스트1_닉네임',
+        null,
+        'ROLE_USER', 'ACTIVATED', '유저이름2', null),
+       (:creatorUserId, localtime, localtime, null, 'creator@gmail.com', true, '공급자_소개', 'GOOGLE', null, '유저테스트2_닉네임',
+        null,
+        'ROLE_CREATOR', 'ACTIVATED', '공급자이름1', null),
+       (:emptyCreatorId, localtime, localtime, null, 'emptyCreator@gmail.com', true, '공급자_소개2', 'GOOGLE', null,
+        '공급자테스트2_닉네임', null, 'ROLE_CREATOR', 'ACTIVATED', '공급자이름2', null),
+       (:oauthFirstJoinId, localtime, localtime, null, 'oauthFirstJoin@gmail.com', true, '최초가입자_소개', 'GOOGLE', null,
+        '최초가입자_닉네임', null, 'ROLE_OAUTH_FIRST_JOIN,ROLE_USER', 'ACTIVATED', '최초가입자이름', null),
+       (:deactivatedUserId, localtime, localtime, null, 'deactivatedUser@gmail.com', true, '최초가입자_소개', 'GOOGLE', null,
+        '비활성화된유저_닉네임', null, 'ROLE_USER', 'DEACTIVATED', '비활성화된유저이름', null),
+       (:deactivatedCreatorId, localtime, localtime, null, 'deactivatedCreator@gmail.com', true, '최초가입자_소개', 'GOOGLE',
+        null,
+        '비활성화된공급자_닉네임', null, 'ROLE_CREATOR', 'DEACTIVATED', '비활성화된공급자이름', null);
 
-insert ignore into user (id, profile_picture_id, email, introduction, username, user_role,
-                         user_status, created_at, modified_at)
-values (:adminId, null, 'admin@gmail.com', null, '어드민테스트1_이름', 'ADMIN', 'ACTIVATED', LOCALTIME, LOCALTIME),
-       (:userId, null, 'user@gmail.com', '유저_소개1', '유저테스트1_이름', 'USER', 'ACTIVATED', LOCALTIME, LOCALTIME),
-       (:emptyUserId, null, 'emptyUser@gmail.com', '유저_소개2', '유저테스트1_이름', 'USER', 'ACTIVATED', LOCALTIME, LOCALTIME),
-       (:creatorId, null, 'creator@gmail.com', '공급자_소개', '유저테스트2_이름', 'CREATOR', 'ACTIVATED', LOCALTIME, LOCALTIME),
-       (:emptyCreatorId, null, 'emptyCreator@gmail.com', '공급자_소개2', '유저테스트2_이름', 'CREATOR', 'ACTIVATED', LOCALTIME,
-        LOCALTIME),
-       (:oauthFirstJoinId, null, 'oauthFirstJoin@gmail.com', '최초가입자_소개', '최초가입자_이름', 'OAUTH_FIRST_JOIN', 'ACTIVATED',
-        LOCALTIME, LOCALTIME);
+insert ignore into creator (id, user_id, workable, created_at, modified_at)
+values (:creatorId, :creatorUserId, true, localtime, localtime),
+       (2, :emptyCreatorId, false, localtime, localtime);
+
+insert ignore into picture_pose (id, created_at, modified_at, url)
+values (1, LOCALTIME, LOCALTIME, 'pose_picture_url1'),
+       (2, LOCALTIME, LOCALTIME, 'pose_picture_url2'),
+       (3, LOCALTIME, LOCALTIME, 'pose_picture_url3'),
+       (4, LOCALTIME, LOCALTIME, 'pose_picture_url4');
+
+insert ignore into picture_user_face (id, created_at, modified_at, url, user_id)
+values (1, LOCALTIME, LOCALTIME, 'user_face_picture_url1', :userId),
+       (2, LOCALTIME, LOCALTIME, 'user_face_picture_url2', :userId),
+       (3, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId),
+       (4, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId),
+       (5, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId),
+       (6, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId),
+       (7, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId),
+       (8, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId),
+       (9, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId);
+
+
+
+insert ignore into picture_generate_request (id, creator_id, picture_pose_id, requester_id, prompt, camera_angle,
+                                             request_status, shot_coverage, created_at, modified_at)
+VALUES (1, null, 4, :userId, 'prompt_test_1', '위에서 촬영', 'BEFORE_WORK', '얼굴만 클로즈업', '2000-01-01 07:00:00', localtime),
+       (2, null, 3, :userId, 'prompt_test_2', '같은 높이에서 촬영', 'CANCELED', '허리 위로 촬영', '2020-01-01 07:00:00',
+        localtime),
+       (3, :creatorId, 2, :userId, 'prompt_test_3', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00',
+        localtime),
+       (4, :creatorId, 2, :userId, 'prompt_test_4', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00',
+        localtime),
+       (5, :creatorId, 2, :userId, 'prompt_test_5', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00',
+        localtime),
+       (6, :creatorId, 2, :userId, 'prompt_test_6', '아래에서 촬영', 'REPORTED', '무릎 위로 촬영', '2000-01-01 07:00:00',
+        localtime),
+       (7, :creatorId, 1, :userId, 'prompt_test_7', '위에서 촬영', 'COMPLETED', '전신 촬영', '2020-01-01 07:00:00', localtime),
+       (8, :creatorId, 1, :userId, 'prompt_test_7', '위에서 촬영', 'REPORTED', '전신 촬영', '2020-01-01 07:00:00', localtime);
+
+insert ignore into picture_generate_request_picture_user_face (picture_generate_request_id, user_face_picture_list_id)
+
+values (1, 1),
+       (1, 2),
+       (1, 3),
+       (2, 1),
+       (2, 2),
+       (2, 3),
+       (3, 1),
+       (3, 2),
+       (3, 3),
+       (4, 1),
+       (4, 2),
+       (4, 3),
+       (5, 4),
+       (5, 5),
+       (5, 6),
+       (6, 4),
+       (6, 5),
+       (6, 6),
+       (7, 4),
+       (7, 5),
+       (7, 6),
+       (8, 7),
+       (8, 8),
+       (8, 9);
+
+
+
+insert ignore into picture_generate_response (id, created_at, modified_at, status, creator_id, request_id)
+values (1, localtime, localtime, 'BEFORE_WORK', :creatorId, 3),
+       (2, localtime, localtime, 'SUBMITTED_FIRST', :creatorId, 4),
+       (3, localtime, localtime, 'SUBMITTED_FINAL', :creatorId, 5),
+       (4, localtime, localtime, 'REPORTED', :creatorId, 6),
+       (5, localtime, localtime, 'COMPLETED', :creatorId, 7),
+       (6, localtime, localtime, 'REPORTED', :creatorId, 8);
+
+insert ignore into report (id, created_at, modified_at, content, report_status, picture_generate_response_id)
+values (1, localtime, localtime, '변태자식이 본인 발가락 사진을 보낸 것 같습니다.', 'NOT_RESOLVED', 4),
+       (2, localtime, localtime, '모르는 사람 얼굴이에요', 'RESOLVED', 6);
+
+insert ignore into picture_created_by_creator (id, created_at, modified_at, url, picture_generate_response_id)
+values (1, localtime, localtime, '얼굴 완성 전 url 1', 2),
+       (2, localtime, localtime, '얼굴 완성 전 url 2', 3),
+       (3, localtime, localtime, '얼굴 완성 전 url 3', 4);
+
+insert ignore into picture_completed (id, created_at, modified_at, url, picture_generate_response_id, user_id)
+values (1, localtime, localtime, '얼굴 완성 사진 url 1', 3, :userId),
+       (2, localtime, localtime, '얼굴 완성 사진 url 2', 4, :userId),
+       (3, localtime, localtime, '얼굴 완성 사진 url 3', 5, :userId),
+       (4, localtime, localtime, '얼굴 완성 사진 url 4', 6, :userId);
 
 
 # insert ignore into post (id, user_id, main_picture_id, content, likes, post_status, created_at)
@@ -106,45 +179,7 @@ values (:adminId, null, 'admin@gmail.com', null, '어드민테스트1_이름', '
 #        (4, 3, 4),
 #        (5, 4, 4);
 
-insert ignore into pose_picture (id, url, created_at, modified_at)
-values (1, 'pose_picture_url1', LOCALTIME, LOCALTIME),
-       (2, 'pose_picture_url2', LOCALTIME, LOCALTIME),
-       (3, 'pose_picture_url3', LOCALTIME, LOCALTIME),
-       (4, 'pose_picture_url4', LOCALTIME, LOCALTIME);
-
-insert ignore into user_face_picture (id, url, user_id, created_at, modified_at)
-values (1, 'user_face_picture_url1', :userId, LOCALTIME, LOCALTIME),
-       (2, 'user_face_picture_url2', :userId, LOCALTIME, LOCALTIME),
-       (3, 'user_face_picture_url3', :userId, LOCALTIME, LOCALTIME);
-
-insert ignore into creator (id, user_id, workable, created_at, modified_at)
-values (1, :creatorId, true, localtime, localtime),
-       (2, :emptyCreatorId, false, localtime, localtime);
-
-insert ignore into picture_generate_request (id, creator_id, pose_picture_id, requester_id, prompt, camera_angle,
-                                             request_status, shot_coverage, created_at, modified_at)
-VALUES (1, null, 4, :userId, 'prompt_test_1', '위에서 촬영', 'BEFORE_WORK', '얼굴만 클로즈업', '2000-01-01 07:00:00', localtime),
-       (2, null, 3, :userId, 'prompt_test_2', '같은 높이에서 촬영', 'CANCELED', '허리 위로 촬영', '2020-01-01 07:00:00',
-        localtime),
-       (3, :creatorId, 2, :userId, 'prompt_test_3', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00',
-        localtime),
-       (4, :creatorId, 2, :userId, 'prompt_test_4', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00',
-        localtime),
-       (5, :creatorId, 2, :userId, 'prompt_test_5', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00',
-        localtime),
-       (6, :creatorId, 2, :userId, 'prompt_test_6', '아래에서 촬영', 'REPORTED', '무릎 위로 촬영', '2000-01-01 07:00:00',
-        localtime),
-       (7, :creatorId, 1, :userId, 'prompt_test_7', '위에서 촬영', 'COMPLETED', '전신 촬영', '2020-01-01 07:00:00', localtime),
-       (8, :creatorId, 1, :userId, 'prompt_test_7', '위에서 촬영', 'REPORTED', '전신 촬영', '2020-01-01 07:00:00', localtime);
-
-insert ignore into picture_generate_response (id, created_at, modified_at, status, creator_id, request_id)
-values (1, localtime, localtime, 'BEFORE_WORK', :creatorId, 3),
-       (2, localtime, localtime, 'SUBMITTED_FIRST', :creatorId, 4),
-       (3, localtime, localtime, 'SUBMITTED_FINAL', :creatorId, 5),
-       (4, localtime, localtime, 'REPORTED', :creatorId, 6),
-       (5, localtime, localtime, 'COMPLETED', :creatorId, 7),
-       (6, localtime, localtime, 'REPORTED', :creatorId, 8);
-
-insert ignore into report (id, created_at, modified_at, content, report_status, picture_generate_response_id)
-values (1, localtime, localtime, '변태자식이 본인 발가락 사진을 보낸 것 같습니다.', 'NOT_RESOLVED', 4),
-       (2, localtime, localtime, '모르는 사람 얼굴이에요', 'RESOLVED', 6);
+#
+# insert ignore into picture_profile (id, created_at, modified_at, url)
+# values (1, localtime, localtime, 'profile_url1'),
+#        (2, localtime, localtime, 'profile_url2');

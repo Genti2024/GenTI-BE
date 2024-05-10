@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.gt.genti.other.config.auth.UserDetailsImpl;
+import com.gt.genti.other.auth.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

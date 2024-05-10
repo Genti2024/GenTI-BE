@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "pose_picture")
+@Table(name = "picture_pose")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

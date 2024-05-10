@@ -17,10 +17,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import com.gt.genti.other.config.auth.UserDetailsImpl;
-import com.gt.genti.other.config.auth.UserDetailsServiceImpl;
 import com.gt.genti.domain.User;
 import com.gt.genti.error.CustomJwtException;
+import com.gt.genti.other.auth.UserDetailsImpl;
+import com.gt.genti.other.auth.UserDetailsServiceImpl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -83,7 +83,7 @@ public class JwtTokenProvider {
 
 	public Authentication getAuthentication(String token) {
 		Claims claims = validateToken(token);
-		String id = (String)claims.getSubject();
+		String id = claims.getSubject();
 		String roles = claims.get(AUTH).toString();
 		List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(","))
 			.map(SimpleGrantedAuthority::new)

@@ -1,6 +1,5 @@
 package com.gt.genti.dto;
 
-import com.gt.genti.domain.PictureCreated;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 

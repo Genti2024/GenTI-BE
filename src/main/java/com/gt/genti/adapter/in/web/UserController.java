@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.other.ToBeUpdated;
+import com.gt.genti.other.annotation.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
-import com.gt.genti.other.config.auth.UserDetailsImpl;
+import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.dto.UserInfoResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
 import com.gt.genti.application.service.UserService;
-import com.gt.genti.other.util.ApiUtils;
 
 import lombok.RequiredArgsConstructor;
 

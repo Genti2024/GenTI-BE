@@ -11,22 +11,34 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "picture_user_face")
+@Table(name = "picture_created_by_creator")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PictureUserFace extends BaseTimeEntity {
+public class PictureCreatedByCreator extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	User user;
-
 	@Column(name = "url", nullable = false)
 	String url;
+
+	@ManyToOne
+	@JoinColumn(name = "picture_generate_response_id")
+	PictureGenerateResponse pictureGenerateResponse;
+
+	@Builder
+	public PictureCreatedByCreator(String url, PictureGenerateResponse pictureGenerateResponse) {
+
+		this.url = url;
+		this.pictureGenerateResponse = pictureGenerateResponse;
+	}
+
+	public void modify(String url) {
+		this.url = url;
+	}
 }

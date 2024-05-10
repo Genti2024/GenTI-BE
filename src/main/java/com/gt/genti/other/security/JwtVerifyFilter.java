@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.gt.genti.other.config.auth.SecurityConfig;
+import com.gt.genti.other.config.SecurityConfig;
 import com.gt.genti.error.CustomJwtException;
 
 import jakarta.servlet.FilterChain;

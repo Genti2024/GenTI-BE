@@ -16,7 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "post_picture")
+@Table(name = "picture_post")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

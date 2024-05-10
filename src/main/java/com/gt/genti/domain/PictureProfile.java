@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "profile_picture")
+@Table(name = "picture_profile")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.domain.PictureCreated;
+import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
@@ -53,9 +53,9 @@ public class PictureGenerateWorkService {
 				pictureGenerateResponseId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
 
-		List<PictureCreated> uploadPictureListCreated = new ArrayList<>();
+		List<PictureCompleted> uploadPictureListCreated = new ArrayList<>();
 		results.forEach(
-			dto -> uploadPictureListCreated.add(new PictureCreated(dto.getS3Key(), findPictureGenerateResponse)));
+			dto -> uploadPictureListCreated.add(new PictureCompleted(dto.getS3Key(), findPictureGenerateResponse)));
 
 		pictureRepository.saveAll(uploadPictureListCreated);
 		return results;

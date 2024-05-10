@@ -16,7 +16,7 @@ import com.gt.genti.application.service.PictureGenerateWorkService;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
 import com.gt.genti.external.aws.dto.PreSignedUrlResponseDto;
-import com.gt.genti.other.config.auth.UserDetailsImpl;
+import com.gt.genti.other.auth.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 

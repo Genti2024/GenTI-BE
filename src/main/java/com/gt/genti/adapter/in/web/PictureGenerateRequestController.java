@@ -20,7 +20,7 @@ import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
 import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
-import com.gt.genti.other.config.auth.UserDetailsImpl;
+import com.gt.genti.other.auth.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 

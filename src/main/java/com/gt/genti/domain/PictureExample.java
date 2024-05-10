@@ -14,19 +14,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "picture_user_face")
+@Table(name = "picture_example")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PictureUserFace extends BaseTimeEntity {
+public class PictureExample extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	User user;
-
-	@Column(name = "url", nullable = false)
-	String url;
 }

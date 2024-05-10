@@ -20,9 +20,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -51,11 +52,18 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@OneToMany(mappedBy = "request")
 	List<PictureGenerateResponse> responseList;
 
+	@ManyToMany
+	@JoinTable(name = "picture_generate_request_picture_user_face")
+	List<PictureUserFace> userFacePictureList;
+
 	@Column(name = "prompt", nullable = false)
 	String prompt;
 
-	@OneToOne
-	@JoinColumn(name = "pose_picture_id", nullable = false)
+	@Column(name = "prompt_advanced")
+	String promptAdvanced;
+
+	@ManyToOne
+	@JoinColumn(name = "picture_pose_id")
 	PicturePose picturePose;
 
 	@Column(name = "camera_angle", nullable = false)
@@ -77,18 +85,20 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.picturePose = picturePose;
 		this.requestStatus = RequestStatus.BEFORE_WORK;
 		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestRequestDto.getCameraAngle());
-		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class, pictureGenerateRequestRequestDto.getShotCoverage());
+		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class,
+			pictureGenerateRequestRequestDto.getShotCoverage());
 	}
 
 	public void modify(PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto, PicturePose picturePose) {
 		this.prompt = pictureGenerateRequestModifyDto.getPrompt();
 		this.picturePose = picturePose;
 		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestModifyDto.getCameraAngle());
-		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class, pictureGenerateRequestModifyDto.getShotCoverage());
+		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class,
+			pictureGenerateRequestModifyDto.getShotCoverage());
 	}
 
-	public void assign(Creator creator){
-		if(this.requestStatus != RequestStatus.BEFORE_WORK){
+	public void assign(Creator creator) {
+		if (this.requestStatus != RequestStatus.BEFORE_WORK) {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}

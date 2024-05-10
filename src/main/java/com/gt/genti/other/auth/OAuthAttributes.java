@@ -1,4 +1,4 @@
-package com.gt.genti.other.config.auth;
+package com.gt.genti.other.auth;
 
 import com.gt.genti.domain.enums.OauthType;
 

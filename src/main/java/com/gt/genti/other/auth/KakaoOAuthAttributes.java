@@ -1,4 +1,4 @@
-package com.gt.genti.other.config.auth;
+package com.gt.genti.other.auth;
 
 import java.util.Map;
 import java.util.UUID;

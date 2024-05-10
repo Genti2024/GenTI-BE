@@ -1,4 +1,4 @@
-package com.gt.genti.other.config.handler;
+package com.gt.genti.other.handler;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
-import com.gt.genti.other.config.auth.UserDetailsImpl;
+import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.other.security.JwtTokenProvider;
 
 import jakarta.servlet.http.HttpServletRequest;

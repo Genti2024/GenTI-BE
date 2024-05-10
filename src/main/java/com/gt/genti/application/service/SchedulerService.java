@@ -1,10 +1,8 @@
-package com.gt.genti.other.config;
+package com.gt.genti.application.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import com.gt.genti.scheduler.ScheduledService;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SchedulerConfig {
-	private final ScheduledService scheduledService;
+public class SchedulerService {
+	private final RequestMatchService requestMatchService;
 
 	@Value("${schedule.delay.match-picture-generate-schedule}")
 	private Long matchPictureGenerateScheduleDelay;
@@ -28,6 +26,6 @@ public class SchedulerConfig {
 
 	@Scheduled(fixedDelayString = "${schedule.delay.match-picture-generate-schedule}")
 	public void run() {
-		scheduledService.matchPictureGenerateRequests();
+		requestMatchService.matchPictureGenerateRequests();
 	}
 }

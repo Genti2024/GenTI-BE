@@ -1,4 +1,4 @@
-package com.gt.genti.other.config.auth;
+package com.gt.genti.other.auth;
 
 import java.util.Optional;
 
@@ -45,10 +45,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			user = User.createNewSocialUser(oauthAttributes);
 
 			user = userRepository.save(user);
-			roles = UserRole.addRole(UserRole.getAllRoles(user.getUserRole()), UserRole.OAUTH_FIRST_JOIN);
+			roles = UserRole.addRole(user.getRoles(), UserRole.OAUTH_FIRST_JOIN);
 		} else {
 			user = optionalUser.get();
-			roles = user.getUserRole().getStringValue();
+			roles = user.getRoles();
 		}
 
 		return new UserDetailsImpl(

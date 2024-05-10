@@ -1,4 +1,4 @@
-package com.gt.genti.scheduler;
+package com.gt.genti.application.service;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ScheduledService {
+public class RequestMatchService {
 	private final CreatorRepository creatorRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final DiscordService discordService;

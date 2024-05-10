@@ -1,4 +1,4 @@
-package com.gt.genti.other.config.auth;
+package com.gt.genti.other.config;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -22,8 +22,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gt.genti.other.config.handler.CommonLoginFailHandler;
-import com.gt.genti.other.config.handler.CommonLoginSuccessHandler;
+import com.gt.genti.other.auth.CustomOAuth2UserService;
+import com.gt.genti.other.handler.CommonLoginFailHandler;
+import com.gt.genti.other.handler.CommonLoginSuccessHandler;
 import com.gt.genti.other.security.JwtTokenProvider;
 import com.gt.genti.other.security.JwtVerifyFilter;
 
@@ -118,6 +119,8 @@ public class SecurityConfig {
 		http.authorizeHttpRequests((authorizeHttpRequests) ->
 			authorizeHttpRequests.requestMatchers(COMMON_RESOURCE_AND_ALLOWED_URL).permitAll()
 				.requestMatchers("/api/**").hasAuthority(ROLE_USER) // not use hasRole
+				.requestMatchers("/api/admin/**").hasAuthority(ROLE_ADMIN)
+				.requestMatchers("/api/creators/").hasAuthority(ROLE_CREATOR)
 				.anyRequest().authenticated()
 		);
 

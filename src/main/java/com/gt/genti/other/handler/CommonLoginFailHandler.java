@@ -1,4 +1,4 @@
-package com.gt.genti.other.config.handler;
+package com.gt.genti.other.handler;
 
 import java.io.IOException;
 import java.io.PrintWriter;

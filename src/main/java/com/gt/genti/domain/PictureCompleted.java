@@ -15,11 +15,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "picture")
+@Table(name = "picture_completed")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PictureCreated extends BaseTimeEntity {
+public class PictureCompleted extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
@@ -32,7 +32,7 @@ public class PictureCreated extends BaseTimeEntity {
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCreated(String url, PictureGenerateResponse pictureGenerateResponse) {
+	public PictureCompleted(String url, PictureGenerateResponse pictureGenerateResponse) {
 
 		this.url = url;
 		this.pictureGenerateResponse = pictureGenerateResponse;

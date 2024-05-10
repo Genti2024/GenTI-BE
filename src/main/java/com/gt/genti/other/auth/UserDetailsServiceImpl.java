@@ -1,11 +1,10 @@
-package com.gt.genti.other.config.auth;
+package com.gt.genti.other.auth;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return userRepository.findByEmail(email)
 			.map(
 				findUser -> new UserDetailsImpl(findUser,
-					UserRole.getAllRoles(findUser.getUserRole())))
+					findUser.getRoles()))
 			.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 사용자입니다"));
 	}
 }

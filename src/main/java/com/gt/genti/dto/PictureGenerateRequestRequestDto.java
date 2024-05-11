@@ -1,5 +1,10 @@
 package com.gt.genti.dto;
 
+import java.util.List;
+
+import com.gt.genti.domain.enums.CameraAngle;
+import com.gt.genti.domain.enums.ShotCoverage;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,12 +16,11 @@ public class PictureGenerateRequestRequestDto {
 
 	String prompt;
 	String posePictureUrl;
-	String cameraAngle;
-	String shotCoverage;
-
+	List<String> facePictureUrlList;
+	CameraAngle cameraAngle;
+	ShotCoverage shotCoverage;
 	@Builder
-	public PictureGenerateRequestRequestDto(String prompt, String posePictureUrl, String cameraAngle,
-		String shotCoverage) {
+	public PictureGenerateRequestRequestDto(String prompt, String posePictureUrl, CameraAngle cameraAngle, ShotCoverage shotCoverage) {
 		this.prompt = prompt;
 		this.posePictureUrl = posePictureUrl;
 		this.cameraAngle = cameraAngle;

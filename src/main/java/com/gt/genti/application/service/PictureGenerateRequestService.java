@@ -1,22 +1,25 @@
 package com.gt.genti.application.service;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
-import com.gt.genti.application.port.in.PosePicturePort;
+import com.gt.genti.application.port.in.PicturePosePort;
+import com.gt.genti.application.port.in.PictureUserFacePort;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
+import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
-import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestSimplifiedResponseDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -30,9 +33,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PictureGenerateRequestService implements PictureGenerateRequestUseCase {
 	private final PictureGenerateRequestPort pictureGenerateRequestPort;
-	private final PosePicturePort posePicturePort;
+	private final PicturePosePort picturePosePort;
 	private final CreatorRepository creatorRepository;
 	private final UserRepository userRepository;
+	private final PictureUserFacePort pictureUserFacePort;
 
 	@Override
 	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestByUserId(Long userId) {
@@ -64,35 +68,57 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public PictureGenerateRequestResponseDto createPictureGenerateRequest(Long requesterId,
+	public Boolean createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 
-		User findRequester = userRepository.findById(requesterId)
+		User foundRequester = userRepository.findById(requesterId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 
 		String posePictureUrl = pictureGenerateRequestRequestDto.getPosePictureUrl();
-		PicturePose findPicturePose = posePicturePort.findByUrl(posePictureUrl)
-			.or(() -> Optional.of(posePicturePort.save(new PicturePose(posePictureUrl)))).get();
+		PicturePose foundPicturePose = picturePosePort.findByUrl(posePictureUrl)
+			.or(() -> Optional.of(picturePosePort.save(new PicturePose(posePictureUrl)))).get();
 
-		PictureGenerateRequest pgr = new PictureGenerateRequest(findRequester, pictureGenerateRequestRequestDto,
-			findPicturePose);
+		List<String> facePictureUrl = pictureGenerateRequestRequestDto.getFacePictureUrlList();
+
+		Set<PictureUserFace> foundFacePictureSet = new HashSet<PictureUserFace>(
+			pictureUserFacePort.findPictureByUrlIn(facePictureUrl));
+
+		if (foundFacePictureSet.size() < 3) {
+			Set<String> foundFacePictureUrlSet = foundFacePictureSet.stream()
+				.map(PictureUserFace::getUrl)
+				.collect(Collectors.toSet());
+
+			List<PictureUserFace> notExistFacePictureList = facePictureUrl.stream()
+				.filter(givenUrl -> !foundFacePictureUrlSet.contains(givenUrl))
+				.map(url -> PictureUserFace.builder()
+					.url(url)
+					.user(foundRequester)
+					.build())
+				.toList();
+
+			List<PictureUserFace> savedPictureUserFaceList = pictureUserFacePort.saveAll(notExistFacePictureList);
+			foundFacePictureSet.addAll(savedPictureUserFaceList);
+		}
+
+		PictureGenerateRequest pgr = PictureGenerateRequest.builder()
+			.requester(foundRequester)
+			.pictureGenerateRequestRequestDto(pictureGenerateRequestRequestDto)
+			.picturePose(foundPicturePose)
+			.userFacePictureList(foundFacePictureSet.stream().toList())
+			.build();
 
 		matchCreatorIfAvailable(pgr);
 		pictureGenerateRequestPort.save(pgr);
 
-		if (pgr.getCreator() != null) {
-			return PictureGenerateRequestResponseDto.builder().message("매칭되었당").build();
-		} else {
-			return PictureGenerateRequestResponseDto.builder().message("현재 매칭 가능한 공급자 없음").build();
-		}
+		return true;
 	}
 
 	@Override
 	public Boolean modifyPictureGenerateRequest(Long userId,
-		PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto) {
+		PictureGenerateRequestModifyDto modifyDto) {
 
 		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequesterId(
-				pictureGenerateRequestModifyDto.getPictureGenerateRequestId(), userId)
+				modifyDto.getPictureGenerateRequestId(), userId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
 
 		if (findPictureGenerateRequest.getCreator() != null) {
@@ -100,14 +126,17 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		}
 
 		PicturePose picturePose = findPictureGenerateRequest.getPicturePose();
-		String modifyPosePictureUrl = findPictureGenerateRequest.getPicturePose().getUrl();
+		String givenPicturePoseUrl = modifyDto.getPosePictureUrl();
+		picturePose.modify(givenPicturePoseUrl);
 
-		if (!Objects.equals(picturePose.getUrl(),
-			pictureGenerateRequestModifyDto.getPosePictureUrl())) {
-			picturePose.modify(modifyPosePictureUrl);
+		List<PictureUserFace> pictureUserFaceList = findPictureGenerateRequest.getUserFacePictureList();
+		List<String> givenPictureUserFaceUrlList = modifyDto.getFacePictureUrlList();
+		for (int i = 0; i < pictureUserFaceList.size(); i++) {
+			String newUrl = givenPictureUserFaceUrlList.get(i);
+			pictureUserFaceList.get(i).modify(newUrl);
 		}
 
-		findPictureGenerateRequest.modify(pictureGenerateRequestModifyDto, picturePose);
+		findPictureGenerateRequest.modify(modifyDto, picturePose, pictureUserFaceList);
 		return true;
 	}
 

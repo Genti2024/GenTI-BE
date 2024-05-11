@@ -18,7 +18,6 @@ import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
-import com.gt.genti.dto.PictureGenerateRequestResponseDto;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
@@ -46,7 +45,7 @@ public class PictureGenerateRequestController {
 
 	@CheckUserIsQuit
 	@PostMapping("")
-	public ResponseEntity<ApiResult<PictureGenerateRequestResponseDto>> createPictureGenerateRequest(
+	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 

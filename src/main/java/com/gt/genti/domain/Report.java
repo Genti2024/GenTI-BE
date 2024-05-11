@@ -42,4 +42,8 @@ public class Report extends BaseTimeEntity {
 		this.reportStatus = ReportStatus.NOT_RESOLVED;
 		this.content = content;
 	}
+
+	public void updateStatus(ReportStatus reportStatus) {
+		this.reportStatus = reportStatus;
+	}
 }

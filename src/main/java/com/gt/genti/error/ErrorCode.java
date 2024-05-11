@@ -22,6 +22,7 @@ public enum ErrorCode {
 	ZeroMatchingRequests(HttpStatus.NO_CONTENT, "G001", "매칭된 요청이 없습니다."),
 	UploadFileTypeNotAvailable(HttpStatus.NO_CONTENT, "G002", "업로드 가능한 파일이 아닙니다."),
 	PictureGenerateResponseNotFound(HttpStatus.NOT_FOUND, "G003", "해당하는 사진생성요청 응답을 찾을 수 없습니다."),
+	ReportNotFound(HttpStatus.NOT_FOUND, "H003", "해당 report 건을 찾지 못했습니다."),
 	LoginIdAlreadyExists(HttpStatus.CONFLICT, "A002", "사용중인 아이디입니다.");
 
 	private final HttpStatusCode status;

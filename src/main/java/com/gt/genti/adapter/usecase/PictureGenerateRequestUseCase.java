@@ -19,7 +19,7 @@ public interface PictureGenerateRequestUseCase {
 	public List<PictureGenerateRequestSimplifiedResponseDto> getAllMyPictureGenerateRequests(User requester);
 
 	@Transactional
-	public PictureGenerateRequestResponseDto createPictureGenerateRequest(Long requesterId,
+	public Boolean createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto);
 
 	@Transactional

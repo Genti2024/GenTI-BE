@@ -26,6 +26,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,23 +79,27 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Convert(converter = RequestStatusConverter.class)
 	RequestStatus requestStatus;
 
+	@Builder
 	public PictureGenerateRequest(User requester, PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto,
-		PicturePose picturePose) {
+		PicturePose picturePose, List<PictureUserFace> userFacePictureList) {
 		this.requester = requester;
 		this.prompt = pictureGenerateRequestRequestDto.getPrompt();
 		this.picturePose = picturePose;
 		this.requestStatus = RequestStatus.BEFORE_WORK;
-		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestRequestDto.getCameraAngle());
-		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class,
-			pictureGenerateRequestRequestDto.getShotCoverage());
+		this.cameraAngle = pictureGenerateRequestRequestDto.getCameraAngle();
+		this.shotCoverage = pictureGenerateRequestRequestDto.getShotCoverage();
+		this.userFacePictureList = userFacePictureList;
 	}
 
-	public void modify(PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto, PicturePose picturePose) {
+	public void modify(PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto, PicturePose picturePose,
+		List<PictureUserFace> pictureUserFaceList) {
 		this.prompt = pictureGenerateRequestModifyDto.getPrompt();
-		this.picturePose = picturePose;
 		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestModifyDto.getCameraAngle());
 		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class,
 			pictureGenerateRequestModifyDto.getShotCoverage());
+		this.picturePose = picturePose;
+		this.userFacePictureList = pictureUserFaceList;
+
 	}
 
 	public void assign(Creator creator) {

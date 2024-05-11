@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,14 @@ public class PictureUserFace extends BaseTimeEntity {
 
 	@Column(name = "url", nullable = false)
 	String url;
+
+	@Builder
+	public PictureUserFace(User user, String url) {
+		this.user = user;
+		this.url = url;
+	}
+
+	public void modify(String url){
+		this.url = url;
+	}
 }

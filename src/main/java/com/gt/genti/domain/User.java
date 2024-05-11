@@ -145,4 +145,8 @@ public class User extends BaseTimeEntity {
 	public Boolean isActivate() {
 		return this.userStatus == UserStatus.ACTIVATED;
 	}
+
+	public void updateStatus(UserStatus userStatus) {
+		this.userStatus = userStatus;
+	}
 }

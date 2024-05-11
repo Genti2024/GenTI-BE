@@ -1,5 +1,7 @@
 package com.gt.genti.dto;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +15,7 @@ public class PictureGenerateRequestModifyDto {
 	Long pictureGenerateRequestId;
 	String prompt;
 	String posePictureUrl;
+	List<String> facePictureUrlList;
 	String cameraAngle;
 	String shotCoverage;
 

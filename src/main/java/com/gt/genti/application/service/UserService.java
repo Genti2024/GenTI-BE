@@ -5,8 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
+import com.gt.genti.dto.ChangeUserStatusRequestDto;
 import com.gt.genti.dto.UserInfoResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -59,6 +62,13 @@ public class UserService {
 			throw new RuntimeException("삭제되지 않은 사용자에 대한 잘못된 요청");
 		}
 		findUser.restore();
+		return true;
+	}
+
+	@Transactional
+	public Boolean updateUserStatus(Long userId, ChangeUserStatusRequestDto changeUserStatusRequestDto) {
+		User findUser = userRepository.findById(userId).orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+		findUser.updateStatus(changeUserStatusRequestDto.getUserStatus());
 		return true;
 	}
 }

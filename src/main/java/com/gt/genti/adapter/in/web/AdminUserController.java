@@ -13,26 +13,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.ReportService;
+import com.gt.genti.application.service.UserService;
+import com.gt.genti.dto.ChangeUserStatusRequestDto;
 import com.gt.genti.dto.ReportResponseDto;
 import com.gt.genti.dto.ReportUpdateDto;
-import com.gt.genti.other.util.ApiUtils;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/reports")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
-public class AdminReportController {
-	ReportService reportService;
-	@GetMapping("")
-	public ResponseEntity<ApiResult<List<ReportResponseDto>>> getAllReports(){
-		return success(reportService.getAllReports());
+public class AdminUserController {
+	UserService userService;
+	@PostMapping("/users/{userId}")
+	public ResponseEntity<ApiResult<Boolean>> changeUserStatus(@PathVariable Long userId, @RequestBody ChangeUserStatusRequestDto changeUserStatusRequestDto){
+		return success(userService.updateUserStatus(userId, changeUserStatusRequestDto));
 	}
 
-	@PostMapping("")
-	public ResponseEntity<ApiResult<Boolean>> updateReport(@RequestBody ReportUpdateDto reportUpdateDto){
-		return success(reportService.updateReport(reportUpdateDto));
-	}
 
 }

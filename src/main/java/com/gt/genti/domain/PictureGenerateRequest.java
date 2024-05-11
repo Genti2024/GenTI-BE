@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.CameraAngle;
-import com.gt.genti.domain.enums.RequestStatus;
+import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.domain.enums.converter.CameraAngleConverter;
 import com.gt.genti.domain.enums.converter.EnumUtil;
@@ -77,7 +77,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 
 	@Column(name = "request_status", nullable = false)
 	@Convert(converter = RequestStatusConverter.class)
-	RequestStatus requestStatus;
+	PictureGenerateRequestStatus pictureGenerateRequestStatus;
 
 	@Builder
 	public PictureGenerateRequest(User requester, PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto,
@@ -85,7 +85,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.requester = requester;
 		this.prompt = pictureGenerateRequestRequestDto.getPrompt();
 		this.picturePose = picturePose;
-		this.requestStatus = RequestStatus.BEFORE_WORK;
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.BEFORE_WORK;
 		this.cameraAngle = pictureGenerateRequestRequestDto.getCameraAngle();
 		this.shotCoverage = pictureGenerateRequestRequestDto.getShotCoverage();
 		this.userFacePictureList = userFacePictureList;
@@ -103,7 +103,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	}
 
 	public void assign(Creator creator) {
-		if (this.requestStatus != RequestStatus.BEFORE_WORK) {
+		if (this.pictureGenerateRequestStatus != PictureGenerateRequestStatus.BEFORE_WORK) {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}

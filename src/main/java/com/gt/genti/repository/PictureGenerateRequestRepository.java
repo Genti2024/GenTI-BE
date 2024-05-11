@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
+import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 
 @Repository
 public interface PictureGenerateRequestRepository
@@ -19,14 +20,14 @@ public interface PictureGenerateRequestRepository
 	@Query("select pqr "
 		+ "from PictureGenerateRequest pqr "
 		+ "where pqr.requester.id = :userId and "
-		+ "pqr.requestStatus in (com.gt.genti.domain.enums.RequestStatus.BEFORE_WORK, com.gt.genti.domain.enums.RequestStatus.IN_PROGRESS)"
+		+ "pqr.requestStatus in (com.gt.genti.domain.enums.PictureGenerateRequestStatus.BEFORE_WORK, com.gt.genti.domain.enums.PictureGenerateRequestStatus.IN_PROGRESS)"
 		+ "order by pqr.createdAt desc")
 	List<PictureGenerateRequest> findByRequestStatusIsActiveAndUserId_JPQL(Long userId);
 
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
-		+ "where pgr.requestStatus = com.gt.genti.domain.enums.RequestStatus.BEFORE_WORK "
+		+ "where pgr.requestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.BEFORE_WORK "
 		+ "and pgr.creator.id = :userId "
 		+ "order by pgr.createdAt asc "
 		+ "limit 1 ")
@@ -34,7 +35,7 @@ public interface PictureGenerateRequestRepository
 		@Param("userId") Long userId);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
-		+ "where pgr.requestStatus = com.gt.genti.domain.enums.RequestStatus.BEFORE_WORK "
+		+ "where pgr.requestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.BEFORE_WORK "
 		+ "and pgr.creator.id is null "
 		+ "order by pgr.createdAt desc")
 	List<PictureGenerateRequest> findPendingRequests();
@@ -44,4 +45,10 @@ public interface PictureGenerateRequestRepository
 		+ "where pgr.id = :id "
 		+ "and pgr.requester.id = :requesterId ")
 	Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, Long requesterId);
+
+
+	@Query("select new com.gt.genti.dto.PictureGenerateRequestDetailResponseDto("
+
+		+ ")")
+	List<PictureGenerateRequestDetailResponseDto> findAllByCreatorAndOrderByCreatedAtDesc(Long creatorId);
 }

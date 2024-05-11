@@ -38,7 +38,7 @@ public class PictureGenerateRequestController {
 	}
 
 	@GetMapping("/{pictureGenerateRequestId}")
-	public ResponseEntity<ApiResult<PictureGenerateRequestDetailResponseDto>> getPictureGenerateDetail(
+	public ResponseEntity<ApiResult<PictureGenerateRequestDetailResponseDto>> getPictureGenerateRequestDetail(
 		@PathVariable Long pictureGenerateRequestId) {
 		return success(pictureGenerateRequestUseCase.getPictureGenerateRequestById(pictureGenerateRequestId));
 	}

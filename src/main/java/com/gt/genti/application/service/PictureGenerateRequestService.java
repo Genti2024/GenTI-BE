@@ -51,8 +51,9 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long id) {
-		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(id)
+	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long pictureGenerateRequestId) {
+		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(
+				pictureGenerateRequestId)
 			.orElseThrow(() ->
 				new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
 		return new PictureGenerateRequestDetailResponseDto(findPictureGenerateRequest);

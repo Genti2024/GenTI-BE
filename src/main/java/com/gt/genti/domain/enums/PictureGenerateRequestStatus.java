@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum RequestStatus implements ConvertableEnum {
+public enum PictureGenerateRequestStatus implements ConvertableEnum {
 	BEFORE_WORK("BEFORE_WORK"),
 	IN_PROGRESS("IN_PROGRESS"),
 	CANCELED("CANCELED"),

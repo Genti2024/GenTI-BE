@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
+import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
+import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
@@ -30,17 +32,25 @@ public class PictureGenerateWorkService {
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
-	public PictureGenerateRequestBriefResponseDto getCreatorAssignedPictureGenerateRequestBrief(Long creatorId) {
-		return pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
-			creatorId).map(
-			(pictureGenerateRequest) ->
-				PictureGenerateRequestBriefResponseDto.builder()
-					.requestId(pictureGenerateRequest.getId())
-					.cameraAngle(pictureGenerateRequest.getCameraAngle().getStringValue())
-					.shotCoverage(pictureGenerateRequest.getShotCoverage().getStringValue())
-					.prompt(pictureGenerateRequest.getPrompt())
-					.build()
-		).orElseThrow(() -> new ExpectedException(ErrorCode.ActivePictureGenerateRequestNotExists));
+	public PictureGenerateRequestBriefResponseDto getPictureGenerateRequestBrief(Long creatorId,
+		PictureGenerateRequestStatus pictureGenerateRequestStatus) {
+		if (pictureGenerateRequestStatus.equals(PictureGenerateRequestStatus.BEFORE_WORK)) {
+			return pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
+				creatorId).map(
+				(pictureGenerateRequest) ->
+					PictureGenerateRequestBriefResponseDto.builder()
+						.requestId(pictureGenerateRequest.getId())
+						.cameraAngle(pictureGenerateRequest.getCameraAngle().getStringValue())
+						.shotCoverage(pictureGenerateRequest.getShotCoverage().getStringValue())
+						.prompt(pictureGenerateRequest.getPrompt())
+						.build()
+			).orElseThrow(() -> new ExpectedException(ErrorCode.ActivePictureGenerateRequestNotExists));
+		}
+		throw new ExpectedException(ErrorCode.NotSupportedTemp);
+	}
+
+	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestDetailAll(Long creatorId) {
+		pictureGenerateResponseRepository.findByCreator
 	}
 
 	@Transactional

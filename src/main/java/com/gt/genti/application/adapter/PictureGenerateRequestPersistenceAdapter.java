@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
+import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,9 +19,11 @@ import lombok.RequiredArgsConstructor;
 public class PictureGenerateRequestPersistenceAdapter implements PictureGenerateRequestPort {
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
+
 	@Override
-	public List<PictureGenerateRequest> findByRequestStatusIsActiveAndUserId_JPQL(Long userId) {
-		return pictureGenerateRequestRepository.findByRequestStatusIsActiveAndUserId_JPQL(userId);
+	public List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus,
+		Long userId) {
+		return pictureGenerateRequestRepository.findByRequestStatusAndUserId(requestStatus, userId);
 	}
 
 	@Override
@@ -28,8 +32,9 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(Long userId) {
-		return pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(userId);
+	public Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(Creator creator) {
+
+		return pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(creator);
 	}
 
 	@Override
@@ -50,5 +55,10 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	@Override
 	public PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest){
 		return pictureGenerateRequestRepository.save(pictureGenerateRequest);
+	}
+
+	@Override
+	public Optional<PictureGenerateRequest> findByUserIdOrderByCreatedByDesc(Long userId) {
+		return pictureGenerateRequestRepository.findByUserIdOrderByCreatedByDesc(userId);
 	}
 }

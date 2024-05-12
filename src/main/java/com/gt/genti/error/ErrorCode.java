@@ -24,7 +24,7 @@ public enum ErrorCode {
 	PictureGenerateResponseNotFound(HttpStatus.NOT_FOUND, "G003", "해당하는 사진생성요청 응답을 찾을 수 없습니다."),
 	ReportNotFound(HttpStatus.NOT_FOUND, "H003", "해당 report 건을 찾지 못했습니다."),
 	NotSupportedTemp(HttpStatus.BAD_REQUEST, "temp1", "지원되지않는 조회조건입니다."),
-
+	CreatorNotFound(HttpStatus.NOT_FOUND,"J001" , "공급자를 찾을 수 없습니다."),
 	LoginIdAlreadyExists(HttpStatus.CONFLICT, "A002", "사용중인 아이디입니다.");
 
 	private final HttpStatusCode status;

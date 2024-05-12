@@ -1,6 +1,7 @@
 package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
+import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.dto.AddPromptOnlyExampleRequestDto;
 import com.gt.genti.dto.AddResponseExampleRequestDto;
 
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ResponseExample extends BaseTimeEntity {
+public class ResponseExample extends PictureEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
@@ -50,5 +51,10 @@ public class ResponseExample extends BaseTimeEntity {
 		this.examplePictureUrl = null;
 		this.examplePrompt = dto.getPrompt();
 		this.createdBy = createdBy;
+	}
+
+	@Override
+	public String getUrl(){
+		return this.getExamplePictureUrl();
 	}
 }

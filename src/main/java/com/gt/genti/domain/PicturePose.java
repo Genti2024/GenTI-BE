@@ -1,6 +1,7 @@
 package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
+import com.gt.genti.domain.common.PictureEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PicturePose extends BaseTimeEntity {
+public class PicturePose extends PictureEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;

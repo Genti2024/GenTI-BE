@@ -23,18 +23,18 @@ public class GlobalExceptionHandler {
 		return error(exception.getErrorCode());
 	}
 
-	@ExceptionHandler(RuntimeException.class)
-	protected ResponseEntity<ApiResult<?>> handleUnExpectedException(final RuntimeException exception) {
-		String error = """
-			Class : %s
-			Cause : %s
-			Message : %s
-			StackTrace : %s
-			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
-			exception.getStackTrace());
-		log.error(error);
-		return error(ErrorCode.UnHandledException);
-	}
+	// @ExceptionHandler(RuntimeException.class)
+	// protected ResponseEntity<ApiResult<?>> handleUnExpectedException(final RuntimeException exception) {
+	// 	String error = """
+	// 		Class : %s
+	// 		Cause : %s
+	// 		Message : %s
+	// 		StackTrace : %s
+	// 		""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
+	// 		exception.getStackTrace());
+	// 	log.error(error);
+	// 	return error(ErrorCode.UnHandledException);
+	// }
 
 	@ExceptionHandler(WebExchangeBindException.class)
 	protected ResponseEntity<ApiResult<?>> processValidationError(WebExchangeBindException exception) {

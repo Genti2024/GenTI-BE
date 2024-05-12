@@ -17,18 +17,23 @@ import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
 import com.gt.genti.dto.PictureGenerateRequestSimplifiedResponseDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
+import com.gt.genti.external.openai.dto.PromptAdvancementRequestDto;
+import com.gt.genti.external.openai.service.OpenAIService;
 import com.gt.genti.other.util.RandomUtils;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PictureGenerateRequestService implements PictureGenerateRequestUseCase {
@@ -37,16 +42,30 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final CreatorRepository creatorRepository;
 	private final UserRepository userRepository;
 	private final PictureUserFacePort pictureUserFacePort;
+	private final OpenAIService openAIService;
 
 	@Override
-	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestByUserId(Long userId) {
-		List<PictureGenerateRequestDetailResponseDto> result = pictureGenerateRequestPort.findByRequestStatusIsActiveAndUserId_JPQL(
-			userId).stream().map(
+	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequest(Long userId,
+		PictureGenerateRequestStatus status) {
+		List<PictureGenerateRequestDetailResponseDto> result = pictureGenerateRequestPort.findByRequestStatusAndUserId(
+			status, userId).stream().map(
 			PictureGenerateRequestDetailResponseDto::new
 		).toList();
 		if (result.isEmpty()) {
 			throw new ExpectedException(ErrorCode.ActivePictureGenerateRequestNotExists);
 		}
+		return result;
+	}
+
+	@Override
+	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequest(Long userId) {
+
+		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findByUserIdOrderByCreatedByDesc(
+			userId).orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
+
+		PictureGenerateRequestDetailResponseDto result = new PictureGenerateRequestDetailResponseDto(
+			foundPictureGenerateRequest);
+
 		return result;
 	}
 
@@ -81,7 +100,10 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 		List<String> facePictureUrl = pictureGenerateRequestRequestDto.getFacePictureUrlList();
 
-		Set<PictureUserFace> foundFacePictureSet = new HashSet<PictureUserFace>(
+		String promptAdvanced = openAIService.getAdvancedPrompt(new PromptAdvancementRequestDto(pictureGenerateRequestRequestDto.getPrompt()));
+		log.info(promptAdvanced);
+
+		Set<PictureUserFace> foundFacePictureSet = new HashSet<>(
 			pictureUserFacePort.findPictureByUrlIn(facePictureUrl));
 
 		if (foundFacePictureSet.size() < 3) {
@@ -103,6 +125,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 		PictureGenerateRequest pgr = PictureGenerateRequest.builder()
 			.requester(foundRequester)
+			.promptAdvanced(promptAdvanced)
 			.pictureGenerateRequestRequestDto(pictureGenerateRequestRequestDto)
 			.picturePose(foundPicturePose)
 			.userFacePictureList(foundFacePictureSet.stream().toList())

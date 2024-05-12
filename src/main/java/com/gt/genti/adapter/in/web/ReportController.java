@@ -16,7 +16,7 @@ import com.gt.genti.other.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/reports")
+@RequestMapping("/api/users/reports")
 @RequiredArgsConstructor
 public class ReportController {
 	private final ReportService reportService;

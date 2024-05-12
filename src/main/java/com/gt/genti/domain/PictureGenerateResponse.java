@@ -6,6 +6,7 @@ import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.domain.enums.converter.PictureGenerateResponseStatusConverter;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,10 +43,17 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	@JoinColumn(name = "request_id")
 	PictureGenerateRequest request;
 
+	@Column(name = "memo")
+	String memo;
+
 	@Convert(converter = PictureGenerateResponseStatusConverter.class)
 	PictureGenerateResponseStatus status;
 
 	public void updateStatus(PictureGenerateResponseStatus status) {
 		this.status = status;
+	}
+
+	public void updateMemo(String memo) {
+		this.memo = memo;
 	}
 }

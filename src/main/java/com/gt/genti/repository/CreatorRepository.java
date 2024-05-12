@@ -1,6 +1,7 @@
 package com.gt.genti.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,8 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 		+ "having count(pgr) < 3 "
 		+ "order by count(pgr) asc, c.id asc ")
 	List<Creator> findAllAvailableCreator();
+
+	@Query("select c from Creator c "
+		+ "where c.user.id = :userId ")
+	Optional<Creator> findByUserId(Long userId);
 }

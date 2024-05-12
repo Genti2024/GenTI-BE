@@ -8,19 +8,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
-import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
-import com.gt.genti.external.aws.dto.PreSignedUrlResponseDto;
+import com.gt.genti.dto.UpdateMemoRequestDto;
+import com.gt.genti.dto.UpdatePictureUrlRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,10 +32,11 @@ public class PictureGenerateWorkController {
 
 	@GetMapping("/picture-generate-requests")
 	public ResponseEntity<ApiResult<PictureGenerateRequestBriefResponseDto>> getAssignedPictureGenerateRequestBrief(
-		@AuthenticationPrincipal
-		UserDetailsImpl userDetails, @RequestParam(value = "pictureGenerateRequestStatus", defaultValue = "BEFORE_WORK") PictureGenerateRequestStatus pictureGenerateRequestStatus) {
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@PathParam(value = "status") PictureGenerateRequestStatus status
+	) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestBrief(
-			userDetails.getId(), pictureGenerateRequestStatus));
+			userDetails.getId(), status));
 	}
 
 	@GetMapping("/picture-generate-requests/all")
@@ -45,18 +47,25 @@ public class PictureGenerateWorkController {
 			userDetails.getId()));
 	}
 
-	@GetMapping("/picture-generate-response/{pictureGenerateResponseId}/upload-url")
-	public ResponseEntity<ApiResult<List<PreSignedUrlResponseDto>>> getPictureUploadUrl(
+	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}")
+	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
 		@PathVariable Long pictureGenerateResponseId,
-		@RequestBody List<PreSignedUrlRequestDto> preSignedUrlRequestDtoList
+		@RequestBody List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList
 	) {
-		return success(pictureGenerateWorkService.getUploadUrl(pictureGenerateResponseId, preSignedUrlRequestDtoList));
+		return success(
+			pictureGenerateWorkService.updatePictureUrls(pictureGenerateResponseId, updatePictureUrlRequestDtoList));
 	}
 
-	@GetMapping("/picture-generate-response/{pictureGenerateResponseId}/submit")
+	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<Boolean>> submitPictureGenerateResponse(
 		@PathVariable Long pictureGenerateResponseId) {
 		return success(pictureGenerateWorkService.submit(pictureGenerateResponseId));
 	}
 
+	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/memo")
+	public ResponseEntity<ApiResult<Boolean>> updateMemo(
+		@PathVariable Long pictureGenerateResponseId,
+		@RequestBody UpdateMemoRequestDto updateMemoRequestDto) {
+		return success(pictureGenerateWorkService.updateMemo(pictureGenerateResponseId, updateMemoRequestDto));
+	}
 }

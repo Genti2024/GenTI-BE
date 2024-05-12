@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
+import com.gt.genti.external.openai.dto.PromptAdvancementResponse;
+
 @Component
 @HttpExchange
 public interface OpenAIRestClient {
 
 	@PostExchange("/v1/chat/completions")
-	String getAdvancedPrompt(@RequestBody String dto);
+	PromptAdvancementResponse getAdvancedPrompt(@RequestBody String dto);
 }

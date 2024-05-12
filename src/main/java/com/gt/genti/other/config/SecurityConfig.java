@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.other.auth.CustomOAuth2UserService;
 import com.gt.genti.other.handler.CommonLoginFailHandler;
 import com.gt.genti.other.handler.CommonLoginSuccessHandler;
@@ -38,12 +39,11 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final ObjectMapper objectMapper;
 	public static final String oauthLoginPath = "/oauth2/login";
 	public static final String ROLE_USER = "ROLE_USER";
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
 	public static final String ROLE_MANAGER = "ROLE_MANAGER";
-	public static final String ROLE_CREATOR = "ROLE_CREATOR";
+	public static final String ROLE_CREATOR = UserRole.CREATOR.getStringValue();
 	private static final String[] PRIVATE_ALLOWED_URLS = new String[] {
 		"/login/testjwt",
 		"/index",
@@ -118,9 +118,9 @@ public class SecurityConfig {
 
 		http.authorizeHttpRequests((authorizeHttpRequests) ->
 			authorizeHttpRequests.requestMatchers(COMMON_RESOURCE_AND_ALLOWED_URL).permitAll()
-				.requestMatchers("/api/**").hasAuthority(ROLE_USER) // not use hasRole
+				.requestMatchers("/api/users/").hasAuthority(ROLE_USER) // not use hasRole
 				.requestMatchers("/api/admin/**").hasAuthority(ROLE_ADMIN)
-				.requestMatchers("/api/creators/").hasAuthority(ROLE_CREATOR)
+				.requestMatchers("/api/creators/**").hasAuthority(ROLE_CREATOR)
 				.anyRequest().authenticated()
 		);
 

@@ -56,7 +56,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 			log.info("context : " + context);
 			SecurityContextHolder.setContext(context);
 		} catch (Exception e) {
-			log.info("CustomExpiredJwtException 발생");
+			log.error("CustomExpiredJwtException 발생");
 			log.info(e.getMessage());
 		}
 

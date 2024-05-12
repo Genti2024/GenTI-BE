@@ -15,26 +15,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
+import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/picture-generate-requests")
+@RequestMapping("/api/users/picture-generate-requests")
 @RequiredArgsConstructor
 public class PictureGenerateRequestController {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 
 	@CheckUserIsQuit
-	@GetMapping("/active")
-	public ResponseEntity<ApiResult<List<PictureGenerateRequestDetailResponseDto>>> getMyActivePictureGenerateRequest(
-		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+	@GetMapping("")
+	public ResponseEntity<ApiResult<List<PictureGenerateRequestDetailResponseDto>>> getMyPictureGenerateRequest(
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@PathParam(value = "status")PictureGenerateRequestStatus status
+	) {
 		return success(
-			pictureGenerateRequestUseCase.getPictureGenerateRequestByUserId(userDetails.getId()));
+			pictureGenerateRequestUseCase.getPictureGenerateRequest(userDetails.getId(), status));
+	}
+
+	@CheckUserIsQuit
+	@GetMapping("/recent")
+	public ResponseEntity<ApiResult<PictureGenerateRequestDetailResponseDto>> getMyRecentPictureGenerateRequest(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		return success(
+			pictureGenerateRequestUseCase.getPictureGenerateRequest(userDetails.getId()));
 	}
 
 	@GetMapping("/{pictureGenerateRequestId}")

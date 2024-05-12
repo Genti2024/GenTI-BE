@@ -57,10 +57,10 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@JoinTable(name = "picture_generate_request_picture_user_face")
 	List<PictureUserFace> userFacePictureList;
 
-	@Column(name = "prompt", nullable = false)
+	@Column(name = "prompt", nullable = false, length = 511)
 	String prompt;
 
-	@Column(name = "prompt_advanced")
+	@Column(name = "prompt_advanced", length = 4095)
 	String promptAdvanced;
 
 	@ManyToOne
@@ -81,9 +81,10 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 
 	@Builder
 	public PictureGenerateRequest(User requester, PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto,
-		PicturePose picturePose, List<PictureUserFace> userFacePictureList) {
+		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced) {
 		this.requester = requester;
 		this.prompt = pictureGenerateRequestRequestDto.getPrompt();
+		this.promptAdvanced = promptAdvanced;
 		this.picturePose = picturePose;
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.BEFORE_WORK;
 		this.cameraAngle = pictureGenerateRequestRequestDto.getCameraAngle();

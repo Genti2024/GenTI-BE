@@ -6,7 +6,6 @@ import java.util.List;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.enums.CameraAngle;
-import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
 
@@ -19,29 +18,31 @@ import lombok.NoArgsConstructor;
 public class PictureGenerateRequestDetailResponseDto {
 	Long id;
 	Long requesterId;
+	String requesterEmail;
+
 	String prompt;
-	String advancedPrompt;
+	String promptAdvanced;
+
 	List<String> facePictureUrlList;
-
-	Long pictureCreatedByCreatorId;
-	String pictureCreatedByCreatorUrl;
-
-	Long pictureCompletedId;
-	String pictureCompletedUrl;
 
 	Long posePictureId;
 	String posePictureUrl;
 
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;
+
 	PictureGenerateRequestStatus requestStatus;
-	PictureGenerateResponseStatus responseStatus;
+
 	LocalDateTime createdAt;
+
+	List<PictureGenerateResponseDetailResponseDto> responseList;
 
 	public PictureGenerateRequestDetailResponseDto(PictureGenerateRequest pictureGenerateRequest) {
 		this.id = pictureGenerateRequest.getId();
 		this.requesterId = pictureGenerateRequest.getRequester().getId();
+		this.requesterEmail = pictureGenerateRequest.getRequester().getEmail();
 		this.prompt = pictureGenerateRequest.getPrompt();
+		this.promptAdvanced = pictureGenerateRequest.getPromptAdvanced();
 		this.facePictureUrlList = pictureGenerateRequest.getUserFacePictureList()
 			.stream()
 			.map(PictureUserFace::getUrl)
@@ -52,20 +53,9 @@ public class PictureGenerateRequestDetailResponseDto {
 		this.shotCoverage = pictureGenerateRequest.getShotCoverage();
 		this.requestStatus = pictureGenerateRequest.getPictureGenerateRequestStatus();
 		this.createdAt = pictureGenerateRequest.getCreatedAt();
-	}
-
-	public PictureGenerateRequestDetailResponseDto(Long id, Long requesterId, String prompt,
-		List<String> facePictureUrlList, Long posePictureId, String posePictureUrl, CameraAngle cameraAngle,
-		ShotCoverage shotCoverage, PictureGenerateRequestStatus requestStatus, LocalDateTime createdAt) {
-		this.id = id;
-		this.requesterId = requesterId;
-		this.prompt = prompt;
-		this.facePictureUrlList = facePictureUrlList;
-		this.posePictureId = posePictureId;
-		this.posePictureUrl = posePictureUrl;
-		this.cameraAngle = cameraAngle;
-		this.shotCoverage = shotCoverage;
-		this.requestStatus = requestStatus;
-		this.createdAt = createdAt;
+		this.responseList = pictureGenerateRequest.getResponseList()
+			.stream()
+			.map(PictureGenerateResponseDetailResponseDto::new)
+			.toList();
 	}
 }

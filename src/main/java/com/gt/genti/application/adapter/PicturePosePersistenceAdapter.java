@@ -6,22 +6,22 @@ import org.springframework.stereotype.Component;
 
 import com.gt.genti.application.port.in.PicturePosePort;
 import com.gt.genti.domain.PicturePose;
-import com.gt.genti.repository.PosePictureRepository;
+import com.gt.genti.repository.PicturePoseRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class PicturePosePersistenceAdapter implements PicturePosePort {
-	private final PosePictureRepository posePictureRepository;
+	private final PicturePoseRepository picturePoseRepository;
 
 	@Override
 	public Optional<PicturePose> findByUrl(String url) {
-		return posePictureRepository.findByUrl(url);
+		return picturePoseRepository.findByUrl(url);
 	}
 
 	@Override
 	public PicturePose save(PicturePose picturePose) {
-		return posePictureRepository.save(picturePose);
+		return picturePoseRepository.save(picturePose);
 	}
 }

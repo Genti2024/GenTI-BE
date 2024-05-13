@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
-import com.gt.genti.application.port.in.PicturePosePort;
 import com.gt.genti.application.port.in.PictureUserFacePort;
+import com.gt.genti.command.CreatePicturePoseCommand;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
@@ -29,6 +29,7 @@ import com.gt.genti.external.openai.service.OpenAIService;
 import com.gt.genti.other.util.RandomUtils;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.UserRepository;
+import com.gt.genti.service.PictureService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +39,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PictureGenerateRequestService implements PictureGenerateRequestUseCase {
 	private final PictureGenerateRequestPort pictureGenerateRequestPort;
-	private final PicturePosePort picturePosePort;
 	private final CreatorRepository creatorRepository;
 	private final UserRepository userRepository;
 	private final PictureUserFacePort pictureUserFacePort;
 	private final OpenAIService openAIService;
+	private final PictureService pictureService;
 
 	@Override
 	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequest(Long userId,
@@ -95,12 +96,19 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 
 		String posePictureUrl = pictureGenerateRequestRequestDto.getPosePictureUrl();
-		PicturePose foundPicturePose = picturePosePort.findByUrl(posePictureUrl)
-			.or(() -> Optional.of(picturePosePort.save(new PicturePose(posePictureUrl)))).get();
+		Optional<PicturePose> optionalPicturePose = pictureService.findByUrlPicturePose(posePictureUrl);
+		PicturePose foundPicturePose;
+		if (optionalPicturePose.isEmpty()) {
+			foundPicturePose = pictureService.uploadPicture(
+				CreatePicturePoseCommand.builder().url(posePictureUrl).uploadedBy(requesterId).build());
+		} else {
+			foundPicturePose = optionalPicturePose.get();
+		}
 
 		List<String> facePictureUrl = pictureGenerateRequestRequestDto.getFacePictureUrlList();
 
-		String promptAdvanced = openAIService.getAdvancedPrompt(new PromptAdvancementRequestDto(pictureGenerateRequestRequestDto.getPrompt()));
+		String promptAdvanced = openAIService.getAdvancedPrompt(
+			new PromptAdvancementRequestDto(pictureGenerateRequestRequestDto.getPrompt()));
 		log.info(promptAdvanced);
 
 		Set<PictureUserFace> foundFacePictureSet = new HashSet<>(

@@ -96,13 +96,13 @@ public class PictureGenerateWorkService {
 
 	@Transactional
 	public Boolean updatePictureUrls(Long pictureGenerateResponseId,
-		List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList) {
+		List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList, Long uploaderId) {
 		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
 				pictureGenerateResponseId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
 
 		List<PictureCreatedByCreator> newUploadPictures = updatePictureUrlRequestDtoList.stream()
-			.map(d -> new PictureCreatedByCreator(d.getUrl(), foundPictureGenerateResponse))
+			.map(d -> new PictureCreatedByCreator(d.getUrl(), foundPictureGenerateResponse, uploaderId))
 			.toList();
 
 		pictureCreatedByCreatorRepository.saveAll(newUploadPictures);

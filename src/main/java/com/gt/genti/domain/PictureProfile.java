@@ -1,6 +1,5 @@
 package com.gt.genti.domain;
 
-import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.common.PictureEntity;
 
 import jakarta.persistence.Column;
@@ -11,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,13 +28,12 @@ public class PictureProfile extends PictureEntity {
 	@Column(name = "url", nullable = false)
 	String url;
 
-	@Builder
-	public PictureProfile(Long id, String url) {
-		this.id = id;
+	public PictureProfile(String url, User user) {
 		this.url = url;
+		this.user = user;
 	}
 
-	public void modify(String url){
+	public void modify(String url) {
 		this.url = url;
 	}
 }

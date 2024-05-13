@@ -1,0 +1,13 @@
+package com.gt.genti.command;
+
+import com.gt.genti.domain.User;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class CreatePictureProfileCommand {
+	String url;
+	User user;
+}

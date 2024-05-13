@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,11 +50,12 @@ public class PictureGenerateWorkController {
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}")
 	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateResponseId,
 		@RequestBody List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList
 	) {
 		return success(
-			pictureGenerateWorkService.updatePictureUrls(pictureGenerateResponseId, updatePictureUrlRequestDtoList));
+			pictureGenerateWorkService.updatePictureUrls(pictureGenerateResponseId, updatePictureUrlRequestDtoList, userDetails.getId()));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/submit")

@@ -33,9 +33,9 @@ public class PictureUserFace extends PictureEntity {
 	String url;
 
 	@Builder
-	public PictureUserFace(User user, String url) {
-		this.user = user;
+	public PictureUserFace(String url, User user) {
 		this.url = url;
+		this.user = user;
 	}
 
 	public void modify(String url){

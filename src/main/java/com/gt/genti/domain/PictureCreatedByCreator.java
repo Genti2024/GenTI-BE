@@ -1,6 +1,5 @@
 package com.gt.genti.domain;
 
-import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.common.PictureEntity;
 
 import jakarta.persistence.Column;
@@ -33,10 +32,11 @@ public class PictureCreatedByCreator extends PictureEntity {
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCreatedByCreator(String url, PictureGenerateResponse pictureGenerateResponse) {
+	public PictureCreatedByCreator(String url, PictureGenerateResponse pictureGenerateResponse, Long uploadedBy) {
 
 		this.url = url;
 		this.pictureGenerateResponse = pictureGenerateResponse;
+		this.setUploadedBy(uploadedBy);
 	}
 
 	public void modify(String url) {

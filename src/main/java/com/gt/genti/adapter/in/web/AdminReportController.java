@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/admin/reports")
 @RequiredArgsConstructor
 public class AdminReportController {
-	ReportService reportService;
+	private final ReportService reportService;
 	@GetMapping("")
 	public ResponseEntity<ApiResult<List<ReportResponseDto>>> getAllReports(){
 		return success(reportService.getAllReports());

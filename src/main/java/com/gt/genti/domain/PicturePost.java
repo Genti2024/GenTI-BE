@@ -1,6 +1,5 @@
 package com.gt.genti.domain;
 
-import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.common.PictureEntity;
 
 import jakarta.persistence.Column;
@@ -10,10 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,9 +30,8 @@ public class PicturePost extends PictureEntity {
 	@Column(name = "url", nullable = false)
 	String url;
 
-	@Builder
-	public PicturePost(Long id, String url) {
-		this.id = id;
+	public PicturePost(String url, Post post) {
 		this.url = url;
+		this.post = post;
 	}
 }

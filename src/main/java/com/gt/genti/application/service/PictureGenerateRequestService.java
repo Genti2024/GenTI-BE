@@ -1,16 +1,11 @@
 package com.gt.genti.application.service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
-import com.gt.genti.application.port.in.PictureUserFacePort;
 import com.gt.genti.command.CreatePicturePoseCommand;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
@@ -41,7 +36,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final PictureGenerateRequestPort pictureGenerateRequestPort;
 	private final CreatorRepository creatorRepository;
 	private final UserRepository userRepository;
-	private final PictureUserFacePort pictureUserFacePort;
 	private final OpenAIService openAIService;
 	private final PictureService pictureService;
 
@@ -96,14 +90,10 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 
 		String posePictureUrl = pictureGenerateRequestRequestDto.getPosePictureUrl();
-		Optional<PicturePose> optionalPicturePose = pictureService.findByUrlPicturePose(posePictureUrl);
-		PicturePose foundPicturePose;
-		if (optionalPicturePose.isEmpty()) {
-			foundPicturePose = pictureService.uploadPicture(
-				CreatePicturePoseCommand.builder().url(posePictureUrl).uploadedBy(requesterId).build());
-		} else {
-			foundPicturePose = optionalPicturePose.get();
-		}
+
+		PicturePose foundPicturePose = pictureService.findByUrlPicturePose(posePictureUrl)
+			.orElseGet(() -> pictureService.updatePicture(
+				CreatePicturePoseCommand.builder().url(posePictureUrl).uploadedBy(requesterId).build()));
 
 		List<String> facePictureUrl = pictureGenerateRequestRequestDto.getFacePictureUrlList();
 
@@ -111,32 +101,15 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			new PromptAdvancementRequestDto(pictureGenerateRequestRequestDto.getPrompt()));
 		log.info(promptAdvanced);
 
-		Set<PictureUserFace> foundFacePictureSet = new HashSet<>(
-			pictureUserFacePort.findPictureByUrlIn(facePictureUrl));
-
-		if (foundFacePictureSet.size() < 3) {
-			Set<String> foundFacePictureUrlSet = foundFacePictureSet.stream()
-				.map(PictureUserFace::getUrl)
-				.collect(Collectors.toSet());
-
-			List<PictureUserFace> notExistFacePictureList = facePictureUrl.stream()
-				.filter(givenUrl -> !foundFacePictureUrlSet.contains(givenUrl))
-				.map(url -> PictureUserFace.builder()
-					.url(url)
-					.user(foundRequester)
-					.build())
-				.toList();
-
-			List<PictureUserFace> savedPictureUserFaceList = pictureUserFacePort.saveAll(notExistFacePictureList);
-			foundFacePictureSet.addAll(savedPictureUserFaceList);
-		}
+		List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(facePictureUrl,
+			foundRequester);
 
 		PictureGenerateRequest pgr = PictureGenerateRequest.builder()
 			.requester(foundRequester)
 			.promptAdvanced(promptAdvanced)
 			.pictureGenerateRequestRequestDto(pictureGenerateRequestRequestDto)
 			.picturePose(foundPicturePose)
-			.userFacePictureList(foundFacePictureSet.stream().toList())
+			.userFacePictureList(uploadedFacePictureList)
 			.build();
 
 		matchCreatorIfAvailable(pgr);

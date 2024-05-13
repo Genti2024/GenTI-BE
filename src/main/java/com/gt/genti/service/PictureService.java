@@ -1,7 +1,10 @@
 package com.gt.genti.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,7 @@ import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PicturePost;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.PictureUserFace;
+import com.gt.genti.domain.User;
 import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.PictureCreatedByCreatorRepository;
@@ -41,6 +45,10 @@ public class PictureService {
 		return pictureUserFaceRepository.findByUrl(url);
 	}
 
+	public List<PictureUserFace> find3ByUrlPictureUserFace(List<String> urlList) {
+		return pictureUserFaceRepository.findAllByUrlIsIn(urlList);
+	}
+
 	public Optional<PictureCompleted> findByUrlPictureCompleted(String url) {
 		return pictureCompletedRepository.findByUrl(url);
 	}
@@ -61,14 +69,14 @@ public class PictureService {
 		return pictureProfileRepository.findByUrl(url);
 	}
 
-	public Picture uploadPicture(CreatePictureCompletedCommand createPictureCompletedCommand) {
+	public Picture updatePicture(CreatePictureCompletedCommand createPictureCompletedCommand) {
 		PictureCompleted pictureCompleted = PictureEntityUtils.makePictureCompleted(
 			createPictureCompletedCommand.getUrl(),
 			createPictureCompletedCommand.getPictureGenerateResponse(), createPictureCompletedCommand.getUploadedBy());
 		return pictureCompletedRepository.save(pictureCompleted);
 	}
 
-	public Picture uploadPicture(CreatePictureUserFaceCommand createPictureUserFaceCommand) {
+	public Picture updatePicture(CreatePictureUserFaceCommand createPictureUserFaceCommand) {
 		PictureUserFace pictureUserFace = PictureEntityUtils.makePictureUserFace(
 			createPictureUserFaceCommand.getUrl(),
 			createPictureUserFaceCommand.getUser()
@@ -76,7 +84,7 @@ public class PictureService {
 		return pictureUserFaceRepository.save(pictureUserFace);
 	}
 
-	public Picture uploadPicture(CreatePictureProfileCommand createPictureProfileCommand) {
+	public Picture updatePicture(CreatePictureProfileCommand createPictureProfileCommand) {
 		PictureProfile pictureProfile = PictureEntityUtils.makePictureProfile(
 			createPictureProfileCommand.getUrl(),
 			createPictureProfileCommand.getUser()
@@ -84,7 +92,7 @@ public class PictureService {
 		return pictureProfileRepository.save(pictureProfile);
 	}
 
-	public PicturePose uploadPicture(CreatePicturePoseCommand createPicturePoseCommand) {
+	public PicturePose updatePicture(CreatePicturePoseCommand createPicturePoseCommand) {
 		PicturePose picturePose = PictureEntityUtils.makePicturePose(
 			createPicturePoseCommand.getUrl(),
 			createPicturePoseCommand.getUploadedBy()
@@ -92,7 +100,7 @@ public class PictureService {
 		return picturePoseRepository.save(picturePose);
 	}
 
-	public Picture uploadPicture(CreatePictureCreatedByCreatorCommand createPictureCreatedByCreatorCommand) {
+	public Picture updatePicture(CreatePictureCreatedByCreatorCommand createPictureCreatedByCreatorCommand) {
 		PictureCreatedByCreator pictureCreatedByCreator = PictureEntityUtils.makePictureCreatedByCreator(
 			createPictureCreatedByCreatorCommand.getUrl(),
 			createPictureCreatedByCreatorCommand.getPictureGenerateResponse(),
@@ -101,7 +109,8 @@ public class PictureService {
 		return pictureCreatedByCreatorRepository.save(pictureCreatedByCreator);
 	}
 
-	public List<PictureUserFace> uploadPictures(List<CreatePictureUserFaceCommand> createPictureUserFaceCommand) {
+	public List<PictureUserFace> updatePictureUserFaceAll(
+		List<CreatePictureUserFaceCommand> createPictureUserFaceCommand) {
 		List<PictureUserFace> pictureUserFaceList = createPictureUserFaceCommand.stream()
 			.map(d -> PictureEntityUtils.makePictureUserFace(
 				d.getUrl(),
@@ -111,4 +120,38 @@ public class PictureService {
 		return pictureUserFaceRepository.saveAll(pictureUserFaceList);
 	}
 
+	public List<PictureUserFace> updateIfNotExistsPictureUserFace(List<String> facePictureUrl, User foundRequester) {
+		Set<PictureUserFace> foundFacePictureSet = new HashSet<>(
+			this.find3ByUrlPictureUserFace(facePictureUrl));
+
+		if (foundFacePictureSet.size() < 3) {
+			Set<String> foundFacePictureUrlSet = foundFacePictureSet.stream()
+				.map(PictureUserFace::getUrl)
+				.collect(Collectors.toSet());
+
+			List<CreatePictureUserFaceCommand> notExistFacePictureList = facePictureUrl.stream()
+				.filter(givenUrl -> !foundFacePictureUrlSet.contains(givenUrl))
+				.map(url -> CreatePictureUserFaceCommand.builder()
+					.url(url)
+					.user(foundRequester)
+					.build())
+				.toList();
+
+			List<PictureUserFace> savedPictureUserFaceList = this.updatePictureUserFaceAll(
+				notExistFacePictureList);
+			foundFacePictureSet.addAll(savedPictureUserFaceList);
+		}
+		return foundFacePictureSet.stream().toList();
+	}
+
+	public List<PictureCreatedByCreator> updateAll(List<CreatePictureCreatedByCreatorCommand> newUploadPictures) {
+		List<PictureCreatedByCreator> uploadEntityList = newUploadPictures.stream()
+			.map(d -> PictureEntityUtils.makePictureCreatedByCreator(
+				d.getUrl(),
+				d.getPictureGenerateResponse(),
+				d.getUploadedBy()
+			))
+			.toList();
+		return pictureCreatedByCreatorRepository.saveAll(uploadEntityList);
+	}
 }

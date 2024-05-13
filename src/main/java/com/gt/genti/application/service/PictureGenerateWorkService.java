@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.command.CreatePictureCreatedByCreatorCommand;
 import com.gt.genti.domain.Creator;
-import com.gt.genti.domain.PictureCreatedByCreator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
@@ -18,23 +18,19 @@ import com.gt.genti.dto.UpdateMemoRequestDto;
 import com.gt.genti.dto.UpdatePictureUrlRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
-import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
-import com.gt.genti.external.aws.dto.PreSignedUrlResponseDto;
-import com.gt.genti.external.aws.service.S3Service;
 import com.gt.genti.repository.CreatorRepository;
-import com.gt.genti.repository.PictureCreatedByCreatorRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.PictureGenerateResponseRepository;
+import com.gt.genti.service.PictureService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class PictureGenerateWorkService {
-	private final S3Service s3Service;
 
+	private final PictureService pictureService;
 	private final CreatorRepository creatorRepository;
-	private final PictureCreatedByCreatorRepository pictureCreatedByCreatorRepository;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
@@ -69,19 +65,9 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> new ExpectedException(ErrorCode.CreatorNotFound));
 		List<PictureGenerateRequest> foundPGRList = pictureGenerateRequestRepository.findAllByCreatorIsOrderByCreatedAtDesc(
 			foundCreator);
-		List<PictureGenerateRequestDetailResponseDto> result = foundPGRList.stream().map(
+
+		return foundPGRList.stream().map(
 			PictureGenerateRequestDetailResponseDto::new).toList();
-
-		return result;
-
-	}
-
-	@Transactional
-	public List<PreSignedUrlResponseDto> getUploadUrl(Long pictureGenerateResponseId,
-		List<PreSignedUrlRequestDto> preSignedUrlRequestDto) {
-
-		List<PreSignedUrlResponseDto> results = s3Service.getPreSignedUrlMany(preSignedUrlRequestDto);
-		return results;
 
 	}
 
@@ -95,17 +81,21 @@ public class PictureGenerateWorkService {
 	}
 
 	@Transactional
-	public Boolean updatePictureUrls(Long pictureGenerateResponseId,
+	public Boolean updatePictureCreatedByCreatorList(Long pictureGenerateResponseId,
 		List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList, Long uploaderId) {
 		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
 				pictureGenerateResponseId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
 
-		List<PictureCreatedByCreator> newUploadPictures = updatePictureUrlRequestDtoList.stream()
-			.map(d -> new PictureCreatedByCreator(d.getUrl(), foundPictureGenerateResponse, uploaderId))
+		List<CreatePictureCreatedByCreatorCommand> newUploadPictures = updatePictureUrlRequestDtoList.stream()
+			.map(d -> CreatePictureCreatedByCreatorCommand.builder()
+				.url(d.getUrl())
+				.uploadedBy(uploaderId)
+				.pictureGenerateResponse(foundPictureGenerateResponse)
+				.build())
 			.toList();
 
-		pictureCreatedByCreatorRepository.saveAll(newUploadPictures);
+		pictureService.updateAll(newUploadPictures);
 		return true;
 	}
 

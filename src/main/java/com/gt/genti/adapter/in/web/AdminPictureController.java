@@ -40,7 +40,7 @@ public class AdminPictureController {
 			.pictureGenerateResponse(foundPictureGenerateResponse)
 			.url(requestDto.getUrl())
 			.uploadedBy(userDetails.getId()).build();
-		pictureService.uploadPicture(command);
+		pictureService.updatePicture(command);
 		return success(true);
 	}
 }

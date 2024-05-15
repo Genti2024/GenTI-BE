@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.dto.TokenRefreshRequestDto;
-import com.gt.genti.error.CustomJwtException;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,9 @@ public class JwtController {
 		@RequestBody TokenRefreshRequestDto tokenRefreshRequestDto) {
 
 		if (authHeader == null) {
-			throw new CustomJwtException("Access Token 이 존재하지 않습니다");
+			throw new ExpectedException(ErrorCode.TOKEN_NOT_PROVIDED);
 		} else if (!authHeader.startsWith(JwtConstants.JWT_PREFIX)) {
-			throw new CustomJwtException("BEARER 로 시작하지 않는 올바르지 않은 토큰 형식입니다");
+			throw new ExpectedException(ErrorCode.INVALID_TOKEN);
 		}
 
 		String receiveAccessToken = jwtTokenProvider.getTokenFromHeader(authHeader);

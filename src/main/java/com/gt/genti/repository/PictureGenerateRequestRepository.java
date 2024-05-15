@@ -27,7 +27,7 @@ public interface PictureGenerateRequestRepository
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
-		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.BEFORE_WORK "
+		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.IN_PROGRESS "
 		+ "and pgr.creator= :creator "
 		+ "order by pgr.createdAt asc "
 		+ "limit 1 ")
@@ -35,7 +35,7 @@ public interface PictureGenerateRequestRepository
 		Creator creator);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
-		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.BEFORE_WORK "
+		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.ASSIGNING "
 		+ "and pgr.creator is null "
 		+ "order by pgr.createdAt desc")
 	List<PictureGenerateRequest> findPendingRequests();
@@ -58,7 +58,6 @@ public interface PictureGenerateRequestRepository
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.requester.id = :userId "
 		+ "and pgr.pictureGenerateRequestStatus in ("
-		+ "		com.gt.genti.domain.enums.PictureGenerateRequestStatus.BEFORE_WORK, "
 		+ "		com.gt.genti.domain.enums.PictureGenerateRequestStatus.ASSIGNING, "
 		+ "		com.gt.genti.domain.enums.PictureGenerateRequestStatus.IN_PROGRESS) "
 		+ "order by pgr.createdAt desc "

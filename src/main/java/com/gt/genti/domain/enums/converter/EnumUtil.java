@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class EnumUtil {
+	public static final String NULL = "NONE";
+
 	private static <E extends Enum<E> & ConvertableEnum> E convertNullToEnum(Class<E> enumType) {
 		for (E enumValue : enumType.getEnumConstants()) {
-			if (enumValue.name().equals("NULL")) {
+			if (enumValue.name().equals(NULL)) {
 				return enumValue;
 			}
 		}

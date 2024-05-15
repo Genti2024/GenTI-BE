@@ -37,7 +37,7 @@ public class OAuthAttributeBuilder {
 			case APPLE -> {
 				return new AppleOAuthAttributes(attributes);
 			}
-			case NULL -> {
+			case NONE -> {
 
 			}
 		}

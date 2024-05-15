@@ -44,7 +44,7 @@ public class LoginController {
 		if (tempRole == null) {
 			throw new RuntimeException();
 		}
-		Map<UserRole, String> userIdMapper = Map.of(UserRole.USER, "3", UserRole.ADMIN, "1", UserRole.CREATOR, "4");
+		Map<UserRole, String> userIdMapper = Map.of(UserRole.USER, "2", UserRole.ADMIN, "1", UserRole.CREATOR, "4");
 		String userId = userIdMapper.get(tempRole);
 		Map<String, Object> tempClaim = Map.of("auth", tempRole.getStringValue(), "sub", userId);
 		String accessToken = jwtTokenProvider.generateToken(tempClaim, 1000000);

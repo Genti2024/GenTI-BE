@@ -40,7 +40,7 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> new ExpectedException(ErrorCode.CreatorNotFound));
 		Optional<PictureGenerateRequest> foundPGR;
 		switch (status) {
-			case BEFORE_WORK ->
+			case IN_PROGRESS ->
 				foundPGR = pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
 					foundCreator);
 			case ASSIGNING ->
@@ -52,8 +52,8 @@ public class PictureGenerateWorkService {
 			(pictureGenerateRequest) ->
 				PictureGenerateRequestBriefResponseDto.builder()
 					.requestId(pictureGenerateRequest.getId())
-					.cameraAngle(pictureGenerateRequest.getCameraAngle().getStringValue())
-					.shotCoverage(pictureGenerateRequest.getShotCoverage().getStringValue())
+					.cameraAngle(pictureGenerateRequest.getCameraAngle())
+					.shotCoverage(pictureGenerateRequest.getShotCoverage())
 					.prompt(pictureGenerateRequest.getPrompt())
 					.build()
 		).orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));

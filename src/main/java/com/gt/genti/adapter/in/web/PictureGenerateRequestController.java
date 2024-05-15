@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
@@ -35,14 +36,14 @@ public class PictureGenerateRequestController {
 	@GetMapping("")
 	public ResponseEntity<ApiResult<List<PictureGenerateRequestDetailResponseDto>>> getMyPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@PathParam(value = "status")PictureGenerateRequestStatus status
+		@PathParam(value = "status") PictureGenerateRequestStatus status
 	) {
 		return success(
 			pictureGenerateRequestUseCase.getPictureGenerateRequest(userDetails.getId(), status));
 	}
 
 	@CheckUserIsQuit
-	@GetMapping("/recent")
+	@GetMapping("/active")
 	public ResponseEntity<ApiResult<PictureGenerateRequestDetailResponseDto>> getMyRecentPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
@@ -75,6 +76,13 @@ public class PictureGenerateRequestController {
 		return success(
 			pictureGenerateRequestUseCase.modifyPictureGenerateRequest(userDetails.getId(),
 				pictureGenerateRequestModifyDto));
+	}
+
+	@GetMapping("/all")
+	public ResponseEntity<ApiResult<List<PictureGenerateRequestBriefResponseDto>>> getAllMyRequests(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		return success(pictureGenerateRequestUseCase.getAllMyPictureGenerateRequests(userDetails.getId()));
 	}
 
 }

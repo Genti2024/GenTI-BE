@@ -8,15 +8,16 @@ import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.command.CreatePicturePoseCommand;
 import com.gt.genti.domain.Creator;
+import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
-import com.gt.genti.dto.PictureGenerateRequestSimplifiedResponseDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.external.openai.dto.PromptAdvancementRequestDto;
@@ -77,9 +78,25 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	// edited at 2024-04-13
 	// author 서병렬
 	@Override
-	public List<PictureGenerateRequestSimplifiedResponseDto> getAllMyPictureGenerateRequests(User requester) {
-		// return pictureGenerateRequestPersistenceAdapter.findAllByRequester(requester).stream().map(entity -> );
-		return null;
+	public List<PictureGenerateRequestBriefResponseDto> getAllMyPictureGenerateRequests(Long userId) {
+		User foundUser = userRepository.findById(userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+		return pictureGenerateRequestPort.findAllByRequester(foundUser)
+			.stream()
+			.map(entity -> PictureGenerateRequestBriefResponseDto.builder()
+				.shotCoverage(entity.getShotCoverage())
+				.cameraAngle(entity.getCameraAngle())
+				.requestId(entity.getId())
+				.prompt(entity.getPrompt())
+				.status(entity.getPictureGenerateRequestStatus())
+				.urlList(entity.getResponseList()
+					.stream()
+					.flatMap(pictureGenerateResponse -> pictureGenerateResponse.getCompletedPictureList().stream().map(
+						PictureCompleted::getUrl))
+					.toList())
+				.build()
+
+			).toList();
 	}
 
 	@Override

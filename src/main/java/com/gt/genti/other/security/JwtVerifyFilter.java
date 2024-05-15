@@ -8,8 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.config.SecurityConfig;
-import com.gt.genti.error.CustomJwtException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,9 +28,9 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 
 	private static void checkAuthorizationHeader(String header) {
 		if (header == null) {
-			throw new CustomJwtException("토큰이 전달되지 않았습니다");
+			throw new ExpectedException(ErrorCode.TOKEN_NOT_PROVIDED);
 		} else if (!header.startsWith(JwtConstants.JWT_PREFIX)) {
-			throw new CustomJwtException("BEARER 로 시작하지 않는 올바르지 않은 토큰 형식입니다");
+			throw new ExpectedException(ErrorCode.INVALID_TOKEN);
 		}
 	}
 
@@ -44,9 +45,9 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		log.info("--------------------------- JwtVerifyFilter ---------------------------");
 
-		String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
-		// log.info("authHeader : " + authHeader);
 		try {
+			String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
+			// log.info("authHeader : " + authHeader);
 			checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
 			String token = jwtTokenProvider.getTokenFromHeader(authHeader);
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
@@ -56,8 +57,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 			log.info("context : " + context);
 			SecurityContextHolder.setContext(context);
 		} catch (Exception e) {
-			log.error("CustomExpiredJwtException 발생");
-			log.info(e.getMessage());
+			request.setAttribute("exception", e);
 		}
 
 		filterChain.doFilter(request, response);    // 다음 필터로 이동

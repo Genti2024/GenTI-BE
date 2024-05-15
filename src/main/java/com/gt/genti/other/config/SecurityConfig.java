@@ -21,11 +21,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.other.auth.CustomOAuth2UserService;
 import com.gt.genti.other.handler.CommonLoginFailHandler;
 import com.gt.genti.other.handler.CommonLoginSuccessHandler;
+import com.gt.genti.other.security.AuthenticationEntryPointImpl;
 import com.gt.genti.other.security.JwtTokenProvider;
 import com.gt.genti.other.security.JwtVerifyFilter;
 
@@ -39,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final AuthenticationEntryPointImpl authenticationEntryPointImpl;
 	public static final String oauthLoginPath = "/oauth2/login";
 	public static final String ROLE_USER = "ROLE_USER";
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -129,6 +130,8 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.NEVER));
 
 		http.addFilterBefore(jwtVerifyFilter(), UsernamePasswordAuthenticationFilter.class);
+
+		http.exceptionHandling(handler -> handler.authenticationEntryPoint(authenticationEntryPointImpl));
 
 		http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
 			httpSecurityOAuth2LoginConfigurer.loginPage(oauthLoginPath)

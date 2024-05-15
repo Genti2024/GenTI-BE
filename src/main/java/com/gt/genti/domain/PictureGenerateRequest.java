@@ -86,7 +86,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.prompt = pictureGenerateRequestRequestDto.getPrompt();
 		this.promptAdvanced = promptAdvanced;
 		this.picturePose = picturePose;
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.BEFORE_WORK;
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.ASSIGNING;
 		this.cameraAngle = pictureGenerateRequestRequestDto.getCameraAngle();
 		this.shotCoverage = pictureGenerateRequestRequestDto.getShotCoverage();
 		this.userFacePictureList = userFacePictureList;
@@ -104,10 +104,11 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	}
 
 	public void assign(Creator creator) {
-		if (this.pictureGenerateRequestStatus != PictureGenerateRequestStatus.BEFORE_WORK) {
+		if (this.pictureGenerateRequestStatus != PictureGenerateRequestStatus.ASSIGNING) {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}
 		this.creator = creator;
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;
 	}
 }

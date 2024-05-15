@@ -18,7 +18,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.gt.genti.domain.User;
-import com.gt.genti.error.CustomJwtException;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.other.auth.UserDetailsServiceImpl;
 
@@ -102,20 +103,16 @@ public class JwtTokenProvider {
 				.parseClaimsJws(token) // 파싱 및 검증, 실패 시 에러
 				.getBody();
 		} catch (ExpiredJwtException expiredJwtException) {
-			throw new CustomExpiredJwtException("토큰이 만료되었습니다", expiredJwtException);
+			throw new ExpectedException(ErrorCode.TOKEN_EXPIRED);
 		} catch (Exception e) {
-			throw new CustomJwtException("Error");
+			throw new ExpectedException(ErrorCode.INVALID_TOKEN);
 		}
 	}
 
 	// 토큰이 만료되었는지 판단하는 메서드
 	public boolean isExpired(String token) {
-		try {
-			validateToken(token);
-		} catch (Exception e) {
-			return (e instanceof CustomExpiredJwtException);
-		}
-		return false;
+		validateToken(token);
+		return true;
 	}
 
 	// 토큰의 남은 만료시간 계산

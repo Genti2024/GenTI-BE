@@ -9,7 +9,7 @@ public enum OauthType implements com.gt.genti.domain.enums.ConvertableEnum {
 	GOOGLE("GOOGLE"),
 	KAKAO("KAKAO"),
 	APPLE("APPLE"),
-	NULL("NULL");
+	NONE("NONE");
 
 	private final String stringValue;
 }

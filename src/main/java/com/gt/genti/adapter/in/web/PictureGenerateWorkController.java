@@ -30,13 +30,20 @@ import lombok.RequiredArgsConstructor;
 public class PictureGenerateWorkController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
-	@GetMapping("/picture-generate-requests")
+	@GetMapping("/picture-generate-requests/assigned")
 	public ResponseEntity<ApiResult<PictureGenerateRequestBriefResponseDto>> getAssignedPictureGenerateRequestBrief(
-		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@PathParam(value = "status") PictureGenerateRequestStatus status
+		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestBrief(
-			userDetails.getId(), status));
+			userDetails.getId(), PictureGenerateRequestStatus.ASSIGNING));
+	}
+
+	@GetMapping("/picture-generate-requests/{pictureGenerateRequestId}")
+	public ResponseEntity<ApiResult<PictureGenerateRequestDetailResponseDto>> getPictureGenerateRequestDetail(
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@PathVariable Long pictureGenerateRequestId) {
+		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail(
+			userDetails.getId(), pictureGenerateRequestId));
 	}
 
 	@GetMapping("/picture-generate-requests/all")
@@ -47,7 +54,7 @@ public class PictureGenerateWorkController {
 			userDetails.getId()));
 	}
 
-	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}")
+	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateResponseId,

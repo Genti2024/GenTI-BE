@@ -1,13 +1,14 @@
 package com.gt.genti.dto;
 
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
+import com.gt.genti.other.util.TimeUtils;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,17 +19,20 @@ public class PictureGenerateRequestBriefResponseDto {
 	String prompt;
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;
-	List<String> urlList;
 	PictureGenerateRequestStatus status;
+	String remainTime;
+	LocalDateTime createdAt;
 
-	@Builder
-	public PictureGenerateRequestBriefResponseDto(Long requestId, String prompt, CameraAngle cameraAngle,
-		ShotCoverage shotCoverage, List<String> urlList, PictureGenerateRequestStatus status) {
-		this.requestId = requestId;
-		this.prompt = prompt;
-		this.cameraAngle = cameraAngle;
-		this.shotCoverage = shotCoverage;
-		this.urlList = urlList;
-		this.status = status;
+	public PictureGenerateRequestBriefResponseDto(PictureGenerateRequest pgreq) {
+		this.requestId = pgreq.getId();
+		this.prompt = pgreq.getPrompt();
+		this.cameraAngle = pgreq.getCameraAngle();
+		this.shotCoverage = pgreq.getShotCoverage();
+		this.status = pgreq.getPictureGenerateRequestStatus();
+		this.createdAt = pgreq.getCreatedAt();
+		Duration duration = Duration.between(LocalDateTime.now(),
+			createdAt.plusMinutes(TimeUtils.ACCEPTABLE_TIME_MINUTE));
+		this.remainTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutes(),
+			duration.toSeconds());
 	}
 }

@@ -2,8 +2,8 @@ package com.gt.genti.other.util;
 
 public class ErrorUtils {
 	private static final String USER = "USER";
-	private static final String RESPONSE = "RES";
-	private static final String REQUEST = "REQ";
+	private static final String RESPONSE = "RESPONSE";
+	private static final String REQUEST = "REQUEST";
 	private static final String CREATOR = "CREATOR";
 	private static final String ADMIN = "ADMIN";
 	private static final String SERVER = "SERVER";
@@ -40,5 +40,7 @@ public class ErrorUtils {
 	public static final String NotSupportedTemp = CODE(TEMP, 1);
 	public static final String CreatorNotFound = CODE(CREATOR, 1);
 	public static final String PictureNotFound = CODE(PICTURE, 1);
+	public static final String NotMatchedYet = CODE(REQUEST, 5);
+	public static final String NotAssignedToMe = CODE(REQUEST, 6);
 
 }

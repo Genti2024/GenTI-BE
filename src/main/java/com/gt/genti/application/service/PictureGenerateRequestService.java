@@ -8,7 +8,6 @@ import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.command.CreatePicturePoseCommand;
 import com.gt.genti.domain.Creator;
-import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
@@ -83,20 +82,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 		return pictureGenerateRequestPort.findAllByRequester(foundUser)
 			.stream()
-			.map(entity -> PictureGenerateRequestBriefResponseDto.builder()
-				.shotCoverage(entity.getShotCoverage())
-				.cameraAngle(entity.getCameraAngle())
-				.requestId(entity.getId())
-				.prompt(entity.getPrompt())
-				.status(entity.getPictureGenerateRequestStatus())
-				.urlList(entity.getResponseList()
-					.stream()
-					.flatMap(pictureGenerateResponse -> pictureGenerateResponse.getCompletedPictureList().stream().map(
-						PictureCompleted::getUrl))
-					.toList())
-				.build()
-
-			).toList();
+			.map(PictureGenerateRequestBriefResponseDto::new).toList();
 	}
 
 	@Override

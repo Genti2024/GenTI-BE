@@ -33,7 +33,9 @@ public enum ErrorCode {
 	ReportNotFound(HttpStatus.NOT_FOUND, ErrorUtils.ReportNotFound, "해당 report 건을 찾지 못했습니다."),
 	NotSupportedTemp(HttpStatus.BAD_REQUEST, ErrorUtils.NotSupportedTemp, "지원되지않는 조회조건입니다."),
 	CreatorNotFound(HttpStatus.NOT_FOUND, ErrorUtils.CreatorNotFound, "공급자를 찾을 수 없습니다."),
-	PictureNotFound(HttpStatus.NOT_FOUND, ErrorUtils.PictureNotFound, "사진을 찾을 수 없습니다.");
+	PictureNotFound(HttpStatus.NOT_FOUND, ErrorUtils.PictureNotFound, "사진을 찾을 수 없습니다."),
+	NotAssignedToMe(HttpStatus.BAD_REQUEST, ErrorUtils.NotAssignedToMe, "나에게 매칭된 요청이 아닙니다."),
+	NotMatchedYet(HttpStatus.BAD_REQUEST, ErrorUtils.NotMatchedYet, "아직 매칭되지 않은 요청을 조회할 수 없습니다.");
 
 	private final HttpStatusCode status;
 	private final String code;

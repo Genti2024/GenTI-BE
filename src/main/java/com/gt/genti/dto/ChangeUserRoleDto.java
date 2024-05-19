@@ -1,12 +1,12 @@
 package com.gt.genti.dto;
 
-import com.gt.genti.domain.enums.UserStatus;
+import com.gt.genti.domain.enums.UserRole;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ChangeUserStatusRequestDto {
-	UserStatus userStatus;
+public class ChangeUserRoleDto {
+	UserRole userRole;
 }

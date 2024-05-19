@@ -13,6 +13,7 @@ public class ErrorUtils {
 	private static final String PICTURE = "PICTURE";
 
 	private static final String AUTH = "AUTH";
+	private static final String DEPOSIT = "DEPOSIT";
 
 	private static String CODE(String type, int seq) {
 		return type + String.format("-%05d", seq);
@@ -42,5 +43,10 @@ public class ErrorUtils {
 	public static final String PictureNotFound = CODE(PICTURE, 1);
 	public static final String NotMatchedYet = CODE(REQUEST, 5);
 	public static final String NotAssignedToMe = CODE(REQUEST, 6);
+	public static final String ExpiredPictureGenerateRequest = CODE(RESPONSE, 2);
+	public static final String ExpiredMatching = CODE(REQUEST, 7);
+
+	public static final String DepositNotFound = CODE(DEPOSIT, 1);
+	public static final String AddPointAmountCannotBeMinus = CODE(DEPOSIT, 2);
 
 }

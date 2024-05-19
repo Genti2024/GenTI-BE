@@ -32,7 +32,7 @@ public class PictureCompleted extends PictureEntity {
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCompleted(String url, PictureGenerateResponse pictureGenerateResponse, Long uploadedBy) {
+	public PictureCompleted(String url, PictureGenerateResponse pictureGenerateResponse, User uploadedBy) {
 
 		this.url = url;
 		this.pictureGenerateResponse = pictureGenerateResponse;

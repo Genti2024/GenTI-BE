@@ -21,6 +21,8 @@ import com.gt.genti.domain.PicturePost;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.PictureCreatedByCreatorRepository;
@@ -28,12 +30,14 @@ import com.gt.genti.repository.PicturePoseRepository;
 import com.gt.genti.repository.PicturePostRepository;
 import com.gt.genti.repository.PictureProfileRepository;
 import com.gt.genti.repository.PictureUserFaceRepository;
+import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class PictureService {
+	private final UserRepository userRepository;
 	private final PictureCreatedByCreatorRepository pictureCreatedByCreatorRepository;
 	private final PictureUserFaceRepository pictureUserFaceRepository;
 	private final PicturePostRepository picturePostRepository;
@@ -69,10 +73,12 @@ public class PictureService {
 		return pictureProfileRepository.findByUrl(url);
 	}
 
-	public Picture updatePicture(CreatePictureCompletedCommand createPictureCompletedCommand) {
+	public Picture updatePicture(CreatePictureCompletedCommand command) {
+		User foundUser = findUser(command.getUserId());
 		PictureCompleted pictureCompleted = PictureEntityUtils.makePictureCompleted(
-			createPictureCompletedCommand.getUrl(),
-			createPictureCompletedCommand.getPictureGenerateResponse(), createPictureCompletedCommand.getUploadedBy());
+			command.getUrl(),
+			command.getPictureGenerateResponse(), foundUser);
+
 		return pictureCompletedRepository.save(pictureCompleted);
 	}
 
@@ -92,19 +98,21 @@ public class PictureService {
 		return pictureProfileRepository.save(pictureProfile);
 	}
 
-	public PicturePose updatePicture(CreatePicturePoseCommand createPicturePoseCommand) {
+	public PicturePose updatePicture(CreatePicturePoseCommand command) {
+
 		PicturePose picturePose = PictureEntityUtils.makePicturePose(
-			createPicturePoseCommand.getUrl(),
-			createPicturePoseCommand.getUploadedBy()
+			command.getUrl(),
+			findUser(command.getUserId())
 		);
 		return picturePoseRepository.save(picturePose);
 	}
 
-	public Picture updatePicture(CreatePictureCreatedByCreatorCommand createPictureCreatedByCreatorCommand) {
+	public Picture updatePicture(CreatePictureCreatedByCreatorCommand command) {
+
 		PictureCreatedByCreator pictureCreatedByCreator = PictureEntityUtils.makePictureCreatedByCreator(
-			createPictureCreatedByCreatorCommand.getUrl(),
-			createPictureCreatedByCreatorCommand.getPictureGenerateResponse(),
-			createPictureCreatedByCreatorCommand.getUploadedBy()
+			command.getUrl(),
+			command.getPictureGenerateResponse(),
+			findUser(command.getUserId())
 		);
 		return pictureCreatedByCreatorRepository.save(pictureCreatedByCreator);
 	}
@@ -145,13 +153,19 @@ public class PictureService {
 	}
 
 	public List<PictureCreatedByCreator> updateAll(List<CreatePictureCreatedByCreatorCommand> newUploadPictures) {
+		User foundUser = findUser(newUploadPictures.get(0).getUserId());
 		List<PictureCreatedByCreator> uploadEntityList = newUploadPictures.stream()
-			.map(d -> PictureEntityUtils.makePictureCreatedByCreator(
-				d.getUrl(),
-				d.getPictureGenerateResponse(),
-				d.getUploadedBy()
+			.map(command -> PictureEntityUtils.makePictureCreatedByCreator(
+				command.getUrl(),
+				command.getPictureGenerateResponse(),
+				foundUser
 			))
 			.toList();
 		return pictureCreatedByCreatorRepository.saveAll(uploadEntityList);
+	}
+
+	private User findUser(Long userId) {
+		return userRepository.findById(userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 	}
 }

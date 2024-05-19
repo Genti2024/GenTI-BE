@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.command.CreatePicturePoseCommand;
-import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
@@ -21,7 +20,6 @@ import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.external.openai.dto.PromptAdvancementRequestDto;
 import com.gt.genti.external.openai.service.OpenAIService;
-import com.gt.genti.other.util.RandomUtils;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.UserRepository;
 import com.gt.genti.service.PictureService;
@@ -38,6 +36,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final UserRepository userRepository;
 	private final OpenAIService openAIService;
 	private final PictureService pictureService;
+	private final RequestMatchService requestMatchService;
 
 	@Override
 	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequest(Long userId,
@@ -96,7 +95,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 		PicturePose foundPicturePose = pictureService.findByUrlPicturePose(posePictureUrl)
 			.orElseGet(() -> pictureService.updatePicture(
-				CreatePicturePoseCommand.builder().url(posePictureUrl).uploadedBy(requesterId).build()));
+				CreatePicturePoseCommand.builder().url(posePictureUrl).userId(requesterId).build()));
 
 		List<String> facePictureUrl = pictureGenerateRequestRequestDto.getFacePictureUrlList();
 
@@ -115,7 +114,11 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.userFacePictureList(uploadedFacePictureList)
 			.build();
 
-		matchCreatorIfAvailable(pgr);
+		Boolean result = requestMatchService.matchPictureGenerateRequest(pgr);
+		//TODO result 결과로 현재 공급자와 매칭 시도인지 알 수 있으나, 도메인 로직상 사용하지 않음
+		// edited at 2024-05-19
+		// author 서병렬
+
 		pictureGenerateRequestPort.save(pgr);
 
 		return true;
@@ -146,21 +149,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 		findPictureGenerateRequest.modify(modifyDto, picturePose, pictureUserFaceList);
 		return true;
-	}
-
-	private void matchCreatorIfAvailable(PictureGenerateRequest pgr) {
-		List<Creator> creatorList = creatorRepository.findAllAvailableCreator();
-		if (!creatorList.isEmpty()) {
-			Creator randomSelectedCreator = RandomUtils.getRandomElement(creatorList);
-			pgr.assign(randomSelectedCreator);
-			sendNotification(randomSelectedCreator);
-		}
-	}
-
-	private void sendNotification(Creator creator) {
-		//TODO 공급자 앱에 푸시알림
-		// edited at 2024-05-04
-		// author
 	}
 
 }

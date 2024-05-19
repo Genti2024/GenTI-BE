@@ -3,13 +3,17 @@ package com.gt.genti.application.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.ChangeUserStatusRequestDto;
+import com.gt.genti.dto.ChangeUserRoleDto;
+import com.gt.genti.dto.ChangeUserStatusDto;
 import com.gt.genti.dto.UserInfoResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
+import com.gt.genti.repository.CreatorRepository;
+import com.gt.genti.repository.DepositRepository;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepository;
+	private final DepositService depositService;
+	private final CreatorRepository creatorRepository;
 
 	@Transactional
 	public UserInfoResponseDto getUserInfo(Long id) {
@@ -66,9 +72,25 @@ public class UserService {
 	}
 
 	@Transactional
-	public Boolean updateUserStatus(Long userId, ChangeUserStatusRequestDto changeUserStatusRequestDto) {
-		User findUser = userRepository.findById(userId).orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
-		findUser.updateStatus(changeUserStatusRequestDto.getUserStatus());
+	public Boolean updateUserStatus(Long userId, ChangeUserStatusDto changeUserStatusDto) {
+		User foundUser = findUserById(userId);
+		foundUser.updateStatus(changeUserStatusDto.getUserStatus());
 		return true;
+	}
+
+
+
+	@Transactional
+	public Boolean updateUserRole(Long userId, ChangeUserRoleDto changeUserRoleDto) {
+		User foundUser = findUserById(userId);
+		foundUser.updateUserRole(changeUserRoleDto.getUserRole());
+		Creator newCreator = new Creator(foundUser);
+		creatorRepository.save(newCreator);
+		depositService.createDeposit(foundUser);
+		return true;
+	}
+
+	private User findUserById(Long userId) {
+		return userRepository.findById(userId).orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 	}
 }

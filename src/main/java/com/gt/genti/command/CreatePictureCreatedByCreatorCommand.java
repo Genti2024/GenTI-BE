@@ -1,10 +1,7 @@
 package com.gt.genti.command;
 
-import org.intellij.lang.annotations.JdkConstants;
-
 import com.gt.genti.domain.PictureGenerateResponse;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,13 +11,13 @@ import lombok.NoArgsConstructor;
 public class CreatePictureCreatedByCreatorCommand {
 	String url;
 	PictureGenerateResponse pictureGenerateResponse;
-	Long uploadedBy;
+	Long userId;
 
 	@Builder
 	public CreatePictureCreatedByCreatorCommand(String url, PictureGenerateResponse pictureGenerateResponse,
-		Long uploadedBy) {
+		Long userId) {
 		this.url = url;
 		this.pictureGenerateResponse = pictureGenerateResponse;
-		this.uploadedBy = uploadedBy;
+		this.userId = userId;
 	}
 }

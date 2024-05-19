@@ -29,13 +29,13 @@ public interface PictureGenerateRequestRepository
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.IN_PROGRESS "
 		+ "and pgr.creator= :creator "
-		+ "order by pgr.createdAt asc "
+		+ "order by pgr.createdAt desc "
 		+ "limit 1 ")
 	Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
 		Creator creator);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
-		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.ASSIGNING "
+		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.domain.enums.PictureGenerateRequestStatus.CREATED "
 		+ "and pgr.creator is null "
 		+ "order by pgr.createdAt desc")
 	List<PictureGenerateRequest> findPendingRequests();

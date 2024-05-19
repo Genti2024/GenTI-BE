@@ -39,7 +39,7 @@ public class AdminPictureController {
 		CreatePictureCompletedCommand command = CreatePictureCompletedCommand.builder()
 			.pictureGenerateResponse(foundPictureGenerateResponse)
 			.url(requestDto.getUrl())
-			.uploadedBy(userDetails.getId()).build();
+			.userId(userDetails.getId()).build();
 		pictureService.updatePicture(command);
 		return success(true);
 	}

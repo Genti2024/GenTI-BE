@@ -36,7 +36,7 @@ public class Creator extends BaseTimeEntity {
 	@Column(name = "workable", nullable = false)
 	Boolean workable;
 
-	@OneToOne()
+	@OneToOne
 	@JoinColumn(name = "user_id")
 	User user;
 
@@ -51,9 +51,9 @@ public class Creator extends BaseTimeEntity {
 	@Column(name = "account_number")
 	String accountNumber;
 
-	@Builder
-	public Creator(Boolean workable) {
-		this.workable = workable;
+	public Creator(User user) {
+		this.workable = true;
+		this.user = user;
 	}
 
 	public void updateAccountInfo(BankType bankType, String accountNumber){

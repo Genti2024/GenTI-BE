@@ -11,12 +11,13 @@ import com.gt.genti.domain.Post;
 import com.gt.genti.domain.User;
 
 public class PictureEntityUtils {
-	public static PictureCompleted makePictureCompleted(String url, PictureGenerateResponse pgres, Long uploadedBy) {
+	public static PictureCompleted makePictureCompleted(String url, PictureGenerateResponse pgres, User uploadedBy) {
 		return new PictureCompleted(url, pgres, uploadedBy);
 	}
 
 	public static PictureCreatedByCreator makePictureCreatedByCreator(String url, PictureGenerateResponse pgres,
-		Long uploadedBy) {
+		User uploadedBy) {
+
 		return new PictureCreatedByCreator(url, pgres, uploadedBy);
 	}
 
@@ -28,7 +29,8 @@ public class PictureEntityUtils {
 		return new PicturePost(url, post);
 	}
 
-	public static PicturePose makePicturePose(String url, Long uploadedBy) {
+	public static PicturePose makePicturePose(String url, User uploadedBy) {
+
 		return new PicturePose(url, uploadedBy);
 	}
 

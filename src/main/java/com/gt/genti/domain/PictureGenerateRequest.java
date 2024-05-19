@@ -1,5 +1,8 @@
 package com.gt.genti.domain;
 
+import static com.gt.genti.other.util.TimeUtils.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
@@ -12,6 +15,8 @@ import com.gt.genti.domain.enums.converter.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.ShotCoverageConverter;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -78,6 +83,8 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Column(name = "request_status", nullable = false)
 	@Convert(converter = RequestStatusConverter.class)
 	PictureGenerateRequestStatus pictureGenerateRequestStatus;
+	
+	
 
 	@Builder
 	public PictureGenerateRequest(User requester, PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto,
@@ -104,11 +111,22 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	}
 
 	public void assign(Creator creator) {
-		if (this.pictureGenerateRequestStatus != PictureGenerateRequestStatus.ASSIGNING) {
+		if (this.pictureGenerateRequestStatus != PictureGenerateRequestStatus.CREATED) {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}
 		this.creator = creator;
+	}
+
+	public void accept(){
+		if(LocalDateTime.now().isAfter(this.getModifiedAt().plusMinutes(ACCEPTABLE_TIME_MINUTE))){
+			throw new ExpectedException(ErrorCode.ExpiredPictureGenerateRequest);
+		}
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;
+	}
+
+	public void reject() {
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.CREATED;
+
 	}
 }

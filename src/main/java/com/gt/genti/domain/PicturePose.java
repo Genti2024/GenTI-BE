@@ -26,7 +26,7 @@ public class PicturePose extends PictureEntity {
 	@Column(name = "url", nullable = false)
 	String url;
 
-	public PicturePose(String url, Long uploadedBy) {
+	public PicturePose(String url, User uploadedBy) {
 		this.url = url;
 		this.setUploadedBy(uploadedBy);
 	}

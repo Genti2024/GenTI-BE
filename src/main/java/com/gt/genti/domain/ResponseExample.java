@@ -1,6 +1,5 @@
 package com.gt.genti.domain;
 
-import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.dto.AddPromptOnlyExampleRequestDto;
 import com.gt.genti.dto.AddResponseExampleRequestDto;
@@ -10,8 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,26 +32,22 @@ public class ResponseExample extends PictureEntity {
 	@Column(name = "prompt_only")
 	Boolean promptOnly;
 
-	@OneToOne
-	@JoinColumn(name = "created_by")
-	User createdBy;
-
-	public ResponseExample(AddResponseExampleRequestDto dto, User createdBy) {
+	public ResponseExample(AddResponseExampleRequestDto dto, User uploadedBy) {
 		this.promptOnly = false;
 		this.examplePictureUrl = dto.getUrl();
 		this.examplePrompt = dto.getPrompt();
-		this.createdBy = createdBy;
+		this.setUploadedBy(uploadedBy);
 	}
 
-	public ResponseExample(AddPromptOnlyExampleRequestDto dto, User createdBy) {
+	public ResponseExample(AddPromptOnlyExampleRequestDto dto, User uploadedBy) {
 		this.promptOnly = true;
 		this.examplePictureUrl = null;
 		this.examplePrompt = dto.getPrompt();
-		this.createdBy = createdBy;
+		this.setUploadedBy(uploadedBy);
 	}
 
 	@Override
-	public String getUrl(){
+	public String getUrl() {
 		return this.getExamplePictureUrl();
 	}
 }

@@ -32,7 +32,7 @@ public class PictureCreatedByCreator extends PictureEntity {
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCreatedByCreator(String url, PictureGenerateResponse pictureGenerateResponse, Long uploadedBy) {
+	public PictureCreatedByCreator(String url, PictureGenerateResponse pictureGenerateResponse, User uploadedBy) {
 
 		this.url = url;
 		this.pictureGenerateResponse = pictureGenerateResponse;

@@ -47,4 +47,6 @@ public class CreatorController {
 		@RequestBody UpdateCreatorStatusRequestDto updateCreatorStatusRequestDto) {
 		return success(creatorService.updateCreatorStatus(userDetails.getId(), updateCreatorStatusRequestDto));
 	}
+
+
 }

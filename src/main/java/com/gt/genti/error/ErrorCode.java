@@ -35,7 +35,12 @@ public enum ErrorCode {
 	CreatorNotFound(HttpStatus.NOT_FOUND, ErrorUtils.CreatorNotFound, "공급자를 찾을 수 없습니다."),
 	PictureNotFound(HttpStatus.NOT_FOUND, ErrorUtils.PictureNotFound, "사진을 찾을 수 없습니다."),
 	NotAssignedToMe(HttpStatus.BAD_REQUEST, ErrorUtils.NotAssignedToMe, "나에게 매칭된 요청이 아닙니다."),
-	NotMatchedYet(HttpStatus.BAD_REQUEST, ErrorUtils.NotMatchedYet, "아직 매칭되지 않은 요청을 조회할 수 없습니다.");
+	NotMatchedYet(HttpStatus.BAD_REQUEST, ErrorUtils.NotMatchedYet, "아직 매칭되지 않은 요청을 조회할 수 없습니다."),
+	ExpiredPictureGenerateRequest(HttpStatus.BAD_REQUEST, ErrorUtils.ExpiredPictureGenerateRequest, "제출 마감 시간을 초과하였습니다."),
+	ExpiredMatching(HttpStatus.BAD_REQUEST, ErrorUtils.ExpiredMatching, "수락 마감 시간을 초과하였습니다."),
+	DepositNotFound(HttpStatus.NOT_FOUND, ErrorUtils.DepositNotFound, "사용자의 포인트 정보를 불러올 수 없습니다."),
+	AddPointAmountCannotBeMinus(HttpStatus.BAD_REQUEST, ErrorUtils.AddPointAmountCannotBeMinus, "적립될 포인트는 음수일 수 없습니다."),
+	Undefined(HttpStatus.INTERNAL_SERVER_ERROR, "UNDEFINED", "FOR FE 원래 비즈니스 로직 상 발생하면 안되는 오류입니다. 문의 부탁드립니다.");
 
 	private final HttpStatusCode status;
 	private final String code;

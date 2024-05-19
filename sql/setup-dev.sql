@@ -40,13 +40,13 @@ insert ignore into creator (id, user_id, workable, created_at, modified_at)
 values (:creatorId, :creatorUserId, true, localtime, localtime),
        (2, :emptyCreatorId, false, localtime, localtime);
 
-insert ignore into picture_pose (id, created_at, modified_at, url)
-values (1, LOCALTIME, LOCALTIME, 'pose_picture_url1'),
-       (2, LOCALTIME, LOCALTIME, 'pose_picture_url2'),
-       (3, LOCALTIME, LOCALTIME, 'pose_picture_url3'),
-       (4, LOCALTIME, LOCALTIME, 'pose_picture_url4');
+insert ignore into picture_pose (id, created_at, modified_at, url, uploaded_by)
+values (1, LOCALTIME, LOCALTIME, 'pose_picture_url1', :userId),
+       (2, LOCALTIME, LOCALTIME, 'pose_picture_url2', :userId),
+       (3, LOCALTIME, LOCALTIME, 'pose_picture_url3', :userId),
+       (4, LOCALTIME, LOCALTIME, 'pose_picture_url4', :userId);
 
-insert ignore into picture_user_face (id, created_at, modified_at, url, user_id)
+insert ignore into picture_user_face (id, created_at, modified_at, url, uploaded_by)
 values (1, LOCALTIME, LOCALTIME, 'user_face_picture_url1', :userId),
        (2, LOCALTIME, LOCALTIME, 'user_face_picture_url2', :userId),
        (3, LOCALTIME, LOCALTIME, 'user_face_picture_url3', :userId),
@@ -116,17 +116,40 @@ insert ignore into report (id, created_at, modified_at, content, report_status, 
 values (1, localtime, localtime, '변태자식이 본인 발가락 사진을 보낸 것 같습니다.', 'NOT_RESOLVED', 4),
        (2, localtime, localtime, '모르는 사람 얼굴이에요', 'RESOLVED', 6);
 
-insert ignore into picture_created_by_creator (id, created_at, modified_at, url, picture_generate_response_id)
-values (1, localtime, localtime, '얼굴 완성 전 url 1', 2),
-       (2, localtime, localtime, '얼굴 완성 전 url 2', 3),
-       (3, localtime, localtime, '얼굴 완성 전 url 3', 4);
+insert ignore into picture_created_by_creator (id, created_at, modified_at, url, picture_generate_response_id,
+                                               uploaded_by)
+values (1, localtime, localtime, '얼굴 완성 전 url 1', 2, :creatorUserId),
+       (2, localtime, localtime, '얼굴 완성 전 url 2', 3, :creatorUserId),
+       (3, localtime, localtime, '얼굴 완성 전 url 3', 4, :creatorUserId);
 
-insert ignore into picture_completed (id, created_at, modified_at, url, picture_generate_response_id, user_id)
-values (1, localtime, localtime, '얼굴 완성 사진 url 1', 3, :userId),
-       (2, localtime, localtime, '얼굴 완성 사진 url 2', 4, :userId),
-       (3, localtime, localtime, '얼굴 완성 사진 url 3', 5, :userId),
-       (4, localtime, localtime, '얼굴 완성 사진 url 4', 6, :userId);
+insert ignore into picture_completed (id, created_at, modified_at, url, picture_generate_response_id, user_id,
+                                      uploaded_by)
+values (1, localtime, localtime, '얼굴 완성 사진 url 1', 3, :userId, :adminId),
+       (2, localtime, localtime, '얼굴 완성 사진 url 2', 4, :userId, :adminId),
+       (3, localtime, localtime, '얼굴 완성 사진 url 3', 5, :userId, :adminId),
+       (4, localtime, localtime, '얼굴 완성 사진 url 4', 6, :userId, :adminId);
 
+insert ignore into response_example (id, created_at, modified_at, example_picture_url, example_prompt, prompt_only,
+                                     uploaded_by)
+values (1, localtime, localtime, '/EXAMPLE/벚꽃벤치여자.png', '벚꽃 벤치 여자', false, :adminId),
+       (2, localtime, localtime, '/EXAMPLE/한강잠수부.png', '한강잠수부', false, :adminId),
+       (3, localtime, localtime, null, '프롬프트만있음 사진은 없고', true, :adminId);
+
+
+insert ignore into settlement (id, created_at, modified_at, elapsed_minutes, reward, picture_generate_response_id)
+values (1, localtime, localtime, 80, 2000, 2),
+       (2, localtime, localtime, 50, 2500, 3),
+       (3, localtime, localtime, 230, 1000, 5);
+
+insert ignore into deposit (id, created_at, modified_at, deposit_amount, user_id)
+values (1, localtime, localtime, 0, :adminId),
+       (2, localtime, localtime, 1000, :userId),
+       (3, localtime, localtime, 0, :emptyUserId),
+       (4, localtime, localtime, 0, :creatorUserId),
+       (5, localtime, localtime, 0, :emptyCreatorId),
+       (6, localtime, localtime, 0, :oauthFirstJoinUserId),
+       (7, localtime, localtime, 0, :deactivatedUserId),
+       (8, localtime, localtime, 0, :deactivatedCreatorId);
 
 # insert ignore into post (id, user_id, main_picture_id, content, likes, post_status, created_at)
 # values (1, 3, 1, 'post content 테스트', 1001, 'POSTED', '20010101')

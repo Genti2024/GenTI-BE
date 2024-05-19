@@ -149,4 +149,8 @@ public class User extends BaseTimeEntity {
 	public void updateStatus(UserStatus userStatus) {
 		this.userStatus = userStatus;
 	}
+
+	public void updateUserRole(UserRole userRole){
+		this.roles = userRole.getStringValue();
+	}
 }

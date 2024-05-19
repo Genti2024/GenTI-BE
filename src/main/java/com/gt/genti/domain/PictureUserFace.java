@@ -25,17 +25,13 @@ public class PictureUserFace extends PictureEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	User user;
-
 	@Column(name = "url", nullable = false)
 	String url;
 
 	@Builder
 	public PictureUserFace(String url, User user) {
 		this.url = url;
-		this.user = user;
+		this.setUploadedBy(user);
 	}
 
 	public void modify(String url){

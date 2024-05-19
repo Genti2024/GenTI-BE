@@ -17,11 +17,11 @@ import com.gt.genti.application.service.PictureGenerateWorkService;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
+import com.gt.genti.dto.PictureGenerateResponseSubmitDto;
 import com.gt.genti.dto.UpdateMemoRequestDto;
 import com.gt.genti.dto.UpdatePictureUrlRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,6 +36,20 @@ public class PictureGenerateWorkController {
 	) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestBrief(
 			userDetails.getId(), PictureGenerateRequestStatus.ASSIGNING));
+	}
+
+	@PostMapping("/picture-generate-requests/{pictureGenerateRequestId}/accept")
+	public ResponseEntity<ApiResult<Boolean>> acceptPictureGenerateRequest(
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@PathVariable Long pictureGenerateRequestId) {
+		return success(pictureGenerateWorkService.acceptPictureGenerateRequest(userDetails.getId(), pictureGenerateRequestId));
+	}
+
+	@PostMapping("/picture-generate-requests/{pictureGenerateRequestId}/reject")
+	public ResponseEntity<ApiResult<Boolean>> rejectPictureGenerateRequest(
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@PathVariable Long pictureGenerateRequestId) {
+		return success(pictureGenerateWorkService.rejectPictureGenerateRequest(userDetails.getId(), pictureGenerateRequestId));
 	}
 
 	@GetMapping("/picture-generate-requests/{pictureGenerateRequestId}")
@@ -61,13 +75,15 @@ public class PictureGenerateWorkController {
 		@RequestBody List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList
 	) {
 		return success(
-			pictureGenerateWorkService.updatePictureCreatedByCreatorList(pictureGenerateResponseId, updatePictureUrlRequestDtoList, userDetails.getId()));
+			pictureGenerateWorkService.updatePictureCreatedByCreatorList(pictureGenerateResponseId,
+				updatePictureUrlRequestDtoList, userDetails.getId()));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/submit")
-	public ResponseEntity<ApiResult<Boolean>> submitPictureGenerateResponse(
+	public ResponseEntity<ApiResult<PictureGenerateResponseSubmitDto>> submitPictureGenerateResponse(
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateResponseId) {
-		return success(pictureGenerateWorkService.submit(pictureGenerateResponseId));
+		return success(pictureGenerateWorkService.submit(userDetails.getId(), pictureGenerateResponseId));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/memo")

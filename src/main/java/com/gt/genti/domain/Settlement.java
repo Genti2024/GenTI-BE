@@ -1,6 +1,6 @@
 package com.gt.genti.domain;
 
-import java.sql.Time;
+import java.time.Duration;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 
@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,10 +30,18 @@ public class Settlement extends BaseTimeEntity {
 	@JoinColumn(name = "picture_generate_response_id", referencedColumnName = "id", nullable = false)
 	PictureGenerateResponse pictureGenerateResponse;
 
-	@Column(name = "elapsed")
-	Time elapsed;
+	@Column(name = "elapsed_minutes")
+	Long elapsedMinutes;
 
-	@Column(name = "point")
-	Long point;
+	@Column(name = "reward")
+	Long reward;
+	Boolean withdrawn;
 
+	@Builder
+
+	public Settlement(PictureGenerateResponse pictureGenerateResponse, Duration elapsed, Long reward) {
+		this.pictureGenerateResponse = pictureGenerateResponse;
+		this.elapsedMinutes = elapsed.toMinutes();
+		this.reward = reward;
+	}
 }

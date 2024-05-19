@@ -32,7 +32,6 @@ public class PictureGenerateRequestBriefResponseDto {
 		this.createdAt = pgreq.getCreatedAt();
 		Duration duration = Duration.between(LocalDateTime.now(),
 			createdAt.plusMinutes(TimeUtils.ACCEPTABLE_TIME_MINUTE));
-		this.remainTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutes(),
-			duration.toSeconds());
+		this.remainTime = TimeUtils.getTimeString(duration);
 	}
 }

@@ -40,7 +40,14 @@ public enum ErrorCode {
 	ExpiredMatching(HttpStatus.BAD_REQUEST, ErrorUtils.ExpiredMatching, "수락 마감 시간을 초과하였습니다."),
 	DepositNotFound(HttpStatus.NOT_FOUND, ErrorUtils.DepositNotFound, "사용자의 포인트 정보를 불러올 수 없습니다."),
 	AddPointAmountCannotBeMinus(HttpStatus.BAD_REQUEST, ErrorUtils.AddPointAmountCannotBeMinus, "적립될 포인트는 음수일 수 없습니다."),
+	FinalPictureNotUploadedYet(HttpStatus.BAD_REQUEST, ErrorUtils.FinalPictureNotUploadedYet, "최종 작업 사진이 제출되지 않았습니다."),
+	CreatorsPictureNotUploadedYet(HttpStatus.BAD_REQUEST, ErrorUtils.CreatorsPictureNotUploadedYet, "작업 사진이 제출되지 않았습니다."),
+	UserDeactivated(HttpStatus.BAD_REQUEST, ErrorUtils.UserDeactivated, "비활성화된 계정입니다."),
+	AlreadyActivatedUser(HttpStatus.BAD_REQUEST, ErrorUtils.AlreadyActivatedUser, "비활성화 되지 않은 상태의 유저입니다."),
+	CannotRestoreUser(HttpStatus.BAD_REQUEST, ErrorUtils.CannotRestoreUser, "탈퇴 후 한달이 지난 경우 재가입해야합니다."),
+
 	Undefined(HttpStatus.INTERNAL_SERVER_ERROR, "UNDEFINED", "FOR FE 원래 비즈니스 로직 상 발생하면 안되는 오류입니다. 문의 부탁드립니다.");
+
 
 	private final HttpStatusCode status;
 	private final String code;

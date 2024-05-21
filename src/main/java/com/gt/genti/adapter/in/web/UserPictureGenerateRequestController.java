@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/users/picture-generate-requests")
 @RequiredArgsConstructor
-public class PictureGenerateRequestController {
+public class UserPictureGenerateRequestController {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 
 	@CheckUserIsQuit

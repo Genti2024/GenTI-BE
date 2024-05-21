@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/creators")
 @RequiredArgsConstructor
-public class PictureGenerateWorkController {
+public class CreatorPictureGenerateController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
 	@GetMapping("/picture-generate-requests/assigned")
@@ -83,7 +83,7 @@ public class PictureGenerateWorkController {
 	public ResponseEntity<ApiResult<PictureGenerateResponseSubmitDto>> submitPictureGenerateResponse(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateResponseId) {
-		return success(pictureGenerateWorkService.submit(userDetails.getId(), pictureGenerateResponseId));
+		return success(pictureGenerateWorkService.submitToAdmin(userDetails.getId(), pictureGenerateResponseId));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/memo")

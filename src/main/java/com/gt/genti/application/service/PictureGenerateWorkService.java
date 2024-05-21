@@ -3,7 +3,6 @@ package com.gt.genti.application.service;
 import static com.gt.genti.other.util.TimeUtils.*;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,6 +10,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.command.CreatePictureCompletedCommand;
 import com.gt.genti.command.CreatePictureCreatedByCreatorCommand;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.Deposit;
@@ -18,9 +18,9 @@ import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.Settlement;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
+import com.gt.genti.dto.PictureGenerateResponseAdminSubmitDto;
 import com.gt.genti.dto.PictureGenerateResponseSubmitDto;
 import com.gt.genti.dto.UpdateMemoRequestDto;
 import com.gt.genti.dto.UpdatePictureUrlRequestDto;
@@ -91,46 +91,9 @@ public class PictureGenerateWorkService {
 	}
 
 	@Transactional
-	public PictureGenerateResponseSubmitDto submit(Long userId, Long pictureGenerateResponseId) {
-		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(
-				pictureGenerateResponseId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
-		Creator foundCreator = creatorRepository.findByUserId(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.CreatorNotFound));
-
-		if (!Objects.equals(foundPGRES.getCreator().getId(), foundCreator.getId())) {
-			throw new ExpectedException(ErrorCode.NotAssignedToMe);
-		}
-
-		foundPGRES.updateStatus(PictureGenerateResponseStatus.SUBMITTED_FINAL);
-
-		LocalDateTime createdAt = foundPGRES.getCreatedAt();
-		Duration elapsedDuration = Duration.between(createdAt, LocalDateTime.now());
-
-		if (elapsedDuration.compareTo(Duration.ofHours(TimeUtils.PGRES_LIMIT_HOUR)) > 0) {
-			throw new ExpectedException(ErrorCode.ExpiredPictureGenerateRequest);
-		}
-		Long reword = calculateReward(elapsedDuration.toMinutes());
-		Settlement settlement = Settlement.builder()
-			.pictureGenerateResponse(foundPGRES)
-			.elapsed(elapsedDuration)
-			.reward(reword).build();
-
-		settlementRepository.save(settlement);
-		Deposit foundDeposit = depositRepository.findByUserId(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.DepositNotFound));
-		foundDeposit.add(reword);
-		return PictureGenerateResponseSubmitDto.builder()
-			.elapsedTime(getTimeString(elapsedDuration))
-			.build();
-	}
-
-	@Transactional
 	public Boolean updatePictureCreatedByCreatorList(Long pictureGenerateResponseId,
 		List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList, Long uploaderId) {
-		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
-				pictureGenerateResponseId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
+		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
 
 		List<CreatePictureCreatedByCreatorCommand> newUploadPictures = updatePictureUrlRequestDtoList.stream()
 			.map(command -> CreatePictureCreatedByCreatorCommand.builder()
@@ -146,9 +109,7 @@ public class PictureGenerateWorkService {
 
 	@Transactional
 	public Boolean updateMemo(Long pictureGenerateResponseId, UpdateMemoRequestDto updateMemoRequestDto) {
-		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
-				pictureGenerateResponseId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
+		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
 		foundPictureGenerateResponse.updateMemo(updateMemoRequestDto.getMemo());
 		return true;
 	}
@@ -182,6 +143,89 @@ public class PictureGenerateWorkService {
 
 		foundPictureGenerateRequest.reject();
 		requestMatchService.matchPictureGenerateRequest(foundPictureGenerateRequest);
+		return true;
+	}
+
+	@Transactional
+	public PictureGenerateResponseSubmitDto submitToAdmin(Long userId, Long pictureGenerateResponseId) {
+		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
+		Creator foundCreator = findCreatorByUserId(userId);
+
+		if (!Objects.equals(foundPGRES.getCreator().getId(), foundCreator.getId())) {
+			throw new ExpectedException(ErrorCode.NotAssignedToMe);
+		}
+
+		pictureService.findPictureCreatedByCreatorByPictureGenerateResponse(foundPGRES)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.CreatorsPictureNotUploadedYet));
+
+		foundPGRES.creatorSubmit();
+
+		Duration elapsedDuration = foundPGRES.getElapsedTime();
+
+		if (elapsedDuration.compareTo(Duration.ofHours(TimeUtils.PGRES_LIMIT_HOUR)) > 0) {
+			throw new ExpectedException(ErrorCode.ExpiredPictureGenerateRequest);
+		}
+
+		Long reword = calculateReward(elapsedDuration.toMinutes());
+
+		Settlement settlement = Settlement.builder()
+			.pictureGenerateResponse(foundPGRES)
+			.elapsed(elapsedDuration)
+			.reward(reword).build();
+
+		settlementRepository.save(settlement);
+		Deposit foundDeposit = depositRepository.findByUserId(userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.DepositNotFound));
+
+		foundDeposit.add(reword);
+
+		return PictureGenerateResponseSubmitDto.builder()
+			.elapsedTime(getTimeString(elapsedDuration))
+			.build();
+	}
+
+	@Transactional
+	public PictureGenerateResponseAdminSubmitDto submitFinal(Long pictureGenerateResponseId) {
+		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
+		pictureService.findPictureCompletedByPictureGenerateResponse(
+			foundPGRES).orElseThrow(() -> new ExpectedException(ErrorCode.FinalPictureNotUploadedYet));
+
+		foundPGRES.adminSubmit();
+		Duration elapsedDuration = foundPGRES.getElapsedTime();
+
+		//TODO 어드민은 시간 체크 할 필요 없겠지?
+		// edited at 2024-05-20
+		// author 서병렬
+
+		//TODO 요청자에게 앱 푸시알림
+		// edited at 2024-05-21
+		// author 서병렬
+
+		return PictureGenerateResponseAdminSubmitDto.builder()
+			.elapsedTime(getTimeString(elapsedDuration))
+			.build();
+	}
+
+	private PictureGenerateResponse findPGRES(Long pictureGenerateResponseId) {
+		return pictureGenerateResponseRepository.findById(
+				pictureGenerateResponseId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
+	}
+
+	public Boolean updatePictureListCreatedByAdmin(Long userId, List<UpdatePictureUrlRequestDto> requestDtoList,
+		Long pictureGenerateResponseId) {
+		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
+				pictureGenerateResponseId)
+			.orElseThrow(() -> new ExpectedException(
+				ErrorCode.PictureGenerateResponseNotFound));
+
+		List<CreatePictureCompletedCommand> commandList = requestDtoList.stream().map(
+			dto -> CreatePictureCompletedCommand.builder()
+				.pictureGenerateResponse(foundPictureGenerateResponse)
+				.url(dto.getUrl())
+				.userId(userId).build()
+		).toList();
+		pictureService.updatePictures(commandList);
 		return true;
 	}
 }

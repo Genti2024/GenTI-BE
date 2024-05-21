@@ -16,6 +16,7 @@ import com.gt.genti.command.CreatePictureUserFaceCommand;
 import com.gt.genti.domain.Picture;
 import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureCreatedByCreator;
+import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PicturePost;
 import com.gt.genti.domain.PictureProfile;
@@ -44,6 +45,10 @@ public class PictureService {
 	private final PictureProfileRepository pictureProfileRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final PicturePoseRepository picturePoseRepository;
+
+	public Optional<PictureCompleted> findPictureCompletedByPictureGenerateResponse(PictureGenerateResponse pgres) {
+		return pictureCompletedRepository.findByPictureGenerateResponse(pgres);
+	}
 
 	public Optional<PictureUserFace> findByUrlPictureUserFace(String url) {
 		return pictureUserFaceRepository.findByUrl(url);
@@ -80,6 +85,18 @@ public class PictureService {
 			command.getPictureGenerateResponse(), foundUser);
 
 		return pictureCompletedRepository.save(pictureCompleted);
+	}
+
+	public List<PictureCompleted> updatePictures(List<CreatePictureCompletedCommand> commandList) {
+		User foundUser = findUser(commandList.get(0).getUserId());
+
+		List<PictureCompleted> pictureCompletedList = commandList.stream().map(
+			command -> PictureEntityUtils.makePictureCompleted(
+				command.getUrl(),
+				command.getPictureGenerateResponse(), foundUser)
+		).toList();
+
+		return pictureCompletedRepository.saveAll(pictureCompletedList);
 	}
 
 	public Picture updatePicture(CreatePictureUserFaceCommand createPictureUserFaceCommand) {
@@ -167,5 +184,10 @@ public class PictureService {
 	private User findUser(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+	}
+
+	public Optional<PictureCreatedByCreator> findPictureCreatedByCreatorByPictureGenerateResponse(
+		PictureGenerateResponse pictureGenerateResponse) {
+		return pictureCreatedByCreatorRepository.findByPictureGenerateResponse(pictureGenerateResponse);
 	}
 }

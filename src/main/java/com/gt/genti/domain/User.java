@@ -12,6 +12,8 @@ import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.OAuthAttributes;
 
 import jakarta.persistence.CascadeType;
@@ -45,10 +47,6 @@ public class User extends BaseTimeEntity {
 	@OneToMany
 	@JoinColumn(name = "user_id")
 	List<PictureUserFace> pictureUserFaceList;
-
-	@OneToMany
-	@JoinColumn(name = "user_id")
-	List<PictureCompleted> createdPictureList;
 
 	@Column(name = "email")
 	String email;
@@ -136,7 +134,7 @@ public class User extends BaseTimeEntity {
 
 	public void restore() {
 		if (Period.between(this.deletedAt.toLocalDate(), LocalDate.now()).getMonths() >= 1) {
-			throw new RuntimeException("탈퇴한 지 한달이 지난 경우 재가입해야합니다.");
+			throw new ExpectedException(ErrorCode.CannotRestoreUser);
 		}
 		this.userStatus = UserStatus.ACTIVATED;
 

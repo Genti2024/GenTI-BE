@@ -48,5 +48,10 @@ public class ErrorUtils {
 
 	public static final String DepositNotFound = CODE(DEPOSIT, 1);
 	public static final String AddPointAmountCannotBeMinus = CODE(DEPOSIT, 2);
+	public static final String FinalPictureNotUploadedYet = CODE(ADMIN, 1);
+	public static final String CreatorsPictureNotUploadedYet = CODE(RESPONSE, 3);
+	public static final String UserDeactivated = CODE(USER, 2);
 
+	public static String AlreadyActivatedUser = CODE(USER, 3);
+	public static String CannotRestoreUser = CODE(USER, 4);
 }

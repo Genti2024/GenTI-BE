@@ -12,11 +12,13 @@ public class CreatorInfoResponseDto {
 	Boolean workable;
 	BankType bankType;
 	String accountNumber;
+	String accountHolder;
 
 	@Builder
-	public CreatorInfoResponseDto(Boolean workable, BankType bankType, String accountNumber) {
+	public CreatorInfoResponseDto(Boolean workable, BankType bankType, String accountNumber, String accountHolder) {
 		this.workable = workable;
 		this.bankType = bankType;
 		this.accountNumber = accountNumber;
+		this.accountHolder = accountHolder;
 	}
 }

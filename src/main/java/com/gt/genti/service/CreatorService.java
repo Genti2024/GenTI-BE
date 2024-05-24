@@ -24,15 +24,16 @@ public class CreatorService {
 		return CreatorInfoResponseDto.builder()
 			.bankType(foundCreator.getBankType())
 			.accountNumber(foundCreator.getAccountNumber())
+			.accountHolder(foundCreator.getAccountHolder())
 			.workable(foundCreator.getWorkable())
 			.build();
 	}
 
 	@Transactional
-	public Boolean updateAccountInfo(Long userId, UpdateAccountInfoRequestDto userInfoUpdateRequestDto) {
+	public Boolean updateAccountInfo(Long userId, UpdateAccountInfoRequestDto dto) {
 		Creator foundCreator = findCreatorByUserId(userId);
-		foundCreator.updateAccountInfo(userInfoUpdateRequestDto.getBankType(),
-			userInfoUpdateRequestDto.getAccountNumber());
+		foundCreator.updateAccountInfo(dto.getBankType(),
+			dto.getAccountNumber(), dto.getAccountHolder());
 		return true;
 	}
 

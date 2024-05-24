@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class UpdateAccountInfoRequestDto {
 	BankType bankType;
 	String accountNumber;
+	String accountHolder;
 }

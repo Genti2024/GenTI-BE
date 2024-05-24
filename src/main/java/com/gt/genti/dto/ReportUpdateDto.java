@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 public class ReportUpdateDto {
 	Long id;
 	ReportStatus reportStatus;
-
 }

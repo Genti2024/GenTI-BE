@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
-	PictureGenerateResponseRepository pictureGenerateResponseRepository;
-	ReportRepository reportRepository;
+	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
+	private final ReportRepository reportRepository;
 
 	public Boolean createReport(ReportCreateRequestDto reportCreateRequestDto) {
 		Long pictureGenerateResponseId = reportCreateRequestDto.getPictureGenerateResponseId();

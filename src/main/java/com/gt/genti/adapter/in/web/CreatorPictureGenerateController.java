@@ -38,6 +38,13 @@ public class CreatorPictureGenerateController {
 			userDetails.getId(), PictureGenerateRequestStatus.ASSIGNING));
 	}
 
+	@GetMapping("/picture-generate-requests/in-progress")
+	public ResponseEntity<ApiResult<List<PictureGenerateRequestDetailResponseDto>>> getInProgressPictureGenerateRequestDetail(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail3(userDetails.getId()));
+	}
+
 	@PostMapping("/picture-generate-requests/{pictureGenerateRequestId}/accept")
 	public ResponseEntity<ApiResult<Boolean>> acceptPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,

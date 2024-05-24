@@ -11,6 +11,7 @@ import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 
 @Repository
 public interface PictureGenerateRequestRepository
@@ -57,10 +58,25 @@ public interface PictureGenerateRequestRepository
 
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.requester.id = :userId "
-		+ "and pgr.pictureGenerateRequestStatus in ("
-		+ "		com.gt.genti.domain.enums.PictureGenerateRequestStatus.ASSIGNING, "
-		+ "		com.gt.genti.domain.enums.PictureGenerateRequestStatus.IN_PROGRESS) "
+		+ "and pgr.pictureGenerateRequestStatus in :statusList "
 		+ "order by pgr.createdAt desc "
 		+ "limit 1 ")
-	Optional<PictureGenerateRequest> findByUserIdOrderByCreatedByDesc(Long userId);
+	Optional<PictureGenerateRequest> findByUserIdAndRequestStatusIn(Long userId,
+		List<PictureGenerateRequestStatus> statusList);
+
+	//TODO 성능 이슈 때문에 dto를 select하도록 변경해야함
+	// edited at 2024-05-23
+	// author 서병렬
+
+	@Query("select pgreq from PictureGenerateRequest pgreq "
+		+ "join PictureGenerateResponse pgres "
+		+ "where pgres.request = pgreq "
+		+ "and pgres.status in :activeResponseStatusList "
+		+ "and pgreq.creator = :foundCreator "
+		+ "and pgreq.pictureGenerateRequestStatus in :activeRequestStatusList "
+		+ "order by pgreq.createdAt desc "
+		+ "limit 3 ")
+	List<PictureGenerateRequest> findByCreatorAndActiveStatus(Creator foundCreator,
+		List<PictureGenerateRequestStatus> activeRequestStatusList,
+		List<PictureGenerateResponseStatus> activeResponseStatusList);
 }

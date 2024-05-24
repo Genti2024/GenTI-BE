@@ -3,6 +3,7 @@ package com.gt.genti.application.service;
 import static com.gt.genti.other.util.TimeUtils.*;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.Settlement;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateResponseAdminSubmitDto;
@@ -80,8 +82,8 @@ public class PictureGenerateWorkService {
 
 	}
 
-	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestDetailAll(Long creatorId) {
-		Creator foundCreator = findCreatorByUserId(creatorId);
+	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestDetailAll(Long userId) {
+		Creator foundCreator = findCreatorByUserId(userId);
 		List<PictureGenerateRequest> foundPGRList = pictureGenerateRequestRepository.findAllByCreatorIsOrderByCreatedAtDesc(
 			foundCreator);
 
@@ -227,6 +229,19 @@ public class PictureGenerateWorkService {
 		).toList();
 		pictureService.updatePictures(commandList);
 		return true;
+	}
+
+	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestDetail3(Long userId) {
+		Creator foundCreator = findCreatorByUserId(userId);
+		List<PictureGenerateRequestStatus> activeRequestStatusList = new ArrayList<>();
+		activeRequestStatusList.add(PictureGenerateRequestStatus.IN_PROGRESS);
+
+		List<PictureGenerateResponseStatus> activeResponseStatusList = new ArrayList<>();
+		activeResponseStatusList.add(PictureGenerateResponseStatus.BEFORE_WORK);
+		List<PictureGenerateRequest> foundPGREQList = pictureGenerateRequestRepository.findByCreatorAndActiveStatus(
+			foundCreator, activeRequestStatusList, activeResponseStatusList);
+
+		return foundPGREQList.stream().map(PictureGenerateRequestDetailResponseDto::new).toList();
 	}
 }
 

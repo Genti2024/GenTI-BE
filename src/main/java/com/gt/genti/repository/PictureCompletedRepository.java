@@ -20,9 +20,9 @@ public interface PictureCompletedRepository extends JpaRepository<PictureComplet
 
 	@Query("select p "
 		+ "from PictureCompleted p "
-		+ ", PictureGenerateResponse pgres "
+		+ "join PictureGenerateResponse pgres "
 		+ "where pgres.request.requester = :user "
-		+ "and p.pictureGenerateResponse = pgres "
+		+ "and p.pictureGenerateResponse.id = pgres.id "
 		+ "order by p.createdAt desc ")
 	List<PictureCompleted> findAllByUser(User user);
 }

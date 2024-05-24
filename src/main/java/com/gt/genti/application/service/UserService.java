@@ -21,7 +21,9 @@ import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -84,6 +86,7 @@ public class UserService {
 
 	public List<CommonPictureResponseDto> getAllMyGeneratedPicture(Long userId) {
 		User foundUser = findActivateUserByUserId(userId);
+		log.info("userId" + userId);
 		List<PictureCompleted> pictureCompletedList = pictureCompletedRepository.findAllByUser(foundUser);
 		return pictureCompletedList.stream()
 			.map(entity -> new CommonPictureResponseDto(entity.getId(), entity.getUrl()))

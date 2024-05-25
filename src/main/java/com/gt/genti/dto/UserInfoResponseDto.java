@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 public class UserInfoResponseDto {
 	Long id;
 	String username;
-	Long pictureId;
+	Long profilePictureId;
 	String url;
 
 	@Builder
 	public UserInfoResponseDto(User user, PictureProfile pictureProfile){
 		this.id = user.getId();
 		this.username = user.getUsername();
-		this.pictureId = pictureProfile.getId();
+		this.profilePictureId = pictureProfile.getId();
 		this.url = pictureProfile.getUrl();
 	}
 }

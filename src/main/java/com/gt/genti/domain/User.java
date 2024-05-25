@@ -10,6 +10,7 @@ import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
+import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
@@ -69,11 +70,18 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "login_id")
 	String loginId;
+
 	@Column(name = "password")
 	String password;
 
 	@OneToOne(mappedBy = "user")
 	Creator creator;
+
+	@Column(name = "userRole")
+	@Convert(converter = UserRoleConverter.class)
+	UserRole userRole;
+
+	String roles;
 
 	@Column(name = "last_login_social_platform")
 	@Convert(converter = OauthTypeConverterIgnoreCase.class)
@@ -81,8 +89,6 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "deleted_at")
 	LocalDateTime deletedAt;
-
-	String roles;
 
 	public static User createPrincipalOnlyUser(Long id) {
 		return new User(id);
@@ -148,7 +154,7 @@ public class User extends BaseTimeEntity {
 		this.userStatus = userStatus;
 	}
 
-	public void updateUserRole(UserRole userRole){
+	public void updateUserRole(UserRole userRole) {
 		this.roles = userRole.getStringValue();
 	}
 }

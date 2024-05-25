@@ -144,7 +144,7 @@ public class PictureGenerateWorkService {
 		}
 
 		foundPictureGenerateRequest.reject();
-		requestMatchService.matchPictureGenerateRequest(foundPictureGenerateRequest);
+		requestMatchService.matchRejectedRequest(foundPictureGenerateRequest);
 		return true;
 	}
 

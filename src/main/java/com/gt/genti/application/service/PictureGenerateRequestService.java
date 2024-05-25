@@ -3,6 +3,7 @@ package com.gt.genti.application.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
@@ -85,6 +86,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
+	@Transactional
 	public Boolean createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 
@@ -114,11 +116,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.userFacePictureList(uploadedFacePictureList)
 			.build();
 
-		Boolean result = requestMatchService.matchPictureGenerateRequest(pgr);
-		//TODO result 결과로 현재 공급자와 매칭 시도인지 알 수 있으나, 도메인 로직상 사용하지 않음
-		// edited at 2024-05-19
-		// author 서병렬
-
+		requestMatchService.matchNewRequest(pgr);
 		pictureGenerateRequestPort.save(pgr);
 
 		return true;

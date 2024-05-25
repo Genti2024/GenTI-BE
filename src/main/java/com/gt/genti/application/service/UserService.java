@@ -9,10 +9,12 @@ import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.dto.ChangeUserRoleDto;
 import com.gt.genti.dto.ChangeUserStatusDto;
 import com.gt.genti.dto.CommonPictureResponseDto;
 import com.gt.genti.dto.UserInfoResponseDto;
+import com.gt.genti.dto.UserInfoResponseDtoForAdmin;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -77,10 +79,16 @@ public class UserService {
 	@Transactional
 	public Boolean updateUserRole(Long userId, ChangeUserRoleDto changeUserRoleDto) {
 		User foundUser = findActivateUserByUserId(userId);
+		UserRole userRole = changeUserRoleDto.getUserRole();
 		foundUser.updateUserRole(changeUserRoleDto.getUserRole());
-		Creator newCreator = new Creator(foundUser);
-		creatorRepository.save(newCreator);
-		depositService.createDeposit(foundUser);
+		if(userRole ==UserRole.CREATOR){
+			Creator newCreator = new Creator(foundUser);
+			creatorRepository.save(newCreator);
+			depositService.createDeposit(foundUser);
+		} else if(userRole == UserRole.ADMIN){
+			Creator newCreator = new Creator(foundUser);
+			creatorRepository.save(newCreator);
+		}
 		return true;
 	}
 
@@ -111,5 +119,10 @@ public class UserService {
 			throw new ExpectedException(ErrorCode.AlreadyActivatedUser);
 		}
 		return foundUser;
+	}
+
+	public List<UserInfoResponseDtoForAdmin> getAllUserInfo() {
+		// userRepository
+		return null;
 	}
 }

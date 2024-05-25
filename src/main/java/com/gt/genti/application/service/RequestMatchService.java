@@ -1,5 +1,6 @@
 package com.gt.genti.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -8,10 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
-import com.gt.genti.external.discord.service.DiscordService;
-import com.gt.genti.other.util.RandomUtils;
+import com.gt.genti.domain.enums.RequestMatchStrategy;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.external.discord.controller.DiscordController;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
+import com.gt.genti.service.AdminService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,81 +26,167 @@ import lombok.extern.slf4j.Slf4j;
 public class RequestMatchService {
 	private final CreatorRepository creatorRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
-	private final DiscordService discordService;
+	private final DiscordController discordController;
 	private final MatchingRegistry matchingRegistry;
+	private final AdminService adminService;
+	public static RequestMatchStrategy CURRENT_STRATEGY = RequestMatchStrategy.ADMIN_ONLY;
 
 	@Transactional
 	public void matchPictureGenerateRequests() {
+		StringBuilder resultSB = new StringBuilder();
+		resultSB.append("""
+			[%s] 전략으로 자동매칭 시작
+			""".formatted(CURRENT_STRATEGY.getStringValue())).append('\n');
+
 		List<PictureGenerateRequest> pendingRequestList = pictureGenerateRequestRepository.findPendingRequests();
-		if (pendingRequestList.isEmpty()) {
-			discordService.sendToDiscord("매칭 대기중인 작업이 없음");
-			return;
-		}
+		List<Creator> creatorList = creatorRepository.findAllAvailableCreator();
+		matchRequest(pendingRequestList, creatorList, resultSB);
 
-		List<Creator> availableCreatorList = creatorRepository.findAllAvailableCreator();
-		if (availableCreatorList.isEmpty()) {
-			String message = """
-				[%d]개의 매칭 대기중인 작업 || 작업 가능한 작업자가 없음""".formatted(pendingRequestList.size());
-			discordService.sendToDiscord(message);
-			return;
-		}
+	}
 
-		int size = Math.min(pendingRequestList.size(), availableCreatorList.size());
-		String[] matchResultArray = new String[size + 1];
-		IntStream.range(0, size).forEach(i -> {
+	@Transactional
+	public void matchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
+		StringBuilder resultSB = new StringBuilder();
+		resultSB.append("신규 요청에 대하여 매칭 시도");
+		matchRequest(pictureGenerateRequest, resultSB);
+	}
+
+	public void matchRejectedRequest(PictureGenerateRequest pictureGenerateRequest) {
+		StringBuilder resultSB = new StringBuilder();
+		resultSB.append("거절된 요청에 대해서 재 매칭 시도");
+		matchRequest(pictureGenerateRequest, resultSB);
+	}
+
+	private void matchRequestToAdmin(List<PictureGenerateRequest> pendingRequestList, StringBuilder resultSB) {
+		Creator adminCreator = adminService.getAdminCreator();
+		int requestCount = pendingRequestList.size();
+		List<String> matchResultList = new ArrayList<>();
+		pendingRequestList.forEach(pgr -> {
+			pgr.assignToAdmin(adminCreator);
+			String result = """
+				email : [%s] id : [%d] 요청을 어드민에게 매칭
+				  """.formatted(pgr.getRequester().getEmail(), pgr.getId());
+			matchResultList.add(result);
+		});
+
+		String result = """
+			대기중이던 요청 [%d]개 전부를 어드민에게 매칭함
+			""".formatted(requestCount);
+		matchResultList.add(result);
+
+		discordController.sendToAdminChannel(String.join("\n", matchResultList));
+	}
+
+	private void matchRequestCreatorAdmin(List<PictureGenerateRequest> pendingRequestList,
+		List<Creator> availableCreatorList, StringBuilder resultSB) {
+		int requestCount = pendingRequestList.size();
+		int creatorCount = availableCreatorList.size();
+		int matchableCount = Math.min(requestCount, creatorCount);
+
+		IntStream.range(0, matchableCount).forEach(i -> {
 				Creator creator = availableCreatorList.get(i);
 				PictureGenerateRequest pgr = pendingRequestList.get(i);
 				pgr.assign(creator);
-				matchResultArray[i] = """
+				String result = """
 					email : [%s] id : [%d] 요청을 작업자 email : [%s] id : [%d]에게 매칭
 					  """.formatted(pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(),
 					creator.getId());
+				resultSB.append(result).append('\n');
 			}
 		);
-		matchResultArray[size] = """
-			대기중 요청 [%d]개, 작업 가능한 작업자 [%d]명 -> \n 총 [%d] 개의 요청이 매칭됨, 남은 요청 개수 : [%d]
-			""".formatted(pendingRequestList.size(), availableCreatorList.size(), size,
-			pendingRequestList.size() - size);
-		discordService.sendToDiscord(String.join("\n", matchResultArray));
+
+		int remainRequestCount = requestCount - matchableCount;
+		int notMatchedIndex = matchableCount;
+		if (remainRequestCount > 0) {
+			Creator adminCreator = creatorRepository.findAdminCreator()
+				.orElseThrow(() -> new ExpectedException(ErrorCode.Undefined));
+			while (notMatchedIndex < pendingRequestList.size()) {
+				PictureGenerateRequest currentRequest = pendingRequestList.get(notMatchedIndex);
+				currentRequest.assignToAdmin(adminCreator);
+				notMatchedIndex++;
+				String result = """
+					요청 id : [%d]에 대하여 작업 가능한 작업자가 없음 어드민에게 매칭
+					""".formatted(currentRequest.getId());
+				resultSB.append(result).append('\n');
+			}
+		}
+		String creatorMatchResult = """
+			대기중이던 요청 [%d]개, 작업자에게 매칭된 요청 [%d]개
+			""".formatted(requestCount, availableCreatorList.size());
+		resultSB.append(creatorMatchResult);
+		discordController.sendToEventChannel(print(resultSB));
+
+		String adminMatchResult = """
+			 어드민에게 매칭된 요청 [%d]개 -> \n 모든 남은 요청이 매칭됨
+			""".formatted(requestCount - (notMatchedIndex + 1));
+		discordController.sendToAdminChannel(adminMatchResult);
 	}
 
-	public boolean matchPictureGenerateRequest(PictureGenerateRequest pictureGenerateRequest) {
-		List<Creator> availableCreatorList = creatorRepository.findAllAvailableCreator();
-		if (availableCreatorList.isEmpty()) {
-			String message = newRequestNotAvailable(pictureGenerateRequest);
-			discordService.sendToDiscord(message);
-			return false;
+	private void matchRequest(List<PictureGenerateRequest> pendingRequestList, List<Creator> creatorList,
+		StringBuilder resultSB) {
+
+		// 현재 작업중인 요청의 수가 작은 기준으로 조회되었음
+		switch (CURRENT_STRATEGY) {
+			case ADMIN_ONLY -> {
+				if (pendingRequestList.isEmpty()) {
+					resultSB.append("매칭 대기중인 작업이 없음");
+					discordController.sendToEventChannel(print(resultSB));
+					return;
+				}
+
+				matchRequestToAdmin(pendingRequestList, resultSB);
+			}
+			case CREATOR_ADMIN -> {
+				if (creatorList.isEmpty()) {
+					resultSB.append("""
+						[%d]개의 매칭 대기중인 작업에 대해 작업 가능한 작업자가 없으므로 admin 매칭으로 전환"""
+						.formatted(pendingRequestList.size()));
+					matchRequestToAdmin(pendingRequestList, resultSB);
+				}
+				matchRequestCreatorAdmin(pendingRequestList, creatorList, resultSB);
+			}
+			case CREATOR_ONLY -> {
+				//TODO Creator가 많아지면 개발
+				// edited at 2024-05-25
+				// author 서병렬
+				if (creatorList.isEmpty()) {
+					resultSB.append("""
+						[%d]개의 매칭 대기중인 작업 || 작업 가능한 작업자가 없음""".formatted(pendingRequestList.size()));
+					discordController.sendToEventChannel(print(resultSB));
+					return;
+				}
+				/* dosomething */
+			}
 		}
 
-		List<Long> alreadyMatchedCreatorIdList = matchingRegistry.getMatchedCreatorBefore(
-			pictureGenerateRequest.getId());
-		List<Creator> removeAlreadyMatchedCreatorList = availableCreatorList.stream()
-			.filter(c -> !alreadyMatchedCreatorIdList.contains(c.getId()))
-			.toList();
-		if (removeAlreadyMatchedCreatorList.isEmpty()) {
-			String message = notHaveNewCreatorMessage(pictureGenerateRequest);
-			discordService.sendToDiscord(message);
-			return false;
-		}
-		Creator randomSelectedCreator = RandomUtils.getRandomElement(removeAlreadyMatchedCreatorList);
-		pictureGenerateRequest.assign(randomSelectedCreator);
-		sendNotification(randomSelectedCreator);
-		return true;
+	}
+
+	private void matchRequest(PictureGenerateRequest pictureGenerateRequest, StringBuilder resultSB) {
+		List<Creator> availableCreatorList = creatorRepository.findAllAvailableCreator();
+		List<PictureGenerateRequest> justOneRequest = List.of(pictureGenerateRequest);
+		matchRequest(justOneRequest, availableCreatorList, resultSB);
 	}
 
 	private static String newRequestNotAvailable(PictureGenerateRequest pictureGenerateRequest) {
 		return """
-			새로운 요청 id : [%d]에 대하여 작업 가능한 작업자가 없음""".formatted(pictureGenerateRequest.getId());
+			새로운 요청 id : [%d]에 대하여 작업 가능한 작업자가 없음 어드민에게 매칭""".formatted(pictureGenerateRequest.getId());
 	}
 
 	private static String notHaveNewCreatorMessage(PictureGenerateRequest pictureGenerateRequest) {
 		return """
-			매칭 취소되었던 요청 id : [%d]에 대하여 작업 가능한 작업자가 없음""".formatted(pictureGenerateRequest.getId());
+			매칭 취소되었던 요청 id : [%d]에 대하여 작업 가능한 작업자가 없음 어드민에게 매칭""".formatted(pictureGenerateRequest.getId());
 	}
 
-	private void sendNotification(Creator creator) {
+	private void pushToCreator(Creator creator) {
 		//TODO 공급자 앱에 푸시알림
 		// edited at 2024-05-04
 		// author
+	}
+
+	private String print(StringBuilder sb) {
+		String result = sb.toString();
+		sb.setLength(0);
+		return result;
+
 	}
 }

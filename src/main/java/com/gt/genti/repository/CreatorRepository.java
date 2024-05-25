@@ -21,4 +21,9 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 	@Query("select c from Creator c "
 		+ "where c.user.id = :userId ")
 	Optional<Creator> findByUserId(Long userId);
+
+	@Query("select c from Creator c "
+		+ "where c.user.userRole = com.gt.genti.domain.enums.UserRole.ADMIN "
+		+ "limit 1 ")
+	Optional<Creator> findAdminCreator();
 }

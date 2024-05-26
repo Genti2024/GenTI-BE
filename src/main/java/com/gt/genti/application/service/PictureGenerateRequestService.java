@@ -12,9 +12,9 @@ import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
-import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
+import com.gt.genti.dto.PictureGenerateRequestDetailResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
 import com.gt.genti.dto.PictureGenerateRequestRequestDto;
 import com.gt.genti.error.ErrorCode;
@@ -39,12 +39,23 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final PictureService pictureService;
 	private final RequestMatchService requestMatchService;
 
-	@Override
-	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequest(Long userId,
-		PictureGenerateRequestStatus status) {
-		List<PictureGenerateRequestDetailResponseDto> result = pictureGenerateRequestPort.findByRequestStatusAndUserId(
-			status, userId).stream().map(
+	public List<PictureGenerateRequestDetailResponseDto> getAllPictureGenerateRequest() {
+
+		List<PictureGenerateRequestDetailResponseDto> result = pictureGenerateRequestPort.findAll().stream().map(
 			PictureGenerateRequestDetailResponseDto::new
+		).toList();
+		if (result.isEmpty()) {
+			throw new ExpectedException(ErrorCode.Undefined);
+		}
+		return result;
+	}
+	@Override
+	public List<PictureGenerateRequestDetailResponseDtoForUser> getAllPictureGenerateRequestForUser(Long userId) {
+		User foundUser = userRepository.findById(userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+		List<PictureGenerateRequestDetailResponseDtoForUser> result = pictureGenerateRequestPort.findAllByRequester(
+			foundUser).stream().map(
+			PictureGenerateRequestDetailResponseDtoForUser::new
 		).toList();
 		if (result.isEmpty()) {
 			throw new ExpectedException(ErrorCode.ActivePictureGenerateRequestNotExists);
@@ -53,15 +64,13 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequest(Long userId) {
+	public PictureGenerateRequestDetailResponseDtoForUser getPictureGenerateRequestForUser(Long userId) {
 
 		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findByUserIdOrderByCreatedByDesc(
 			userId).orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
 
-		PictureGenerateRequestDetailResponseDto result = new PictureGenerateRequestDetailResponseDto(
+		return new PictureGenerateRequestDetailResponseDtoForUser(
 			foundPictureGenerateRequest);
-
-		return result;
 	}
 
 	@Override
@@ -87,7 +96,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	@Override
 	@Transactional
-	public Boolean createPictureGenerateRequest(Long requesterId,
+	public PictureGenerateRequest createPictureGenerateRequest(Long requesterId,
 		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto) {
 
 		User foundRequester = userRepository.findById(requesterId)
@@ -97,7 +106,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 		PicturePose foundPicturePose = pictureService.findByUrlPicturePose(posePictureUrl)
 			.orElseGet(() -> pictureService.updatePicture(
-				CreatePicturePoseCommand.builder().url(posePictureUrl).userId(requesterId).build()));
+				CreatePicturePoseCommand.builder().url(posePictureUrl).user(foundRequester).build()));
 
 		List<String> facePictureUrl = pictureGenerateRequestRequestDto.getFacePictureUrlList();
 
@@ -117,13 +126,11 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.build();
 
 		requestMatchService.matchNewRequest(pgr);
-		pictureGenerateRequestPort.save(pgr);
-
-		return true;
+		return pictureGenerateRequestPort.save(pgr);
 	}
 
 	@Override
-	public Boolean modifyPictureGenerateRequest(Long userId,
+	public void modifyPictureGenerateRequest(Long userId,
 		PictureGenerateRequestModifyDto modifyDto) {
 
 		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequesterId(
@@ -146,7 +153,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		}
 
 		findPictureGenerateRequest.modify(modifyDto, picturePose, pictureUserFaceList);
-		return true;
 	}
 
 }

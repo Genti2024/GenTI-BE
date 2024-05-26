@@ -1,5 +1,6 @@
 package com.gt.genti.service;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.gt.genti.domain.Creator;
@@ -19,10 +20,10 @@ public class AdminService {
 	private final CreatorRepository creatorRepository;
 
 	public User getAdminUser(){
-		return userRepository.findAdminUser().orElseThrow(()-> new ExpectedException(ErrorCode.UnHandledException));
+		return userRepository.findAdminUser(PageRequest.of(0,1)).get(0);
 	}
 	public Creator getAdminCreator(){
-		return creatorRepository.findAdminCreator().orElseThrow(()-> new ExpectedException(ErrorCode.UnHandledException));
+		return creatorRepository.findAdminCreator(PageRequest.of(0,1)).get(0);
 	}
 
 

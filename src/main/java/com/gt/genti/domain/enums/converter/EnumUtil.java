@@ -1,6 +1,6 @@
 package com.gt.genti.domain.enums.converter;
 
-import org.thymeleaf.util.StringUtils;
+import org.apache.commons.codec.binary.StringUtils;
 
 import com.gt.genti.domain.enums.ConvertableEnum;
 
@@ -39,10 +39,7 @@ public class EnumUtil {
 
 	public static <E extends Enum<E> & ConvertableEnum> E stringToEnumIgnoreCase(Class<E> enumType, String value) {
 		for (E enumValue : enumType.getEnumConstants()) {
-			// log.info("enumValue.name() : " + enumValue.name());
-			// log.info("enumValue.getStringValue() : " + enumValue.getStringValue());
-			// log.info("value : " + value);
-			if (StringUtils.equalsIgnoreCase(value, enumValue.getStringValue())) {
+			if (enumValue.getStringValue().equalsIgnoreCase(value)) {
 				return enumValue;
 			}
 		}

@@ -1,5 +1,7 @@
 package com.gt.genti.command;
 
+import com.gt.genti.domain.User;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreatePicturePoseCommand {
 	String url;
-	Long userId;
+	User user;
 
 	@Builder
-	public CreatePicturePoseCommand(String url, Long userId) {
+	public CreatePicturePoseCommand(String url, User user) {
 		this.url = url;
-		this.userId = userId;
+		this.user = user;
 	}
 }

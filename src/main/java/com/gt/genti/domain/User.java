@@ -28,6 +28,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -77,10 +78,11 @@ public class User extends BaseTimeEntity {
 	@OneToOne(mappedBy = "user")
 	Creator creator;
 
-	@Column(name = "userRole")
+	@Column(name = "userRole", nullable = false)
 	@Convert(converter = UserRoleConverter.class)
 	UserRole userRole;
 
+	@Column(name = "roles", nullable = false)
 	String roles;
 
 	@Column(name = "last_login_social_platform")
@@ -108,6 +110,7 @@ public class User extends BaseTimeEntity {
 		this.email = email;
 		this.username = username;
 		this.nickname = nickname;
+		this.userRole = userRole;
 		this.roles = userRole.getStringValue();
 		this.lastLoginSocialPlatform = oauthType;
 		this.userStatus = UserStatus.ACTIVATED;
@@ -155,6 +158,29 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateUserRole(UserRole userRole) {
+		this.userRole = userRole;
 		this.roles = userRole.getStringValue();
+	}
+
+	@Builder
+	public User(PictureProfile pictureProfile, List<PictureUserFace> pictureUserFaceList, String email,
+		String introduction,
+		String username, String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password,
+		Creator creator, UserRole userRole, String roles, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt) {
+		this.pictureProfile = pictureProfile;
+		this.pictureUserFaceList = pictureUserFaceList;
+		this.email = email;
+		this.introduction = introduction;
+		this.username = username;
+		this.nickname = nickname;
+		this.userStatus = userStatus;
+		this.emailVerified = emailVerified;
+		this.loginId = loginId;
+		this.password = password;
+		this.creator = creator;
+		this.userRole = userRole;
+		this.roles = roles;
+		this.lastLoginSocialPlatform = lastLoginSocialPlatform;
+		this.deletedAt = deletedAt;
 	}
 }

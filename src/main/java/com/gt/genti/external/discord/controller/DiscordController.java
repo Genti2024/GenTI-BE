@@ -46,7 +46,7 @@ public class DiscordController {
 
 	}
 
-	@DeployOnly
+	// @DeployOnly
 	public void sendToAdminChannel(String message) {
 		String body = getRequestBody(message);
 		discordRestClient.post()

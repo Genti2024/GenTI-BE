@@ -3,6 +3,7 @@ package com.gt.genti.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -23,7 +24,6 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 	Optional<Creator> findByUserId(Long userId);
 
 	@Query("select c from Creator c "
-		+ "where c.user.userRole = com.gt.genti.domain.enums.UserRole.ADMIN "
-		+ "limit 1 ")
-	Optional<Creator> findAdminCreator();
+		+ "where c.user.userRole = com.gt.genti.domain.enums.UserRole.ADMIN ")
+	List<Creator> findAdminCreator(Pageable pageable);
 }

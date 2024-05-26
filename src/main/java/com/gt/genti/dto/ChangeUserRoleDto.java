@@ -2,6 +2,7 @@ package com.gt.genti.dto;
 
 import com.gt.genti.domain.enums.UserRole;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,4 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChangeUserRoleDto {
 	UserRole userRole;
+
+	@Builder
+	public ChangeUserRoleDto(UserRole userRole) {
+		this.userRole = userRole;
+	}
 }

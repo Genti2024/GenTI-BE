@@ -20,9 +20,10 @@ public class PictureGenerateRequestRequestDto {
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;
 	@Builder
-	public PictureGenerateRequestRequestDto(String prompt, String posePictureUrl, CameraAngle cameraAngle, ShotCoverage shotCoverage) {
+	public PictureGenerateRequestRequestDto(String prompt, String posePictureUrl, CameraAngle cameraAngle, ShotCoverage shotCoverage, List<String> facePictureUrlList) {
 		this.prompt = prompt;
 		this.posePictureUrl = posePictureUrl;
+		this.facePictureUrlList = facePictureUrlList;
 		this.cameraAngle = cameraAngle;
 		this.shotCoverage = shotCoverage;
 	}

@@ -1,5 +1,6 @@
 package com.gt.genti.application.port.in;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +26,6 @@ public interface PictureGenerateRequestPort {
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 
 	Optional<PictureGenerateRequest> findByUserIdOrderByCreatedByDesc(Long userId);
+
+	List<PictureGenerateRequest> findAll();
 }

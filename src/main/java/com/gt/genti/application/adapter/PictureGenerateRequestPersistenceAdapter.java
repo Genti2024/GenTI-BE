@@ -67,4 +67,9 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 		activeStatusList.add(PictureGenerateRequestStatus.IN_PROGRESS);
 		return pictureGenerateRequestRepository.findByUserIdAndRequestStatusIn(requesterId, activeStatusList);
 	}
+
+	@Override
+	public List<PictureGenerateRequest> findAll() {
+		return pictureGenerateRequestRepository.findAll();
+	}
 }

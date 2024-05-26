@@ -56,6 +56,22 @@ public class UserService {
 	}
 
 	@Transactional
+	public Boolean updateUserRole(Long userId, ChangeUserRoleDto changeUserRoleDto) {
+		User foundUser = findActivateUserByUserId(userId);
+		UserRole userRole = changeUserRoleDto.getUserRole();
+		foundUser.updateUserRole(userRole);
+		if(userRole ==UserRole.CREATOR){
+			Creator newCreator = new Creator(foundUser);
+			creatorRepository.save(newCreator);
+			depositService.createDeposit(foundUser);
+		} else if(userRole == UserRole.ADMIN){
+			Creator newCreator = new Creator(foundUser);
+			creatorRepository.save(newCreator);
+		}
+		return true;
+	}
+
+	@Transactional
 	public Boolean deleteUserInfoSoft(Long userId) {
 		User findUser = findActivateUserByUserId(userId);
 		findUser.softDelete();
@@ -73,22 +89,6 @@ public class UserService {
 	public Boolean updateUserStatus(Long userId, ChangeUserStatusDto changeUserStatusDto) {
 		User foundUser = findActivateUserByUserId(userId);
 		foundUser.updateStatus(changeUserStatusDto.getUserStatus());
-		return true;
-	}
-
-	@Transactional
-	public Boolean updateUserRole(Long userId, ChangeUserRoleDto changeUserRoleDto) {
-		User foundUser = findActivateUserByUserId(userId);
-		UserRole userRole = changeUserRoleDto.getUserRole();
-		foundUser.updateUserRole(changeUserRoleDto.getUserRole());
-		if(userRole ==UserRole.CREATOR){
-			Creator newCreator = new Creator(foundUser);
-			creatorRepository.save(newCreator);
-			depositService.createDeposit(foundUser);
-		} else if(userRole == UserRole.ADMIN){
-			Creator newCreator = new Creator(foundUser);
-			creatorRepository.save(newCreator);
-		}
 		return true;
 	}
 

@@ -119,7 +119,7 @@ public class PictureService {
 
 		PicturePose picturePose = PictureEntityUtils.makePicturePose(
 			command.getUrl(),
-			findUser(command.getUserId())
+			command.getUser()
 		);
 		return picturePoseRepository.save(picturePose);
 	}

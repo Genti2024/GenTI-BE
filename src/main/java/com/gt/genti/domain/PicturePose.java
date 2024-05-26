@@ -35,4 +35,6 @@ public class PicturePose extends PictureEntity {
 	public void modify(String modifyPosePictureUrl) {
 		this.url = modifyPosePictureUrl;
 	}
+
+
 }

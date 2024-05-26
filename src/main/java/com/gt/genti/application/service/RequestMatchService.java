@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.enums.RequestMatchStrategy;
-import com.gt.genti.error.ErrorCode;
-import com.gt.genti.error.ExpectedException;
 import com.gt.genti.external.discord.controller.DiscordController;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
@@ -29,6 +27,7 @@ public class RequestMatchService {
 	private final DiscordController discordController;
 	private final MatchingRegistry matchingRegistry;
 	private final AdminService adminService;
+
 	public static RequestMatchStrategy CURRENT_STRATEGY = RequestMatchStrategy.ADMIN_ONLY;
 
 	@Transactional
@@ -98,8 +97,7 @@ public class RequestMatchService {
 		int remainRequestCount = requestCount - matchableCount;
 		int notMatchedIndex = matchableCount;
 		if (remainRequestCount > 0) {
-			Creator adminCreator = creatorRepository.findAdminCreator()
-				.orElseThrow(() -> new ExpectedException(ErrorCode.Undefined));
+			Creator adminCreator = adminService.getAdminCreator();
 			while (notMatchedIndex < pendingRequestList.size()) {
 				PictureGenerateRequest currentRequest = pendingRequestList.get(notMatchedIndex);
 				currentRequest.assignToAdmin(adminCreator);

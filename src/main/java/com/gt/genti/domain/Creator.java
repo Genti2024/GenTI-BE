@@ -57,6 +57,7 @@ public class Creator extends BaseTimeEntity {
 	public Creator(User user) {
 		this.workable = true;
 		this.user = user;
+		this.bankType = BankType.NONE;
 	}
 
 	public void updateAccountInfo(BankType bankType, String accountNumber, String accountHolder){

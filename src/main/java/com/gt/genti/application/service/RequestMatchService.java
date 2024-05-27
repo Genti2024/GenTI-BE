@@ -43,19 +43,16 @@ public class RequestMatchService {
 
 	}
 
-	@Transactional
 	public void matchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
 		StringBuilder resultSB = new StringBuilder();
 		resultSB.append("신규 요청에 대하여 매칭 시도");
 		matchRequest(pictureGenerateRequest, resultSB);
 	}
-
 	public void matchRejectedRequest(PictureGenerateRequest pictureGenerateRequest) {
 		StringBuilder resultSB = new StringBuilder();
 		resultSB.append("거절된 요청에 대해서 재 매칭 시도");
 		matchRequest(pictureGenerateRequest, resultSB);
 	}
-
 	private void matchRequestToAdmin(List<PictureGenerateRequest> pendingRequestList, StringBuilder resultSB) {
 		Creator adminCreator = adminService.getAdminCreator();
 		int requestCount = pendingRequestList.size();
@@ -75,7 +72,6 @@ public class RequestMatchService {
 
 		discordController.sendToAdminChannel(String.join("\n", matchResultList));
 	}
-
 	private void matchRequestCreatorAdmin(List<PictureGenerateRequest> pendingRequestList,
 		List<Creator> availableCreatorList, StringBuilder resultSB) {
 		int requestCount = pendingRequestList.size();

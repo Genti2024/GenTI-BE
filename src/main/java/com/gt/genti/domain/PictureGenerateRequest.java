@@ -131,10 +131,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	}
 
 	public void assignToAdmin(Creator creator) {
-		if(this.getCreator() != null){
-			this.creator = null;
-		}
+		this.creator = creator;
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.MATCH_TO_ADMIN;
-
 	}
 }

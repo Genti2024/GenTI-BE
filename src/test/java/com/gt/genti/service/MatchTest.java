@@ -73,8 +73,6 @@ public class MatchTest {
 		User savedAdmin = userRepository.save(adminUser);
 		// admin으로 userrole 변경시 admin creator 생성됨
 		userService.updateUserRole(savedAdmin.getId(), ChangeUserRoleDto.builder().userRole(UserRole.ADMIN).build());
-		Creator foundCreator = adminService.getAdminCreator();
-		assertThat(foundCreator).isNotNull();
 
 		CreatePicturePoseCommand command = getCreatePicturePoseCommand(savedUser);
 		PicturePose savedPicturePose = pictureService.updatePicture(command);
@@ -92,14 +90,14 @@ public class MatchTest {
 			.build();
 
 		// when
-		PictureGenerateRequest savedPictureGenerateRequest = pictureGenerateRequestService.createPictureGenerateRequest(
+		PictureGenerateRequest createdPGREQ = pictureGenerateRequestService.createPictureGenerateRequest(
 			requester.getId(), req);
 
 		// then
 		Creator adminCreator = adminService.getAdminCreator();
 		// verify(discordController).sendToAdminChannel(anyString());
-		assertThat(savedPictureGenerateRequest.getCreator()).isEqualTo(adminCreator);
-		assertThat(savedPictureGenerateRequest.getPictureGenerateRequestStatus()).isEqualTo(
+		assertThat(createdPGREQ.getCreator().getId()).isEqualTo(adminCreator.getId());
+		assertThat(createdPGREQ.getPictureGenerateRequestStatus()).isEqualTo(
 			PictureGenerateRequestStatus.MATCH_TO_ADMIN);
 	}
 

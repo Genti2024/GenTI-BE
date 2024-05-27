@@ -11,16 +11,26 @@ set @deactivatedCreatorId := 8; # 비활성화된 공급자의 CreatorId
 
 set @creatorId := 1; # 공급자의 CreatorId
 
-insert ignore into user (id, created_at, modified_at, deleted_at, email, email_verified, introduction, last_login_social_platform, login_id, nickname, password, roles, user_status, username, profile_picture_id)
+insert ignore into user (id, created_at, modified_at, deleted_at, email, email_verified, introduction,
+                         last_login_social_platform, login_id, nickname, password, user_role, roles, user_status,
+                         username, profile_picture_id)
 
-VALUES (1, localtime, localtime, null, 'admin@gmail.com', true, null, 'GOOGLE', null, '어드민테스트1_닉네임', null, 'ROLE_ADMIN,ROLE_MANAGER,ROLE_CREATOR,ROLE_USER','ACTIVATED', '어드민이름', null),
-       (2, localtime, localtime, null, 'user@gmail.com', true, '유저_소개1', 'GOOGLE', null, '유저테스트1_닉네임', null, 'ROLE_USER', 'ACTIVATED', '유저이름1', null),
-       (3, localtime, localtime, null, 'emptyUser@gmail.com', true, '유저_소개2', 'GOOGLE', null, '유저테스트1_닉네임', null, 'ROLE_USER', 'ACTIVATED', '유저이름2', null),
-       (4, localtime, localtime, null, 'creator@gmail.com', true, '공급자_소개', 'GOOGLE', null, '유저테스트2_닉네임', null, 'ROLE_CREATOR', 'ACTIVATED', '공급자이름1', null),
-       (5, localtime, localtime, null, 'emptyCreator@gmail.com', true, '공급자_소개2', 'GOOGLE', null, '공급자테스트2_닉네임', null, 'ROLE_CREATOR', 'ACTIVATED', '공급자이름2', null),
-       (6, localtime, localtime, null, 'oauthFirstJoin@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '최초가입자_닉네임', null, 'ROLE_OAUTH_FIRST_JOIN,ROLE_USER', 'ACTIVATED', '최초가입자이름', null),
-       (7, localtime, localtime, null, 'deactivatedUser@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된유저_닉네임', null, 'ROLE_USER', 'DEACTIVATED', '비활성화된유저이름', null),
-       (8, localtime, localtime, null, 'deactivatedCreator@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된공급자_닉네임', null, 'ROLE_CREATOR', 'DEACTIVATED', '비활성화된공급자이름', null);
+VALUES (1, localtime, localtime, null, 'admin@gmail.com', true, null, 'GOOGLE', null, '어드민테스트1_닉네임', null, 'ROLE_ADMIN',
+        'ROLE_ADMIN,ROLE_MANAGER,ROLE_CREATOR,ROLE_USER', 'ACTIVATED', '어드민이름', null),
+       (2, localtime, localtime, null, 'user@gmail.com', true, '유저_소개1', 'GOOGLE', null, '유저테스트1_닉네임', null,
+        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름1', null),
+       (3, localtime, localtime, null, 'emptyUser@gmail.com', true, '유저_소개2', 'GOOGLE', null, '유저테스트1_닉네임', null,
+        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름2', null),
+       (4, localtime, localtime, null, 'creator@gmail.com', true, '공급자_소개', 'GOOGLE', null, '유저테스트2_닉네임', null,
+        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름1', null),
+       (5, localtime, localtime, null, 'emptyCreator@gmail.com', true, '공급자_소개2', 'GOOGLE', null, '공급자테스트2_닉네임', null,
+        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름2', null),
+       (6, localtime, localtime, null, 'oauthFirstJoin@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '최초가입자_닉네임', null,
+        'ROLE_OAUTH_FIRST_JOIN', 'ROLE_OAUTH_FIRST_JOIN,ROLE_USER', 'ACTIVATED', '최초가입자이름', null),
+       (7, localtime, localtime, null, 'deactivatedUser@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된유저_닉네임',
+        null, 'ROLE_USER', 'ROLE_USER', 'DEACTIVATED', '비활성화된유저이름', null),
+       (8, localtime, localtime, null, 'deactivatedCreator@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된공급자_닉네임',
+        null, 'ROLE_CREATOR', 'ROLE_CREATOR', 'DEACTIVATED', '비활성화된공급자이름', null);
 
 insert ignore into creator (id, user_id, workable, created_at, modified_at)
 values (1, 4, true, localtime, localtime),
@@ -45,7 +55,8 @@ values (1, LOCALTIME, LOCALTIME, 'user_face_picture_url1', 2),
 
 
 
-insert ignore into picture_generate_request (id, creator_id, picture_pose_id, requester_id, prompt, camera_angle, request_status, shot_coverage, created_at, modified_at)
+insert ignore into picture_generate_request (id, creator_id, picture_pose_id, requester_id, prompt, camera_angle,
+                                             request_status, shot_coverage, created_at, modified_at)
 VALUES (1, null, 4, 2, 'prompt_test_1', '위에서 촬영', 'CREATED', '얼굴만 클로즈업', '2000-01-01 07:00:00', localtime),
        (2, null, 3, 2, 'prompt_test_2', '같은 높이에서 촬영', 'CANCELED', '허리 위로 촬영', '2020-01-01 07:00:00', localtime),
        (3, 1, 2, 2, 'prompt_test_3', '아래에서 촬영', 'ASSIGNING', '무릎 위로 촬영', '2000-01-01 07:00:00', localtime),
@@ -94,18 +105,21 @@ insert ignore into report (id, created_at, modified_at, content, report_status, 
 values (1, localtime, localtime, '변태자식이 본인 발가락 사진을 보낸 것 같습니다.', 'NOT_RESOLVED', 4),
        (2, localtime, localtime, '모르는 사람 얼굴이에요', 'RESOLVED', 6);
 
-insert ignore into picture_created_by_creator (id, created_at, modified_at, url, picture_generate_response_id, uploaded_by)
+insert ignore into picture_created_by_creator (id, created_at, modified_at, url, picture_generate_response_id,
+                                               uploaded_by)
 values (1, localtime, localtime, '얼굴 완성 전 url 1', 2, 4),
        (2, localtime, localtime, '얼굴 완성 전 url 2', 3, 4),
        (3, localtime, localtime, '얼굴 완성 전 url 3', 4, 4);
 
-insert ignore into picture_completed (id, created_at, modified_at, url, picture_generate_response_id, user_id, uploaded_by)
+insert ignore into picture_completed (id, created_at, modified_at, url, picture_generate_response_id, user_id,
+                                      uploaded_by)
 values (1, localtime, localtime, '얼굴 완성 사진 url 1', 3, 2, 1),
        (2, localtime, localtime, '얼굴 완성 사진 url 2', 4, 2, 1),
        (3, localtime, localtime, '얼굴 완성 사진 url 3', 5, 2, 1),
        (4, localtime, localtime, '얼굴 완성 사진 url 4', 6, 2, 1);
 
-insert ignore into response_example (id, created_at, modified_at, example_picture_url, example_prompt, prompt_only, uploaded_by)
+insert ignore into response_example (id, created_at, modified_at, example_picture_url, example_prompt, prompt_only,
+                                     uploaded_by)
 values (1, localtime, localtime, '/EXAMPLE/벚꽃벤치여자.png', '벚꽃 벤치 여자', false, 1),
        (2, localtime, localtime, '/EXAMPLE/한강잠수부.png', '한강잠수부', false, 1),
        (3, localtime, localtime, null, '프롬프트만있음 사진은 없고', true, 1);

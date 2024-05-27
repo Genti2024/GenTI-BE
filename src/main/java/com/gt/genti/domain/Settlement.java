@@ -3,8 +3,11 @@ package com.gt.genti.domain;
 import java.time.Duration;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
+import com.gt.genti.domain.enums.SettlementStatus;
+import com.gt.genti.domain.enums.converter.SettlementStatusConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,10 +38,12 @@ public class Settlement extends BaseTimeEntity {
 
 	@Column(name = "reward")
 	Long reward;
-	Boolean withdrawn;
+
+	@Convert(converter = SettlementStatusConverter.class)
+	@Column(name = "settlement_status")
+	SettlementStatus settlementStatus;
 
 	@Builder
-
 	public Settlement(PictureGenerateResponse pictureGenerateResponse, Duration elapsed, Long reward) {
 		this.pictureGenerateResponse = pictureGenerateResponse;
 		this.elapsedMinutes = elapsed.toMinutes();

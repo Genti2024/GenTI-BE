@@ -53,7 +53,7 @@ public class PostService {
 				.likes(post.getLikes())
 				.userId(post.getUser().getId())
 				.content(post.getContent())
-				.profileImageUrl(post.getUser().getPictureProfile().getUrl())
+				.profileImageUrl(post.getUser().getPictureProfileList().getUrl())
 				.createdAt(post.getCreatedAt())
 				.build()).toList();
 	}

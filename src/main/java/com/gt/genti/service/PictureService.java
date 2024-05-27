@@ -18,7 +18,6 @@ import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureCreatedByCreator;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.PicturePose;
-import com.gt.genti.domain.PicturePost;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
@@ -46,36 +45,37 @@ public class PictureService {
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final PicturePoseRepository picturePoseRepository;
 
-	public Optional<PictureCompleted> findPictureCompletedByPictureGenerateResponse(PictureGenerateResponse pgres) {
-		return pictureCompletedRepository.findByPictureGenerateResponse(pgres);
+	public List<PictureCompleted> findAllPictureCompletedByPictureGenerateResponse(PictureGenerateResponse pgres) {
+		return pictureCompletedRepository.findAllByPictureGenerateResponse(pgres);
 	}
 
-	public Optional<PictureUserFace> findByUrlPictureUserFace(String url) {
-		return pictureUserFaceRepository.findByUrl(url);
+	public PictureUserFace findByUrlPictureUserFace(String url) {
+		return pictureUserFaceRepository.findByUrl(url)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureUserFaceNotFound));
 	}
 
-	public List<PictureUserFace> find3ByUrlPictureUserFace(List<String> urlList) {
-		return pictureUserFaceRepository.findAllByUrlIsIn(urlList);
-	}
+	// public PictureCompleted findByUrlPictureCompleted(String url) {
+	// 	return pictureCompletedRepository.findByUrl(url);
+	// }
 
-	public Optional<PictureCompleted> findByUrlPictureCompleted(String url) {
-		return pictureCompletedRepository.findByUrl(url);
-	}
-
-	public Optional<PictureCreatedByCreator> findByUrlPictureCreatedByCreator(String url) {
-		return pictureCreatedByCreatorRepository.findByUrl(url);
+	public PictureCreatedByCreator findByUrlPictureCreatedByCreator(String url) {
+		return pictureCreatedByCreatorRepository.findByUrl(url)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureCreatedByCreatorNotFound));
 	}
 
 	public Optional<PicturePose> findByUrlPicturePose(String url) {
 		return picturePoseRepository.findByUrl(url);
 	}
 
-	public Optional<PicturePost> findByUrlPicturePost(String url) {
-		return picturePostRepository.findByUrl(url);
+	public PictureProfile findByUrlPictureProfile(String url) {
+		return pictureProfileRepository.findByUrl(url)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureProfileNotFound));
 	}
 
-	public Optional<PictureProfile> findByUrlPictureProfile(String url) {
-		return pictureProfileRepository.findByUrl(url);
+	public PictureCreatedByCreator findPictureCreatedByCreatorByPictureGenerateResponse(
+		PictureGenerateResponse pictureGenerateResponse) {
+		return pictureCreatedByCreatorRepository.findByPictureGenerateResponse(pictureGenerateResponse)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureCreatedByCreatorNotFound));
 	}
 
 	public Picture updatePicture(CreatePictureCompletedCommand command) {
@@ -186,8 +186,12 @@ public class PictureService {
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 	}
 
-	public Optional<PictureCreatedByCreator> findPictureCreatedByCreatorByPictureGenerateResponse(
-		PictureGenerateResponse pictureGenerateResponse) {
-		return pictureCreatedByCreatorRepository.findByPictureGenerateResponse(pictureGenerateResponse);
+	public List<PictureProfile> findAllProfilePicture(User foundUser) {
+		return pictureProfileRepository.findAllByUserOrderByCreatedAtDesc(foundUser);
 	}
+
+	public List<PictureUserFace> find3ByUrlPictureUserFace(List<String> urlList) {
+		return pictureUserFaceRepository.findAllByUrlIsIn(urlList);
+	}
+
 }

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminUserController {
-	UserService userService;
+	private final UserService userService;
 
 	@PostMapping("/users/{userId}/status")
 	public ResponseEntity<ApiResult<Boolean>> changeUserStatus(@PathVariable Long userId, @RequestBody ChangeUserStatusDto changeUserStatusDto){

@@ -54,4 +54,10 @@ public class ErrorUtils {
 
 	public static String AlreadyActivatedUser = CODE(USER, 3);
 	public static String CannotRestoreUser = CODE(USER, 4);
+	public static String PictureUserFaceNotFound = CODE(PICTURE, 1);
+	public static String PicturePoseNotFound = CODE(PICTURE, 2);
+	public static String PictureCompletedNotFound = CODE(PICTURE, 3);
+	public static String PictureCreatedByCreatorNotFound = CODE(PICTURE, 4);
+	public static String PictureProfileNotFound=CODE(PICTURE,5);
+
 }

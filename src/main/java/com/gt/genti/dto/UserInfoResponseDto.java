@@ -1,5 +1,7 @@
 package com.gt.genti.dto;
 
+import java.util.List;
+
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 
@@ -13,14 +15,14 @@ import lombok.NoArgsConstructor;
 public class UserInfoResponseDto {
 	Long id;
 	String username;
-	Long profilePictureId;
-	String url;
+	List<CommonPictureResponseDto> profilePictureList;
 
 	@Builder
-	public UserInfoResponseDto(User user, PictureProfile pictureProfile){
+	public UserInfoResponseDto(User user, List<PictureProfile> pictureProfileList) {
 		this.id = user.getId();
 		this.username = user.getUsername();
-		this.profilePictureId = pictureProfile.getId();
-		this.url = pictureProfile.getUrl();
+		this.profilePictureList = pictureProfileList.stream()
+			.map(pictureProfile -> new CommonPictureResponseDto(pictureProfile.getId(), pictureProfile.getUrl()))
+			.toList();
 	}
 }

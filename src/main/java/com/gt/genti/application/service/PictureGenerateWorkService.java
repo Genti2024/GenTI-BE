@@ -15,6 +15,7 @@ import com.gt.genti.command.CreatePictureCompletedCommand;
 import com.gt.genti.command.CreatePictureCreatedByCreatorCommand;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.Deposit;
+import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.Settlement;
@@ -157,8 +158,7 @@ public class PictureGenerateWorkService {
 			throw new ExpectedException(ErrorCode.NotAssignedToMe);
 		}
 
-		pictureService.findPictureCreatedByCreatorByPictureGenerateResponse(foundPGRES)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.CreatorsPictureNotUploadedYet));
+		pictureService.findPictureCreatedByCreatorByPictureGenerateResponse(foundPGRES);
 
 		foundPGRES.creatorSubmit();
 
@@ -189,9 +189,11 @@ public class PictureGenerateWorkService {
 	@Transactional
 	public PictureGenerateResponseAdminSubmitDto submitFinal(Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
-		pictureService.findPictureCompletedByPictureGenerateResponse(
-			foundPGRES).orElseThrow(() -> new ExpectedException(ErrorCode.FinalPictureNotUploadedYet));
-
+		List<PictureCompleted> pictureCompletedList = pictureService.findAllPictureCompletedByPictureGenerateResponse(
+			foundPGRES);
+		if (pictureCompletedList.isEmpty()) {
+			throw new ExpectedException(ErrorCode.FinalPictureNotUploadedYet);
+		}
 		foundPGRES.adminSubmit();
 		Duration elapsedDuration = foundPGRES.getElapsedTime();
 

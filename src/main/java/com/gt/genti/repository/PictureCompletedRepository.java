@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.gt.genti.domain.PictureCompleted;
-import com.gt.genti.domain.PictureCreatedByCreator;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.User;
 
@@ -16,7 +15,7 @@ public interface PictureCompletedRepository extends JpaRepository<PictureComplet
 
 	// @Query("select pc from PictureCompleted pc "
 	// 	+ "where pc.pictureGenerateResponse = :pictureGenerateResponse ")
-	Optional<PictureCompleted> findByPictureGenerateResponse(PictureGenerateResponse pictureGenerateResponse);
+	List<PictureCompleted> findAllByPictureGenerateResponse(PictureGenerateResponse pictureGenerateResponse);
 
 	@Query("select p "
 		+ "from PictureCompleted p "

@@ -21,6 +21,7 @@ import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.UserRepository;
+import com.gt.genti.service.PictureService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+	private final PictureService pictureService;
 	private final UserRepository userRepository;
 	private final DepositService depositService;
 	private final CreatorRepository creatorRepository;
@@ -37,21 +39,27 @@ public class UserService {
 	@Transactional
 	public UserInfoResponseDto getUserInfo(Long userId) {
 		User foundUser = findActivateUserByUserId(userId);
-		PictureProfile pictureProfile = foundUser.getPictureProfile();
+		List<PictureProfile> pictureProfileList = foundUser.getPictureProfileList();
 		return UserInfoResponseDto.builder()
 			.user(foundUser)
-			.pictureProfile(pictureProfile)
+			.pictureProfileList(pictureProfileList)
 			.build();
 	}
 
 	@Transactional
 	public UserInfoResponseDto updateUserInfo(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		User findUser = findActivateUserByUserId(userId);
+		User foundUser = findActivateUserByUserId(userId);
+		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
+		if (!(userInfoUpdateRequestDto.getProfilePictureUrl().isEmpty()
+			|| userInfoUpdateRequestDto.getProfilePictureUrl().isBlank())) {
+			PictureProfile foundPictureProfile = pictureService.findByUrlPictureProfile(
+				userInfoUpdateRequestDto.getProfilePictureUrl());
+			foundUser.addProfilePicture(foundPictureProfile);
+		}
 
-		findUser.update(userInfoUpdateRequestDto);
 		return UserInfoResponseDto.builder()
-			.user(findUser)
-			.pictureProfile(findUser.getPictureProfile())
+			.user(foundUser)
+			.pictureProfileList(foundUser.getPictureProfileList())
 			.build();
 	}
 
@@ -60,11 +68,11 @@ public class UserService {
 		User foundUser = findActivateUserByUserId(userId);
 		UserRole userRole = changeUserRoleDto.getUserRole();
 		foundUser.updateUserRole(userRole);
-		if(userRole ==UserRole.CREATOR){
+		if (userRole == UserRole.CREATOR) {
 			Creator newCreator = new Creator(foundUser);
 			creatorRepository.save(newCreator);
 			depositService.createDeposit(foundUser);
-		} else if(userRole == UserRole.ADMIN){
+		} else if (userRole == UserRole.ADMIN) {
 			Creator newCreator = new Creator(foundUser);
 			creatorRepository.save(newCreator);
 		}
@@ -73,15 +81,15 @@ public class UserService {
 
 	@Transactional
 	public Boolean deleteUserInfoSoft(Long userId) {
-		User findUser = findActivateUserByUserId(userId);
-		findUser.softDelete();
+		User foundUser = findActivateUserByUserId(userId);
+		foundUser.softDelete();
 		return true;
 	}
 
 	@Transactional
 	public Boolean restoreSoftDeletedUser(Long userId) {
-		User findUser = findDeactivatedUserByUserId(userId);
-		findUser.restore();
+		User foundUser = findDeactivatedUserByUserId(userId);
+		foundUser.restore();
 		return true;
 	}
 

@@ -12,7 +12,6 @@ import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
 import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
-import com.gt.genti.dto.UserInfoUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.OAuthAttributes;
@@ -41,13 +40,13 @@ public class User extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	// profile_picture는 완전히 user에 종속되어있다
-	@OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.DETACH}, orphanRemoval = true)
+	// PictureProfile는 완전히 user에 종속되어있다
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "profile_picture_id")
-	PictureProfile pictureProfile;
+	List<PictureProfile> pictureProfileList;
 
-	@OneToMany
-	@JoinColumn(name = "user_id")
+	// PictureUserFace는 완전히 user에 종속
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureUserFace> pictureUserFaceList;
 
 	@Column(name = "email")
@@ -75,7 +74,8 @@ public class User extends BaseTimeEntity {
 	@Column(name = "password")
 	String password;
 
-	@OneToOne(mappedBy = "user")
+	// user hard delete 시에 같이 삭제
+	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	Creator creator;
 
 	@Column(name = "userRole", nullable = false)
@@ -91,6 +91,10 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "deleted_at")
 	LocalDateTime deletedAt;
+
+	// user hard delete시 deposit도 삭제
+	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+	private Deposit deposit;
 
 	public static User createPrincipalOnlyUser(Long id) {
 		return new User(id);
@@ -131,9 +135,12 @@ public class User extends BaseTimeEntity {
 		return new User(email, username, nickname, oauthType, UserRole.USER);
 	}
 
-	public void update(UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		this.username = userInfoUpdateRequestDto.getUserName();
-		this.getPictureProfile().modify(userInfoUpdateRequestDto.getProfilePictureUrl());
+	public void updateName(String username) {
+		this.username = username;
+	}
+
+	public void addProfilePicture(PictureProfile pictureProfile) {
+		this.getPictureProfileList().add(pictureProfile);
 	}
 
 	public void softDelete() {
@@ -163,11 +170,11 @@ public class User extends BaseTimeEntity {
 	}
 
 	@Builder
-	public User(PictureProfile pictureProfile, List<PictureUserFace> pictureUserFaceList, String email,
+	public User(List<PictureProfile> pictureProfileList, List<PictureUserFace> pictureUserFaceList, String email,
 		String introduction,
 		String username, String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password,
 		Creator creator, UserRole userRole, String roles, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt) {
-		this.pictureProfile = pictureProfile;
+		this.pictureProfileList = pictureProfileList;
 		this.pictureUserFaceList = pictureUserFaceList;
 		this.email = email;
 		this.introduction = introduction;

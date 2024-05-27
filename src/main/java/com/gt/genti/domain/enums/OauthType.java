@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum OauthType implements com.gt.genti.domain.enums.ConvertableEnum {
+public enum OauthType implements ConvertableEnum {
 	GOOGLE("GOOGLE"),
 	KAKAO("KAKAO"),
 	APPLE("APPLE"),

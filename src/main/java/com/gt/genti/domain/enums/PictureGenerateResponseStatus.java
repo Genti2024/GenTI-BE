@@ -14,4 +14,8 @@ public enum PictureGenerateResponseStatus implements ConvertableEnum {
 
 	private final String stringValue;
 
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

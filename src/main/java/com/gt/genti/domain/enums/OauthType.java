@@ -12,4 +12,9 @@ public enum OauthType implements ConvertableEnum {
 	NONE("NONE");
 
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return true;
+	}
 }

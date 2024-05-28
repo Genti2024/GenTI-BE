@@ -22,7 +22,7 @@ public class DefaultStringAttributeConverter<T extends Enum<T> & ConvertableEnum
 		try{
 			return attribute.getStringValue();
 		} catch (NullPointerException e){
-			if(attribute.isNullable()){
+			if(enumClassType.getEnumConstants()[0].isNullable()){
 				return null;
 			} else{
 				throw new DynamicException("ENUM", enumClassType.getName() + " 타입은 null 값을 허용하지 않습니다.", HttpStatus.BAD_REQUEST);

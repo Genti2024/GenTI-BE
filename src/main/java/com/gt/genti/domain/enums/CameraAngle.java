@@ -11,4 +11,9 @@ public enum CameraAngle implements com.gt.genti.domain.enums.ConvertableEnum {
 	BELOW("아래에서 촬영");
 
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

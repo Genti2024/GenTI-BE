@@ -26,4 +26,9 @@ public enum UserRole implements ConvertableEnum {
 	public static String addRole(String roleToAdd, UserRole role) {
 		return role.getRoleString() + "," + roleToAdd;
 	}
+
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

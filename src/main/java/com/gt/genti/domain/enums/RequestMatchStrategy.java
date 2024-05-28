@@ -11,4 +11,9 @@ public enum RequestMatchStrategy implements ConvertableEnum {
 	CREATOR_ONLY("CREATOR_ONLY");
 
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

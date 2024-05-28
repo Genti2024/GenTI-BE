@@ -28,4 +28,9 @@ public enum BankType implements ConvertableEnum {
 	JEJU("제주은행"),
 	NONE("NONE");
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return true;
+	}
 }

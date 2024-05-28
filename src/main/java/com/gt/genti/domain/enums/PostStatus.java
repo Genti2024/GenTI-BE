@@ -11,4 +11,8 @@ public enum PostStatus implements ConvertableEnum {
 
 	private final String stringValue;
 
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

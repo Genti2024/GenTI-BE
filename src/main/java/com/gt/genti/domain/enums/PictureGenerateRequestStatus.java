@@ -15,4 +15,9 @@ public enum PictureGenerateRequestStatus implements ConvertableEnum {
 	COMPLETED("COMPLETED");
 
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

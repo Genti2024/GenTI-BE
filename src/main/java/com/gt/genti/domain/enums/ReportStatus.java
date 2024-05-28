@@ -10,4 +10,9 @@ public enum ReportStatus implements ConvertableEnum {
 	RESOLVED("RESOLVED");
 
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

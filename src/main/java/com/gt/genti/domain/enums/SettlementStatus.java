@@ -11,4 +11,9 @@ public enum SettlementStatus implements ConvertableEnum {
 	CANCELLED("CANCELLED");
 
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return false;
+	}
 }

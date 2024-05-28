@@ -10,4 +10,9 @@ public enum Sex implements ConvertableEnum {
 	W("W"),
 	NONE("NONE");
 	private final String stringValue;
+
+	@Override
+	public Boolean isNullable() {
+		return true;
+	}
 }

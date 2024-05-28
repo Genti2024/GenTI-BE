@@ -150,7 +150,7 @@ public class MatchTest {
 			.roles(UserRole.USER.getStringValue())
 			.loginId(null)
 			.password(null)
-			.pictureProfile(null)
+			.pictureProfileList(null)
 			.lastLoginSocialPlatform(OauthType.GOOGLE)
 			.nickname("nickname")
 			.pictureUserFaceList(null)

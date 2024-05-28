@@ -9,6 +9,7 @@ import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.dto.ChangeUserRoleDto;
 import com.gt.genti.dto.ChangeUserStatusDto;
@@ -39,11 +40,7 @@ public class UserService {
 	@Transactional
 	public UserInfoResponseDto getUserInfo(Long userId) {
 		User foundUser = findActivateUserByUserId(userId);
-		List<PictureProfile> pictureProfileList = foundUser.getPictureProfileList();
-		return UserInfoResponseDto.builder()
-			.user(foundUser)
-			.pictureProfileList(pictureProfileList)
-			.build();
+		return new UserInfoResponseDto(foundUser);
 	}
 
 	@Transactional
@@ -57,10 +54,7 @@ public class UserService {
 			foundUser.addProfilePicture(foundPictureProfile);
 		}
 
-		return UserInfoResponseDto.builder()
-			.user(foundUser)
-			.pictureProfileList(foundUser.getPictureProfileList())
-			.build();
+		return new UserInfoResponseDto(foundUser);
 	}
 
 	@Transactional
@@ -105,7 +99,7 @@ public class UserService {
 		log.info("userId" + userId);
 		List<PictureCompleted> pictureCompletedList = pictureCompletedRepository.findAllByUser(foundUser);
 		return pictureCompletedList.stream()
-			.map(entity -> new CommonPictureResponseDto(entity.getId(), entity.getUrl()))
+			.map(PictureEntity::mapToCommonResponse)
 			.toList();
 	}
 
@@ -130,7 +124,10 @@ public class UserService {
 	}
 
 	public List<UserInfoResponseDtoForAdmin> getAllUserInfo() {
-		// userRepository
+		return userRepository.findAll().stream().map(UserInfoResponseDtoForAdmin::new).toList();
+	}
+
+	public List<UserInfoResponseDtoForAdmin> getAllUserInfo(UserRole userRole) {
 		return null;
 	}
 }

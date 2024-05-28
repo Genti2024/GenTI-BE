@@ -6,6 +6,7 @@ import java.util.List;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.PictureUserFace;
+import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
@@ -54,7 +55,7 @@ public class PictureGenerateRequestDetailResponseDtoForUser {
 				.get(0)
 				.getCompletedPictureList()
 				.stream()
-				.map(d -> new CommonPictureResponseDto(d.getId(), d.getUrl()))
+				.map(PictureEntity::mapToCommonResponse)
 				.toList();
 		} else {
 			PictureGenerateResponse realResponse = pictureGenerateRequest.getResponseList()
@@ -65,7 +66,7 @@ public class PictureGenerateRequestDetailResponseDtoForUser {
 				.findFirst().orElseThrow(() -> new ExpectedException(ErrorCode.UnHandledException));
 			this.pictureCompletedList = realResponse.getCompletedPictureList()
 				.stream()
-				.map(picture -> new CommonPictureResponseDto(picture.getId(), picture.getUrl()))
+				.map(PictureEntity::mapToCommonResponse)
 				.toList();
 		}
 

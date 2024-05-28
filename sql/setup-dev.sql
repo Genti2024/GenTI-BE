@@ -10,31 +10,32 @@ set @deactivatedUserId := 7; # 비활성화된 유저의 UserId
 set @deactivatedCreatorId := 8; # 비활성화된 공급자의 CreatorId
 
 set @creatorId := 1; # 공급자의 CreatorId
-
+set @adminCreatorId := 3; # 어드민의 공급자 id
 insert ignore into user (id, created_at, modified_at, deleted_at, email, email_verified, introduction,
                          last_login_social_platform, login_id, nickname, password, user_role, roles, user_status,
-                         username, profile_picture_id)
+                         username, sex)
 
 VALUES (1, localtime, localtime, null, 'admin@gmail.com', true, null, 'GOOGLE', null, '어드민테스트1_닉네임', null, 'ROLE_ADMIN',
-        'ROLE_ADMIN,ROLE_MANAGER,ROLE_CREATOR,ROLE_USER', 'ACTIVATED', '어드민이름', null),
-       (2, localtime, localtime, null, 'user@gmail.com', true, '유저_소개1', 'GOOGLE', null, '유저테스트1_닉네임', null,
-        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름1', null),
+        'ROLE_ADMIN,ROLE_MANAGER,ROLE_CREATOR,ROLE_USER', 'ACTIVATED', '어드민이름', 'NONE'),
+       (2, localtime, localtime, null, 'user@gmail.com', true, '유저_소개1', 'GOOGLE', null, '유저테스`트1_닉네임', null,
+        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름1', 'M'),
        (3, localtime, localtime, null, 'emptyUser@gmail.com', true, '유저_소개2', 'GOOGLE', null, '유저테스트1_닉네임', null,
-        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름2', null),
+        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름2', 'W'),
        (4, localtime, localtime, null, 'creator@gmail.com', true, '공급자_소개', 'GOOGLE', null, '유저테스트2_닉네임', null,
-        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름1', null),
+        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름1', 'M'),
        (5, localtime, localtime, null, 'emptyCreator@gmail.com', true, '공급자_소개2', 'GOOGLE', null, '공급자테스트2_닉네임', null,
-        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름2', null),
+        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름2', 'M'),
        (6, localtime, localtime, null, 'oauthFirstJoin@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '최초가입자_닉네임', null,
-        'ROLE_OAUTH_FIRST_JOIN', 'ROLE_OAUTH_FIRST_JOIN,ROLE_USER', 'ACTIVATED', '최초가입자이름', null),
+        'ROLE_OAUTH_FIRST_JOIN', 'ROLE_OAUTH_FIRST_JOIN,ROLE_USER', 'ACTIVATED', '최초가입자이름', 'M'),
        (7, localtime, localtime, null, 'deactivatedUser@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된유저_닉네임',
-        null, 'ROLE_USER', 'ROLE_USER', 'DEACTIVATED', '비활성화된유저이름', null),
+        null, 'ROLE_USER', 'ROLE_USER', 'DEACTIVATED', '비활성화된유저이름', 'M'),
        (8, localtime, localtime, null, 'deactivatedCreator@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된공급자_닉네임',
-        null, 'ROLE_CREATOR', 'ROLE_CREATOR', 'DEACTIVATED', '비활성화된공급자이름', null);
+        null, 'ROLE_CREATOR', 'ROLE_CREATOR', 'DEACTIVATED', '비활성화된공급자이름', 'M');
 
-insert ignore into creator (id, user_id, workable, created_at, modified_at)
-values (1, 4, true, localtime, localtime),
-       (2, 5, false, localtime, localtime);
+insert ignore into creator (id, created_at, modified_at, account_holder, account_number, bank_type, workable, user_id)
+values (1, localtime, localtime, '서병렬', '123-4142-2523331-123', '국민은행', true, 4),
+       (2, localtime, localtime, null, null, null, false, 5),
+       (3, localtime, localtime, null, null, null, true, 1);
 
 insert ignore into picture_pose (id, created_at, modified_at, url, uploaded_by)
 values (1, LOCALTIME, LOCALTIME, 'pose_picture_url1', 2),
@@ -54,17 +55,27 @@ values (1, LOCALTIME, LOCALTIME, 'user_face_picture_url1', 2),
        (9, LOCALTIME, LOCALTIME, 'user_face_picture_url3', 2);
 
 
-
-insert ignore into picture_generate_request (id, creator_id, picture_pose_id, requester_id, prompt, camera_angle,
+insert ignore into picture_generate_request (id, creator_id, picture_pose_id, requester_id, prompt, prompt_advanced,
+                                             camera_angle,
                                              request_status, shot_coverage, created_at, modified_at)
-VALUES (1, null, 4, 2, 'prompt_test_1', '위에서 촬영', 'CREATED', '얼굴만 클로즈업', '2000-01-01 07:00:00', localtime),
-       (2, null, 3, 2, 'prompt_test_2', '같은 높이에서 촬영', 'CANCELED', '허리 위로 촬영', '2020-01-01 07:00:00', localtime),
-       (3, 1, 2, 2, 'prompt_test_3', '아래에서 촬영', 'ASSIGNING', '무릎 위로 촬영', '2000-01-01 07:00:00', localtime),
-       (4, 1, 2, 2, 'prompt_test_4', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00', localtime),
-       (5, 1, 2, 2, 'prompt_test_5', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영', '2000-01-01 07:00:00', localtime),
-       (6, 1, 2, 2, 'prompt_test_6', '아래에서 촬영', 'REPORTED', '무릎 위로 촬영', '2000-01-01 07:00:00', localtime),
-       (7, 1, 1, 2, 'prompt_test_7', '위에서 촬영', 'COMPLETED', '전신 촬영', '2020-01-01 07:00:00', localtime),
-       (8, 1, 1, 2, 'prompt_test_7', '위에서 촬영', 'REPORTED', '전신 촬영', '2020-01-01 07:00:00', localtime);
+VALUES (1, null, 4, 2, '생성된요청', 'prompt_advanced_test_1', '위에서 촬영', 'CREATED', '얼굴만 클로즈업',
+        '2000-01-01 07:00:00', localtime),
+       (2, null, 3, 2, '취소된요청', 'prompt_advanced_test_2', '같은 높이에서 촬영', 'CANCELED', '허리 위로 촬영',
+        '2020-01-01 07:00:00', localtime),
+       (3, :creatorId, 2, 2, '특정 공급자와 매칭중인요청', 'prompt_advanced_test_3', '아래에서 촬영', 'ASSIGNING', '무릎 위로 촬영',
+        '2000-01-01 07:00:00', localtime),
+       (4, :creatorId, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_4', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영',
+        '2000-01-01 07:00:00', localtime),
+       (5, :creatorId, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_5', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영',
+        '2000-01-01 07:00:00', localtime),
+       (6, :creatorId, 2, 2, '신고된 요청', 'prompt_advanced_test_6', '아래에서 촬영', 'REPORTED', '무릎 위로 촬영', '2000-01-01 07:00:00',
+        localtime),
+       (7, :creatorId, 1, 2, '완료된 요청', 'prompt_advanced_test_7', '위에서 촬영', 'COMPLETED', '전신 촬영', '2020-01-01 07:00:00',
+        localtime),
+       (8, :creatorId, 1, 2, '신고된 요청', 'prompt_advanced_test_8', '위에서 촬영', 'REPORTED', '전신 촬영', '2020-01-01 07:00:00',
+        localtime),
+       (9, :adminCreatorId, 3, 2, 'prompt_test_9', 'prompt_advanced_test_9', '위에서 촬영', 'MATCH_TO_ADMIN', '전신 촬영', '2020-01-01 07:00:00',
+        localtime);
 
 insert ignore into picture_generate_request_picture_user_face (picture_generate_request_id, user_face_picture_list_id)
 
@@ -91,15 +102,19 @@ values (1, 1),
        (7, 6),
        (8, 7),
        (8, 8),
-       (8, 9);
+       (8, 9),
+       (9, 7),
+       (9, 8),
+       (9, 9);
 
-insert ignore into picture_generate_response (id, created_at, modified_at, status, creator_id, request_id)
-values (1, localtime, localtime, 'BEFORE_WORK', 1, 3),
-       (2, localtime, localtime, 'SUBMITTED_FIRST', 1, 4),
-       (3, localtime, localtime, 'SUBMITTED_FINAL', 1, 5),
-       (4, localtime, localtime, 'REPORTED', 1, 6),
-       (5, localtime, localtime, 'COMPLETED', 1, 7),
-       (6, localtime, localtime, 'REPORTED', 1, 8);
+
+insert ignore into picture_generate_response (id, created_at, modified_at, memo, status, creator_id, request_id)
+values (1, localtime, localtime, 'memo', 'BEFORE_WORK', 1, 3),
+       (2, localtime, localtime, 'memo', 'SUBMITTED_FIRST', 1, 4),
+       (3, localtime, localtime, 'memo', 'SUBMITTED_FINAL', 1, 5),
+       (4, localtime, localtime, 'memo', 'REPORTED', 1, 6),
+       (5, localtime, localtime, 'memo', 'COMPLETED', 1, 7),
+       (6, localtime, localtime, 'memo', 'REPORTED', 1, 8);
 
 insert ignore into report (id, created_at, modified_at, content, report_status, picture_generate_response_id)
 values (1, localtime, localtime, '변태자식이 본인 발가락 사진을 보낸 것 같습니다.', 'NOT_RESOLVED', 4),
@@ -111,12 +126,12 @@ values (1, localtime, localtime, '얼굴 완성 전 url 1', 2, 4),
        (2, localtime, localtime, '얼굴 완성 전 url 2', 3, 4),
        (3, localtime, localtime, '얼굴 완성 전 url 3', 4, 4);
 
-insert ignore into picture_completed (id, created_at, modified_at, url, picture_generate_response_id, user_id,
-                                      uploaded_by)
-values (1, localtime, localtime, '얼굴 완성 사진 url 1', 3, 2, 1),
-       (2, localtime, localtime, '얼굴 완성 사진 url 2', 4, 2, 1),
-       (3, localtime, localtime, '얼굴 완성 사진 url 3', 5, 2, 1),
-       (4, localtime, localtime, '얼굴 완성 사진 url 4', 6, 2, 1);
+insert ignore into picture_completed (id, created_at, modified_at, url, uploaded_by, picture_generate_response_id,
+                                      requester_id)
+values (1, localtime, localtime, '얼굴 완성 사진 url 1', 1, 3, 2),
+       (2, localtime, localtime, '얼굴 완성 사진 url 2', 1, 4, 2),
+       (3, localtime, localtime, '얼굴 완성 사진 url 3', 1, 5, 2),
+       (4, localtime, localtime, '얼굴 완성 사진 url 4', 1, 6, 2);
 
 insert ignore into response_example (id, created_at, modified_at, example_picture_url, example_prompt, prompt_only,
                                      uploaded_by)
@@ -124,11 +139,12 @@ values (1, localtime, localtime, '/EXAMPLE/벚꽃벤치여자.png', '벚꽃 벤�
        (2, localtime, localtime, '/EXAMPLE/한강잠수부.png', '한강잠수부', false, 1),
        (3, localtime, localtime, null, '프롬프트만있음 사진은 없고', true, 1);
 
-
-insert ignore into settlement (id, created_at, modified_at, elapsed_minutes, reward, picture_generate_response_id)
-values (1, localtime, localtime, 80, 2000, 2),
-       (2, localtime, localtime, 50, 2500, 3),
-       (3, localtime, localtime, 230, 1000, 5);
+insert ignore into settlement (id, created_at, modified_at, elapsed_minutes, reward, picture_generate_response_id,
+                               settlement_status)
+values (1, localtime, localtime, 80, 2000, 2, 'WITHDRAWN'),
+       (2, localtime, localtime, 50, 2500, 3, 'CREATED'),
+       (3, localtime, localtime, 10, 2500, 4, 'CANCELLED'),
+       (4, localtime, localtime, 230, 1000, 5, 'CREATED');
 
 insert ignore into deposit (id, created_at, modified_at, deposit_amount, user_id)
 values (1, localtime, localtime, 0, 1),

@@ -7,9 +7,11 @@ import java.util.List;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.OauthType;
+import com.gt.genti.domain.enums.Sex;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
+import com.gt.genti.domain.enums.converter.SexConverter;
 import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
 import com.gt.genti.error.ErrorCode;
@@ -46,11 +48,15 @@ public class User extends BaseTimeEntity {
 	List<PictureProfile> pictureProfileList;
 
 	// PictureUserFace는 완전히 user에 종속
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureUserFace> pictureUserFaceList;
 
 	@Column(name = "email")
 	String email;
+
+	@Column(name = "sex")
+	@Convert(converter = SexConverter.class)
+	Sex sex;
 
 	@Column(name = "introduction")
 	String introduction;

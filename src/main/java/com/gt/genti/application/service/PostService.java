@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
-import com.gt.genti.domain.PicturePost;
 import com.gt.genti.domain.Post;
 import com.gt.genti.dto.PostBriefResponseDto;
 import com.gt.genti.dto.PostDetailResponseDto;
@@ -48,12 +47,11 @@ public class PostService {
 		return postList.stream()
 			.map(post -> PostDetailResponseDto.builder()
 				.postId(post.getId())
-				.postImageUrl(
-					post.getPictureList().stream().map(PicturePost::getUrl).toList())
+				.picturePostList(post.getPictureList())
 				.likes(post.getLikes())
 				.userId(post.getUser().getId())
 				.content(post.getContent())
-				.profileImageUrl(post.getUser().getPictureProfileList().getUrl())
+				.pictureProfile(post.getUser().getPictureProfileList().get(0))
 				.createdAt(post.getCreatedAt())
 				.build()).toList();
 	}

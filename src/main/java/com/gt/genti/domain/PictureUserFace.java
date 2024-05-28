@@ -1,8 +1,5 @@
 package com.gt.genti.domain;
 
-import java.util.List;
-
-import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.common.PictureEntity;
 
 import jakarta.persistence.Column;
@@ -12,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,10 +26,6 @@ public class PictureUserFace extends PictureEntity {
 
 	@Column(name = "url", nullable = false)
 	String url;
-
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	User user;
 
 	@Builder
 	public PictureUserFace(String url, User user) {

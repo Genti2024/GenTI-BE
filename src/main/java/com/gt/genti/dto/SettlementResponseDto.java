@@ -3,6 +3,7 @@ package com.gt.genti.dto;
 import java.time.LocalDateTime;
 
 import com.gt.genti.domain.Settlement;
+import com.gt.genti.domain.enums.SettlementStatus;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +14,12 @@ public class SettlementResponseDto {
 	Long settlementId;
 	LocalDateTime createdAt;
 	Long reward;
-	Boolean withdrawn;
-
+	SettlementStatus settlementStatus;
 
 	public SettlementResponseDto(Settlement settlement) {
 		this.settlementId = settlement.getId();
 		this.createdAt = settlement.getCreatedAt();
 		this.reward = settlement.getReward();
-		this.withdrawn = settlement.getWithdrawn();
+		this.settlementStatus = settlement.getSettlementStatus();
 	}
 }

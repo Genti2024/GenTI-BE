@@ -99,7 +99,7 @@ public class PictureService {
 		return pictureCompletedRepository.saveAll(pictureCompletedList);
 	}
 
-	public Picture updatePicture(CreatePictureUserFaceCommand createPictureUserFaceCommand) {
+	public PictureUserFace updatePicture(CreatePictureUserFaceCommand createPictureUserFaceCommand) {
 		PictureUserFace pictureUserFace = PictureEntityUtils.makePictureUserFace(
 			createPictureUserFaceCommand.getUrl(),
 			createPictureUserFaceCommand.getUser()

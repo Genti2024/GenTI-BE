@@ -28,6 +28,10 @@ public class PictureCompleted extends PictureEntity {
 	String url;
 
 	@ManyToOne
+	@JoinColumn(name = "requester_id")
+	User requester;
+
+	@ManyToOne
 	@JoinColumn(name = "picture_generate_response_id")
 	PictureGenerateResponse pictureGenerateResponse;
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.common.PictureEntity;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,12 +18,11 @@ public class UserInfoResponseDto {
 	String username;
 	List<CommonPictureResponseDto> profilePictureList;
 
-	@Builder
-	public UserInfoResponseDto(User user, List<PictureProfile> pictureProfileList) {
+	public UserInfoResponseDto(User user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
-		this.profilePictureList = pictureProfileList.stream()
-			.map(pictureProfile -> new CommonPictureResponseDto(pictureProfile.getId(), pictureProfile.getUrl()))
+		this.profilePictureList = user.getPictureProfileList().stream()
+			.map(PictureEntity::mapToCommonResponse)
 			.toList();
 	}
 }

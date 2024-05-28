@@ -41,7 +41,14 @@ public class GlobalExceptionHandler {
 		String errorMessage = exception.getBindingResult().getFieldErrors().stream().map(
 			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
 
-		return error(new DynamicException("V001", errorMessage, HttpStatus.BAD_REQUEST));
+		return error(new DynamicException("VALIDATION", errorMessage, HttpStatus.BAD_REQUEST));
+	}
+
+	@ExceptionHandler(DynamicException.class)
+	protected ResponseEntity<ApiResult<?>> processValidationError(DynamicException exception) {
+		String errorMessage = exception.getMessage();
+
+		return error(new DynamicException(exception.getErrorCode(), errorMessage, exception.getHttpStatusCode()));
 	}
 
 	@NotNull

@@ -1,23 +1,20 @@
 package com.gt.genti.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import com.gt.genti.domain.Deposit;
-import com.gt.genti.domain.PictureProfile;
-import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.Sex;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
 public class UserInfoResponseDtoForAdmin {
 	Long id;
-
-	List<PictureProfile> pictureProfileList;
-
-	List<PictureUserFace> pictureUserFaceList;
 
 	String email;
 
@@ -46,12 +43,10 @@ public class UserInfoResponseDtoForAdmin {
 
 	LocalDateTime deletedAt;
 
-	Deposit deposit;
+	DepositResponseDto deposit;
 
 	public UserInfoResponseDtoForAdmin(User user) {
 		this.id = user.getId();
-		this.pictureProfileList = user.getPictureProfileList();
-		this.pictureUserFaceList = user.getPictureUserFaceList();
 		this.email = user.getEmail();
 		this.introduction = user.getIntroduction();
 		this.username = user.getUsername();
@@ -60,12 +55,14 @@ public class UserInfoResponseDtoForAdmin {
 		this.emailVerified = user.getEmailVerified();
 		this.loginId = user.getLoginId();
 		this.password = user.getPassword();
-		this.creator = new CreatorInfoResponseDto(user.getCreator());
+		if (user.getCreator() != null) {
+			this.creator = new CreatorInfoResponseDto(user.getCreator());
+		}
 		this.userRole = user.getUserRole();
 		this.roles = user.getRoles();
 		this.lastLoginSocialPlatform = user.getLastLoginSocialPlatform();
 		this.deletedAt = user.getDeletedAt();
-		this.deposit = user.getDeposit();
+		this.deposit = new DepositResponseDto(user.getDeposit());
 		this.sex = user.getSex();
 	}
 

@@ -4,6 +4,8 @@ import java.util.Map;
 
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.converter.EnumUtil;
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -41,6 +43,6 @@ public class OAuthAttributeBuilder {
 
 			}
 		}
-		throw new RuntimeException("등록되지 않은 oauth type :" + registrationId);
+		throw new ExpectedException(ErrorCode.NotAllowedOauthProvider,registrationId );
 	}
 }

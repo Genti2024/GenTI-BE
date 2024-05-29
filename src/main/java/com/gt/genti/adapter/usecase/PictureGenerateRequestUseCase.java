@@ -5,8 +5,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.PictureGenerateRequest;
-import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
@@ -19,7 +18,7 @@ public interface PictureGenerateRequestUseCase {
 
 	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long id);
 
-	public List<PictureGenerateRequestBriefResponseDto> getAllMyPictureGenerateRequests(Long userId);
+	public List<PictureGenerateRequestBriefResponseDtoForUser> getAllMyPictureGenerateRequests(Long userId);
 
 	@Transactional
 	public PictureGenerateRequest createPictureGenerateRequest(Long requesterId,

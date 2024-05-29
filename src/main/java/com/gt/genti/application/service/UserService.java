@@ -2,6 +2,9 @@ package com.gt.genti.application.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,11 +126,16 @@ public class UserService {
 		return foundUser;
 	}
 
-	public List<UserInfoResponseDtoForAdmin> getAllUserInfo() {
-		return userRepository.findAll().stream().map(UserInfoResponseDtoForAdmin::new).toList();
+	public Page<UserInfoResponseDtoForAdmin> getAllUserInfo(int page, int size) {
+		if (page < 0) {
+			page = 0;
+		}
+
+		Pageable pageable = PageRequest.of(page, size);
+		return userRepository.findAll(pageable).map(UserInfoResponseDtoForAdmin::new);
 	}
 
-	public List<UserInfoResponseDtoForAdmin> getAllUserInfo(UserRole userRole) {
+	public Page<UserInfoResponseDtoForAdmin> getAllUserInfo(UserRole userRole, int page, int size) {
 		return null;
 	}
 }

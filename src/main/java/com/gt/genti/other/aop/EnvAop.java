@@ -7,6 +7,8 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -20,14 +22,6 @@ public class EnvAop {
 
 	private final Environment env;
 
-	@Before("@annotation(com.gt.genti.other.aop.annotation.CheckUserIsQuit) && args(userDetailsImpl)")
-	public void checkUserIsQuit(final UserDetailsImpl userDetailsImpl) {
-		log.info("유저탈퇴확인aop실행");
-		if (!userDetailsImpl.isEnabled()) {
-			throw new RuntimeException("탈퇴한 사용자입니다.");
-		}
-	}
-
 	@Around("@annotation(com.gt.genti.other.aop.annotation.DeployOnly)")
 	public Object deployOnly(ProceedingJoinPoint joinPoint) throws Throwable {
 		String[] activeProfiles = env.getActiveProfiles();
@@ -36,8 +30,6 @@ public class EnvAop {
 				return joinPoint.proceed();
 			}
 		}
-
 		return null;
-
 	}
 }

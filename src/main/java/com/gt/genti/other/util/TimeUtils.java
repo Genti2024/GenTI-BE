@@ -8,6 +8,7 @@ import com.gt.genti.error.ExpectedException;
 public class TimeUtils {
 	public static Long ACCEPTABLE_TIME_MINUTE = 15L;
 	public static Long PGRES_LIMIT_HOUR = 4L;
+	public static Long PGREQ_LIMIT_HOUR = 6L;
 
 	//소요시간 기준 1시간 이내 2,500원, 2시간 이내 2,000원 4시간 이내 1,000원
 	public static Long[][] TIME_REWARD_MAPPER = {

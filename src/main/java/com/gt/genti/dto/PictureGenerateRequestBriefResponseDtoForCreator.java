@@ -14,16 +14,16 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PictureGenerateRequestBriefResponseDto {
+public class PictureGenerateRequestBriefResponseDtoForCreator {
 	Long requestId;
 	String prompt;
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;
 	PictureGenerateRequestStatus status;
-	String remainTime;
+	String remainTimeForAccept;
 	LocalDateTime createdAt;
 
-	public PictureGenerateRequestBriefResponseDto(PictureGenerateRequest pgreq) {
+	public PictureGenerateRequestBriefResponseDtoForCreator(PictureGenerateRequest pgreq) {
 		this.requestId = pgreq.getId();
 		this.prompt = pgreq.getPrompt();
 		this.cameraAngle = pgreq.getCameraAngle();
@@ -32,6 +32,6 @@ public class PictureGenerateRequestBriefResponseDto {
 		this.createdAt = pgreq.getCreatedAt();
 		Duration duration = Duration.between(LocalDateTime.now(),
 			createdAt.plusMinutes(TimeUtils.ACCEPTABLE_TIME_MINUTE));
-		this.remainTime = TimeUtils.getTimeString(duration);
+		this.remainTimeForAccept = TimeUtils.getTimeString(duration);
 	}
 }

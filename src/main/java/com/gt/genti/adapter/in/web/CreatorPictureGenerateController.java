@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForCreator;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateResponseSubmitDto;
 import com.gt.genti.dto.UpdateMemoRequestDto;
@@ -31,7 +32,7 @@ public class CreatorPictureGenerateController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
 	@GetMapping("/picture-generate-requests/assigned")
-	public ResponseEntity<ApiResult<PictureGenerateRequestBriefResponseDto>> getAssignedPictureGenerateRequestBrief(
+	public ResponseEntity<ApiResult<PictureGenerateRequestBriefResponseDtoForCreator>> getAssignedPictureGenerateRequestBrief(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestBrief(

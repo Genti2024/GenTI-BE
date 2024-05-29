@@ -14,6 +14,12 @@ public class ErrorUtils {
 
 	private static final String AUTH = "AUTH";
 	private static final String DEPOSIT = "DEPOSIT";
+	private static final String ENUM = "ENUM";
+	private static final String UNDEFINED = "UNDEFINED";
+
+	private static final String OAUTH = "OAUTH";
+	private static final String VALIDATION = "VALIDATION";
+
 
 	private static String CODE(String type, int seq) {
 		return type + String.format("-%05d", seq);
@@ -45,19 +51,23 @@ public class ErrorUtils {
 	public static final String NotAssignedToMe = CODE(REQUEST, 6);
 	public static final String ExpiredPictureGenerateRequest = CODE(RESPONSE, 2);
 	public static final String ExpiredMatching = CODE(REQUEST, 7);
-
 	public static final String DepositNotFound = CODE(DEPOSIT, 1);
 	public static final String AddPointAmountCannotBeMinus = CODE(DEPOSIT, 2);
 	public static final String FinalPictureNotUploadedYet = CODE(ADMIN, 1);
 	public static final String CreatorsPictureNotUploadedYet = CODE(RESPONSE, 3);
 	public static final String UserDeactivated = CODE(USER, 2);
 
-	public static String AlreadyActivatedUser = CODE(USER, 3);
-	public static String CannotRestoreUser = CODE(USER, 4);
-	public static String PictureUserFaceNotFound = CODE(PICTURE, 1);
-	public static String PicturePoseNotFound = CODE(PICTURE, 2);
-	public static String PictureCompletedNotFound = CODE(PICTURE, 3);
-	public static String PictureCreatedByCreatorNotFound = CODE(PICTURE, 4);
-	public static String PictureProfileNotFound=CODE(PICTURE,5);
-
+	public static final String AlreadyActivatedUser = CODE(USER, 3);
+	public static final String CannotRestoreUser = CODE(USER, 4);
+	public static final String PictureUserFaceNotFound = CODE(PICTURE, 1);
+	public static final String PicturePoseNotFound = CODE(PICTURE, 2);
+	public static final String PictureCompletedNotFound = CODE(PICTURE, 3);
+	public static final String PictureCreatedByCreatorNotFound = CODE(PICTURE, 4);
+	public static final String PictureProfileNotFound = CODE(PICTURE, 5);
+	public static final String NotNullableEnum = CODE(ENUM, 1);
+	public static final String DBToEnumFailed = CODE(UNDEFINED, 1);
+	public static final String Undefined = CODE(UNDEFINED, 2);
+	public static final String WithDrawnUser = CODE(USER, 5);
+	public static final String NotAllowedOauthProvider = CODE(OAUTH, 1);
+	public static final String ControllerValidationError = CODE(VALIDATION, 1);
 }

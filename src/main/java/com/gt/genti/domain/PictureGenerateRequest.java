@@ -83,8 +83,6 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Column(name = "request_status", nullable = false)
 	@Convert(converter = RequestStatusConverter.class)
 	PictureGenerateRequestStatus pictureGenerateRequestStatus;
-	
-	
 
 	@Builder
 	public PictureGenerateRequest(User requester, PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto,
@@ -118,8 +116,8 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.creator = creator;
 	}
 
-	public void accept(){
-		if(LocalDateTime.now().isAfter(this.getModifiedAt().plusMinutes(ACCEPTABLE_TIME_MINUTE))){
+	public void accept() {
+		if (LocalDateTime.now().isAfter(this.getModifiedAt().plusMinutes(ACCEPTABLE_TIME_MINUTE))) {
 			throw new ExpectedException(ErrorCode.ExpiredPictureGenerateRequest);
 		}
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;

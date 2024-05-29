@@ -2,6 +2,8 @@ package com.gt.genti.application.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +14,7 @@ import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
@@ -39,16 +41,18 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final PictureService pictureService;
 	private final RequestMatchService requestMatchService;
 
-	public List<PictureGenerateRequestDetailResponseDto> getAllPictureGenerateRequest() {
+	public Page<PictureGenerateRequestDetailResponseDto> getAllPictureGenerateRequest(
+		Pageable pageable) {
 
-		List<PictureGenerateRequestDetailResponseDto> result = pictureGenerateRequestPort.findAll().stream().map(
+		Page<PictureGenerateRequestDetailResponseDto> result = pictureGenerateRequestPort.findAll(pageable).map(
 			PictureGenerateRequestDetailResponseDto::new
-		).toList();
+		);
 		if (result.isEmpty()) {
 			throw new ExpectedException(ErrorCode.Undefined);
 		}
 		return result;
 	}
+
 	@Override
 	public List<PictureGenerateRequestDetailResponseDtoForUser> getAllPictureGenerateRequestForUser(Long userId) {
 		User foundUser = userRepository.findById(userId)
@@ -86,12 +90,12 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	// edited at 2024-04-13
 	// author 서병렬
 	@Override
-	public List<PictureGenerateRequestBriefResponseDto> getAllMyPictureGenerateRequests(Long userId) {
+	public List<PictureGenerateRequestBriefResponseDtoForUser> getAllMyPictureGenerateRequests(Long userId) {
 		User foundUser = userRepository.findById(userId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 		return pictureGenerateRequestPort.findAllByRequester(foundUser)
 			.stream()
-			.map(PictureGenerateRequestBriefResponseDto::new).toList();
+			.map(PictureGenerateRequestBriefResponseDtoForUser::new).toList();
 	}
 
 	@Override

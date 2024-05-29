@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PictureGenerateRequestDetailResponseDto {
 	Long id;
-	
+
 	Long requesterId;
 	String requesterEmail;
 
@@ -57,13 +57,18 @@ public class PictureGenerateRequestDetailResponseDto {
 		this.shotCoverage = pictureGenerateRequest.getShotCoverage();
 		this.requestStatus = pictureGenerateRequest.getPictureGenerateRequestStatus();
 		this.createdAt = pictureGenerateRequest.getCreatedAt();
-		this.responseList = pictureGenerateRequest.getResponseList()
-			.stream()
-			.map(PictureGenerateResponseDetailResponseDto::new)
-			.toList();
-		Duration duration = Duration.between(LocalDateTime.now(),
-			responseList.get(responseList.size() - 1).createdAt.plusHours(
-				TimeUtils.PGRES_LIMIT_HOUR));
-		this.remainTime = TimeUtils.getTimeString(duration);
+		if (!pictureGenerateRequest.getResponseList().isEmpty()) {
+			this.responseList = pictureGenerateRequest.getResponseList()
+				.stream()
+				.map(PictureGenerateResponseDetailResponseDto::new)
+				.toList();
+
+			Duration duration = Duration.between(LocalDateTime.now(),
+				pictureGenerateRequest.getCreatedAt().plusHours(TimeUtils.PGREQ_LIMIT_HOUR));
+			if (!duration.isNegative()) {
+				this.remainTime = TimeUtils.getTimeString(duration);
+			}
+		}
+
 	}
 }

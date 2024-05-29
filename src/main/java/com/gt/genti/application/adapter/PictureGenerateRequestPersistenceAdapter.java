@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
@@ -69,7 +71,7 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public List<PictureGenerateRequest> findAll() {
-		return pictureGenerateRequestRepository.findAll();
+	public Page<PictureGenerateRequest> findAll(Pageable pageable) {
+		return pictureGenerateRequestRepository.findAll(pageable);
 	}
 }

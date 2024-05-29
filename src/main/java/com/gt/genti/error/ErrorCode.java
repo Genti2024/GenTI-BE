@@ -9,8 +9,8 @@ import com.gt.genti.other.util.ErrorUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
+@Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
 	TOKEN_NOT_PROVIDED(HttpStatus.UNAUTHORIZED, ErrorUtils.TOKEN_NOT_PROVIDED, "토큰이 전달되지 않았습니다."),
@@ -57,10 +57,20 @@ public enum ErrorCode {
 		"공급자가 제출한 1차 완성 사진을 찾지 못했습니다."),
 	PictureProfileNotFound(HttpStatus.NOT_FOUND, ErrorUtils.PictureProfileNotFound,
 		"해당하는 유저 프로필 사진을 찾지 못했습니다."),
+	NotNullableEnum(HttpStatus.BAD_REQUEST, ErrorUtils.NotNullableEnum, " [%s] 값은 null 값을 허용하지 않습니다."),
+	DBToEnumFailed(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.DBToEnumFailed,
+		"DB -> ENUM 값 불러오기 실패  enum : %s value :  %s detail : %s"),
+	WithDrawnUser(HttpStatus.BAD_REQUEST, ErrorUtils.WithDrawnUser, "탈퇴한 사용자입니다."),
+	Undefined(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.Undefined, "FOR FE 원래 비즈니스 로직 상 발생하면 안되는 오류입니다. 문의 부탁드립니다."),
+	ValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError,"%s"),
+	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE,ErrorUtils.NotAllowedOauthProvider , "허가되지 않은 oauth type %s");
 
-	Undefined(HttpStatus.INTERNAL_SERVER_ERROR, "UNDEFINED", "FOR FE 원래 비즈니스 로직 상 발생하면 안되는 오류입니다. 문의 부탁드립니다.");
-
-	private final HttpStatusCode status;
+	private final HttpStatusCode httpStatusCode;
 	private final String code;
 	private final String message;
+
+	public String getMessage(Object... args) {
+		return String.format(message, args);
+	}
+
 }

@@ -59,23 +59,23 @@ insert ignore into picture_generate_request (id, creator_id, picture_pose_id, re
                                              camera_angle,
                                              request_status, shot_coverage, created_at, modified_at)
 VALUES (1, null, 4, 2, '생성된요청', 'prompt_advanced_test_1', '위에서 촬영', 'CREATED', '얼굴만 클로즈업',
-        '2000-01-01 07:00:00', localtime),
+        '2024-05-08 07:00:00', '2024-05-08 07:00:00'),
        (2, null, 3, 2, '취소된요청', 'prompt_advanced_test_2', '같은 높이에서 촬영', 'CANCELED', '허리 위로 촬영',
-        '2020-01-01 07:00:00', localtime),
+        '2024-05-08 13:00:00', '2024-05-08 13:00:00'),
        (3, 1, 2, 2, '특정 공급자와 매칭중인요청', 'prompt_advanced_test_3', '아래에서 촬영', 'ASSIGNING', '무릎 위로 촬영',
-        '2000-01-01 07:00:00', localtime),
+        '2024-05-29 07:00:00', '2024-05-29 07:00:00'),
        (4, 1, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_4', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영',
-        '2000-01-01 07:00:00', localtime),
+        '2024-05-29 08:00:00', '2024-05-29 08:00:00'),
        (5, 1, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_5', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영',
-        '2000-01-01 07:00:00', localtime),
-       (6, 1, 2, 2, '신고된 요청', 'prompt_advanced_test_6', '아래에서 촬영', 'REPORTED', '무릎 위로 촬영', '2000-01-01 07:00:00',
-        localtime),
-       (7, 1, 1, 2, '완료된 요청', 'prompt_advanced_test_7', '위에서 촬영', 'COMPLETED', '전신 촬영', '2020-01-01 07:00:00',
-        localtime),
-       (8, 1, 1, 2, '신고된 요청', 'prompt_advanced_test_8', '위에서 촬영', 'REPORTED', '전신 촬영', '2020-01-01 07:00:00',
-        localtime),
-       (9, 3, 3, 2, 'prompt_test_9', 'prompt_advanced_test_9', '위에서 촬영', 'MATCH_TO_ADMIN', '전신 촬영', '2020-01-01 07:00:00',
-        localtime);
+        '2024-05-29 09:00:00', '2024-05-29 09:00:00'),
+       (6, 1, 2, 2, '신고된 요청', 'prompt_advanced_test_6', '아래에서 촬영', 'REPORTED', '무릎 위로 촬영', '2024-05-29 10:00:00',
+        '2024-05-29 10:00:00'),
+       (7, 1, 1, 2, '완료된 요청', 'prompt_advanced_test_7', '위에서 촬영', 'COMPLETED', '전신 촬영', '2024-05-29 10:00:00',
+        '2024-05-29 11:00:00'),
+       (8, 1, 1, 2, '신고된 요청', 'prompt_advanced_test_8', '위에서 촬영', 'REPORTED', '전신 촬영', '2024-05-29 12:00:00',
+        '2024-05-29 12:00:00'),
+       (9, 3, 3, 2, 'prompt_test_9', 'prompt_advanced_test_9', '위에서 촬영', 'MATCH_TO_ADMIN', '전신 촬영',
+        '2024-05-29 13:00:00', '2024-05-29 13:00:00');
 
 insert ignore into picture_generate_request_picture_user_face (picture_generate_request_id, user_face_picture_list_id)
 
@@ -108,17 +108,22 @@ values (1, 1),
        (9, 9);
 
 
-insert ignore into picture_generate_response (id, created_at, modified_at, memo, status, creator_id, request_id)
-values (1, localtime, localtime, 'memo', 'BEFORE_WORK', 1, 3),
-       (2, localtime, localtime, 'memo', 'SUBMITTED_FIRST', 1, 4),
-       (3, localtime, localtime, 'memo', 'SUBMITTED_FINAL', 1, 5),
-       (4, localtime, localtime, 'memo', 'REPORTED', 1, 6),
-       (5, localtime, localtime, 'memo', 'COMPLETED', 1, 7),
-       (6, localtime, localtime, 'memo', 'REPORTED', 1, 8);
+insert ignore into picture_generate_response (id, created_at, modified_at, memo, status, creator_id, request_id,
+                                              submitted_by_admin_at, submitted_by_creator_at)
+values (1, '2024-05-29 07:00:02', null, null, 'BEFORE_WORK', 1, 3, null, null),
+       (2, '2024-05-29 08:00:02', '2024-05-29 10:30:00', 'memo', 'SUBMITTED_FIRST', 1, 4, '2024-05-29 10:30:00', null),
+       (3, '2024-05-29 09:00:02', '2024-05-29 10:20:00', 'memo', 'SUBMITTED_FINAL', 1, 5, '2024-05-29 10:20:00',
+        '2024-05-29 11:20:00'),
+       (4, '2024-05-29 10:00:02', '2024-05-29 11:00:02', 'memo', 'REPORTED', 1, 6, '2024-05-29 11:00:02',
+        '2024-05-29 12:20:00'),
+       (5, '2024-05-29 11:00:02', '2024-05-29 13:00:02', 'memo', 'COMPLETED', 1, 7, '2024-05-29 13:00:02',
+        '2024-05-29 18:00:02'),
+       (6, '2024-05-29 12:00:02', '2024-05-29 14:00:02', 'memo', 'REPORTED', 1, 8, '2024-05-29 14:00:02',
+        '2024-05-29 15:20:00');
 
 insert ignore into report (id, created_at, modified_at, content, report_status, picture_generate_response_id)
-values (1, localtime, localtime, '변태자식이 본인 발가락 사진을 보낸 것 같습니다.', 'NOT_RESOLVED', 4),
-       (2, localtime, localtime, '모르는 사람 얼굴이에요', 'RESOLVED', 6);
+values (1, '2024-05-29 10:30:00', null, '변태자식이 본인 발가락 사진을 보낸 것 같습니다.', 'NOT_RESOLVED', 4),
+       (2, '2024-05-29 12:00:00', null, '모르는 사람 얼굴이에요', 'RESOLVED', 6);
 
 insert ignore into picture_created_by_creator (id, created_at, modified_at, url, picture_generate_response_id,
                                                uploaded_by)

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
-import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDtoForUser;
 import com.gt.genti.dto.PictureGenerateRequestModifyDto;
@@ -76,7 +76,7 @@ public class UserPictureGenerateRequestController {
 	}
 
 	@GetMapping("/all")
-	public ResponseEntity<ApiResult<List<PictureGenerateRequestBriefResponseDto>>> getAllMyRequests(
+	public ResponseEntity<ApiResult<List<PictureGenerateRequestBriefResponseDtoForUser>>> getAllMyRequests(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(pictureGenerateRequestUseCase.getAllMyPictureGenerateRequests(userDetails.getId()));

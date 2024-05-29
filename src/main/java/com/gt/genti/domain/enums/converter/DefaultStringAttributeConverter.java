@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatusCode;
 
 import com.gt.genti.domain.enums.ConvertableEnum;
 import com.gt.genti.error.DynamicException;
+import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.AttributeConverter;
@@ -25,7 +26,7 @@ public class DefaultStringAttributeConverter<T extends Enum<T> & ConvertableEnum
 			if(enumClassType.getEnumConstants()[0].isNullable()){
 				return null;
 			} else{
-				throw new DynamicException("ENUM", enumClassType.getName() + " 타입은 null 값을 허용하지 않습니다.", HttpStatus.BAD_REQUEST);
+				throw new ExpectedException(ErrorCode.NotNullableEnum,enumClassType.getName());
 			}
 		}
 	}

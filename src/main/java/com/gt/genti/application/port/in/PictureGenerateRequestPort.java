@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
@@ -27,5 +30,5 @@ public interface PictureGenerateRequestPort {
 
 	Optional<PictureGenerateRequest> findByUserIdOrderByCreatedByDesc(Long userId);
 
-	List<PictureGenerateRequest> findAll();
+	Page<PictureGenerateRequest> findAll(Pageable pageable);
 }

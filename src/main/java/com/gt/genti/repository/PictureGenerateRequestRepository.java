@@ -3,6 +3,9 @@ package com.gt.genti.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -79,4 +82,7 @@ public interface PictureGenerateRequestRepository
 	List<PictureGenerateRequest> findByCreatorAndActiveStatus(Creator foundCreator,
 		List<PictureGenerateRequestStatus> activeRequestStatusList,
 		List<PictureGenerateResponseStatus> activeResponseStatusList);
+
+	@NotNull
+	Page<PictureGenerateRequest> findAll(@NotNull Pageable pageable);
 }

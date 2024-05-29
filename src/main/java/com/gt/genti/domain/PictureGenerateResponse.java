@@ -7,8 +7,6 @@ import java.util.List;
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.domain.enums.converter.PictureGenerateResponseStatusConverter;
-import com.gt.genti.error.ErrorCode;
-import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -53,10 +51,16 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	@Convert(converter = PictureGenerateResponseStatusConverter.class)
 	PictureGenerateResponseStatus status;
 
+	@Column(name = "submitted_by_creator_at")
+	LocalDateTime submittedByCreatorAt;
+	@Column(name = "submitted_by_admin_at")
+	LocalDateTime submittedByAdminAt;
+
 	public void creatorSubmit() {
 		//TODO 공급자가 제출시 불가한 상태가 있는지 생각해볼것
 		// edited at 2024-05-20
 		// author 서병렬
+		this.submittedByCreatorAt = LocalDateTime.now();
 		this.status = PictureGenerateResponseStatus.SUBMITTED_FIRST;
 	}
 
@@ -65,10 +69,11 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	}
 
 	public Duration getElapsedTime() {
-		return Duration.between(this.getCreatedAt(), LocalDateTime.now());
+		return Duration.between(this.getCreatedAt(), this.getSubmittedByCreatorAt());
 	}
 
 	public void adminSubmit() {
+		this.submittedByAdminAt = LocalDateTime.now();
 		this.status = PictureGenerateResponseStatus.SUBMITTED_FINAL;
 	}
 }

@@ -21,7 +21,7 @@ import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.Settlement;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
-import com.gt.genti.dto.PictureGenerateRequestBriefResponseDto;
+import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForCreator;
 import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
 import com.gt.genti.dto.PictureGenerateResponseAdminSubmitDto;
 import com.gt.genti.dto.PictureGenerateResponseSubmitDto;
@@ -51,7 +51,7 @@ public class PictureGenerateWorkService {
 	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
 
-	public PictureGenerateRequestBriefResponseDto getPictureGenerateRequestBrief(Long userId,
+	public PictureGenerateRequestBriefResponseDtoForCreator getPictureGenerateRequestBrief(Long userId,
 		PictureGenerateRequestStatus status) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		Optional<PictureGenerateRequest> foundPGR;
@@ -64,7 +64,7 @@ public class PictureGenerateWorkService {
 			default -> throw new ExpectedException(ErrorCode.NotSupportedTemp);
 		}
 
-		return foundPGR.map(PictureGenerateRequestBriefResponseDto::new)
+		return foundPGR.map(PictureGenerateRequestBriefResponseDtoForCreator::new)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
 
 	}

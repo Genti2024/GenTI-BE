@@ -1,10 +1,6 @@
 package com.gt.genti.domain.enums.converter;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-
 import com.gt.genti.domain.enums.ConvertableEnum;
-import com.gt.genti.error.DynamicException;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 
@@ -20,13 +16,13 @@ public class DefaultStringAttributeConverter<T extends Enum<T> & ConvertableEnum
 
 	@Override
 	public String convertToDatabaseColumn(T attribute) {
-		try{
+		try {
 			return attribute.getStringValue();
-		} catch (NullPointerException e){
-			if(enumClassType.getEnumConstants()[0].isNullable()){
+		} catch (NullPointerException e) {
+			if (enumClassType.getEnumConstants()[0].isNullable()) {
 				return null;
-			} else{
-				throw new ExpectedException(ErrorCode.NotNullableEnum,enumClassType.getName());
+			} else {
+				throw new ExpectedException(ErrorCode.NotNullableEnum, enumClassType.getName());
 			}
 		}
 	}

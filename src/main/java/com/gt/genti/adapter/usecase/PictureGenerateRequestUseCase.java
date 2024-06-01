@@ -5,27 +5,27 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.PictureGenerateRequest;
-import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForUser;
-import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
-import com.gt.genti.dto.PictureGenerateRequestDetailResponseDtoForUser;
-import com.gt.genti.dto.PictureGenerateRequestModifyDto;
-import com.gt.genti.dto.PictureGenerateRequestRequestDto;
+import com.gt.genti.dto.PGREQBriefFindByUserResponseDto;
+import com.gt.genti.dto.PGREQDetailFindResponseDto;
+import com.gt.genti.dto.PGREQUpdateRequestDto;
+import com.gt.genti.dto.PGREQDetailFindByUserResponseDto;
+import com.gt.genti.dto.PGREQSaveRequestDto;
 
 public interface PictureGenerateRequestUseCase {
-	public List<PictureGenerateRequestDetailResponseDtoForUser> getAllPictureGenerateRequestForUser(Long userId);
+	public List<PGREQDetailFindByUserResponseDto> getAllPictureGenerateRequestForUser(Long userId);
 
-	public PictureGenerateRequestDetailResponseDtoForUser getPictureGenerateRequestForUser(Long userId);
+	public PGREQDetailFindByUserResponseDto getPictureGenerateRequestForUser(Long userId);
 
-	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestById(Long id);
+	public PGREQDetailFindResponseDto getPictureGenerateRequestById(Long id);
 
-	public List<PictureGenerateRequestBriefResponseDtoForUser> getAllMyPictureGenerateRequests(Long userId);
+	public List<PGREQBriefFindByUserResponseDto> getAllMyPictureGenerateRequests(Long userId);
 
 	@Transactional
 	public PictureGenerateRequest createPictureGenerateRequest(Long requesterId,
-		PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto);
+		PGREQSaveRequestDto PGREQSaveRequestDto);
 
 	@Transactional
 	public void modifyPictureGenerateRequest(Long userId,
-		PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto);
+		PGREQUpdateRequestDto PGREQUpdateRequestDto);
 
 }

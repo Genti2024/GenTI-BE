@@ -13,8 +13,8 @@ import com.gt.genti.domain.enums.converter.CameraAngleConverter;
 import com.gt.genti.domain.enums.converter.EnumUtil;
 import com.gt.genti.domain.enums.converter.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.ShotCoverageConverter;
-import com.gt.genti.dto.PictureGenerateRequestModifyDto;
-import com.gt.genti.dto.PictureGenerateRequestRequestDto;
+import com.gt.genti.dto.PGREQUpdateRequestDto;
+import com.gt.genti.dto.PGREQSaveRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 
@@ -85,24 +85,24 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	PictureGenerateRequestStatus pictureGenerateRequestStatus;
 
 	@Builder
-	public PictureGenerateRequest(User requester, PictureGenerateRequestRequestDto pictureGenerateRequestRequestDto,
+	public PictureGenerateRequest(User requester, PGREQSaveRequestDto pgreqSaveRequestDto,
 		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced) {
 		this.requester = requester;
-		this.prompt = pictureGenerateRequestRequestDto.getPrompt();
+		this.prompt = pgreqSaveRequestDto.getPrompt();
 		this.promptAdvanced = promptAdvanced;
 		this.picturePose = picturePose;
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.ASSIGNING;
-		this.cameraAngle = pictureGenerateRequestRequestDto.getCameraAngle();
-		this.shotCoverage = pictureGenerateRequestRequestDto.getShotCoverage();
+		this.cameraAngle = pgreqSaveRequestDto.getCameraAngle();
+		this.shotCoverage = pgreqSaveRequestDto.getShotCoverage();
 		this.userFacePictureList = userFacePictureList;
 	}
 
-	public void modify(PictureGenerateRequestModifyDto pictureGenerateRequestModifyDto, PicturePose picturePose,
+	public void modify(PGREQUpdateRequestDto PGREQUpdateRequestDto, PicturePose picturePose,
 		List<PictureUserFace> pictureUserFaceList) {
-		this.prompt = pictureGenerateRequestModifyDto.getPrompt();
-		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, pictureGenerateRequestModifyDto.getCameraAngle());
+		this.prompt = PGREQUpdateRequestDto.getPrompt();
+		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, PGREQUpdateRequestDto.getCameraAngle());
 		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class,
-			pictureGenerateRequestModifyDto.getShotCoverage());
+			PGREQUpdateRequestDto.getShotCoverage());
 		this.picturePose = picturePose;
 		this.userFacePictureList = pictureUserFaceList;
 

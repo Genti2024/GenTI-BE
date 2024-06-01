@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.Report;
 import com.gt.genti.domain.enums.ReportStatus;
-import com.gt.genti.dto.ReportCreateRequestDto;
-import com.gt.genti.dto.ReportResponseDto;
-import com.gt.genti.dto.ReportUpdateDto;
+import com.gt.genti.dto.ReportSaveRequestDto;
+import com.gt.genti.dto.ReportFindResponseDto;
+import com.gt.genti.dto.ReportUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.PictureGenerateResponseRepository;
@@ -24,27 +24,27 @@ public class ReportService {
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final ReportRepository reportRepository;
 
-	public Boolean createReport(ReportCreateRequestDto reportCreateRequestDto) {
-		Long pictureGenerateResponseId = reportCreateRequestDto.getPictureGenerateResponseId();
+	public Boolean createReport(ReportSaveRequestDto reportSaveRequestDto) {
+		Long pictureGenerateResponseId = reportSaveRequestDto.getPictureGenerateResponseId();
 		PictureGenerateResponse findPictureGenerateResponse = pictureGenerateResponseRepository.findById(
 			pictureGenerateResponseId).orElseThrow(() -> new ExpectedException(
 			ErrorCode.PictureGenerateResponseNotFound));
 
-		Report createReport = new Report(findPictureGenerateResponse, reportCreateRequestDto.getContent());
+		Report createReport = new Report(findPictureGenerateResponse, reportSaveRequestDto.getContent());
 
 		reportRepository.save(createReport);
 
 		return true;
 	}
 
-	public List<ReportResponseDto> getAllReports() {
+	public List<ReportFindResponseDto> getAllReports() {
 		return reportRepository.findAllByOrderByReportStatusAndCreatedAt();
 	}
 
 	@Transactional
-	public Boolean updateReport(ReportUpdateDto reportUpdateDto) {
-		Long id = reportUpdateDto.getId();
-		ReportStatus status = reportUpdateDto.getReportStatus();
+	public Boolean updateReport(ReportUpdateRequestDto reportUpdateRequestDto) {
+		Long id = reportUpdateRequestDto.getId();
+		ReportStatus status = reportUpdateRequestDto.getReportStatus();
 		Report findReport = reportRepository.findById(id).orElseThrow(() -> new ExpectedException(ErrorCode.ReportNotFound));
 		findReport.updateStatus(status);
 		return true;

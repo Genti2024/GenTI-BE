@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.gt.genti.domain.Report;
-import com.gt.genti.dto.ReportResponseDto;
+import com.gt.genti.dto.ReportFindResponseDto;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
-	@Query("select new com.gt.genti.dto.ReportResponseDto( "
+	@Query("select new com.gt.genti.dto.ReportFindResponseDto( "
 		+ "r,"
 		+ "u.email,"
 		+ "c.user.email,"
@@ -24,5 +24,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 		// + "where r.pictureGenerateResponse.id = pgres.id and "
 		// + "pgres.request.requester.id = u.id "
 		+ "order by r.reportStatus asc, r.createdAt desc ")
-	List<ReportResponseDto> findAllByOrderByReportStatusAndCreatedAt();
+	List<ReportFindResponseDto> findAllByOrderByReportStatusAndCreatedAt();
 }

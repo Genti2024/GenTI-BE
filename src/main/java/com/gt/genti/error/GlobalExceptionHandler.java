@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExpectedException.class)
-	protected ResponseEntity<ApiResult<?>> handleExpectedException(final ExpectedException exception) {
+	protected ResponseEntity<ApiResult<ExpectedException>> handleExpectedException(final ExpectedException exception) {
 		return error(exception);
 	}
 
@@ -50,7 +50,8 @@ public class GlobalExceptionHandler {
 
 	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시
 	@ExceptionHandler(HandlerMethodValidationException.class)
-	public ResponseEntity<ApiResult<?>> handleValidationExceptions(HandlerMethodValidationException exception) {
+	public ResponseEntity<ApiResult<ExpectedException>> handleValidationExceptions(
+		HandlerMethodValidationException exception) {
 		MessageSourceResolvable resolvable = exception.getAllValidationResults().get(0).getResolvableErrors().get(0);
 		String fieldName = Objects.requireNonNull(resolvable.getCodes())[0];
 		fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);

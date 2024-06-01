@@ -21,12 +21,12 @@ import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.Settlement;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
-import com.gt.genti.dto.PictureGenerateRequestBriefResponseDtoForCreator;
-import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
-import com.gt.genti.dto.PictureGenerateResponseAdminSubmitDto;
-import com.gt.genti.dto.PictureGenerateResponseSubmitDto;
-import com.gt.genti.dto.UpdateMemoRequestDto;
-import com.gt.genti.dto.UpdatePictureUrlRequestDto;
+import com.gt.genti.dto.PGREQBriefFindByCreatorResponseDto;
+import com.gt.genti.dto.PGREQDetailFindResponseDto;
+import com.gt.genti.dto.PGRESUpdateByAdminResponseDto;
+import com.gt.genti.dto.PGRESUpdateByCreatorResponseDto;
+import com.gt.genti.dto.MemoUpdateRequestDto;
+import com.gt.genti.dto.PictureUrlUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.util.TimeUtils;
@@ -51,7 +51,7 @@ public class PictureGenerateWorkService {
 	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
 
-	public PictureGenerateRequestBriefResponseDtoForCreator getPictureGenerateRequestBrief(Long userId,
+	public PGREQBriefFindByCreatorResponseDto getPictureGenerateRequestBrief(Long userId,
 		PictureGenerateRequestStatus status) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		Optional<PictureGenerateRequest> foundPGR;
@@ -64,12 +64,12 @@ public class PictureGenerateWorkService {
 			default -> throw new ExpectedException(ErrorCode.NotSupportedTemp);
 		}
 
-		return foundPGR.map(PictureGenerateRequestBriefResponseDtoForCreator::new)
+		return foundPGR.map(PGREQBriefFindByCreatorResponseDto::new)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
 
 	}
 
-	public PictureGenerateRequestDetailResponseDto getPictureGenerateRequestDetail(Long userId,
+	public PGREQDetailFindResponseDto getPictureGenerateRequestDetail(Long userId,
 		Long pictureGenerateRequestId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
@@ -79,26 +79,26 @@ public class PictureGenerateWorkService {
 			throw new ExpectedException(ErrorCode.NotAssignedToMe);
 		}
 
-		return new PictureGenerateRequestDetailResponseDto(foundPictureGenerateRequest);
+		return new PGREQDetailFindResponseDto(foundPictureGenerateRequest);
 
 	}
 
-	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestDetailAll(Long userId) {
+	public List<PGREQDetailFindResponseDto> getPictureGenerateRequestDetailAll(Long userId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		List<PictureGenerateRequest> foundPGRList = pictureGenerateRequestRepository.findAllByCreatorIsOrderByCreatedAtDesc(
 			foundCreator);
 
 		return foundPGRList.stream().map(
-			PictureGenerateRequestDetailResponseDto::new).toList();
+			PGREQDetailFindResponseDto::new).toList();
 
 	}
 
 	@Transactional
 	public Boolean updatePictureCreatedByCreatorList(Long pictureGenerateResponseId,
-		List<UpdatePictureUrlRequestDto> updatePictureUrlRequestDtoList, Long uploaderId) {
+		List<PictureUrlUpdateRequestDto> pictureUrlUpdateRequestDtoList, Long uploaderId) {
 		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
 
-		List<CreatePictureCreatedByCreatorCommand> newUploadPictures = updatePictureUrlRequestDtoList.stream()
+		List<CreatePictureCreatedByCreatorCommand> newUploadPictures = pictureUrlUpdateRequestDtoList.stream()
 			.map(command -> CreatePictureCreatedByCreatorCommand.builder()
 				.url(command.getUrl())
 				.userId(uploaderId)
@@ -111,9 +111,9 @@ public class PictureGenerateWorkService {
 	}
 
 	@Transactional
-	public Boolean updateMemo(Long pictureGenerateResponseId, UpdateMemoRequestDto updateMemoRequestDto) {
+	public Boolean updateMemo(Long pictureGenerateResponseId, MemoUpdateRequestDto memoUpdateRequestDto) {
 		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
-		foundPictureGenerateResponse.updateMemo(updateMemoRequestDto.getMemo());
+		foundPictureGenerateResponse.updateMemo(memoUpdateRequestDto.getMemo());
 		return true;
 	}
 
@@ -150,7 +150,7 @@ public class PictureGenerateWorkService {
 	}
 
 	@Transactional
-	public PictureGenerateResponseSubmitDto submitToAdmin(Long userId, Long pictureGenerateResponseId) {
+	public PGRESUpdateByCreatorResponseDto submitToAdmin(Long userId, Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
 		Creator foundCreator = findCreatorByUserId(userId);
 
@@ -181,13 +181,13 @@ public class PictureGenerateWorkService {
 
 		foundDeposit.add(reword);
 
-		return PictureGenerateResponseSubmitDto.builder()
+		return PGRESUpdateByCreatorResponseDto.builder()
 			.elapsedTime(getTimeString(elapsedDuration))
 			.build();
 	}
 
 	@Transactional
-	public PictureGenerateResponseAdminSubmitDto submitFinal(Long pictureGenerateResponseId) {
+	public PGRESUpdateByAdminResponseDto submitFinal(Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
 		List<PictureCompleted> pictureCompletedList = pictureService.findAllPictureCompletedByPictureGenerateResponse(
 			foundPGRES);
@@ -205,7 +205,7 @@ public class PictureGenerateWorkService {
 		// edited at 2024-05-21
 		// author 서병렬
 
-		return PictureGenerateResponseAdminSubmitDto.builder()
+		return PGRESUpdateByAdminResponseDto.builder()
 			.elapsedTime(getTimeString(elapsedDuration))
 			.build();
 	}
@@ -216,7 +216,7 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
 	}
 
-	public Boolean updatePictureListCreatedByAdmin(Long userId, List<UpdatePictureUrlRequestDto> requestDtoList,
+	public Boolean updatePictureListCreatedByAdmin(Long userId, List<PictureUrlUpdateRequestDto> requestDtoList,
 		Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
 				pictureGenerateResponseId)
@@ -233,7 +233,7 @@ public class PictureGenerateWorkService {
 		return true;
 	}
 
-	public List<PictureGenerateRequestDetailResponseDto> getPictureGenerateRequestDetail3(Long userId) {
+	public List<PGREQDetailFindResponseDto> getPictureGenerateRequestDetail3(Long userId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		List<PictureGenerateRequestStatus> activeRequestStatusList = new ArrayList<>();
 		activeRequestStatusList.add(PictureGenerateRequestStatus.IN_PROGRESS);
@@ -243,7 +243,7 @@ public class PictureGenerateWorkService {
 		List<PictureGenerateRequest> foundPGREQList = pictureGenerateRequestRepository.findByCreatorAndActiveStatus(
 			foundCreator, activeRequestStatusList, activeResponseStatusList);
 
-		return foundPGREQList.stream().map(PictureGenerateRequestDetailResponseDto::new).toList();
+		return foundPGREQList.stream().map(PGREQDetailFindResponseDto::new).toList();
 	}
 }
 

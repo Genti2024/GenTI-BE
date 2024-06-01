@@ -54,7 +54,12 @@ public class SecurityConfig {
 		"/login",
 		"/error",
 		"/test/**",
-		"/oauth2"
+		"/oauth2",
+		// swagger
+		"/swagger-ui/**",
+		"/swagger-resources/**",
+		"/v3/api-docs/**",
+		"/api-docs/**"
 	};
 
 	public static String[] COMMON_RESOURCE_AND_ALLOWED_URL;

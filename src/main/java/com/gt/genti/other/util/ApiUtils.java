@@ -14,7 +14,7 @@ public class ApiUtils {
 		return new ResponseEntity<>(new ApiResult<>(true, response), HttpStatus.OK);
 	}
 
-	public static ResponseEntity<ApiResult<?>> error(ExpectedException exception) {
+	public static ResponseEntity<ApiResult<ExpectedException>> error(ExpectedException exception) {
 		return new ResponseEntity<>(new ApiResult<>(false, null, exception),
 			exception.getErrorCode().getHttpStatusCode());
 	}

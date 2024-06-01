@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.gt.genti.domain.Post;
-import com.gt.genti.dto.PostBriefResponseDto;
+import com.gt.genti.dto.PostBriefFindResponseDto;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -41,7 +41,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	Slice<Post> findPostsNextCursorByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId,
 		@Param("cursor") Long cursor, PageRequest pageRequest);
 
-	@Query("select new com.gt.genti.dto.PostBriefResponseDto( "
+	@Query("select new com.gt.genti.dto.PostBriefFindResponseDto( "
 		+ "p.id,"
 		+ "pic.url)"
 		+ "from Post p "
@@ -50,5 +50,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		+ "where p.mainPicture.id = pic.id and "
 		+ "p.user.id = :userId "
 		+ "order by p.createdAt desc ")
-	List<PostBriefResponseDto> findPostBriefByUserId(@Param("userId") Long userId);
+	List<PostBriefFindResponseDto> findPostBriefByUserId(@Param("userId") Long userId);
 }

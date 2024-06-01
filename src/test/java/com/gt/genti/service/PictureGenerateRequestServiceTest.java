@@ -21,9 +21,9 @@
 // import com.gt.genti.domain.enums.CameraAngle;
 // import com.gt.genti.domain.enums.RequestStatus;
 // import com.gt.genti.domain.enums.ShotCoverage;
-// import com.gt.genti.dto.PictureGenerateRequestDetailResponseDto;
-// import com.gt.genti.dto.PictureGenerateRequestModifyDto;
-// import com.gt.genti.dto.PictureGenerateRequestRequestDto;
+// import com.gt.genti.dto.PGREQDetailFindResponseDto;
+// import com.gt.genti.dto.PGREQUpdateRequestDto;
+// import com.gt.genti.dto.PGREQSaveRequestDto;
 // import com.gt.genti.repository.PictureGenerateRequestRepository;
 // import com.gt.genti.repository.PosePictureRepository;
 // import com.gt.genti.repository.UserRepository;
@@ -53,9 +53,9 @@
 // 			UserFacePicture::getUrl).toList();
 //
 // 		// when
-// 		List<PictureGenerateRequestDetailResponseDto> pictureGenerateRequestDetailResponseDtoList = pictureGenerateRequestService.getMyActivePictureGenerateRequest(
+// 		List<PGREQDetailFindResponseDto> pictureGenerateRequestDetailResponseDtoList = pictureGenerateRequestService.getMyActivePictureGenerateRequest(
 // 			3L);
-// 		PictureGenerateRequestDetailResponseDto recentDto = pictureGenerateRequestDetailResponseDtoList.get(0);
+// 		PGREQDetailFindResponseDto recentDto = pictureGenerateRequestDetailResponseDtoList.get(0);
 //
 // 		// then
 // 		assertThat(recentDto.getId()).isEqualTo(2L);
@@ -78,7 +78,7 @@
 // 		// given
 // 		String randomPrompt = UUID.randomUUID().toString();
 // 		String posePictureUrl = UUID.randomUUID().toString();
-// 		PictureGenerateRequestRequestDto reqDto = PictureGenerateRequestRequestDto.builder()
+// 		PGREQSaveRequestDto reqDto = PGREQSaveRequestDto.builder()
 // 			.cameraAngle(CameraAngle.EYE_LEVEL.getStringValue())
 // 			.posePictureUrl(posePictureUrl)
 // 			.prompt(randomPrompt)
@@ -117,7 +117,7 @@
 // 		given(posePictureRepository.findByUrl(randomUrl)).willReturn(
 // 			Optional.of(PosePicture.builder().id(1L).url(randomUrl).build()));
 //
-// 		PictureGenerateRequestRequestDto reqDto = PictureGenerateRequestRequestDto.builder()
+// 		PGREQSaveRequestDto reqDto = PGREQSaveRequestDto.builder()
 // 			.cameraAngle(CameraAngle.EYE_LEVEL.getStringValue())
 // 			.posePictureUrl(randomUrl)
 // 			.prompt(randomPrompt)
@@ -161,7 +161,7 @@
 // 		String randomPosePictureUrl = UUID.randomUUID().toString();
 // 		String randomPrompt = UUID.randomUUID().toString();
 //
-// 		PictureGenerateRequestModifyDto modifyDto = PictureGenerateRequestModifyDto.builder()
+// 		PGREQUpdateRequestDto modifyDto = PGREQUpdateRequestDto.builder()
 // 			.id(1L)
 // 			.posePictureUrl(randomPosePictureUrl)
 // 			.shotCoverage(ShotCoverage.UPPER_BODY.getStringValue())

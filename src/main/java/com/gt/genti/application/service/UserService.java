@@ -14,11 +14,11 @@ import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.dto.ChangeUserRoleDto;
-import com.gt.genti.dto.ChangeUserStatusDto;
-import com.gt.genti.dto.CommonPictureResponseDto;
-import com.gt.genti.dto.UserInfoResponseDto;
-import com.gt.genti.dto.UserInfoResponseDtoForAdmin;
+import com.gt.genti.dto.UserFindResponseDto;
+import com.gt.genti.dto.UserRoleUpdateRequestDto;
+import com.gt.genti.dto.UserStatusUpdateRequestDto;
+import com.gt.genti.dto.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.UserFindByAdminResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -41,13 +41,13 @@ public class UserService {
 	private final PictureCompletedRepository pictureCompletedRepository;
 
 	@Transactional
-	public UserInfoResponseDto getUserInfo(Long userId) {
+	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = findActivateUserByUserId(userId);
-		return new UserInfoResponseDto(foundUser);
+		return new UserFindResponseDto(foundUser);
 	}
 
 	@Transactional
-	public UserInfoResponseDto updateUserInfo(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
+	public UserFindResponseDto updateUserInfo(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		User foundUser = findActivateUserByUserId(userId);
 		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
 		if (!(userInfoUpdateRequestDto.getProfilePictureUrl().isEmpty()
@@ -57,13 +57,13 @@ public class UserService {
 			foundUser.addProfilePicture(foundPictureProfile);
 		}
 
-		return new UserInfoResponseDto(foundUser);
+		return new UserFindResponseDto(foundUser);
 	}
 
 	@Transactional
-	public Boolean updateUserRole(Long userId, ChangeUserRoleDto changeUserRoleDto) {
+	public Boolean updateUserRole(Long userId, UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
 		User foundUser = findActivateUserByUserId(userId);
-		UserRole userRole = changeUserRoleDto.getUserRole();
+		UserRole userRole = userRoleUpdateRequestDto.getUserRole();
 		foundUser.updateUserRole(userRole);
 		if (userRole == UserRole.CREATOR) {
 			Creator newCreator = new Creator(foundUser);
@@ -91,13 +91,13 @@ public class UserService {
 	}
 
 	@Transactional
-	public Boolean updateUserStatus(Long userId, ChangeUserStatusDto changeUserStatusDto) {
+	public Boolean updateUserStatus(Long userId, UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		User foundUser = findActivateUserByUserId(userId);
-		foundUser.updateStatus(changeUserStatusDto.getUserStatus());
+		foundUser.updateStatus(userStatusUpdateRequestDto.getUserStatus());
 		return true;
 	}
 
-	public List<CommonPictureResponseDto> getAllMyGeneratedPicture(Long userId) {
+	public List<CommonPictureUrlResponseDto> getAllMyGeneratedPicture(Long userId) {
 		User foundUser = findActivateUserByUserId(userId);
 		log.info("userId" + userId);
 		List<PictureCompleted> pictureCompletedList = pictureCompletedRepository.findAllByUser(foundUser);
@@ -126,16 +126,16 @@ public class UserService {
 		return foundUser;
 	}
 
-	public Page<UserInfoResponseDtoForAdmin> getAllUserInfo(int page, int size) {
+	public Page<UserFindByAdminResponseDto> getAllUserInfo(int page, int size) {
 		if (page < 0) {
 			page = 0;
 		}
 
 		Pageable pageable = PageRequest.of(page, size);
-		return userRepository.findAll(pageable).map(UserInfoResponseDtoForAdmin::new);
+		return userRepository.findAll(pageable).map(UserFindByAdminResponseDto::new);
 	}
 
-	public Page<UserInfoResponseDtoForAdmin> getAllUserInfo(UserRole userRole, int page, int size) {
+	public Page<UserFindByAdminResponseDto> getAllUserInfo(UserRole userRole, int page, int size) {
 		return null;
 	}
 }

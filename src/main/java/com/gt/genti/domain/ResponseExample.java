@@ -1,8 +1,8 @@
 package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.PictureEntity;
-import com.gt.genti.dto.AddPromptOnlyExampleRequestDto;
-import com.gt.genti.dto.AddResponseExampleRequestDto;
+import com.gt.genti.dto.PromptOnlyExampleSaveRequestDto;
+import com.gt.genti.dto.ExampleSaveRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,14 +32,14 @@ public class ResponseExample extends PictureEntity {
 	@Column(name = "prompt_only")
 	Boolean promptOnly;
 
-	public ResponseExample(AddResponseExampleRequestDto dto, User uploadedBy) {
+	public ResponseExample(ExampleSaveRequestDto dto, User uploadedBy) {
 		this.promptOnly = false;
 		this.examplePictureUrl = dto.getUrl();
 		this.examplePrompt = dto.getPrompt();
 		this.setUploadedBy(uploadedBy);
 	}
 
-	public ResponseExample(AddPromptOnlyExampleRequestDto dto, User uploadedBy) {
+	public ResponseExample(PromptOnlyExampleSaveRequestDto dto, User uploadedBy) {
 		this.promptOnly = true;
 		this.examplePictureUrl = null;
 		this.examplePrompt = dto.getPrompt();

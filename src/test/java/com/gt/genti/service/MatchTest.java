@@ -1,21 +1,17 @@
 package com.gt.genti.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.gt.genti.adapter.in.web.AdminPictureGenerateWorkController;
 import com.gt.genti.application.service.PictureGenerateRequestService;
-import com.gt.genti.application.service.RequestMatchService;
 import com.gt.genti.application.service.UserService;
 import com.gt.genti.command.CreatePicturePoseCommand;
 import com.gt.genti.command.CreatePictureUserFaceCommand;
@@ -30,8 +26,8 @@ import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
-import com.gt.genti.dto.ChangeUserRoleDto;
-import com.gt.genti.dto.PictureGenerateRequestRequestDto;
+import com.gt.genti.dto.PGREQSaveRequestDto;
+import com.gt.genti.dto.UserRoleUpdateRequestDto;
 import com.gt.genti.external.discord.controller.DiscordController;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.UserRepository;
@@ -72,7 +68,7 @@ public class MatchTest {
 		User adminUser = getTestAdminUser();
 		User savedAdmin = userRepository.save(adminUser);
 		// admin으로 userrole 변경시 admin creator 생성됨
-		userService.updateUserRole(savedAdmin.getId(), ChangeUserRoleDto.builder().userRole(UserRole.ADMIN).build());
+		userService.updateUserRole(savedAdmin.getId(), UserRoleUpdateRequestDto.builder().userRole(UserRole.ADMIN).build());
 
 		CreatePicturePoseCommand command = getCreatePicturePoseCommand(savedUser);
 		PicturePose savedPicturePose = pictureService.updatePicture(command);
@@ -81,7 +77,7 @@ public class MatchTest {
 			savedUser);
 		List<PictureUserFace> savedPictureUserfaceList = pictureService.updatePictureUserFaceAll(commandList);
 
-		PictureGenerateRequestRequestDto req = PictureGenerateRequestRequestDto.builder()
+		PGREQSaveRequestDto req = PGREQSaveRequestDto.builder()
 			.prompt("벚꽃여자요")
 			.posePictureUrl(savedPicturePose.getUrl())
 			.cameraAngle(CameraAngle.ABOVE)

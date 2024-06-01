@@ -7,7 +7,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.gt.genti.domain.Post;
-import com.gt.genti.dto.PostBriefResponseDto;
+import com.gt.genti.dto.PostBriefFindResponseDto;
 import com.gt.genti.dto.PostDetailResponseDto;
 import com.gt.genti.repository.PostRepository;
 
@@ -56,7 +56,7 @@ public class PostService {
 				.build()).toList();
 	}
 
-	public List<PostBriefResponseDto> getPostBriefAllByUserId(Long userId) {
+	public List<PostBriefFindResponseDto> getPostBriefAllByUserId(Long userId) {
 		return postRepository.findPostBriefByUserId(userId);
 	}
 }

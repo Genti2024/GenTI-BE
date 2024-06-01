@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.ResponseExample;
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.AddPromptOnlyExampleRequestDto;
-import com.gt.genti.dto.AddResponseExampleRequestDto;
-import com.gt.genti.dto.PromptOnlyExampleResponseDto;
-import com.gt.genti.dto.ResponseExampleResponseDto;
+import com.gt.genti.dto.PromptOnlyExampleSaveRequestDto;
+import com.gt.genti.dto.ExampleSaveRequestDto;
+import com.gt.genti.dto.PromptOnlyExampleFindResponseDto;
+import com.gt.genti.dto.ExampleWithPictureFindResponseDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.ResponseExampleRepository;
@@ -24,22 +24,22 @@ public class ResponseExampleService {
 	private final UserRepository userRepository;
 	private final ResponseExampleRepository responseExampleRepository;
 
-	public List<ResponseExampleResponseDto> getAllResponseExamples() {
+	public List<ExampleWithPictureFindResponseDto> getAllResponseExamples() {
 		return responseExampleRepository.findAllByPromptOnlyIsFalse()
 			.stream()
-			.map(ResponseExampleResponseDto::new)
+			.map(ExampleWithPictureFindResponseDto::new)
 			.toList();
 	}
 
-	public List<PromptOnlyExampleResponseDto> getAllPromptOnlyExamples() {
+	public List<PromptOnlyExampleFindResponseDto> getAllPromptOnlyExamples() {
 		return responseExampleRepository.findAllByPromptOnlyIsFalse()
 			.stream()
-			.map(PromptOnlyExampleResponseDto::new)
+			.map(PromptOnlyExampleFindResponseDto::new)
 			.toList();
 	}
 
 	@Transactional
-	public void addResponseExamples(List<AddResponseExampleRequestDto> requestDtoList,
+	public void addResponseExamples(List<ExampleSaveRequestDto> requestDtoList,
 		Long userId) {
 		User findAdmin = userRepository.findById(userId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
@@ -50,7 +50,7 @@ public class ResponseExampleService {
 	}
 
 	@Transactional
-	public void addPromptOnlyExamples(List<AddPromptOnlyExampleRequestDto> requestDtoList, Long userId) {
+	public void addPromptOnlyExamples(List<PromptOnlyExampleSaveRequestDto> requestDtoList, Long userId) {
 		User findAdmin = userRepository.findById(userId)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
 		responseExampleRepository.saveAll(

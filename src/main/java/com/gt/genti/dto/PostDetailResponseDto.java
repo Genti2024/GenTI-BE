@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class PostDetailResponseDto {
 	Long postId;
 	Long userId;
-	CommonPictureResponseDto profilePicture;
-	List<CommonPictureResponseDto> postPictureList;
+	CommonPictureUrlResponseDto profilePicture;
+	List<CommonPictureUrlResponseDto> postPictureList;
 	String content;
 	Integer likes;
 	LocalDateTime createdAt;

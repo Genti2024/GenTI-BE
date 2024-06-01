@@ -10,7 +10,7 @@
 // import org.springframework.transaction.annotation.Transactional;
 //
 // import com.gt.genti.domain.User;
-// import com.gt.genti.dto.UserInfoResponseDto;
+// import com.gt.genti.dto.UserFindResponseDto;
 // import com.gt.genti.dto.UserInfoUpdateRequestDto;
 // import com.gt.genti.repository.UserRepository;
 //
@@ -25,7 +25,7 @@
 // 	@Test
 // 	void getUserInfoSuccessTest() {
 //
-// 		UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(1L);
+// 		UserFindResponseDto userInfoResponseDto = userService.getUserInfo(1L);
 // 		assertNotNull(userInfoResponseDto);
 // 		assertThat(userInfoResponseDto.getId()).isEqualTo(1L);
 // 		assertThat(userInfoResponseDto.getUsername()).isEqualTo("어드민테스트1_이름");
@@ -48,7 +48,7 @@
 // 			.profilePictureUrl(afterProfilePictureUrl)
 // 			.build();
 //
-// 		UserInfoResponseDto userInfoResponseDto = userService.updateUserInfo(1L, userInfoUpdateRequestDto);
+// 		UserFindResponseDto userInfoResponseDto = userService.updateUserInfo(1L, userInfoUpdateRequestDto);
 //
 // 		assertThat(userInfoResponseDto.getId()).isEqualTo(1L);
 // 		assertThat(userInfoResponseDto.getUsername()).isEqualTo(afterName);

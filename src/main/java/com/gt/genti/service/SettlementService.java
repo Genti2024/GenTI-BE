@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.gt.genti.domain.Settlement;
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.SettlementResponseDto;
+import com.gt.genti.dto.SettlementFindResponseDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.SettlementRepository;
@@ -19,10 +19,10 @@ import lombok.RequiredArgsConstructor;
 public class SettlementService {
 	private final SettlementRepository settlementRepository;
 	private final UserRepository userRepository;
-	public List<SettlementResponseDto> getAllSettlements(Long userId) {
+	public List<SettlementFindResponseDto> getAllSettlements(Long userId) {
 		User foundUser = userRepository.findById(userId).orElseThrow(()-> new ExpectedException(ErrorCode.UserNotFound));
 		List<Settlement> settlementList = settlementRepository.findAllByUserOrderByCreatedAtDesc(foundUser);
-		return settlementList.stream().map(SettlementResponseDto::new).toList();
+		return settlementList.stream().map(SettlementFindResponseDto::new).toList();
 
 	}
 }

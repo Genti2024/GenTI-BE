@@ -8,14 +8,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ExampleWithPictureFindResponseDto {
-	Long id;
-	String url;
+	CommonPictureUrlResponseDto picture;
 	String prompt;
 
-
 	public ExampleWithPictureFindResponseDto(ResponseExample responseExample) {
-		this.id = responseExample.getId();
-		this.url = responseExample.getExamplePictureUrl();
+		this.picture = responseExample.mapToCommonResponse();
 		this.prompt = responseExample.getExamplePrompt();
 	}
 }

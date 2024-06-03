@@ -2,7 +2,6 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.PictureEntity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,22 +23,18 @@ public class PictureCreatedByCreator extends PictureEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@Column(name = "url", nullable = false)
-	String url;
-
 	@ManyToOne
 	@JoinColumn(name = "picture_generate_response_id")
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCreatedByCreator(String url, PictureGenerateResponse pictureGenerateResponse, User uploadedBy) {
-
-		this.url = url;
+	public PictureCreatedByCreator(String key, PictureGenerateResponse pictureGenerateResponse, User uploadedBy) {
+		this.key = key;
 		this.pictureGenerateResponse = pictureGenerateResponse;
-		this.setUploadedBy(uploadedBy);
+		this.uploadedBy = uploadedBy;
 	}
 
-	public void modify(String url) {
-		this.url = url;
+	public void modify(String key) {
+		this.key = key;
 	}
 }

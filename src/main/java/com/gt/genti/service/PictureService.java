@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import com.gt.genti.command.CreatePictureCompletedCommand;
 import com.gt.genti.command.CreatePictureCreatedByCreatorCommand;
 import com.gt.genti.command.CreatePicturePoseCommand;
-import com.gt.genti.command.CreatePictureProfileCommand;
 import com.gt.genti.command.CreatePictureUserFaceCommand;
-import com.gt.genti.domain.Picture;
+import com.gt.genti.command.PictureProfileSaveCommand;
+import com.gt.genti.domain.common.Picture;
 import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureCreatedByCreator;
 import com.gt.genti.domain.PictureGenerateResponse;
@@ -33,7 +33,9 @@ import com.gt.genti.repository.PictureUserFaceRepository;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PictureService {
@@ -49,26 +51,26 @@ public class PictureService {
 		return pictureCompletedRepository.findAllByPictureGenerateResponse(pgres);
 	}
 
-	public PictureUserFace findByUrlPictureUserFace(String url) {
-		return pictureUserFaceRepository.findByUrl(url)
+	public PictureUserFace findByUrlPictureUserFace(String key) {
+		return pictureUserFaceRepository.findByKey(key)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureUserFaceNotFound));
 	}
 
-	// public PictureCompleted findByUrlPictureCompleted(String url) {
-	// 	return pictureCompletedRepository.findByUrl(url);
+	// public PictureCompleted findByUrlPictureCompleted(String key) {
+	// 	return pictureCompletedRepository.findByUrl(key);
 	// }
 
-	public PictureCreatedByCreator findByUrlPictureCreatedByCreator(String url) {
-		return pictureCreatedByCreatorRepository.findByUrl(url)
+	public PictureCreatedByCreator findByUrlPictureCreatedByCreator(String key) {
+		return pictureCreatedByCreatorRepository.findByKey(key)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureCreatedByCreatorNotFound));
 	}
 
-	public Optional<PicturePose> findByUrlPicturePose(String url) {
-		return picturePoseRepository.findByUrl(url);
+	public Optional<PicturePose> findByUrlPicturePose(String key) {
+		return picturePoseRepository.findByKey(key);
 	}
 
-	public PictureProfile findByUrlPictureProfile(String url) {
-		return pictureProfileRepository.findByUrl(url)
+	public PictureProfile findByUrlPictureProfile(String key) {
+		return pictureProfileRepository.findByKey(key)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureProfileNotFound));
 	}
 
@@ -79,21 +81,21 @@ public class PictureService {
 	}
 
 	public Picture updatePicture(CreatePictureCompletedCommand command) {
-		User foundUser = findUser(command.getUserId());
-		PictureCompleted pictureCompleted = PictureEntityUtils.makePictureCompleted(
-			command.getUrl(),
-			command.getPictureGenerateResponse(), foundUser);
+		PictureCompleted pictureCompleted = PictureCompleted.builder()
+			.uploadedBy(command.getUploader())
+			.key(command.getKey())
+			.pictureGenerateResponse(command.getPictureGenerateResponse())
+			.build();
 
 		return pictureCompletedRepository.save(pictureCompleted);
 	}
 
 	public List<PictureCompleted> updatePictures(List<CreatePictureCompletedCommand> commandList) {
-		User foundUser = findUser(commandList.get(0).getUserId());
 
 		List<PictureCompleted> pictureCompletedList = commandList.stream().map(
 			command -> PictureEntityUtils.makePictureCompleted(
-				command.getUrl(),
-				command.getPictureGenerateResponse(), foundUser)
+				command.getKey(),
+				command.getPictureGenerateResponse(), command.getUploader())
 		).toList();
 
 		return pictureCompletedRepository.saveAll(pictureCompletedList);
@@ -101,16 +103,16 @@ public class PictureService {
 
 	public PictureUserFace updatePicture(CreatePictureUserFaceCommand createPictureUserFaceCommand) {
 		PictureUserFace pictureUserFace = PictureEntityUtils.makePictureUserFace(
-			createPictureUserFaceCommand.getUrl(),
-			createPictureUserFaceCommand.getUser()
+			createPictureUserFaceCommand.getKey(),
+			createPictureUserFaceCommand.getUploader()
 		);
 		return pictureUserFaceRepository.save(pictureUserFace);
 	}
 
-	public Picture updatePicture(CreatePictureProfileCommand createPictureProfileCommand) {
+	public Picture updatePicture(PictureProfileSaveCommand pictureProfileSaveCommand) {
 		PictureProfile pictureProfile = PictureEntityUtils.makePictureProfile(
-			createPictureProfileCommand.getUrl(),
-			createPictureProfileCommand.getUser()
+			pictureProfileSaveCommand.getKey(),
+			pictureProfileSaveCommand.getUploader()
 		);
 		return pictureProfileRepository.save(pictureProfile);
 	}
@@ -118,8 +120,8 @@ public class PictureService {
 	public PicturePose updatePicture(CreatePicturePoseCommand command) {
 
 		PicturePose picturePose = PictureEntityUtils.makePicturePose(
-			command.getUrl(),
-			command.getUser()
+			command.getKey(),
+			command.getUploader()
 		);
 		return picturePoseRepository.save(picturePose);
 	}
@@ -127,9 +129,9 @@ public class PictureService {
 	public Picture updatePicture(CreatePictureCreatedByCreatorCommand command) {
 
 		PictureCreatedByCreator pictureCreatedByCreator = PictureEntityUtils.makePictureCreatedByCreator(
-			command.getUrl(),
+			command.getKey(),
 			command.getPictureGenerateResponse(),
-			findUser(command.getUserId())
+			command.getUploader()
 		);
 		return pictureCreatedByCreatorRepository.save(pictureCreatedByCreator);
 	}
@@ -137,29 +139,34 @@ public class PictureService {
 	public List<PictureUserFace> updatePictureUserFaceAll(
 		List<CreatePictureUserFaceCommand> createPictureUserFaceCommand) {
 		List<PictureUserFace> pictureUserFaceList = createPictureUserFaceCommand.stream()
-			.map(d -> PictureEntityUtils.makePictureUserFace(
-				d.getUrl(),
-				d.getUser()
+			.map(command -> PictureEntityUtils.makePictureUserFace(
+				command.getKey(),
+				command.getUploader()
 			))
 			.toList();
 		return pictureUserFaceRepository.saveAll(pictureUserFaceList);
 	}
 
-	public List<PictureUserFace> updateIfNotExistsPictureUserFace(List<String> facePictureUrl, User foundRequester) {
+	public List<PictureUserFace> updateIfNotExistsPictureUserFace(List<String> facePictureKeyList, User uploader) {
 		Set<PictureUserFace> foundFacePictureSet = new HashSet<>(
-			this.find3ByUrlPictureUserFace(facePictureUrl));
+			this.find3PictureUserFaceByKeyList(facePictureKeyList));
 
 		if (foundFacePictureSet.size() < 3) {
 			Set<String> foundFacePictureUrlSet = foundFacePictureSet.stream()
-				.map(PictureUserFace::getUrl)
+				.map(PictureUserFace::getKey)
 				.collect(Collectors.toSet());
 
-			List<CreatePictureUserFaceCommand> notExistFacePictureList = facePictureUrl.stream()
+			List<CreatePictureUserFaceCommand> notExistFacePictureList = facePictureKeyList.stream()
 				.filter(givenUrl -> !foundFacePictureUrlSet.contains(givenUrl))
-				.map(url -> CreatePictureUserFaceCommand.builder()
-					.url(url)
-					.user(foundRequester)
-					.build())
+				.map(key -> {
+					log.info("""
+						%s 유저가 요청에 포함한 얼굴사진  key [%s] 기존 사진을 찾을 수 없어 신규 저장"""
+						.formatted(uploader.getEmail(), key));
+					return (CreatePictureUserFaceCommand)CreatePictureUserFaceCommand.builder()
+						.key(key)
+						.uploader(uploader)
+						.build();
+				})
 				.toList();
 
 			List<PictureUserFace> savedPictureUserFaceList = this.updatePictureUserFaceAll(
@@ -170,13 +177,12 @@ public class PictureService {
 	}
 
 	public List<PictureCreatedByCreator> updateAll(List<CreatePictureCreatedByCreatorCommand> newUploadPictures) {
-		User foundUser = findUser(newUploadPictures.get(0).getUserId());
 		List<PictureCreatedByCreator> uploadEntityList = newUploadPictures.stream()
-			.map(command -> PictureEntityUtils.makePictureCreatedByCreator(
-				command.getUrl(),
-				command.getPictureGenerateResponse(),
-				foundUser
-			))
+			.map(command -> PictureCreatedByCreator.builder()
+				.key(command.getKey())
+				.pictureGenerateResponse(command.getPictureGenerateResponse())
+				.uploadedBy(command.getUploader())
+				.build())
 			.toList();
 		return pictureCreatedByCreatorRepository.saveAll(uploadEntityList);
 	}
@@ -190,8 +196,8 @@ public class PictureService {
 		return pictureProfileRepository.findAllByUserOrderByCreatedAtDesc(foundUser);
 	}
 
-	public List<PictureUserFace> find3ByUrlPictureUserFace(List<String> urlList) {
-		return pictureUserFaceRepository.findAllByUrlIsIn(urlList);
+	public List<PictureUserFace> find3PictureUserFaceByKeyList(List<String> keyList) {
+		return pictureUserFaceRepository.findAllByKeyIsIn(keyList);
 	}
 
 }

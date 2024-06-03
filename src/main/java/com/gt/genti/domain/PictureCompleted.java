@@ -2,7 +2,6 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.PictureEntity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,9 +23,6 @@ public class PictureCompleted extends PictureEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@Column(name = "url", nullable = false)
-	String url;
-
 	@ManyToOne
 	@JoinColumn(name = "requester_id")
 	User requester;
@@ -36,14 +32,13 @@ public class PictureCompleted extends PictureEntity {
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCompleted(String url, PictureGenerateResponse pictureGenerateResponse, User uploadedBy) {
-
-		this.url = url;
+	public PictureCompleted(String key, PictureGenerateResponse pictureGenerateResponse, User uploadedBy) {
+		this.key = key;
 		this.pictureGenerateResponse = pictureGenerateResponse;
 		this.setUploadedBy(uploadedBy);
 	}
 
 	public void modify(String url) {
-		this.url = url;
+		this.key = url;
 	}
 }

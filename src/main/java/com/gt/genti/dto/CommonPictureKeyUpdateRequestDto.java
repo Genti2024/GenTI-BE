@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PictureUrlUpdateRequestDto {
-	String url;
+public class CommonPictureKeyUpdateRequestDto {
+	String key;
 }

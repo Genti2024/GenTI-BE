@@ -1,6 +1,7 @@
 package com.gt.genti.application.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,20 +56,25 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	@Override
 	public List<PGREQDetailFindByUserResponseDto> getAllPictureGenerateRequestForUser(Long userId) {
-		User foundUser = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+		User foundUser = findUser(userId);
+		
 		List<PGREQDetailFindByUserResponseDto> result = pictureGenerateRequestPort.findAllByRequester(
 			foundUser).stream().map(
 			PGREQDetailFindByUserResponseDto::new
 		).toList();
 		if (result.isEmpty()) {
-			throw new ExpectedException(ErrorCode.ActivePictureGenerateRequestNotExists);
+			throw new ExpectedException(ErrorCode.PictureGenerateRequestNotFound);
 		}
 		return result;
 	}
 
+	private User findUser(Long userId) {
+		return userRepository.findById(userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+	}
+
 	@Override
-	public PGREQDetailFindByUserResponseDto getPictureGenerateRequestForUser(Long userId) {
+	public PGREQDetailFindByUserResponseDto findActivePGREQByUser(Long userId) {
 
 		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findByUserIdOrderByCreatedByDesc(
 			userId).orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
@@ -78,12 +84,15 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public PGREQDetailFindResponseDto getPictureGenerateRequestById(Long pictureGenerateRequestId) {
-		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findById(
+	public PGREQDetailFindByUserResponseDto findPGREQByUserAndId(Long userId, Long pictureGenerateRequestId) {
+		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findById(
 				pictureGenerateRequestId)
 			.orElseThrow(() ->
 				new ExpectedException(ErrorCode.PictureGenerateRequestNotFound));
-		return new PGREQDetailFindResponseDto(findPictureGenerateRequest);
+		if (!Objects.equals(foundPictureGenerateRequest.getRequester().getId(), userId)) {
+			throw new ExpectedException(ErrorCode.OnlyRequesterCanViewRequest);
+		}
+		return new PGREQDetailFindByUserResponseDto(foundPictureGenerateRequest);
 	}
 
 	//TODO 내가 생성한 요청 리스트 보기
@@ -91,8 +100,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	// author 서병렬
 	@Override
 	public List<PGREQBriefFindByUserResponseDto> getAllMyPictureGenerateRequests(Long userId) {
-		User foundUser = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+		User foundUser = findUser(userId);
 		return pictureGenerateRequestPort.findAllByRequester(foundUser)
 			.stream()
 			.map(PGREQBriefFindByUserResponseDto::new).toList();
@@ -103,26 +111,31 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	public PictureGenerateRequest createPictureGenerateRequest(Long requesterId,
 		PGREQSaveRequestDto PGREQSaveRequestDto) {
 
-		User foundRequester = userRepository.findById(requesterId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+		User foundUploader = findUser(requesterId);
 
-		String posePictureUrl = PGREQSaveRequestDto.getPosePictureUrl();
+		String posePictureKey = PGREQSaveRequestDto.getPosePictureKey();
 
-		PicturePose foundPicturePose = pictureService.findByUrlPicturePose(posePictureUrl)
-			.orElseGet(() -> pictureService.updatePicture(
-				CreatePicturePoseCommand.builder().url(posePictureUrl).user(foundRequester).build()));
+		PicturePose foundPicturePose = pictureService.findByUrlPicturePose(posePictureKey)
+			.orElseGet(() -> {
+				log.info("""
+					%s 유저가 요청에 포함한 포즈참고사진 key [%s] 기존 사진을 찾을 수 없어 신규 저장"""
+					.formatted(foundUploader.getEmail(), posePictureKey));
+				return pictureService.updatePicture(
+					CreatePicturePoseCommand.builder()
+						.key(posePictureKey)
+						.uploader(foundUploader).build());
+			});
 
-		List<String> facePictureUrl = PGREQSaveRequestDto.getFacePictureUrlList();
+		List<String> facePictureUrl = PGREQSaveRequestDto.getFacePictureKeyList();
+		List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(facePictureUrl,
+			foundUploader);
 
 		String promptAdvanced = openAIService.getAdvancedPrompt(
 			new PromptAdvancementRequestDto(PGREQSaveRequestDto.getPrompt()));
 		log.info(promptAdvanced);
 
-		List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(facePictureUrl,
-			foundRequester);
-
 		PictureGenerateRequest pgr = PictureGenerateRequest.builder()
-			.requester(foundRequester)
+			.requester(foundUploader)
 			.promptAdvanced(promptAdvanced)
 			.pgreqSaveRequestDto(PGREQSaveRequestDto)
 			.picturePose(foundPicturePose)

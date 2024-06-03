@@ -6,10 +6,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class AwsUtils {
 
-	@Value("${aws.cloudfront.url}")
-	private String cloudfrontUrl;
+	public static String CLOUDFRONT_BASEURL;
 
-	public String getCloudfrontUrl(String key) {
-		return cloudfrontUrl + "/" + key;
+	@Value("${aws.cloudfront.url}")
+	public void setCloudFrontUrl(String cloudFrontUrl) {
+		AwsUtils.CLOUDFRONT_BASEURL = cloudFrontUrl;
+	}
+
+	public String getCloudfrontUrl() {
+		return CLOUDFRONT_BASEURL;
 	}
 }

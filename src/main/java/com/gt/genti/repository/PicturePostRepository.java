@@ -8,6 +8,6 @@ import com.gt.genti.domain.PictureCreatedByCreator;
 import com.gt.genti.domain.PicturePost;
 
 public interface PicturePostRepository extends JpaRepository<PicturePost, Long> {
-	Optional<PicturePost> findByUrl(String url);
+	Optional<PicturePost> findByKey(String key);
 
 }

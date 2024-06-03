@@ -27,11 +27,9 @@ public class PicturePost extends PictureEntity {
 	@JoinColumn(name = "post_id", nullable = false)
 	Post post;
 
-	@Column(name = "url", nullable = false)
-	String url;
-
-	public PicturePost(String url, Post post) {
-		this.url = url;
+	public PicturePost(String key, Post post, User uploadedBy) {
+		this.key = key;
 		this.post = post;
+		this.uploadedBy = uploadedBy;
 	}
 }

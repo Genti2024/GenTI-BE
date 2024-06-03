@@ -1,8 +1,9 @@
 package com.gt.genti.domain;
 
+import com.gt.genti.domain.common.Picture;
 import com.gt.genti.domain.common.PictureEntity;
-import com.gt.genti.dto.PromptOnlyExampleSaveRequestDto;
 import com.gt.genti.dto.ExampleSaveRequestDto;
+import com.gt.genti.dto.PromptOnlyExampleSaveRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,13 +19,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ResponseExample extends PictureEntity {
+public class ResponseExample extends PictureEntity implements Picture {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
-
-	@Column(name = "example_picture_url")
-	String examplePictureUrl;
 
 	@Column(name = "example_prompt")
 	String examplePrompt;
@@ -34,20 +32,16 @@ public class ResponseExample extends PictureEntity {
 
 	public ResponseExample(ExampleSaveRequestDto dto, User uploadedBy) {
 		this.promptOnly = false;
-		this.examplePictureUrl = dto.getUrl();
+		this.key = dto.getKey();
 		this.examplePrompt = dto.getPrompt();
 		this.setUploadedBy(uploadedBy);
 	}
 
 	public ResponseExample(PromptOnlyExampleSaveRequestDto dto, User uploadedBy) {
 		this.promptOnly = true;
-		this.examplePictureUrl = null;
+		this.key = null;
 		this.examplePrompt = dto.getPrompt();
 		this.setUploadedBy(uploadedBy);
 	}
 
-	@Override
-	public String getUrl() {
-		return this.getExamplePictureUrl();
-	}
 }

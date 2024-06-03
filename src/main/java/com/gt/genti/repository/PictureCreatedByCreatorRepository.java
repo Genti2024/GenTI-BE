@@ -8,7 +8,7 @@ import com.gt.genti.domain.PictureCreatedByCreator;
 import com.gt.genti.domain.PictureGenerateResponse;
 
 public interface PictureCreatedByCreatorRepository extends JpaRepository<PictureCreatedByCreator, Long> {
-	Optional<PictureCreatedByCreator> findByUrl(String url);
+	Optional<PictureCreatedByCreator> findByKey(String key);
 
 	Optional<PictureCreatedByCreator> findByPictureGenerateResponse(PictureGenerateResponse pictureGenerateResponse);
 }

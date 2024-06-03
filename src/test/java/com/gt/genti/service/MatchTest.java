@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,7 +27,6 @@ import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.dto.PGREQSaveRequestDto;
 import com.gt.genti.dto.UserRoleUpdateRequestDto;
-import com.gt.genti.external.discord.controller.DiscordController;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.UserRepository;
 import com.gt.genti.service.config.TestConfig;
@@ -36,8 +34,6 @@ import com.gt.genti.service.config.TestConfig;
 @ActiveProfiles("test")
 @SpringBootTest(classes = TestConfig.class)
 public class MatchTest {
-	//@InjectMocks
-	//RequestMatchService requestMatchService;
 	@Autowired
 	PictureGenerateRequestService pictureGenerateRequestService;
 
@@ -45,10 +41,10 @@ public class MatchTest {
 	PictureService pictureService;
 
 	@Autowired
-	UserRepository userRepository;
+	UserRepository uploaderRepository;
 
 	@Autowired
-	UserService userService;
+	UserService uploaderService;
 
 	@Autowired
 	AdminService adminService;
@@ -56,19 +52,17 @@ public class MatchTest {
 	@Autowired
 	PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
-	@Mock
-	DiscordController discordController;
-
 	@Test
 	public void oneRequestWithAdminStrategy() {
 		// given
 		User requester = getTestUser();
-		User savedUser = userRepository.save(requester);
+		User savedUser = uploaderRepository.save(requester);
 
 		User adminUser = getTestAdminUser();
-		User savedAdmin = userRepository.save(adminUser);
-		// admin으로 userrole 변경시 admin creator 생성됨
-		userService.updateUserRole(savedAdmin.getId(), UserRoleUpdateRequestDto.builder().userRole(UserRole.ADMIN).build());
+		User savedAdmin = uploaderRepository.save(adminUser);
+		// admin으로 uploaderrole 변경시 admin creator 생성됨
+		uploaderService.updateUserRole(savedAdmin.getId(),
+			UserRoleUpdateRequestDto.builder().userRole(UserRole.ADMIN).build());
 
 		CreatePicturePoseCommand command = getCreatePicturePoseCommand(savedUser);
 		PicturePose savedPicturePose = pictureService.updatePicture(command);
@@ -79,10 +73,10 @@ public class MatchTest {
 
 		PGREQSaveRequestDto req = PGREQSaveRequestDto.builder()
 			.prompt("벚꽃여자요")
-			.posePictureUrl(savedPicturePose.getUrl())
+			.posePictureKey(savedPicturePose.getKey())
 			.cameraAngle(CameraAngle.ABOVE)
 			.shotCoverage(ShotCoverage.FACE)
-			.facePictureUrlList(savedPictureUserfaceList.stream().map(PictureUserFace::getUrl).toList())
+			.facePictureKeyList(savedPictureUserfaceList.stream().map(PictureUserFace::getKey).toList())
 			.build();
 
 		// when
@@ -103,35 +97,34 @@ public class MatchTest {
 			.roles(UserRole.ADMIN.getStringValue())
 			.userStatus(UserStatus.ACTIVATED)
 			.lastLoginSocialPlatform(OauthType.GOOGLE)
-			.username("username")
+			.username("adminusername")
 			.build();
 	}
 
 	private static CreatePicturePoseCommand getCreatePicturePoseCommand(User savedUser) {
-		CreatePicturePoseCommand command = CreatePicturePoseCommand.builder()
-			.url("/test/picturepose")
-			.user(savedUser)
+		return CreatePicturePoseCommand
+			.builder()
+			.key("/test/picturepose")
+			.uploader(savedUser)
 			.build();
-		return command;
 	}
 
 	@NotNull
 	private static List<CreatePictureUserFaceCommand> getPictureUserFaceCommandList(User savedUser) {
 		CreatePictureUserFaceCommand command1 = CreatePictureUserFaceCommand.builder()
-			.url("/test/pictureuserface1")
-			.user(savedUser)
+			.key("/test/pictureuploaderface1")
+			.uploader(savedUser)
 			.build();
 		CreatePictureUserFaceCommand command2 = CreatePictureUserFaceCommand.builder()
-			.url("/test/pictureuserface2")
-			.user(savedUser)
+			.key("/test/pictureuploaderface2")
+			.uploader(savedUser)
 			.build();
 		CreatePictureUserFaceCommand command3 = CreatePictureUserFaceCommand.builder()
-			.url("/test/pictureuserface3")
-			.user(savedUser)
+			.key("/test/pictureuploaderface3")
+			.uploader(savedUser)
 			.build();
 
-		List<CreatePictureUserFaceCommand> commandList = List.of(command1, command2, command3);
-		return commandList;
+		return List.of(command1, command2, command3);
 	}
 
 	private static User getTestUser() {

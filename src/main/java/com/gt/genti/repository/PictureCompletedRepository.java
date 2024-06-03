@@ -11,7 +11,7 @@ import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.User;
 
 public interface PictureCompletedRepository extends JpaRepository<PictureCompleted, Long> {
-	Optional<PictureCompleted> findByUrl(String url);
+	Optional<PictureCompleted> findByKey(String key);
 
 	// @Query("select pc from PictureCompleted pc "
 	// 	+ "where pc.pictureGenerateResponse = :pictureGenerateResponse ")

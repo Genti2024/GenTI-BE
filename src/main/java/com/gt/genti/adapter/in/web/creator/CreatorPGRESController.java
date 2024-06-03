@@ -19,7 +19,7 @@ import com.gt.genti.dto.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.dto.PGREQDetailFindResponseDto;
 import com.gt.genti.dto.PGRESUpdateByCreatorResponseDto;
 import com.gt.genti.dto.MemoUpdateRequestDto;
-import com.gt.genti.dto.PictureUrlUpdateRequestDto;
+import com.gt.genti.dto.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -79,11 +79,11 @@ public class CreatorPGRESController {
 	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateResponseId,
-		@RequestBody List<PictureUrlUpdateRequestDto> pictureUrlUpdateRequestDtoList
+		@RequestBody List<CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList
 	) {
 		return success(
 			pictureGenerateWorkService.updatePictureCreatedByCreatorList(pictureGenerateResponseId,
-				pictureUrlUpdateRequestDtoList, userDetails.getId()));
+				commonPictureKeyUpdateRequestDtoList, userDetails.getId()));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/submit")

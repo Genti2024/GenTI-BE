@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
-public class UserAop {
+public class UserAspect {
 	@Before("@annotation(com.gt.genti.other.aop.annotation.CheckUserIsQuit) && args(principalDetail)")
 	public void checkUserIsQuit(final UserDetailsImpl principalDetail) {
 		log.info("유저탈퇴확인aop실행");

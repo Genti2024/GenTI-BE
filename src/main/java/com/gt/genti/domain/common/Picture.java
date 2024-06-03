@@ -1,9 +1,9 @@
-package com.gt.genti.domain;
+package com.gt.genti.domain.common;
 
 import com.gt.genti.dto.CommonPictureUrlResponseDto;
 
 public interface Picture {
 	Long getId();
-	String getUrl();
+	String getKey();
 	CommonPictureUrlResponseDto mapToCommonResponse();
 }

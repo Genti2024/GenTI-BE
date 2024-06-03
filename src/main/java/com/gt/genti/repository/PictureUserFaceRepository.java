@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.gt.genti.domain.PictureUserFace;
 
 public interface PictureUserFaceRepository extends JpaRepository<PictureUserFace, Long> {
-	Optional<PictureUserFace> findByUrl(String url);
+	Optional<PictureUserFace> findByKey(String key);
 
-	List<PictureUserFace> findAllByUrlIsIn(Collection<String> url);
+	List<PictureUserFace> findAllByKeyIsIn(Collection<String> keyList);
 }

@@ -23,17 +23,14 @@ public class PicturePose extends PictureEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@Column(name = "url", nullable = false)
-	String url;
-
-	public PicturePose(String url, User uploadedBy) {
-		this.url = url;
+	public PicturePose(String key, User uploadedBy) {
+		this.key = key;
 		this.setUploadedBy(uploadedBy);
 	}
 
 
-	public void modify(String modifyPosePictureUrl) {
-		this.url = modifyPosePictureUrl;
+	public void modify(String key) {
+		this.key = key;
 	}
 
 

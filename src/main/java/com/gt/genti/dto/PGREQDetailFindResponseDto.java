@@ -49,10 +49,10 @@ public class PGREQDetailFindResponseDto {
 		this.promptAdvanced = pictureGenerateRequest.getPromptAdvanced();
 		this.facePictureUrlList = pictureGenerateRequest.getUserFacePictureList()
 			.stream()
-			.map(PictureUserFace::getUrl)
+			.map(PictureUserFace::getKey)
 			.toList();
 		this.posePictureId = pictureGenerateRequest.getPicturePose().getId();
-		this.posePictureUrl = pictureGenerateRequest.getPicturePose().getUrl();
+		this.posePictureUrl = pictureGenerateRequest.getPicturePose().getKey();
 		this.cameraAngle = pictureGenerateRequest.getCameraAngle();
 		this.shotCoverage = pictureGenerateRequest.getShotCoverage();
 		this.requestStatus = pictureGenerateRequest.getPictureGenerateRequestStatus();
@@ -60,7 +60,7 @@ public class PGREQDetailFindResponseDto {
 		if (!pictureGenerateRequest.getResponseList().isEmpty()) {
 			this.responseList = pictureGenerateRequest.getResponseList()
 				.stream()
-				.map(PGRESDetailFindByAdminResponseDto::new)
+				.map(d -> new PGRESDetailFindByAdminResponseDto(d))
 				.toList();
 
 			Duration duration = Duration.between(LocalDateTime.now(),

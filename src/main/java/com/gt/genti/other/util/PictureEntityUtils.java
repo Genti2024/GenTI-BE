@@ -10,31 +10,40 @@ import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.Post;
 import com.gt.genti.domain.User;
 
+import lombok.Builder;
+
 public class PictureEntityUtils {
+	@Builder
 	public static PictureCompleted makePictureCompleted(String url, PictureGenerateResponse pgres, User uploadedBy) {
 		return new PictureCompleted(url, pgres, uploadedBy);
 	}
 
+	@Builder
 	public static PictureCreatedByCreator makePictureCreatedByCreator(String url, PictureGenerateResponse pgres,
 		User uploadedBy) {
 
 		return new PictureCreatedByCreator(url, pgres, uploadedBy);
 	}
 
-	public static PictureProfile makePictureProfile(String url, User user) {
-		return new PictureProfile(url, user);
+	@Builder
+	public static PictureProfile makePictureProfile(String url, User uploadedBy) {
+		return new PictureProfile(url, uploadedBy);
 	}
 
-	public static PicturePost makePicturePost(String url, Post post) {
-		return new PicturePost(url, post);
+	@Deprecated
+	@Builder
+	public static PicturePost makePicturePost(String url, Post post, User uploadedBy) {
+		return new PicturePost(url, post, uploadedBy);
 	}
 
+	@Builder
 	public static PicturePose makePicturePose(String url, User uploadedBy) {
 
 		return new PicturePose(url, uploadedBy);
 	}
 
-	public static PictureUserFace makePictureUserFace(String url, User user) {
-		return new PictureUserFace(url, user);
+	@Builder
+	public static PictureUserFace makePictureUserFace(String url, User uploadedBy) {
+		return new PictureUserFace(url, uploadedBy);
 	}
 }

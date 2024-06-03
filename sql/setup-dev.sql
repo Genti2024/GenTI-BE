@@ -37,7 +37,7 @@ values (1, localtime, localtime, '서병렬', '123-4142-2523331-123', '국민은
        (2, localtime, localtime, null, null, null, false, 5),
        (3, localtime, localtime, null, null, null, true, 1);
 
-insert ignore into picture_pose (id, created_at, modified_at, url, uploaded_by)
+insert ignore into picture_pose (id, created_at, modified_at, key, uploaded_by)
 values (1, LOCALTIME, LOCALTIME, 'pose_picture_url1', 2),
        (2, LOCALTIME, LOCALTIME, 'pose_picture_url2', 2),
        (3, LOCALTIME, LOCALTIME, 'pose_picture_url3', 2),

@@ -15,15 +15,15 @@ import lombok.NoArgsConstructor;
 public class PGREQSaveRequestDto {
 
 	String prompt;
-	String posePictureUrl;
-	List<String> facePictureUrlList;
+	String posePictureKey;
+	List<String> facePictureKeyList;
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;
 	@Builder
-	public PGREQSaveRequestDto(String prompt, String posePictureUrl, CameraAngle cameraAngle, ShotCoverage shotCoverage, List<String> facePictureUrlList) {
+	public PGREQSaveRequestDto(String prompt, String posePictureKey, CameraAngle cameraAngle, ShotCoverage shotCoverage, List<String> facePictureKeyList) {
 		this.prompt = prompt;
-		this.posePictureUrl = posePictureUrl;
-		this.facePictureUrlList = facePictureUrlList;
+		this.posePictureKey = posePictureKey;
+		this.facePictureKeyList = facePictureKeyList;
 		this.cameraAngle = cameraAngle;
 		this.shotCoverage = shotCoverage;
 	}

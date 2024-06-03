@@ -4,6 +4,7 @@ import static com.gt.genti.other.util.ApiUtils.*;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.dto.PGREQBriefFindByUserResponseDto;
-import com.gt.genti.dto.PGREQDetailFindResponseDto;
-import com.gt.genti.dto.PGREQUpdateRequestDto;
 import com.gt.genti.dto.PGREQDetailFindByUserResponseDto;
 import com.gt.genti.dto.PGREQSaveRequestDto;
-import com.gt.genti.error.ExpectedException;
+import com.gt.genti.dto.PGREQUpdateRequestDto;
+import com.gt.genti.error.ErrorCode;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,13 +40,13 @@ public class UserPGREQController {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 
 	@GetMapping("")
-	@Operation(summary = "전체 조회", description = "내가 생성했던 요청들 전체 조회")
+	@Operation(summary = "유저의 사진생성요청 전체 조회", description = "내가 생성했던 요청들 전체 조회")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "성공",
 			content = {@Content(mediaType = "application/json",
 				array = @ArraySchema(schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class)))}),
-		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ExpectedException.class))),
-		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음", content = @Content(schema = @Schema(implementation = ExpectedException.class))),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, ErrorCode.PictureGenerateRequestNotFound"),
 	})
 	public ResponseEntity<ApiResult<List<PGREQDetailFindByUserResponseDto>>> getAllUsersPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
@@ -55,20 +55,50 @@ public class UserPGREQController {
 			pictureGenerateRequestUseCase.getAllPictureGenerateRequestForUser(userDetails.getId()));
 	}
 
+	@Operation(summary = "유저의 활성된 사진생성요청 1개 조회", description = "작업이 진행중인 사진생성요청을 조회한다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공",
+			content = {
+				@Content(mediaType = "application/json", schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class))}),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "현재 진행중인 요청이 없습니다, ErrorCode.ActivePictureGenerateRequestNotExists"),
+	})
 	@GetMapping("/active")
 	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getMyRecentPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(
-			pictureGenerateRequestUseCase.getPictureGenerateRequestForUser(userDetails.getId()));
+			pictureGenerateRequestUseCase.findActivePGREQByUser(userDetails.getId()));
 	}
 
+	@Operation(summary = "유저의 사진생성요청 조회", description = "사진생성요청 id로 사진생성요청을 조회한다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공",
+			content = {
+				@Content(mediaType = "application/json", schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class))}),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, ErrorCode.PictureGenerateRequestNotFound"),
+		@ApiResponse(responseCode = "403", description = "사진생성요청을 한 유저 본인만 조회할 수 있습니다., ErrorCode.OnlyRequesterCanViewRequest"),
+	})
 	@GetMapping("/{pictureGenerateRequestId}")
-	public ResponseEntity<ApiResult<PGREQDetailFindResponseDto>> getPictureGenerateRequestDetail(
-		@PathVariable Long pictureGenerateRequestId) {
-		return success(pictureGenerateRequestUseCase.getPictureGenerateRequestById(pictureGenerateRequestId));
+	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getPictureGenerateRequestDetail(
+		@PathVariable
+		@Schema(description = "사진생성요청id", example = "1")
+		Long pictureGenerateRequestId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return success(
+			pictureGenerateRequestUseCase.findPGREQByUserAndId(userDetails.getId(), pictureGenerateRequestId));
 	}
 
+	@Operation(summary = "사진생성요청 생성", description = "사진생성요청을 생성한다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공",
+			content = {
+				@Content(mediaType = "application/json", schema = @Schema(implementation = ApiResult.class))}),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, ErrorCode.PictureGenerateRequestNotFound"),
+		@ApiResponse(responseCode = "403", description = "사진생성요청을 한 유저 본인만 조회할 수 있습니다., ErrorCode.OnlyRequesterCanViewRequest"),
+	})
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,

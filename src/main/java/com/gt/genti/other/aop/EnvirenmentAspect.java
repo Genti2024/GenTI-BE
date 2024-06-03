@@ -3,13 +3,8 @@ package com.gt.genti.other.aop;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import com.gt.genti.error.ErrorCode;
-import com.gt.genti.error.ExpectedException;
-import com.gt.genti.other.auth.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class EnvAop {
+public class EnvirenmentAspect {
 
 	private final Environment env;
 

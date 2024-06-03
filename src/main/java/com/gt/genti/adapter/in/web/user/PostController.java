@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.application.service.PostService;
+import com.gt.genti.dto.PostBriefFindResponseDto;
+import com.gt.genti.dto.PostDetailResponseDto;
 import com.gt.genti.other.annotation.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.auth.UserDetailsImpl;
-import com.gt.genti.dto.PostBriefFindResponseDto;
-import com.gt.genti.dto.PostDetailResponseDto;
-import com.gt.genti.application.service.PostService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +44,6 @@ public class PostController {
 		@RequestParam(value = "cursor", required = false) Long cursor) {
 		return success(postService.getPostDetailAllByUserIdPagination(userDetails.getId(), cursor));
 	}
-
 
 	@ToBeUpdated
 	@CheckUserIsQuit

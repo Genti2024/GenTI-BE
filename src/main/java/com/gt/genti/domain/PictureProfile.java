@@ -28,15 +28,12 @@ public class PictureProfile extends PictureEntity {
 	@JoinColumn(name = "user_id")
 	User user;
 
-	@Column(name = "url", nullable = false)
-	String url;
-
-	public PictureProfile(String url, User user) {
-		this.url = url;
+	public PictureProfile(String key, User user) {
+		this.key = key;
 		this.user = user;
 	}
 
-	public void modify(String url) {
-		this.url = url;
+	public void modify(String key) {
+		this.key = key;
 	}
 }

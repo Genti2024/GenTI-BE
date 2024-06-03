@@ -43,9 +43,9 @@ public class PGREQDetailFindByUserResponseDto {
 		this.promptAdvanced = pictureGenerateRequest.getPromptAdvanced();
 		this.facePictureUrlList = pictureGenerateRequest.getUserFacePictureList()
 			.stream()
-			.map(PictureUserFace::getUrl)
+			.map(PictureUserFace::getKey)
 			.toList();
-		this.posePictureUrl = pictureGenerateRequest.getPicturePose().getUrl();
+		this.posePictureUrl = pictureGenerateRequest.getPicturePose().getKey();
 		this.cameraAngle = pictureGenerateRequest.getCameraAngle();
 		this.shotCoverage = pictureGenerateRequest.getShotCoverage();
 		this.requestStatus = pictureGenerateRequest.getPictureGenerateRequestStatus();

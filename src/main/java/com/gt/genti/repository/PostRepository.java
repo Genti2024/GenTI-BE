@@ -43,7 +43,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("select new com.gt.genti.dto.PostBriefFindResponseDto( "
 		+ "p.id,"
-		+ "pic.url)"
+		+ "pic.key)"
 		+ "from Post p "
 		+ "join p.mainPicture pic "
 		+ "join p.user u "

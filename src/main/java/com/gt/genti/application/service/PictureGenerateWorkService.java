@@ -19,14 +19,15 @@ import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.Settlement;
+import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
+import com.gt.genti.dto.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.MemoUpdateRequestDto;
 import com.gt.genti.dto.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.dto.PGREQDetailFindResponseDto;
 import com.gt.genti.dto.PGRESUpdateByAdminResponseDto;
 import com.gt.genti.dto.PGRESUpdateByCreatorResponseDto;
-import com.gt.genti.dto.MemoUpdateRequestDto;
-import com.gt.genti.dto.PictureUrlUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.util.TimeUtils;
@@ -35,6 +36,7 @@ import com.gt.genti.repository.DepositRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.PictureGenerateResponseRepository;
 import com.gt.genti.repository.SettlementRepository;
+import com.gt.genti.repository.UserRepository;
 import com.gt.genti.service.PictureService;
 
 import lombok.RequiredArgsConstructor;
@@ -42,7 +44,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PictureGenerateWorkService {
-
+	private final UserRepository userRepository;
 	private final PictureService pictureService;
 	private final CreatorRepository creatorRepository;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
@@ -51,9 +53,9 @@ public class PictureGenerateWorkService {
 	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
 
-	public PGREQBriefFindByCreatorResponseDto getPictureGenerateRequestBrief(Long userId,
+	public PGREQBriefFindByCreatorResponseDto getPictureGenerateRequestBrief(Long user,
 		PictureGenerateRequestStatus status) {
-		Creator foundCreator = findCreatorByUserId(userId);
+		Creator foundCreator = findCreatorByUserId(user);
 		Optional<PictureGenerateRequest> foundPGR;
 		switch (status) {
 			case IN_PROGRESS ->
@@ -69,9 +71,9 @@ public class PictureGenerateWorkService {
 
 	}
 
-	public PGREQDetailFindResponseDto getPictureGenerateRequestDetail(Long userId,
+	public PGREQDetailFindResponseDto getPictureGenerateRequestDetail(Long user,
 		Long pictureGenerateRequestId) {
-		Creator foundCreator = findCreatorByUserId(userId);
+		Creator foundCreator = findCreatorByUserId(user);
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
 		if (foundPictureGenerateRequest.getCreator() == null) {
 			throw new ExpectedException(ErrorCode.NotMatchedYet);
@@ -83,8 +85,8 @@ public class PictureGenerateWorkService {
 
 	}
 
-	public List<PGREQDetailFindResponseDto> getPictureGenerateRequestDetailAll(Long userId) {
-		Creator foundCreator = findCreatorByUserId(userId);
+	public List<PGREQDetailFindResponseDto> getPictureGenerateRequestDetailAll(Long user) {
+		Creator foundCreator = findCreatorByUserId(user);
 		List<PictureGenerateRequest> foundPGRList = pictureGenerateRequestRepository.findAllByCreatorIsOrderByCreatedAtDesc(
 			foundCreator);
 
@@ -95,15 +97,18 @@ public class PictureGenerateWorkService {
 
 	@Transactional
 	public Boolean updatePictureCreatedByCreatorList(Long pictureGenerateResponseId,
-		List<PictureUrlUpdateRequestDto> pictureUrlUpdateRequestDtoList, Long uploaderId) {
-		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
+		List<CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList, Long uploaderId) {
 
-		List<CreatePictureCreatedByCreatorCommand> newUploadPictures = pictureUrlUpdateRequestDtoList.stream()
-			.map(command -> CreatePictureCreatedByCreatorCommand.builder()
-				.url(command.getUrl())
-				.userId(uploaderId)
+		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
+		User foundUploader = findActiveUserByUserId(uploaderId);
+
+		List<CreatePictureCreatedByCreatorCommand> newUploadPictures = commonPictureKeyUpdateRequestDtoList.stream()
+			.map(command -> (CreatePictureCreatedByCreatorCommand)CreatePictureCreatedByCreatorCommand.builder()
+				.key(command.getKey())
+				.uploader(foundUploader)
 				.pictureGenerateResponse(foundPictureGenerateResponse)
-				.build())
+				.build()
+			)
 			.toList();
 
 		pictureService.updateAll(newUploadPictures);
@@ -117,17 +122,17 @@ public class PictureGenerateWorkService {
 		return true;
 	}
 
-	public Boolean acceptPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
+	public Boolean acceptPictureGenerateRequest(Long user, Long pictureGenerateRequestId) {
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
-		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser().getId(), userId)) {
+		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser().getId(), user)) {
 			throw new ExpectedException(ErrorCode.NotAssignedToMe);
 		}
 		foundPictureGenerateRequest.accept();
 		return true;
 	}
 
-	private Creator findCreatorByUserId(Long userId) {
-		return creatorRepository.findByUserId(userId)
+	private Creator findCreatorByUserId(Long user) {
+		return creatorRepository.findByUserId(user)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.CreatorNotFound));
 	}
 
@@ -138,9 +143,9 @@ public class PictureGenerateWorkService {
 	}
 
 	@Transactional
-	public Boolean rejectPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
+	public Boolean rejectPictureGenerateRequest(Long user, Long pictureGenerateRequestId) {
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
-		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser().getId(), userId)) {
+		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser().getId(), user)) {
 			throw new ExpectedException(ErrorCode.NotAssignedToMe);
 		}
 
@@ -150,9 +155,9 @@ public class PictureGenerateWorkService {
 	}
 
 	@Transactional
-	public PGRESUpdateByCreatorResponseDto submitToAdmin(Long userId, Long pictureGenerateResponseId) {
+	public PGRESUpdateByCreatorResponseDto submitToAdmin(Long user, Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
-		Creator foundCreator = findCreatorByUserId(userId);
+		Creator foundCreator = findCreatorByUserId(user);
 
 		if (!Objects.equals(foundPGRES.getCreator().getId(), foundCreator.getId())) {
 			throw new ExpectedException(ErrorCode.NotAssignedToMe);
@@ -176,7 +181,7 @@ public class PictureGenerateWorkService {
 			.reward(reword).build();
 
 		settlementRepository.save(settlement);
-		Deposit foundDeposit = depositRepository.findByUserId(userId)
+		Deposit foundDeposit = depositRepository.findByUserId(user)
 			.orElseThrow(() -> new ExpectedException(ErrorCode.DepositNotFound));
 
 		foundDeposit.add(reword);
@@ -210,31 +215,27 @@ public class PictureGenerateWorkService {
 			.build();
 	}
 
-	private PictureGenerateResponse findPGRES(Long pictureGenerateResponseId) {
-		return pictureGenerateResponseRepository.findById(
-				pictureGenerateResponseId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
-	}
-
-	public Boolean updatePictureListCreatedByAdmin(Long userId, List<PictureUrlUpdateRequestDto> requestDtoList,
+	public Boolean updatePictureListCreatedByAdmin(Long uploaderId,
+		List<CommonPictureKeyUpdateRequestDto> requestDtoList,
 		Long pictureGenerateResponseId) {
+		User foundUploader = findActiveUserByUserId(uploaderId);
 		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
 				pictureGenerateResponseId)
 			.orElseThrow(() -> new ExpectedException(
 				ErrorCode.PictureGenerateResponseNotFound));
 
 		List<CreatePictureCompletedCommand> commandList = requestDtoList.stream().map(
-			dto -> CreatePictureCompletedCommand.builder()
+			dto -> (CreatePictureCompletedCommand)CreatePictureCompletedCommand.builder()
 				.pictureGenerateResponse(foundPictureGenerateResponse)
-				.url(dto.getUrl())
-				.userId(userId).build()
+				.key(dto.getKey())
+				.uploader(foundUploader).build()
 		).toList();
 		pictureService.updatePictures(commandList);
 		return true;
 	}
 
-	public List<PGREQDetailFindResponseDto> getPictureGenerateRequestDetail3(Long userId) {
-		Creator foundCreator = findCreatorByUserId(userId);
+	public List<PGREQDetailFindResponseDto> getPictureGenerateRequestDetail3(Long user) {
+		Creator foundCreator = findCreatorByUserId(user);
 		List<PictureGenerateRequestStatus> activeRequestStatusList = new ArrayList<>();
 		activeRequestStatusList.add(PictureGenerateRequestStatus.IN_PROGRESS);
 
@@ -244,6 +245,22 @@ public class PictureGenerateWorkService {
 			foundCreator, activeRequestStatusList, activeResponseStatusList);
 
 		return foundPGREQList.stream().map(PGREQDetailFindResponseDto::new).toList();
+	}
+
+	private User findActiveUserByUserId(Long userId) {
+		User foundUser = userRepository.findById(userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+
+		if (!foundUser.isActivate()) {
+			throw new ExpectedException(ErrorCode.UserDeactivated);
+		}
+		return foundUser;
+	}
+
+	private PictureGenerateResponse findPGRES(Long pictureGenerateResponseId) {
+		return pictureGenerateResponseRepository.findById(
+				pictureGenerateResponseId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureGenerateResponseNotFound));
 	}
 }
 

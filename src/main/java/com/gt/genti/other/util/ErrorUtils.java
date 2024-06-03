@@ -20,7 +20,6 @@ public class ErrorUtils {
 	private static final String OAUTH = "OAUTH";
 	private static final String VALIDATION = "VALIDATION";
 
-
 	private static String CODE(String type, int seq) {
 		return type + String.format("-%05d", seq);
 	}
@@ -70,4 +69,6 @@ public class ErrorUtils {
 	public static final String WithDrawnUser = CODE(USER, 5);
 	public static final String NotAllowedOauthProvider = CODE(OAUTH, 1);
 	public static final String ControllerValidationError = CODE(VALIDATION, 1);
+	public static String OnlyRequesterCanViewRequest = CODE(REQUEST, 8);
+
 }

@@ -16,8 +16,8 @@ public class PicturePosePersistenceAdapter implements PicturePosePort {
 	private final PicturePoseRepository picturePoseRepository;
 
 	@Override
-	public Optional<PicturePose> findByUrl(String url) {
-		return picturePoseRepository.findByUrl(url);
+	public Optional<PicturePose> findByKey(String key) {
+		return picturePoseRepository.findByKey(key);
 	}
 
 	@Override

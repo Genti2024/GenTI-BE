@@ -1,23 +1,15 @@
 package com.gt.genti.command;
 
 import com.gt.genti.domain.PictureGenerateResponse;
+import com.gt.genti.domain.User;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@NoArgsConstructor
-public class CreatePictureCreatedByCreatorCommand {
-	String url;
+@SuperBuilder
+public class CreatePictureCreatedByCreatorCommand extends CommonPictureSaveCommand {
 	PictureGenerateResponse pictureGenerateResponse;
-	Long userId;
-
-	@Builder
-	public CreatePictureCreatedByCreatorCommand(String url, PictureGenerateResponse pictureGenerateResponse,
-		Long userId) {
-		this.url = url;
-		this.pictureGenerateResponse = pictureGenerateResponse;
-		this.userId = userId;
-	}
 }

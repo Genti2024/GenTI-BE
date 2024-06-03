@@ -14,14 +14,15 @@ import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.dto.UserFindResponseDto;
-import com.gt.genti.dto.UserRoleUpdateRequestDto;
-import com.gt.genti.dto.UserStatusUpdateRequestDto;
 import com.gt.genti.dto.CommonPictureUrlResponseDto;
 import com.gt.genti.dto.UserFindByAdminResponseDto;
+import com.gt.genti.dto.UserFindResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
+import com.gt.genti.dto.UserRoleUpdateRequestDto;
+import com.gt.genti.dto.UserStatusUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
+import com.gt.genti.external.aws.AwsUtils;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.UserRepository;
@@ -106,14 +107,17 @@ public class UserService {
 			.toList();
 	}
 
-	private User findActivateUserByUserId(Long userId) {
-		User foundUser = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
-
-		if (!foundUser.isActivate()) {
-			throw new ExpectedException(ErrorCode.UserDeactivated);
+	public Page<UserFindByAdminResponseDto> getAllUserInfo(int page, int size) {
+		if (page < 0) {
+			page = 0;
 		}
-		return foundUser;
+
+		Pageable pageable = PageRequest.of(page, size);
+		return userRepository.findAll(pageable).map(UserFindByAdminResponseDto::new);
+	}
+
+	public Page<UserFindByAdminResponseDto> getAllUserInfo(UserRole userRole, int page, int size) {
+		return null;
 	}
 
 	private User findDeactivatedUserByUserId(Long userId) {
@@ -126,16 +130,13 @@ public class UserService {
 		return foundUser;
 	}
 
-	public Page<UserFindByAdminResponseDto> getAllUserInfo(int page, int size) {
-		if (page < 0) {
-			page = 0;
+	private User findActivateUserByUserId(Long userId) {
+		User foundUser = userRepository.findById(userId)
+			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+
+		if (!foundUser.isActivate()) {
+			throw new ExpectedException(ErrorCode.UserDeactivated);
 		}
-
-		Pageable pageable = PageRequest.of(page, size);
-		return userRepository.findAll(pageable).map(UserFindByAdminResponseDto::new);
-	}
-
-	public Page<UserFindByAdminResponseDto> getAllUserInfo(UserRole userRole, int page, int size) {
-		return null;
+		return foundUser;
 	}
 }

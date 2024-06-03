@@ -6,6 +6,6 @@ import com.gt.genti.domain.PicturePose;
 
 public interface PicturePosePort {
 
-	Optional<PicturePose> findByUrl(String url);
+	Optional<PicturePose> findByKey(String key);
 	PicturePose save(PicturePose picturePose);
 }

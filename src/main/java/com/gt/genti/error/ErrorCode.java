@@ -63,6 +63,7 @@ public enum ErrorCode {
 	WithDrawnUser(HttpStatus.BAD_REQUEST, ErrorUtils.WithDrawnUser, "탈퇴한 사용자입니다."),
 	Undefined(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.Undefined, "FOR FE 원래 비즈니스 로직 상 발생하면 안되는 오류입니다. 문의 부탁드립니다."),
 	ValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError,"%s"),
+	OnlyRequesterCanViewRequest(HttpStatus.FORBIDDEN, ErrorUtils.OnlyRequesterCanViewRequest,"사진생성요청을 요청한 유저만 볼 수 있습니다."),
 	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE,ErrorUtils.NotAllowedOauthProvider , "허가되지 않은 oauth type %s");
 
 	private final HttpStatusCode httpStatusCode;

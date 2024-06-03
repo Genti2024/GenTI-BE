@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ExampleSaveRequestDto {
-	String url;
+	String key;
 	String prompt;
 }

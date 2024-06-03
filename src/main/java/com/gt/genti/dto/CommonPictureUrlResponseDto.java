@@ -1,5 +1,7 @@
 package com.gt.genti.dto;
 
+import com.gt.genti.external.aws.AwsUtils;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,9 +10,11 @@ import lombok.NoArgsConstructor;
 public class CommonPictureUrlResponseDto {
 	Long id;
 	String url;
+	String key;
 
-	public CommonPictureUrlResponseDto(Long id, String url) {
+	public CommonPictureUrlResponseDto(Long id, String key) {
 		this.id = id;
-		this.url = url;
+		this.key = key;
+		this.url = AwsUtils.CLOUDFRONT_BASEURL + key;
 	}
 }

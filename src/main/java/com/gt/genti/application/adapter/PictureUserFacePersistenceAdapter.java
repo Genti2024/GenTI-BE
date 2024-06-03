@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 public class PictureUserFacePersistenceAdapter implements PictureUserFacePort {
 	private final PictureUserFaceRepository pictureUserFaceRepository;
 	@Override
-	public List<PictureUserFace> findPictureByUrlIn(List<String> urls) {
-		return pictureUserFaceRepository.findAllByUrlIsIn(urls);
+	public List<PictureUserFace> findPictureByUrlIn(List<String> keyList) {
+		return pictureUserFaceRepository.findAllByKeyIsIn(keyList);
 	}
 
 	@Override

@@ -26,5 +26,8 @@ springdoc:
   model-and-view-allowed: true
   paths-to-match:
     - /api/**
+  url:
+    deploy: https://genti.kr
+    local: http://127.0.0.1
 
 

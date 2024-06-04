@@ -5,7 +5,7 @@ services:
     image: byeongryeol/genti-dev:latest
     container_name: genti-dev
     volumes:
-      - ./home/ubuntu/workspace/logs:/logs # 로그 경로 마운트
+      - /home/ubuntu/workspace/logs:/logs # 로그 경로 마운트
     ports:
       - ${SERVER_BINDING_PORT}:${SERVER_CONTAINER_PORT}
   redis:

@@ -16,7 +16,7 @@ COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
 
-COPY logback-spring.xml /application/src/main/resources/logback-spring.xml
+#COPY logback-spring.xml /application/src/main/resources/logback-spring.xml
 
 
 ENTRYPOINT ["java", "-Dspring.profiles.active=deploy", "-Duser.timezone=Asia/Seoul","-Dlogging.config=/application/logback-spring.xml", "org.springframework.boot.loader.launch.JarLauncher"]

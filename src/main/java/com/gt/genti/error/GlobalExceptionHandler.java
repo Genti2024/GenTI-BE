@@ -22,6 +22,8 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExpectedException.class)
 	protected ResponseEntity<ApiResult<ExpectedException>> handleExpectedException(final ExpectedException exception) {
+		log.error("""
+			예외 발생, 예외 내용 : \n \n %s""".formatted(exception.toString()));
 		return error(exception);
 	}
 

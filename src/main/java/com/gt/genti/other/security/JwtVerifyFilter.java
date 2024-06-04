@@ -43,11 +43,8 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		log.info("--------------------------- JwtVerifyFilter ---------------------------");
-
 		try {
 			String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
-			// log.info("authHeader : " + authHeader);
 			checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
 			String token = jwtTokenProvider.getTokenFromHeader(authHeader);
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);

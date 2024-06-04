@@ -30,7 +30,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
@@ -92,6 +94,8 @@ public class JwtTokenProvider {
 		UserDetailsImpl userDetails = UserDetailsImpl.builder()
 			.user(User.createPrincipalOnlyUser(Long.parseLong(id)))
 			.roles(roles).build();
+		log.info("""
+			요청한 유저 id : [%d]""".formatted(userDetails.getId()));
 		return new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
 	}
 

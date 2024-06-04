@@ -73,7 +73,7 @@ public class MatchTest {
 		List<PictureUserFace> savedPictureUserfaceList = pictureService.updatePictureUserFaceAll(commandList);
 
 		PGREQSaveRequestDto req = PGREQSaveRequestDto.builder()
-			.prompt("벚꽃여자요")
+			.prompt("밤에 한강공원에서 벤치에 앉은 사진이요")
 			.posePictureKey(savedPicturePose.getKey())
 			.cameraAngle(CameraAngle.ABOVE)
 			.shotCoverage(ShotCoverage.FACE)

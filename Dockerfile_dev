@@ -11,12 +11,12 @@ WORKDIR application
 ENV port 8080
 EXPOSE 8080
 ENV spring.profiles.active deploy
+# build stage에 있는 파일을 복사
 COPY --from=builder application/dependencies/ ./
 COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
 
-#COPY logback-spring.xml /application/src/main/resources/logback-spring.xml
-
+COPY src/main/resources/logback-spring.xml /application/
 
 ENTRYPOINT ["java", "-Dspring.profiles.active=deploy", "-Duser.timezone=Asia/Seoul","-Dlogging.config=/application/logback-spring.xml", "org.springframework.boot.loader.launch.JarLauncher"]

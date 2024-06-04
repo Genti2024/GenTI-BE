@@ -1,6 +1,7 @@
 package com.gt.genti.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -86,6 +87,7 @@ public class MatchTest {
 		// then
 		Creator adminCreator = adminService.getAdminCreator();
 		// verify(discordController).sendToAdminChannel(anyString());
+		assertNotNull(createdPGREQ.getPromptAdvanced());
 		assertThat(createdPGREQ.getCreator().getId()).isEqualTo(adminCreator.getId());
 		assertThat(createdPGREQ.getPictureGenerateRequestStatus()).isEqualTo(
 			PictureGenerateRequestStatus.MATCH_TO_ADMIN);

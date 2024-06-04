@@ -3,6 +3,7 @@ package com.gt.genti.dto;
 import java.util.List;
 
 import com.gt.genti.domain.enums.CameraAngle;
+import com.gt.genti.domain.enums.PictureRatio;
 import com.gt.genti.domain.enums.ShotCoverage;
 
 import lombok.AccessLevel;
@@ -19,6 +20,7 @@ public class PGREQSaveRequestDto {
 	List<String> facePictureKeyList;
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;
+	PictureRatio pictureRatio;
 	@Builder
 	public PGREQSaveRequestDto(String prompt, String posePictureKey, CameraAngle cameraAngle, ShotCoverage shotCoverage, List<String> facePictureKeyList) {
 		this.prompt = prompt;

@@ -14,6 +14,7 @@ public interface PictureGenerateRequestUseCase {
 	public List<PGREQDetailFindByUserResponseDto> getAllPictureGenerateRequestForUser(Long userId);
 
 	public PGREQDetailFindByUserResponseDto findActivePGREQByUser(Long userId);
+	public Boolean isActivePGREQExists(Long userId);
 
 	public PGREQDetailFindByUserResponseDto findPGREQByUserAndId(Long userId, Long id);
 

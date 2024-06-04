@@ -4,7 +4,6 @@ import static com.gt.genti.other.util.ApiUtils.*;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,6 @@ import com.gt.genti.dto.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.dto.PGREQDetailFindByUserResponseDto;
 import com.gt.genti.dto.PGREQSaveRequestDto;
 import com.gt.genti.dto.PGREQUpdateRequestDto;
-import com.gt.genti.error.ErrorCode;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,6 +53,23 @@ public class UserPGREQController {
 			pictureGenerateRequestUseCase.getAllPictureGenerateRequestForUser(userDetails.getId()));
 	}
 
+	@Deprecated
+	@Operation(summary = "유저의 활성된 사진생성요청 1개 조회", description = "작업이 진행중인 사진생성요청을 조회한다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공",
+			content = {
+				@Content(mediaType = "application/json", schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class))}),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "현재 진행중인 요청이 없습니다, ErrorCode.ActivePictureGenerateRequestNotExists"),
+	})
+	@GetMapping("/active/deprecated")
+	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getMyActivePictureGenerateRequest_Deprecated(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		return success(
+			pictureGenerateRequestUseCase.findActivePGREQByUser(userDetails.getId()));
+	}
+
 	@Operation(summary = "유저의 활성된 사진생성요청 1개 조회", description = "작업이 진행중인 사진생성요청을 조회한다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "성공",
@@ -64,11 +79,11 @@ public class UserPGREQController {
 		@ApiResponse(responseCode = "404", description = "현재 진행중인 요청이 없습니다, ErrorCode.ActivePictureGenerateRequestNotExists"),
 	})
 	@GetMapping("/active")
-	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getMyRecentPictureGenerateRequest(
+	public ResponseEntity<ApiResult<Boolean>> getMyActivePictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(
-			pictureGenerateRequestUseCase.findActivePGREQByUser(userDetails.getId()));
+			pictureGenerateRequestUseCase.isActivePGREQExists(userDetails.getId()));
 	}
 
 	@Operation(summary = "유저의 사진생성요청 조회", description = "사진생성요청 id로 사진생성요청을 조회한다.")

@@ -22,7 +22,7 @@ import com.gt.genti.dto.PGREQSaveRequestDto;
 import com.gt.genti.dto.PGREQUpdateRequestDto;
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
-import com.gt.genti.external.openai.dto.PromptAdvancementRequestDto;
+import com.gt.genti.external.openai.dto.PromptAdvancementRequestCommand;
 import com.gt.genti.external.openai.service.OpenAIService;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.UserRepository;
@@ -84,6 +84,14 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
+	public Boolean isActivePGREQExists(Long userId) {
+		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findByUserIdOrderByCreatedByDesc(
+			userId).orElse(null);
+		return foundPictureGenerateRequest != null;
+
+	}
+
+	@Override
 	public PGREQDetailFindByUserResponseDto findPGREQByUserAndId(Long userId, Long pictureGenerateRequestId) {
 		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findById(
 				pictureGenerateRequestId)
@@ -131,7 +139,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			foundUploader);
 
 		String promptAdvanced = openAIService.getAdvancedPrompt(
-			new PromptAdvancementRequestDto(PGREQSaveRequestDto.getPrompt()));
+			new PromptAdvancementRequestCommand(PGREQSaveRequestDto.getPrompt()));
 		log.info(promptAdvanced);
 
 		PictureGenerateRequest pgr = PictureGenerateRequest.builder()

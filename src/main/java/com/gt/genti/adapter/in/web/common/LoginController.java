@@ -2,18 +2,16 @@ package com.gt.genti.adapter.in.web.common;
 
 import static com.gt.genti.other.util.ApiUtils.*;
 
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.error.ErrorCode;
-import com.gt.genti.error.ExpectedException;
 import com.gt.genti.fortest.TestJwtResponseDto;
+import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.other.security.JwtTokenProvider;
 
 import jakarta.websocket.server.PathParam;
@@ -56,15 +54,13 @@ public class LoginController {
 		return "oauth2";
 	}
 
-	@GetMapping("/login/success")
-	public String successRedirect() {
-		return "redirecttest";
-	}
-
-	// @GetMapping("/error")
-	// public ResponseEntity<String> error() {
-	//
-	// 	return new ResponseEntity<>("error", HttpStatus.CONFLICT);
+	// @GetMapping("/login/success")
+	// public String successRedirect() {
+	// 	return "redirecttest";
 	// }
 
+	@GetMapping("/logout")
+	public ResponseEntity<ApiResult<Boolean>> logout(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return null;
+	}
 }

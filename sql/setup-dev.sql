@@ -1,16 +1,16 @@
 use genti;
 
-set @adminId := 1;
-set @userId := 2;
-set @emptyUserId := 3; # 아무 사진 생성 요청하지 않은 유저의 UserId
-set @creatorUserId := 4; # 공급자 UserId
-set @emptyCreatorId := 5; # 사진 생성 요청 매칭되지 않은 공급자의 UserId
-set @oauthFirstJoinUserId := 6; # 첫 회원가입 유저 - FE에서는 크게 신경쓸 일 없을 것 같긴 합니다.
-set @deactivatedUserId := 7; # 비활성화된 유저의 UserId
-set @deactivatedCreatorId := 8; # 비활성화된 공급자의 CreatorId
-
-set @creatorId := 1; # 공급자의 CreatorId
-set @adminCreatorId := 3; # 어드민의 공급자 id
+# set @adminId := 1;
+# set @userId := 2;
+# set @emptyUserId := 3; # 아무 사진 생성 요청하지 않은 유저의 UserId
+# set @creatorUserId := 4; # 공급자 UserId
+# set @emptyCreatorId := 5; # 사진 생성 요청 매칭되지 않은 공급자의 UserId
+# set @oauthFirstJoinUserId := 6; # 첫 회원가입 유저 - FE에서는 크게 신경쓸 일 없을 것 같긴 합니다.
+# set @deactivatedUserId := 7; # 비활성화된 유저의 UserId
+# set @deactivatedCreatorId := 8; # 비활성화된 공급자의 CreatorId
+#
+# set @creatorId := 1; # 공급자의 CreatorId
+# set @adminCreatorId := 3; # 어드민의 공급자 id
 insert ignore into user (id, created_at, modified_at, deleted_at, email, email_verified, introduction,
                          last_login_social_platform, login_id, nickname, password, user_role, roles, user_status,
                          username, sex)

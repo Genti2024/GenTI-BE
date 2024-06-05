@@ -2,6 +2,7 @@ package com.gt.genti.other.util;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.support.WebExchangeBindException;
 
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -17,6 +18,11 @@ public class ApiUtils {
 	public static ResponseEntity<ApiResult<ExpectedException>> error(ExpectedException exception) {
 		return new ResponseEntity<>(new ApiResult<>(false, null, exception),
 			exception.getErrorCode().getHttpStatusCode());
+	}
+
+	public static ResponseEntity<ApiResult<?>> error(WebExchangeBindException exception) {
+		return new ResponseEntity<>(new ApiResult<>(false, null, ErrorCode.ValidationError),
+			exception.getStatusCode());
 	}
 
 	// public static ResponseEntity<ApiResult<?>> error(DynamicException exception) {

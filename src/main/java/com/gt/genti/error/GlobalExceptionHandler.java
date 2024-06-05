@@ -25,31 +25,29 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ApiResult<ExpectedException>> handleExpectedException(final HttpServletRequest request,
 		final ExpectedException exception) {
 		log.error("""
-			[Error] uri : %s \n%s""".formatted(request.getRequestURI(), exception.toString()));
+			\n[Error] uri : %s \n%s""".formatted(request.getRequestURI(), exception.toString()));
 		return error(exception);
 	}
 
-	// @ExceptionHandler(RuntimeException.class)
-	// protected ResponseEntity<ApiResult<?>> handleUnExpectedException(final RuntimeException exception) {
-	// 	String error = """
-	// 		Class : %s
-	// 		Cause : %s
-	// 		Message : %s
-	// 		StackTrace : %s
-	// 		""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
-	// 		exception.getStackTrace());
-	// 	log.error(error);
-	// 	return error(ErrorCode.UnHandledException);
-	// }
+	@ExceptionHandler(RuntimeException.class)
+	protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final RuntimeException exception) {
+		String error = """
+			Class : %s
+			Cause : %s
+			Message : %s
+			StackTrace : %s
+			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
+			exception.getStackTrace());
+		log.error(error);
+		return error(new ExpectedException(ErrorCode.UnHandledException, error));
+	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
 	protected ResponseEntity<ApiResult<?>> processValidationError(WebExchangeBindException exception) {
 		String errorMessage = exception.getBindingResult().getFieldErrors().stream().map(
 			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
-		log.info(exception.getMessage());
-
-		// return error(new DynamicException("VALIDATION", errorMessage, HttpStatus.BAD_REQUEST));
-		return null;
+		log.error(errorMessage);
+		return error(exception);
 	}
 
 	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시

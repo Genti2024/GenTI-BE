@@ -21,7 +21,8 @@ public enum ErrorCode {
 	REFRESH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, ErrorUtils.REFRESH_TOKEN_INVALID, "유효하지 않은 리프레시 토큰입니다."),
 	TOKEN_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.TOKEN_CREATION_FAILED, "토큰 생성에 실패했습니다."),
 	TOKEN_REFRESH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.TOKEN_REFRESH_FAILED, "토큰 갱신에 실패했습니다."),
-	UnHandledException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.UnHandledException, "예기치 못한 문제가 발생했습니다."),
+	UnHandledException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.UnHandledException,
+		"예기치 못한 문제가 발생했습니다.\n오류내용 : \n%s"),
 	ActivePictureGenerateRequestNotExists(HttpStatus.NOT_FOUND, ErrorUtils.ActivePictureGenerateRequestNotExists,
 		"현재 진행중인 요청이 없습니다."),
 	FileTypeNotProvided(HttpStatus.BAD_REQUEST, ErrorUtils.FileTypeNotProvided, "파일 형식이 주어지지 않았습니다."),
@@ -62,9 +63,10 @@ public enum ErrorCode {
 		"DB -> ENUM 값 불러오기 실패  enum : %s value :  %s detail : %s"),
 	WithDrawnUser(HttpStatus.BAD_REQUEST, ErrorUtils.WithDrawnUser, "탈퇴한 사용자입니다."),
 	Undefined(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.Undefined, "FOR FE 원래 비즈니스 로직 상 발생하면 안되는 오류입니다. 문의 부탁드립니다."),
-	ValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError,"%s"),
-	OnlyRequesterCanViewRequest(HttpStatus.FORBIDDEN, ErrorUtils.OnlyRequesterCanViewRequest,"사진생성요청을 요청한 유저만 볼 수 있습니다."),
-	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE,ErrorUtils.NotAllowedOauthProvider , "허가되지 않은 oauth type %s");
+	ValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError, "%s"),
+	OnlyRequesterCanViewRequest(HttpStatus.FORBIDDEN, ErrorUtils.OnlyRequesterCanViewRequest,
+		"사진생성요청을 요청한 유저만 볼 수 있습니다."),
+	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotAllowedOauthProvider, "허가되지 않은 oauth type %s");
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

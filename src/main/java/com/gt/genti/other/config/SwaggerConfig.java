@@ -33,7 +33,6 @@ public class SwaggerConfig {
 	@Value("${springdoc.url.port}")
 	private String urlPort;
 
-	//
 	@Bean
 	public OpenAPI openAPI() {
 		String serverUrl = String.format("%s://%s:%s", urlScheme, urlHost, urlPort);

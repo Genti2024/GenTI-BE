@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,9 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExpectedException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> handleExpectedException(final ExpectedException exception) {
+	protected ResponseEntity<ApiResult<ExpectedException>> handleExpectedException(final HttpServletRequest request,
+		final ExpectedException exception) {
 		log.error("""
-			예외 발생, 예외 내용 : \n \n %s""".formatted(exception.toString()));
+			[Error] uri : %s \n%s""".formatted(request.getRequestURI(), exception.toString()));
 		return error(exception);
 	}
 

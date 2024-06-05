@@ -41,3 +41,9 @@ logging:
             sql:
               BasicBinder: TRACE
 
+
+springdoc:
+  url:
+    scheme: http
+    host: localhost
+    port: 8080

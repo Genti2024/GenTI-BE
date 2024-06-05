@@ -24,6 +24,7 @@ public class SwaggerConfig {
 
 	private final String BEARER_TOKEN_PREFIX = "Bearer"; // Bearer직접 넣어서 주는걸로 결정
 	private final String securityJwtName = "JWT";
+
 	@Value("${springdoc.url.scheme}")
 	private String urlScheme;
 

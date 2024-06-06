@@ -14,6 +14,11 @@ public enum OauthType implements ConvertableEnum {
 	private final String stringValue;
 
 	@Override
+	public String getResponse() {
+		return stringValue;
+	}
+
+	@Override
 	public Boolean isNullable() {
 		return true;
 	}

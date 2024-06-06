@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.dto.TokenRefreshRequestDto;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DefaultErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,9 @@ public class JwtController {
 		@RequestBody TokenRefreshRequestDto tokenRefreshRequestDto) {
 
 		if (authHeader == null) {
-			throw new ExpectedException(ErrorCode.TOKEN_NOT_PROVIDED);
+			throw new ExpectedException(DefaultErrorCode.TOKEN_NOT_PROVIDED);
 		} else if (!authHeader.startsWith(JwtConstants.JWT_PREFIX)) {
-			throw new ExpectedException(ErrorCode.INVALID_TOKEN);
+			throw new ExpectedException(DefaultErrorCode.INVALID_TOKEN);
 		}
 
 		String receiveAccessToken = jwtTokenProvider.getTokenFromHeader(authHeader);

@@ -14,7 +14,7 @@ import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
 import com.gt.genti.domain.enums.converter.SexConverter;
 import com.gt.genti.domain.enums.converter.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.UserStatusConverter;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.OAuthAttributes;
 
@@ -138,7 +138,7 @@ public class User extends BaseTimeEntity {
 		// author
 		OauthType oauthType = oauthAttributes.getOauthType();
 		String nickname = "최초로그인시닉네임";
-		return new User(email, username, nickname, oauthType, UserRole.USER);
+		return new User(email, username, nickname, oauthType, UserRole.OAUTH_FIRST_JOIN);
 	}
 
 	public void updateName(String username) {
@@ -156,7 +156,7 @@ public class User extends BaseTimeEntity {
 
 	public void restore() {
 		if (Period.between(this.deletedAt.toLocalDate(), LocalDate.now()).getMonths() >= 1) {
-			throw new ExpectedException(ErrorCode.CannotRestoreUser);
+			throw new ExpectedException(DomainErrorCode.CannotRestoreUser);
 		}
 		this.userStatus = UserStatus.ACTIVATED;
 

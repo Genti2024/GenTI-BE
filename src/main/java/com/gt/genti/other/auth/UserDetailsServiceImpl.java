@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.gt.genti.error.DomainErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,13 +21,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		log.info("--------------------------- UserDetailsServiceImpl ---------------------------");
-		log.info("email = {}", email);
-
 		return userRepository.findByEmail(email)
 			.map(
 				findUser -> new UserDetailsImpl(findUser,
 					findUser.getRoles()))
-			.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 사용자입니다"));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound, email));
+	}
+
+	public UserDetailsImpl loadUserById(Long id) throws UsernameNotFoundException {
+		return userRepository.findById(id)
+			.map(
+				findUser -> new UserDetailsImpl(findUser,
+					findUser.getRoles()))
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound, "찾은 id : " + id));
 	}
 }

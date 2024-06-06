@@ -27,7 +27,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	@Transactional
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-		log.info("---------OAuth2UserService---------");
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		String email = oAuth2User.getAttribute("email");
@@ -43,16 +42,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 			OAuthAttributes oauthAttributes = OAuthAttributeBuilder.of(registrationId, oAuth2User.getAttributes());
 			user = User.createNewSocialUser(oauthAttributes);
-
 			user = userRepository.save(user);
-			roles = UserRole.addRole(user.getRoles(), UserRole.OAUTH_FIRST_JOIN);
 		} else {
 			user = optionalUser.get();
-			roles = user.getRoles();
 		}
 
 		return new UserDetailsImpl(
-			user, roles, oAuth2User.getAttributes());
+			user, oAuth2User.getAttributes());
 	}
 
 }

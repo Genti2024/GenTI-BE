@@ -21,7 +21,7 @@ import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.repository.PictureCompletedRepository;
@@ -53,7 +53,7 @@ public class PictureService {
 
 	public PictureUserFace findByUrlPictureUserFace(String key) {
 		return pictureUserFaceRepository.findByKey(key)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureUserFaceNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureUserFaceNotFound));
 	}
 
 	// public PictureCompleted findByUrlPictureCompleted(String key) {
@@ -62,7 +62,7 @@ public class PictureService {
 
 	public PictureCreatedByCreator findByUrlPictureCreatedByCreator(String key) {
 		return pictureCreatedByCreatorRepository.findByKey(key)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureCreatedByCreatorNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureCreatedByCreatorNotFound));
 	}
 
 	public Optional<PicturePose> findByUrlPicturePose(String key) {
@@ -71,13 +71,13 @@ public class PictureService {
 
 	public PictureProfile findByUrlPictureProfile(String key) {
 		return pictureProfileRepository.findByKey(key)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureProfileNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureProfileNotFound));
 	}
 
 	public PictureCreatedByCreator findPictureCreatedByCreatorByPictureGenerateResponse(
 		PictureGenerateResponse pictureGenerateResponse) {
 		return pictureCreatedByCreatorRepository.findByPictureGenerateResponse(pictureGenerateResponse)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.PictureCreatedByCreatorNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureCreatedByCreatorNotFound));
 	}
 
 	public Picture updatePicture(CreatePictureCompletedCommand command) {
@@ -189,7 +189,7 @@ public class PictureService {
 
 	private User findUser(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
 	}
 
 	public List<PictureProfile> findAllProfilePicture(User foundUser) {

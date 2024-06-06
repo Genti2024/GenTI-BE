@@ -6,10 +6,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Sex implements ConvertableEnum {
-	M("M"),
-	W("W"),
-	NONE("NONE");
+	M("M", "남자"),
+	W("W", "여자"),
+	NONE("NONE", "미입력");
 	private final String stringValue;
+	private final String response;
 
 	@Override
 	public Boolean isNullable() {

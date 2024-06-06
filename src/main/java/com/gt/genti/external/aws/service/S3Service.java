@@ -13,7 +13,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
 import com.gt.genti.external.aws.dto.PreSignedUrlResponseDto;
@@ -39,7 +39,7 @@ public class S3Service {
 		String fileName = preSignedUrlRequestDto.getFileName();
 		String fileType = preSignedUrlRequestDto.getFileType().getStringValue();
 		if (fileType == null) {
-			throw new ExpectedException(ErrorCode.ActivePictureGenerateRequestNotExists);
+			throw new ExpectedException(DomainErrorCode.ActivePictureGenerateRequestNotExists);
 		}
 		String s3Key = createPath(fileType, fileName);
 

@@ -2,9 +2,7 @@ package com.gt.genti.other.security;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,11 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.gt.genti.domain.User;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DefaultErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.other.auth.UserDetailsServiceImpl;
@@ -36,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+
 	private final UserDetailsServiceImpl userDetailsServiceImpl;
 	public static final String AUTH = "auth";
 	public static final String ID = "sub";
@@ -87,16 +86,12 @@ public class JwtTokenProvider {
 	public Authentication getAuthentication(String token) {
 		Claims claims = validateToken(token);
 		String id = claims.getSubject();
-		String roles = claims.get(AUTH).toString();
-		List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(","))
-			.map(SimpleGrantedAuthority::new)
-			.toList();
-		UserDetailsImpl userDetails = UserDetailsImpl.builder()
-			.user(User.createPrincipalOnlyUser(Long.parseLong(id)))
-			.roles(roles).build();
-		log.info("""
-			요청한 유저 id : [%d]""".formatted(userDetails.getId()));
-		return new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
+		UserDetailsImpl userDetails = userDetailsServiceImpl.loadUserById(Long.parseLong(id));
+
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, token,
+			userDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		return authentication;
 	}
 
 	public Claims validateToken(String token) {
@@ -107,9 +102,9 @@ public class JwtTokenProvider {
 				.parseClaimsJws(token) // 파싱 및 검증, 실패 시 에러
 				.getBody();
 		} catch (ExpiredJwtException expiredJwtException) {
-			throw new ExpectedException(ErrorCode.TOKEN_EXPIRED);
+			throw new ExpectedException(DefaultErrorCode.TOKEN_EXPIRED);
 		} catch (Exception e) {
-			throw new ExpectedException(ErrorCode.INVALID_TOKEN);
+			throw new ExpectedException(DefaultErrorCode.INVALID_TOKEN);
 		}
 	}
 

@@ -7,12 +7,17 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -29,25 +34,32 @@ public class GlobalExceptionHandler {
 		return error(exception);
 	}
 
-	@ExceptionHandler(RuntimeException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final RuntimeException exception) {
-		String error = """
-			Class : %s
-			Cause : %s
-			Message : %s
-			StackTrace : %s
-			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
-			exception.getStackTrace());
-		log.error(error);
-		return error(new ExpectedException(ErrorCode.UnHandledException, error));
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException));
 	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
-	protected ResponseEntity<ApiResult<?>> processValidationError(WebExchangeBindException exception) {
+	protected ResponseEntity<ApiResult<ExpectedException>> processValidationError(WebExchangeBindException exception) {
 		String errorMessage = exception.getBindingResult().getFieldErrors().stream().map(
 			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
-		log.error(errorMessage);
-		return error(exception);
+		return error(new ExpectedException(DefaultErrorCode.ValidationError, errorMessage));
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		return new ResponseEntity<>("Invalid request data", HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+		return new ResponseEntity<>("Malformed JSON request", HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ResponseEntity<String> handleHttpRequestMethodNotSupportedException(
+		HttpRequestMethodNotSupportedException ex) {
+		return new ResponseEntity<>("Method not allowed", HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
 	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시
@@ -60,7 +72,20 @@ public class GlobalExceptionHandler {
 		String errorMessage = resolvable.getDefaultMessage();
 		String error = fieldName + " 필드는 " + errorMessage;
 
-		return error(new ExpectedException(ErrorCode.ValidationError, error));
+		return error(new ExpectedException(DefaultErrorCode.ValidationError, error));
+	}
+
+	@ExceptionHandler(RuntimeException.class)
+	protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final RuntimeException exception) {
+		String error = """
+			Class : %s
+			Cause : %s
+			Message : %s
+			StackTrace : %s
+			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
+			exception.getStackTrace());
+		log.error(error);
+		return error(new ExpectedException(DefaultErrorCode.UnHandledException, error));
 	}
 
 	@NotNull

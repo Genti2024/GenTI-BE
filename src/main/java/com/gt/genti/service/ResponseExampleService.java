@@ -11,7 +11,7 @@ import com.gt.genti.dto.ExampleSaveRequestDto;
 import com.gt.genti.dto.ExampleWithPictureFindResponseDto;
 import com.gt.genti.dto.PromptOnlyExampleFindResponseDto;
 import com.gt.genti.dto.PromptOnlyExampleSaveRequestDto;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.ResponseExampleRepository;
 import com.gt.genti.repository.UserRepository;
@@ -42,7 +42,7 @@ public class ResponseExampleService {
 	public void addResponseExamples(List<ExampleSaveRequestDto> requestDtoList,
 		Long userId) {
 		User findAdmin = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
 
 		responseExampleRepository.saveAll(
 			requestDtoList.stream().map(dto -> new ResponseExample(dto, findAdmin)).toList());
@@ -51,7 +51,7 @@ public class ResponseExampleService {
 	@Transactional
 	public void addPromptOnlyExamples(List<PromptOnlyExampleSaveRequestDto> requestDtoList, Long userId) {
 		User findAdmin = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
 		responseExampleRepository.saveAll(
 			requestDtoList.stream().map(dto -> new ResponseExample(dto, findAdmin)).toList());
 	}

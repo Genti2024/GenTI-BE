@@ -11,7 +11,7 @@ import com.gt.genti.domain.enums.ReportStatus;
 import com.gt.genti.dto.ReportSaveRequestDto;
 import com.gt.genti.dto.ReportFindResponseDto;
 import com.gt.genti.dto.ReportUpdateRequestDto;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.PictureGenerateResponseRepository;
 import com.gt.genti.repository.ReportRepository;
@@ -28,7 +28,7 @@ public class ReportService {
 		Long pictureGenerateResponseId = reportSaveRequestDto.getPictureGenerateResponseId();
 		PictureGenerateResponse findPictureGenerateResponse = pictureGenerateResponseRepository.findById(
 			pictureGenerateResponseId).orElseThrow(() -> new ExpectedException(
-			ErrorCode.PictureGenerateResponseNotFound));
+			DomainErrorCode.PictureGenerateResponseNotFound));
 
 		Report createReport = new Report(findPictureGenerateResponse, reportSaveRequestDto.getContent());
 
@@ -45,7 +45,7 @@ public class ReportService {
 	public Boolean updateReport(ReportUpdateRequestDto reportUpdateRequestDto) {
 		Long id = reportUpdateRequestDto.getId();
 		ReportStatus status = reportUpdateRequestDto.getReportStatus();
-		Report findReport = reportRepository.findById(id).orElseThrow(() -> new ExpectedException(ErrorCode.ReportNotFound));
+		Report findReport = reportRepository.findById(id).orElseThrow(() -> new ExpectedException(DomainErrorCode.ReportNotFound));
 		findReport.updateStatus(status);
 		return true;
 	}

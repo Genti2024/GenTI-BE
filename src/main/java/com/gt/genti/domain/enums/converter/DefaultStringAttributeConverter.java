@@ -1,7 +1,8 @@
 package com.gt.genti.domain.enums.converter;
 
 import com.gt.genti.domain.enums.ConvertableEnum;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DefaultErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.AttributeConverter;
@@ -22,7 +23,7 @@ public class DefaultStringAttributeConverter<T extends Enum<T> & ConvertableEnum
 			if (enumClassType.getEnumConstants()[0].isNullable()) {
 				return null;
 			} else {
-				throw new ExpectedException(ErrorCode.NotNullableEnum, enumClassType.getName());
+				throw new ExpectedException(DefaultErrorCode.NotNullableEnum, enumClassType.getName());
 			}
 		}
 	}

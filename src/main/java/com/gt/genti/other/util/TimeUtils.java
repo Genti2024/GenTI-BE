@@ -2,7 +2,7 @@ package com.gt.genti.other.util;
 
 import java.time.Duration;
 
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DefaultErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 public class TimeUtils {
@@ -28,6 +28,10 @@ public class TimeUtils {
 				return timeReward[1];
 			}
 		}
-		throw new ExpectedException(ErrorCode.Undefined);
+		throw new ExpectedException(DefaultErrorCode.UnHandledException,
+			"""
+				요청-응답의 공급자의 응답 소요 시간 계산 중 문제 발생,
+				계산된 응답소요시간은 [%d분]"""
+				.formatted(elapsedMinutes));
 	}
 }

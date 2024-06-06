@@ -43,8 +43,8 @@ public class UserPGREQController {
 		@ApiResponse(responseCode = "200", description = "성공",
 			content = {@Content(mediaType = "application/json",
 				array = @ArraySchema(schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class)))}),
-		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
-		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, ErrorCode.PictureGenerateRequestNotFound"),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, DomainErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, DomainErrorCode.PictureGenerateRequestNotFound"),
 	})
 	public ResponseEntity<ApiResult<List<PGREQDetailFindByUserResponseDto>>> getAllUsersPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
@@ -59,8 +59,8 @@ public class UserPGREQController {
 		@ApiResponse(responseCode = "200", description = "성공",
 			content = {
 				@Content(mediaType = "application/json", schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class))}),
-		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
-		@ApiResponse(responseCode = "404", description = "현재 진행중인 요청이 없습니다, ErrorCode.ActivePictureGenerateRequestNotExists"),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, DomainErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "현재 진행중인 요청이 없습니다, DomainErrorCode.ActivePictureGenerateRequestNotExists"),
 	})
 	@GetMapping("/active/deprecated")
 	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getMyActivePictureGenerateRequest_Deprecated(
@@ -75,8 +75,8 @@ public class UserPGREQController {
 		@ApiResponse(responseCode = "200", description = "성공",
 			content = {
 				@Content(mediaType = "application/json", schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class))}),
-		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
-		@ApiResponse(responseCode = "404", description = "현재 진행중인 요청이 없습니다, ErrorCode.ActivePictureGenerateRequestNotExists"),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, DomainErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "현재 진행중인 요청이 없습니다, DomainErrorCode.ActivePictureGenerateRequestNotExists"),
 	})
 	@GetMapping("/active")
 	public ResponseEntity<ApiResult<Boolean>> getMyActivePictureGenerateRequest(
@@ -91,9 +91,9 @@ public class UserPGREQController {
 		@ApiResponse(responseCode = "200", description = "성공",
 			content = {
 				@Content(mediaType = "application/json", schema = @Schema(implementation = PGREQDetailFindByUserResponseDto.class))}),
-		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
-		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, ErrorCode.PictureGenerateRequestNotFound"),
-		@ApiResponse(responseCode = "403", description = "사진생성요청을 한 유저 본인만 조회할 수 있습니다., ErrorCode.OnlyRequesterCanViewRequest"),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, DomainErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, DomainErrorCode.PictureGenerateRequestNotFound"),
+		@ApiResponse(responseCode = "403", description = "사진생성요청을 한 유저 본인만 조회할 수 있습니다., DomainErrorCode.OnlyRequesterCanViewRequest"),
 	})
 	@GetMapping("/{pictureGenerateRequestId}")
 	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getPictureGenerateRequestDetail(
@@ -110,9 +110,9 @@ public class UserPGREQController {
 		@ApiResponse(responseCode = "200", description = "성공",
 			content = {
 				@Content(mediaType = "application/json", schema = @Schema(implementation = ApiResult.class))}),
-		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, ErrorCode.UserNotFound"),
-		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, ErrorCode.PictureGenerateRequestNotFound"),
-		@ApiResponse(responseCode = "403", description = "사진생성요청을 한 유저 본인만 조회할 수 있습니다., ErrorCode.OnlyRequesterCanViewRequest"),
+		@ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음, DomainErrorCode.UserNotFound"),
+		@ApiResponse(responseCode = "404", description = "요청을 찾을 수 없음, DomainErrorCode.PictureGenerateRequestNotFound"),
+		@ApiResponse(responseCode = "403", description = "사진생성요청을 한 유저 본인만 조회할 수 있습니다., DomainErrorCode.OnlyRequesterCanViewRequest"),
 	})
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(

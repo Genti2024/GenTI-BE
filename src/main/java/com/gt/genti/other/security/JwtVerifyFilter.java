@@ -8,7 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DefaultErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.config.SecurityConfig;
 
@@ -28,9 +29,9 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 
 	private static void checkAuthorizationHeader(String header) {
 		if (header == null) {
-			throw new ExpectedException(ErrorCode.TOKEN_NOT_PROVIDED);
+			throw new ExpectedException(DefaultErrorCode.TOKEN_NOT_PROVIDED);
 		} else if (!header.startsWith(JwtConstants.JWT_PREFIX)) {
-			throw new ExpectedException(ErrorCode.INVALID_TOKEN);
+			throw new ExpectedException(DefaultErrorCode.INVALID_TOKEN);
 		}
 	}
 
@@ -45,13 +46,11 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
 			String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
-			checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
+			checkAuthorizationHeader(authHeader);
 			String token = jwtTokenProvider.getTokenFromHeader(authHeader);
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
-			log.info("authentication = {}", authentication);
 			SecurityContext context = SecurityContextHolder.createEmptyContext();
 			context.setAuthentication(authentication);
-			log.info("context : " + context);
 			SecurityContextHolder.setContext(context);
 		} catch (Exception e) {
 			request.setAttribute("exception", e);

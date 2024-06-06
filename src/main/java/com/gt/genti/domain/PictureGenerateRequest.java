@@ -15,7 +15,7 @@ import com.gt.genti.domain.enums.converter.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.ShotCoverageConverter;
 import com.gt.genti.dto.PGREQUpdateRequestDto;
 import com.gt.genti.dto.PGREQSaveRequestDto;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.Column;
@@ -118,7 +118,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 
 	public void accept() {
 		if (LocalDateTime.now().isAfter(this.getModifiedAt().plusMinutes(ACCEPTABLE_TIME_MINUTE))) {
-			throw new ExpectedException(ErrorCode.ExpiredPictureGenerateRequest);
+			throw new ExpectedException(DomainErrorCode.ExpiredPictureGenerateRequest);
 		}
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;
 	}

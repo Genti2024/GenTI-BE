@@ -20,9 +20,8 @@ import com.gt.genti.dto.UserFindResponseDto;
 import com.gt.genti.dto.UserInfoUpdateRequestDto;
 import com.gt.genti.dto.UserRoleUpdateRequestDto;
 import com.gt.genti.dto.UserStatusUpdateRequestDto;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
-import com.gt.genti.external.aws.AwsUtils;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.UserRepository;
@@ -122,20 +121,20 @@ public class UserService {
 
 	private User findDeactivatedUserByUserId(Long userId) {
 		User foundUser = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
 
 		if (foundUser.isActivate()) {
-			throw new ExpectedException(ErrorCode.AlreadyActivatedUser);
+			throw new ExpectedException(DomainErrorCode.AlreadyActivatedUser);
 		}
 		return foundUser;
 	}
 
 	private User findActivateUserByUserId(Long userId) {
 		User foundUser = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.UserNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
 
 		if (!foundUser.isActivate()) {
-			throw new ExpectedException(ErrorCode.UserDeactivated);
+			throw new ExpectedException(DomainErrorCode.UserDeactivated);
 		}
 		return foundUser;
 	}

@@ -5,7 +5,8 @@ import java.util.List;
 import org.apache.commons.codec.binary.StringUtils;
 
 import com.gt.genti.domain.enums.ConvertableEnum;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DefaultErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class EnumUtil {
 				return enumValue;
 			}
 		}
-		throw new ExpectedException(ErrorCode.NotNullableEnum, enumType);
+		throw new ExpectedException(DefaultErrorCode.NotNullableEnum, enumType);
 	}
 
 	public static <E extends Enum<E> & ConvertableEnum> E stringToEnum(Class<E> enumType, String value) {
@@ -33,7 +34,7 @@ public class EnumUtil {
 		try {
 			return convertNullToEnum(enumType);
 		} catch (Exception e) {
-			throw new ExpectedException(ErrorCode.DBToEnumFailed, List.of(enumType.getName(), value, e.getMessage()));
+			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed, List.of(enumType.getName(), value, e.getMessage()));
 		}
 	}
 
@@ -47,7 +48,7 @@ public class EnumUtil {
 		try {
 			return convertNullToEnum(enumType);
 		} catch (Exception e) {
-			throw new ExpectedException(ErrorCode.DBToEnumFailed, List.of(enumType.getName(), value, e.getMessage()));
+			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed, List.of(enumType.getName(), value, e.getMessage()));
 		}
 	}
 }

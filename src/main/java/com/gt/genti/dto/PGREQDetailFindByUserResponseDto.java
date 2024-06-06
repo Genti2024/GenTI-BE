@@ -11,7 +11,8 @@ import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DefaultErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import lombok.Getter;
@@ -63,7 +64,7 @@ public class PGREQDetailFindByUserResponseDto {
 				.filter(response ->
 					response.getStatus() == PictureGenerateResponseStatus.SUBMITTED_FINAL
 						|| response.getStatus() == PictureGenerateResponseStatus.COMPLETED)
-				.findFirst().orElseThrow(() -> new ExpectedException(ErrorCode.UnHandledException));
+				.findFirst().orElseThrow(() -> new ExpectedException(DefaultErrorCode.UnHandledException));
 			this.pictureCompletedList = realResponse.getCompletedPictureList()
 				.stream()
 				.map(PictureEntity::mapToCommonResponse)

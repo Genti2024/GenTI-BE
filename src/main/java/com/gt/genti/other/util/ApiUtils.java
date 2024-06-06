@@ -2,7 +2,6 @@ package com.gt.genti.other.util;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.support.WebExchangeBindException;
 
 import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -20,15 +19,6 @@ public class ApiUtils {
 			exception.getErrorCode().getHttpStatusCode());
 	}
 
-	public static ResponseEntity<ApiResult<?>> error(WebExchangeBindException exception) {
-		return new ResponseEntity<>(new ApiResult<>(false, null, ErrorCode.ValidationError),
-			exception.getStatusCode());
-	}
-
-	// public static ResponseEntity<ApiResult<?>> error(DynamicException exception) {
-	// 	return new ResponseEntity<>(new ApiResult<>(false, null, exception), exception.getHttpStatusCode());
-	// }
-
 	@Getter
 	public static class ApiResult<T> {
 		private final boolean success;
@@ -36,11 +26,11 @@ public class ApiUtils {
 		private final String errorCode;
 		private final String errorMessage;
 
-		private ApiResult(boolean success, T response, ErrorCode errorCode) {
+		private ApiResult(boolean success, T response, ErrorCode domainErrorCode) {
 			this.success = success;
 			this.response = response;
-			this.errorCode = errorCode.getCode();
-			this.errorMessage = errorCode.getMessage();
+			this.errorCode = domainErrorCode.getCode();
+			this.errorMessage = domainErrorCode.getMessage();
 		}
 
 		private ApiResult(boolean success, T response) {

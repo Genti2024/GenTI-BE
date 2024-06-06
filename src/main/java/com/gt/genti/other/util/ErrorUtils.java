@@ -69,6 +69,6 @@ public class ErrorUtils {
 	public static final String WithDrawnUser = CODE(USER, 5);
 	public static final String NotAllowedOauthProvider = CODE(OAUTH, 1);
 	public static final String ControllerValidationError = CODE(VALIDATION, 1);
-	public static String OnlyRequesterCanViewRequest = CODE(REQUEST, 8);
-
+	public static final String OnlyRequesterCanViewRequest = CODE(REQUEST, 8);
+	public static final String NoHandlerFoundException = CODE(SERVER, 2);
 }

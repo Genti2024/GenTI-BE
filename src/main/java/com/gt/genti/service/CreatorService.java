@@ -8,7 +8,7 @@ import com.gt.genti.dto.CreatorFindResponseDto;
 import com.gt.genti.dto.AccountUpdateRequestDto;
 import com.gt.genti.dto.CreatorStatusUpdateRequestDto;
 import com.gt.genti.dto.CreatorStatusUpdateResponseDto;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.CreatorRepository;
 
@@ -47,6 +47,6 @@ public class CreatorService {
 
 	private Creator findCreatorByUserId(Long userId) {
 		return creatorRepository.findByUserId(userId)
-			.orElseThrow(() -> new ExpectedException(ErrorCode.CreatorNotFound));
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.CreatorNotFound));
 	}
 }

@@ -1,13 +1,10 @@
 package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
-import com.gt.genti.domain.enums.ReportStatus;
-import com.gt.genti.domain.enums.converter.ReportStatusConverter;
-import com.gt.genti.error.ErrorCode;
+import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,7 +34,7 @@ public class Deposit extends BaseTimeEntity {
 
 	public void add(Long amount){
 		if(amount < 0){
-			throw new ExpectedException(ErrorCode.AddPointAmountCannotBeMinus);
+			throw new ExpectedException(DomainErrorCode.AddPointAmountCannotBeMinus);
 		}
 		this.depositAmount += amount;
 	}

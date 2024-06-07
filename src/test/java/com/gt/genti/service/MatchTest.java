@@ -23,11 +23,12 @@ import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.domain.enums.PictureRatio;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
-import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.dto.admin.request.UserRoleUpdateRequestDto;
+import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.UserRepository;
 import com.gt.genti.service.config.TestConfig;
@@ -76,6 +77,7 @@ public class MatchTest {
 			.prompt("밤에 한강공원에서 벤치에 앉은 사진이요")
 			.posePictureKey(savedPicturePose.getKey())
 			.cameraAngle(CameraAngle.ABOVE)
+			.pictureRatio(PictureRatio.THREE_TWO)
 			.shotCoverage(ShotCoverage.FACE)
 			.facePictureKeyList(savedPictureUserfaceList.stream().map(PictureUserFace::getKey).toList())
 			.build();

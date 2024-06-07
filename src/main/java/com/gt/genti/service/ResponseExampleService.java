@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.ResponseExample;
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.admin.ExampleSaveRequestDto;
-import com.gt.genti.dto.admin.ExampleWithPictureFindResponseDto;
+import com.gt.genti.dto.admin.request.ExampleSaveRequestDto;
+import com.gt.genti.dto.admin.response.ExampleWithPictureFindResponseDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.ResponseExampleRepository;

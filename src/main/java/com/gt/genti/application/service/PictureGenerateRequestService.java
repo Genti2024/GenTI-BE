@@ -15,11 +15,11 @@ import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.user.PGREQBriefFindByUserResponseDto;
-import com.gt.genti.dto.user.PGREQDetailFindByUserResponseDto;
 import com.gt.genti.dto.PGREQDetailFindResponseDto;
-import com.gt.genti.dto.user.PGREQSaveRequestDto;
-import com.gt.genti.dto.user.PGREQUpdateRequestDto;
+import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
+import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
+import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
+import com.gt.genti.dto.user.response.PGREQDetailFindByUserResponseDto;
 import com.gt.genti.error.DefaultErrorCode;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -58,7 +58,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	@Override
 	public List<PGREQDetailFindByUserResponseDto> getAllPictureGenerateRequestForUser(Long userId) {
 		User foundUser = findUser(userId);
-		
+
 		List<PGREQDetailFindByUserResponseDto> result = pictureGenerateRequestPort.findAllByRequester(
 			foundUser).stream().map(
 			PGREQDetailFindByUserResponseDto::new
@@ -118,35 +118,39 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	@Override
 	@Transactional
 	public PictureGenerateRequest createPictureGenerateRequest(Long requesterId,
-		PGREQSaveRequestDto PGREQSaveRequestDto) {
+		PGREQSaveRequestDto pgreqSaveRequestDto) {
 
 		User foundUploader = findUser(requesterId);
 
-		String posePictureKey = PGREQSaveRequestDto.getPosePictureKey();
+		String posePictureKey = "";
+		PicturePose foundPicturePose = null;
+		if (!Objects.isNull(pgreqSaveRequestDto.getPosePictureKey())) {
+			posePictureKey = pgreqSaveRequestDto.getPosePictureKey();
+			String finalPosePictureKey = posePictureKey;
+			foundPicturePose = pictureService.findByUrlPicturePose(posePictureKey)
+				.orElseGet(() -> {
+					log.info("""
+						%s 유저가 요청에 포함한 포즈참고사진 key [%s] 기존 사진을 찾을 수 없어 신규 저장"""
+						.formatted(foundUploader.getEmail(), finalPosePictureKey));
+					return pictureService.updatePicture(
+						CreatePicturePoseCommand.builder()
+							.key(finalPosePictureKey)
+							.uploader(foundUploader).build());
+				});
+		}
 
-		PicturePose foundPicturePose = pictureService.findByUrlPicturePose(posePictureKey)
-			.orElseGet(() -> {
-				log.info("""
-					%s 유저가 요청에 포함한 포즈참고사진 key [%s] 기존 사진을 찾을 수 없어 신규 저장"""
-					.formatted(foundUploader.getEmail(), posePictureKey));
-				return pictureService.updatePicture(
-					CreatePicturePoseCommand.builder()
-						.key(posePictureKey)
-						.uploader(foundUploader).build());
-			});
-
-		List<String> facePictureUrl = PGREQSaveRequestDto.getFacePictureKeyList();
+		List<String> facePictureUrl = pgreqSaveRequestDto.getFacePictureKeyList();
 		List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(facePictureUrl,
 			foundUploader);
 
 		String promptAdvanced = openAIService.getAdvancedPrompt(
-			new PromptAdvancementRequestCommand(PGREQSaveRequestDto.getPrompt()));
+			new PromptAdvancementRequestCommand(pgreqSaveRequestDto.getPrompt()));
 		log.info(promptAdvanced);
 
 		PictureGenerateRequest pgr = PictureGenerateRequest.builder()
 			.requester(foundUploader)
 			.promptAdvanced(promptAdvanced)
-			.pgreqSaveRequestDto(PGREQSaveRequestDto)
+			.pgreqSaveRequestDto(pgreqSaveRequestDto)
 			.picturePose(foundPicturePose)
 			.userFacePictureList(uploadedFacePictureList)
 			.build();

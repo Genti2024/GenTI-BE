@@ -10,8 +10,8 @@
 // import org.springframework.transaction.annotation.Transactional;
 //
 // import com.gt.genti.domain.User;
-// import com.gt.genti.dto.user.UserFindResponseDto;
-// import com.gt.genti.dto.user.UserInfoUpdateRequestDto;
+// import com.gt.genti.dto.user.response.UserFindResponseDto;
+// import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
 // import com.gt.genti.repository.UserRepository;
 //
 // @SpringBootTest

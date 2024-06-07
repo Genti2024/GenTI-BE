@@ -1,7 +1,7 @@
 package com.gt.genti.domain.common;
 
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.common.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;

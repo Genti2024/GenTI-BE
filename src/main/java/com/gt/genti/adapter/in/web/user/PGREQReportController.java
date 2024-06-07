@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.ReportService;
-import com.gt.genti.dto.admin.ReportSaveRequestDto;
+import com.gt.genti.dto.admin.request.ReportSaveRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import jakarta.validation.Valid;

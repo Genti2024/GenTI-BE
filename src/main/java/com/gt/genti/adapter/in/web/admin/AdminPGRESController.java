@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
-import com.gt.genti.dto.admin.PGRESUpdateByAdminResponseDto;
-import com.gt.genti.dto.common.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.admin.response.PGRESUpdateByAdminResponseDto;
+import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import jakarta.validation.Valid;

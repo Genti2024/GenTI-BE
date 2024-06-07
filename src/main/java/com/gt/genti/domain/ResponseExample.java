@@ -2,7 +2,7 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.Picture;
 import com.gt.genti.domain.common.PictureEntity;
-import com.gt.genti.dto.admin.ExampleSaveRequestDto;
+import com.gt.genti.dto.admin.request.ExampleSaveRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

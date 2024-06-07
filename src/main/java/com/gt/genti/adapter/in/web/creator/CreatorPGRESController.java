@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.dto.creator.PGREQBriefFindByCreatorResponseDto;
+import com.gt.genti.dto.creator.response.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.dto.PGREQDetailFindResponseDto;
-import com.gt.genti.dto.creator.PGRESUpdateByCreatorResponseDto;
-import com.gt.genti.dto.MemoUpdateRequestDto;
-import com.gt.genti.dto.common.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.creator.response.PGRESUpdateByCreatorResponseDto;
+import com.gt.genti.dto.creator.request.MemoUpdateRequestDto;
+import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import jakarta.validation.Valid;

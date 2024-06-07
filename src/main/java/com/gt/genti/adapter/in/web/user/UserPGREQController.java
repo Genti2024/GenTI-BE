@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
-import com.gt.genti.dto.user.PGREQBriefFindByUserResponseDto;
-import com.gt.genti.dto.user.PGREQDetailFindByUserResponseDto;
-import com.gt.genti.dto.user.PGREQSaveRequestDto;
-import com.gt.genti.dto.user.PGREQUpdateRequestDto;
+import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
+import com.gt.genti.dto.user.response.PGREQDetailFindByUserResponseDto;
+import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
+import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import io.swagger.v3.oas.annotations.Operation;

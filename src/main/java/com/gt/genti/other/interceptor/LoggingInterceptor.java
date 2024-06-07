@@ -18,7 +18,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		String requestUrl = request.getRequestURL().toString();
+			String requestUrl = request.getRequestURL().toString();
 		String method = request.getMethod();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String logMessage;

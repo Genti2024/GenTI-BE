@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.admin.ExampleWithPictureFindResponseDto;
+import com.gt.genti.dto.admin.response.ExampleWithPictureFindResponseDto;
 import com.gt.genti.service.ResponseExampleService;
 
 import lombok.RequiredArgsConstructor;

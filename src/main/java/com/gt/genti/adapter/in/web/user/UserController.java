@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.common.CommonPictureUrlResponseDto;
-import com.gt.genti.dto.user.UserFindResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.user.response.UserFindResponseDto;
 import com.gt.genti.other.annotation.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.auth.UserDetailsImpl;
-import com.gt.genti.dto.user.UserInfoUpdateRequestDto;
+import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
 import com.gt.genti.application.service.UserService;
 
 import jakarta.validation.Valid;

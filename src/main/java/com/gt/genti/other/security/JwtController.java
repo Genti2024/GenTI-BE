@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.common.TokenRefreshRequestDto;
+import com.gt.genti.dto.common.request.TokenRefreshRequestDto;
 import com.gt.genti.error.DefaultErrorCode;
 import com.gt.genti.error.ExpectedException;
 

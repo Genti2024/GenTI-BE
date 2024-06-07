@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSourceResolvable;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +50,19 @@ public class GlobalExceptionHandler {
 		String errorMessage = exception.getBindingResult().getFieldErrors().stream().map(
 			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
 		return error(new ExpectedException(DefaultErrorCode.ValidationError, errorMessage));
+	}
+
+	@ExceptionHandler(UnrecognizedPropertyException.class)
+	protected ResponseEntity<ApiResult<ExpectedException>> unRecognizedPropertyException(UnrecognizedPropertyException exception) {
+		String errorMessage = exception.getMessage();
+		return error(new ExpectedException(DefaultErrorCode.UnrecognizedPropertyException, errorMessage));
+	}
+
+	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
+	protected ResponseEntity<ApiResult<ExpectedException>> invalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception){
+		String errorMessage = exception.getMessage();
+
+		return error(new ExpectedException(DefaultErrorCode.InvalidDataAccessApiUsageException, errorMessage));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

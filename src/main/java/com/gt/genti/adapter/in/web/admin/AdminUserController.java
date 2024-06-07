@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gt.genti.application.service.UserService;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.converter.EnumUtil;
-import com.gt.genti.dto.admin.UserRoleUpdateRequestDto;
-import com.gt.genti.dto.admin.UserStatusUpdateRequestDto;
-import com.gt.genti.dto.admin.UserFindByAdminResponseDto;
+import com.gt.genti.dto.admin.request.UserRoleUpdateRequestDto;
+import com.gt.genti.dto.admin.request.UserStatusUpdateRequestDto;
+import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;

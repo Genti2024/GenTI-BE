@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.admin.ExampleSaveRequestDto;
-import com.gt.genti.dto.admin.ExampleWithPictureFindResponseDto;
+import com.gt.genti.dto.admin.request.ExampleSaveRequestDto;
+import com.gt.genti.dto.admin.response.ExampleWithPictureFindResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.service.ResponseExampleService;
 

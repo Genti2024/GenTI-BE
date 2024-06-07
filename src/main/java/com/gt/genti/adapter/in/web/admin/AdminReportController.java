@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.ReportService;
-import com.gt.genti.dto.admin.ReportFindResponseDto;
-import com.gt.genti.dto.admin.ReportUpdateRequestDto;
+import com.gt.genti.dto.admin.response.ReportFindResponseDto;
+import com.gt.genti.dto.admin.request.ReportUpdateRequestDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -4,10 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.Creator;
-import com.gt.genti.dto.creator.CreatorFindResponseDto;
-import com.gt.genti.dto.creator.AccountUpdateRequestDto;
-import com.gt.genti.dto.creator.CreatorStatusUpdateRequestDto;
-import com.gt.genti.dto.creator.CreatorStatusUpdateResponseDto;
+import com.gt.genti.dto.creator.response.CreatorFindResponseDto;
+import com.gt.genti.dto.creator.request.AccountUpdateRequestDto;
+import com.gt.genti.dto.creator.request.CreatorStatusUpdateRequestDto;
+import com.gt.genti.dto.creator.response.CreatorStatusUpdateResponseDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.CreatorRepository;

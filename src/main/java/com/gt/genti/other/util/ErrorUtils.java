@@ -20,6 +20,7 @@ public class ErrorUtils {
 	private static final String OAUTH = "OAUTH";
 	private static final String VALIDATION = "VALIDATION";
 
+
 	private static String CODE(String type, int seq) {
 		return type + String.format("-%05d", seq);
 	}
@@ -71,4 +72,6 @@ public class ErrorUtils {
 	public static final String ControllerValidationError = CODE(VALIDATION, 1);
 	public static final String OnlyRequesterCanViewRequest = CODE(REQUEST, 8);
 	public static final String NoHandlerFoundException = CODE(SERVER, 2);
+	public static final String UnrecognizedPropertyException = CODE(SERVER, 3);
+	public static final String InvalidDataAccessApiUsageException = CODE(SERVER, 4);
 }

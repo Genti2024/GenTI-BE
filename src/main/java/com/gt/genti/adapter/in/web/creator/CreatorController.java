@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.creator.CreatorFindResponseDto;
-import com.gt.genti.dto.creator.AccountUpdateRequestDto;
-import com.gt.genti.dto.creator.CreatorStatusUpdateRequestDto;
-import com.gt.genti.dto.creator.CreatorStatusUpdateResponseDto;
+import com.gt.genti.dto.creator.response.CreatorFindResponseDto;
+import com.gt.genti.dto.creator.request.AccountUpdateRequestDto;
+import com.gt.genti.dto.creator.request.CreatorStatusUpdateRequestDto;
+import com.gt.genti.dto.creator.response.CreatorStatusUpdateResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.service.CreatorService;
 

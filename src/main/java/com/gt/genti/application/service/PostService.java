@@ -7,8 +7,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.gt.genti.domain.Post;
-import com.gt.genti.dto.user.PostBriefFindResponseDto;
-import com.gt.genti.dto.user.PostDetailResponseDto;
+import com.gt.genti.dto.user.response.PostBriefFindResponseDto;
+import com.gt.genti.dto.user.response.PostDetailResponseDto;
 import com.gt.genti.repository.PostRepository;
 
 import lombok.AccessLevel;

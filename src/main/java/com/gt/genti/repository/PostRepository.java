@@ -10,11 +10,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.gt.genti.domain.Post;
-import com.gt.genti.dto.user.PostBriefFindResponseDto;
+import com.gt.genti.dto.user.response.PostBriefFindResponseDto;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-
 	@Query("select p from Post p where p.postStatus != 'DELETED' order by p.createdAt desc")
 	Slice<Post> findPostsTopByOrderByCreatedAtDesc(PageRequest pageRequest);
 
@@ -41,7 +40,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	Slice<Post> findPostsNextCursorByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId,
 		@Param("cursor") Long cursor, PageRequest pageRequest);
 
-	@Query("select new com.gt.genti.dto.PostBriefFindResponseDto( "
+	@Query("select new com.gt.genti.dto.user.response.PostBriefFindResponseDto( "
 		+ "p.id,"
 		+ "pic.key)"
 		+ "from Post p "

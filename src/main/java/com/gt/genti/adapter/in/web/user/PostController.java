@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PostService;
-import com.gt.genti.dto.user.PostBriefFindResponseDto;
-import com.gt.genti.dto.user.PostDetailResponseDto;
+import com.gt.genti.dto.user.response.PostBriefFindResponseDto;
+import com.gt.genti.dto.user.response.PostDetailResponseDto;
 import com.gt.genti.other.annotation.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.auth.UserDetailsImpl;

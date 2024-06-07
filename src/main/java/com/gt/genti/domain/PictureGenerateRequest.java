@@ -86,7 +86,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Convert(converter = RequestStatusConverter.class)
 	PictureGenerateRequestStatus pictureGenerateRequestStatus;
 
-	@Column(name = "picture_ratio")
+	@Column(name = "picture_ratio", nullable = false)
 	@Convert(converter = PictureRatioConverter.class)
 	PictureRatio pictureRatio;
 

@@ -101,18 +101,18 @@ public class GlobalExceptionHandler {
 
 		return error(new ExpectedException(DefaultErrorCode.ValidationError, error));
 	}
-	@ExceptionHandler(RuntimeException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final RuntimeException exception) {
-		String error = """
-			Class : %s
-			Cause : %s
-			Message : %s
-			StackTrace : %s
-			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
-			exception.getStackTrace());
-		log.error(error);
-		return error(new ExpectedException(DefaultErrorCode.UnHandledException, error));
-	}
+	// @ExceptionHandler(RuntimeException.class)
+	// protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final RuntimeException exception) {
+	// 	String error = """
+	// 		Class : %s
+	// 		Cause : %s
+	// 		Message : %s
+	// 		StackTrace : %s
+	// 		""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
+	// 		exception.getStackTrace());
+	// 	log.error(error);
+	// 	return error(new ExpectedException(DefaultErrorCode.UnHandledException, error));
+	// }
 
 	@NotNull
 	private static String makeFieldErrorMessage(FieldError fieldError) {

@@ -8,9 +8,11 @@ import java.util.List;
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.domain.enums.PictureRatio;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.domain.enums.converter.CameraAngleConverter;
 import com.gt.genti.domain.enums.converter.EnumUtil;
+import com.gt.genti.domain.enums.converter.PictureRatioConverter;
 import com.gt.genti.domain.enums.converter.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.ShotCoverageConverter;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
@@ -84,9 +86,13 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Convert(converter = RequestStatusConverter.class)
 	PictureGenerateRequestStatus pictureGenerateRequestStatus;
 
+	@Column(name = "picture_ratio")
+	@Convert(converter = PictureRatioConverter.class)
+	PictureRatio pictureRatio;
+
 	@Builder
 	public PictureGenerateRequest(User requester, PGREQSaveRequestDto pgreqSaveRequestDto,
-		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced) {
+		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced, PictureRatio pictureRatio) {
 		this.requester = requester;
 		this.prompt = pgreqSaveRequestDto.getPrompt();
 		this.promptAdvanced = promptAdvanced;
@@ -95,6 +101,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.cameraAngle = pgreqSaveRequestDto.getCameraAngle();
 		this.shotCoverage = pgreqSaveRequestDto.getShotCoverage();
 		this.userFacePictureList = userFacePictureList;
+		this.pictureRatio = pictureRatio;
 	}
 
 	public void modify(PGREQUpdateRequestDto PGREQUpdateRequestDto, PicturePose picturePose,

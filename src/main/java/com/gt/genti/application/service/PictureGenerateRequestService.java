@@ -153,6 +153,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.pgreqSaveRequestDto(pgreqSaveRequestDto)
 			.picturePose(foundPicturePose)
 			.userFacePictureList(uploadedFacePictureList)
+			.pictureRatio(pgreqSaveRequestDto.getPictureRatio())
 			.build();
 
 		requestMatchService.matchNewRequest(pgr);

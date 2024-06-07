@@ -58,23 +58,23 @@ values (1, LOCALTIME, LOCALTIME, 'user_face_picture_url1', 2),
 insert ignore into picture_generate_request (id, creator_id, picture_pose_id, requester_id, prompt, prompt_advanced,
                                              camera_angle,
                                              request_status, shot_coverage, created_at, modified_at)
-VALUES (1, null, 4, 2, '생성된요청', 'prompt_advanced_test_1', '위에서 촬영', 'CREATED', '얼굴만 클로즈업',
+VALUES (1, null, 4, 2, '생성된요청', 'prompt_advanced_test_1', 'ABOVE', 'CREATED', 'FACE',
         '2024-05-08 07:00:00', '2024-05-08 07:00:00'),
-       (2, null, 3, 2, '취소된요청', 'prompt_advanced_test_2', '같은 높이에서 촬영', 'CANCELED', '허리 위로 촬영',
+       (2, null, 3, 2, '취소된요청', 'prompt_advanced_test_2', 'EYE_LEVEL', 'CANCELED', 'UPPER_BODY',
         '2024-05-08 13:00:00', '2024-05-08 13:00:00'),
-       (3, 1, 2, 2, '특정 공급자와 매칭중인요청', 'prompt_advanced_test_3', '아래에서 촬영', 'ASSIGNING', '무릎 위로 촬영',
+       (3, 1, 2, 2, '특정 공급자와 매칭중인요청', 'prompt_advanced_test_3', 'BELOW', 'ASSIGNING', 'KNEE_UP',
         '2024-05-29 07:00:00', '2024-05-29 07:00:00'),
-       (4, 1, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_4', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영',
+       (4, 1, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_4', 'BELOW', 'IN_PROGRESS', 'KNEE_UP',
         '2024-05-29 08:00:00', '2024-05-29 08:00:00'),
-       (5, 1, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_5', '아래에서 촬영', 'IN_PROGRESS', '무릎 위로 촬영',
+       (5, 1, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_5', 'BELOW', 'IN_PROGRESS', 'KNEE_UP',
         '2024-05-29 09:00:00', '2024-05-29 09:00:00'),
-       (6, 1, 2, 2, '신고된 요청', 'prompt_advanced_test_6', '아래에서 촬영', 'REPORTED', '무릎 위로 촬영', '2024-05-29 10:00:00',
+       (6, 1, 2, 2, '신고된 요청', 'prompt_advanced_test_6', 'BELOW', 'REPORTED', 'KNEE_UP', '2024-05-29 10:00:00',
         '2024-05-29 10:00:00'),
-       (7, 1, 1, 2, '완료된 요청', 'prompt_advanced_test_7', '위에서 촬영', 'COMPLETED', '전신 촬영', '2024-05-29 10:00:00',
+       (7, 1, 1, 2, '완료된 요청', 'prompt_advanced_test_7', 'ABOVE', 'COMPLETED', 'FUUL_BODY', '2024-05-29 10:00:00',
         '2024-05-29 11:00:00'),
-       (8, 1, 1, 2, '신고된 요청', 'prompt_advanced_test_8', '위에서 촬영', 'REPORTED', '전신 촬영', '2024-05-29 12:00:00',
+       (8, 1, 1, 2, '신고된 요청', 'prompt_advanced_test_8', 'ABOVE', 'REPORTED', 'ANY', '2024-05-29 12:00:00',
         '2024-05-29 12:00:00'),
-       (9, 3, 3, 2, 'prompt_test_9', 'prompt_advanced_test_9', '위에서 촬영', 'MATCH_TO_ADMIN', '전신 촬영',
+       (9, 3, 3, 2, 'prompt_test_9', 'prompt_advanced_test_9', 'ANY', 'MATCH_TO_ADMIN', 'FACE',
         '2024-05-29 13:00:00', '2024-05-29 13:00:00');
 
 insert ignore into picture_generate_request_picture_user_face (picture_generate_request_id, user_face_picture_list_id)
@@ -141,8 +141,7 @@ values (1, localtime, localtime, '얼굴 완성 사진 url 1', 1, 3, 2),
 insert ignore into response_example (id, created_at, modified_at, `key`, example_prompt, prompt_only,
                                      uploaded_by)
 values (1, localtime, localtime, '/EXAMPLE/벚꽃벤치여자.png', '벚꽃 벤치 여자', false, 1),
-       (2, localtime, localtime, '/EXAMPLE/한강잠수부.png', '한강잠수부', false, 1),
-       (3, localtime, localtime, null, '프롬프트만있음 사진은 없고', true, 1);
+       (2, localtime, localtime, '/EXAMPLE/한강잠수부.png', '한강잠수부', false, 1);
 
 insert ignore into settlement (id, created_at, modified_at, elapsed_minutes, reward, picture_generate_response_id,
                                settlement_status)

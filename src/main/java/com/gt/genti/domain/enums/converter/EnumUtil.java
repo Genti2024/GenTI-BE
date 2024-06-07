@@ -6,7 +6,6 @@ import org.apache.commons.codec.binary.StringUtils;
 
 import com.gt.genti.domain.enums.ConvertableEnum;
 import com.gt.genti.error.DefaultErrorCode;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ public class EnumUtil {
 		try {
 			return convertNullToEnum(enumType);
 		} catch (Exception e) {
-			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed, List.of(enumType.getName(), value, e.getMessage()));
+			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed, enumType.getName(), value, e.getMessage());
 		}
 	}
 
@@ -48,7 +47,8 @@ public class EnumUtil {
 		try {
 			return convertNullToEnum(enumType);
 		} catch (Exception e) {
-			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed, List.of(enumType.getName(), value, e.getMessage()));
+			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed,
+				List.of(enumType.getName(), value, e.getMessage()));
 		}
 	}
 }

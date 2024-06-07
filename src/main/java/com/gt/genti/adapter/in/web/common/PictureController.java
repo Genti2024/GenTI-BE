@@ -14,6 +14,7 @@ import com.gt.genti.application.service.UploadUrlService;
 import com.gt.genti.external.aws.dto.PreSignedUrlRequestDto;
 import com.gt.genti.external.aws.dto.PreSignedUrlResponseDto;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,12 +24,14 @@ public class PictureController {
 	private final UploadUrlService uploadUrlService;
 
 	@PostMapping("/presigned-url")
-	public ResponseEntity<ApiResult<PreSignedUrlResponseDto>> getUploadUrl(@RequestBody PreSignedUrlRequestDto preSignedUrlRequestDto){
+	public ResponseEntity<ApiResult<PreSignedUrlResponseDto>> getUploadUrl(
+		@RequestBody @Valid PreSignedUrlRequestDto preSignedUrlRequestDto){
 		return success(uploadUrlService.getUploadUrl(preSignedUrlRequestDto));
 	}
 
 	@PostMapping("/presigned-url/many")
-	public ResponseEntity<ApiResult<List<PreSignedUrlResponseDto>>> getUploadUrls(@RequestBody List<PreSignedUrlRequestDto> requestDtoList){
+	public ResponseEntity<ApiResult<List<PreSignedUrlResponseDto>>> getUploadUrls(
+		@RequestBody @Valid List<PreSignedUrlRequestDto> requestDtoList){
 		return success(uploadUrlService.getUploadUrls(requestDtoList));
 	}
 }

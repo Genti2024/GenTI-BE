@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.PictureGenerateRequest;
-import com.gt.genti.dto.PGREQBriefFindByUserResponseDto;
-import com.gt.genti.dto.PGREQUpdateRequestDto;
-import com.gt.genti.dto.PGREQDetailFindByUserResponseDto;
-import com.gt.genti.dto.PGREQSaveRequestDto;
+import com.gt.genti.dto.user.PGREQBriefFindByUserResponseDto;
+import com.gt.genti.dto.user.PGREQUpdateRequestDto;
+import com.gt.genti.dto.user.PGREQDetailFindByUserResponseDto;
+import com.gt.genti.dto.user.PGREQSaveRequestDto;
 
 public interface PictureGenerateRequestUseCase {
 	public List<PGREQDetailFindByUserResponseDto> getAllPictureGenerateRequestForUser(Long userId);

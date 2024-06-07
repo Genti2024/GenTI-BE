@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.TokenRefreshRequestDto;
+import com.gt.genti.dto.common.TokenRefreshRequestDto;
 import com.gt.genti.error.DefaultErrorCode;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +24,7 @@ public class JwtController {
 
 	@RequestMapping("/refresh")
 	public Map<String, Object> refresh(@RequestHeader(name = "Authorization") String authHeader,
-		@RequestBody TokenRefreshRequestDto tokenRefreshRequestDto) {
+		@RequestBody @Valid TokenRefreshRequestDto tokenRefreshRequestDto) {
 
 		if (authHeader == null) {
 			throw new ExpectedException(DefaultErrorCode.TOKEN_NOT_PROVIDED);

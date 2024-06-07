@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.dto.PGREQBriefFindByCreatorResponseDto;
+import com.gt.genti.dto.creator.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.dto.PGREQDetailFindResponseDto;
-import com.gt.genti.dto.PGRESUpdateByCreatorResponseDto;
+import com.gt.genti.dto.creator.PGRESUpdateByCreatorResponseDto;
 import com.gt.genti.dto.MemoUpdateRequestDto;
-import com.gt.genti.dto.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.common.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -79,7 +80,7 @@ public class CreatorPGRESController {
 	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateResponseId,
-		@RequestBody List<CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList
+		@RequestBody @Valid List<CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList
 	) {
 		return success(
 			pictureGenerateWorkService.updatePictureCreatedByCreatorList(pictureGenerateResponseId,
@@ -96,7 +97,7 @@ public class CreatorPGRESController {
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/memo")
 	public ResponseEntity<ApiResult<Boolean>> updateMemo(
 		@PathVariable Long pictureGenerateResponseId,
-		@RequestBody MemoUpdateRequestDto memoUpdateRequestDto) {
+		@RequestBody @Valid MemoUpdateRequestDto memoUpdateRequestDto) {
 		return success(pictureGenerateWorkService.updateMemo(pictureGenerateResponseId, memoUpdateRequestDto));
 	}
 }

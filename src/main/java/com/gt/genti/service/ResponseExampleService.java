@@ -7,10 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.ResponseExample;
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.ExampleSaveRequestDto;
-import com.gt.genti.dto.ExampleWithPictureFindResponseDto;
-import com.gt.genti.dto.PromptOnlyExampleFindResponseDto;
-import com.gt.genti.dto.PromptOnlyExampleSaveRequestDto;
+import com.gt.genti.dto.admin.ExampleSaveRequestDto;
+import com.gt.genti.dto.admin.ExampleWithPictureFindResponseDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.ResponseExampleRepository;
@@ -31,13 +29,6 @@ public class ResponseExampleService {
 			.toList();
 	}
 
-	public List<PromptOnlyExampleFindResponseDto> getAllPromptOnlyExamples() {
-		return responseExampleRepository.findAllByPromptOnlyIsFalse()
-			.stream()
-			.map(PromptOnlyExampleFindResponseDto::new)
-			.toList();
-	}
-
 	@Transactional
 	public void addResponseExamples(List<ExampleSaveRequestDto> requestDtoList,
 		Long userId) {
@@ -48,11 +39,4 @@ public class ResponseExampleService {
 			requestDtoList.stream().map(dto -> new ResponseExample(dto, findAdmin)).toList());
 	}
 
-	@Transactional
-	public void addPromptOnlyExamples(List<PromptOnlyExampleSaveRequestDto> requestDtoList, Long userId) {
-		User findAdmin = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
-		responseExampleRepository.saveAll(
-			requestDtoList.stream().map(dto -> new ResponseExample(dto, findAdmin)).toList());
-	}
 }

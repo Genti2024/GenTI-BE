@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.CreatorFindResponseDto;
-import com.gt.genti.dto.AccountUpdateRequestDto;
-import com.gt.genti.dto.CreatorStatusUpdateRequestDto;
-import com.gt.genti.dto.CreatorStatusUpdateResponseDto;
+import com.gt.genti.dto.creator.CreatorFindResponseDto;
+import com.gt.genti.dto.creator.AccountUpdateRequestDto;
+import com.gt.genti.dto.creator.CreatorStatusUpdateRequestDto;
+import com.gt.genti.dto.creator.CreatorStatusUpdateResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.service.CreatorService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,13 +35,13 @@ public class CreatorController {
 	@PostMapping("/account")
 	public ResponseEntity<ApiResult<Boolean>> updateAccountInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody AccountUpdateRequestDto accountUpdateRequestDto) {
+		@RequestBody @Valid AccountUpdateRequestDto accountUpdateRequestDto) {
 		return success(creatorService.updateAccountInfo(userDetails.getId(), accountUpdateRequestDto));
 	}
 	@PostMapping("/status")
 	public ResponseEntity<ApiResult<CreatorStatusUpdateResponseDto>> updateCreatorStatus(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody CreatorStatusUpdateRequestDto creatorStatusUpdateRequestDto) {
+		@RequestBody @Valid CreatorStatusUpdateRequestDto creatorStatusUpdateRequestDto) {
 		return success(creatorService.updateCreatorStatus(userDetails.getId(), creatorStatusUpdateRequestDto));
 	}
 

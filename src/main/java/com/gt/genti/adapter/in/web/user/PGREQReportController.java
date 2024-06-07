@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.ReportService;
-import com.gt.genti.dto.ReportSaveRequestDto;
+import com.gt.genti.dto.admin.ReportSaveRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,7 +25,7 @@ public class PGREQReportController {
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createReport(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody ReportSaveRequestDto reportSaveRequestDto
+		@RequestBody @Valid ReportSaveRequestDto reportSaveRequestDto
 	) {
 		return success(reportService.createReport(reportSaveRequestDto));
 	}

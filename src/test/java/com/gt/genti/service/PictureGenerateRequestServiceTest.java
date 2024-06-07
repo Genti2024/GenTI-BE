@@ -22,8 +22,8 @@
 // import com.gt.genti.domain.enums.RequestStatus;
 // import com.gt.genti.domain.enums.ShotCoverage;
 // import com.gt.genti.dto.PGREQDetailFindResponseDto;
-// import com.gt.genti.dto.PGREQUpdateRequestDto;
-// import com.gt.genti.dto.PGREQSaveRequestDto;
+// import com.gt.genti.dto.user.PGREQUpdateRequestDto;
+// import com.gt.genti.dto.user.PGREQSaveRequestDto;
 // import com.gt.genti.repository.PictureGenerateRequestRepository;
 // import com.gt.genti.repository.PosePictureRepository;
 // import com.gt.genti.repository.UserRepository;

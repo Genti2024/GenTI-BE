@@ -2,6 +2,7 @@ package com.gt.genti.error;
 
 import static com.gt.genti.other.util.ApiUtils.*;
 
+import java.util.MissingFormatArgumentException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +35,10 @@ public class GlobalExceptionHandler {
 		return error(exception);
 	}
 
-	@ExceptionHandler(NoHandlerFoundException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+	@ExceptionHandler({MissingFormatArgumentException.class, NoHandlerFoundException.class,
+		NoResourceFoundException.class})
+	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
+		MissingFormatArgumentException ex) {
 		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException));
 	}
 
@@ -47,15 +50,22 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-		return new ResponseEntity<>("Invalid request data", HttpStatus.BAD_REQUEST);
+	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentNotValidException(
+		MethodArgumentNotValidException exception) {
+		exception.getMessage();
+		String error = exception.getBindingResult()
+			.getFieldErrors()
+			.stream()
+			.map(GlobalExceptionHandler::formatError)
+			.collect(Collectors.joining());
+		return error(new ExpectedException(DefaultErrorCode.ValidationError, error));
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-		return new ResponseEntity<>("Malformed JSON request", HttpStatus.BAD_REQUEST);
-	}
 
+	// @ExceptionHandler(HttpMessageNotReadableException.class)
+	// public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+	// 	return new ResponseEntity<>("Malformed JSON request", HttpStatus.BAD_REQUEST);
+	// }
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<String> handleHttpRequestMethodNotSupportedException(
 		HttpRequestMethodNotSupportedException ex) {
@@ -63,6 +73,7 @@ public class GlobalExceptionHandler {
 	}
 
 	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시
+
 	@ExceptionHandler(HandlerMethodValidationException.class)
 	public ResponseEntity<ApiResult<ExpectedException>> handleValidationExceptions(
 		HandlerMethodValidationException exception) {
@@ -74,7 +85,6 @@ public class GlobalExceptionHandler {
 
 		return error(new ExpectedException(DefaultErrorCode.ValidationError, error));
 	}
-
 	@ExceptionHandler(RuntimeException.class)
 	protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final RuntimeException exception) {
 		String error = """
@@ -94,5 +104,11 @@ public class GlobalExceptionHandler {
 			%s 은(는) %s
 			입력된 값 : %s
 			""".formatted(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue());
+	}
+
+	private static String formatError(FieldError fieldError) {
+		return """
+			[%s]는 %s 입력된 값 : [%s]""".formatted(fieldError.getField(), fieldError.getDefaultMessage(),
+			fieldError.getRejectedValue());
 	}
 }

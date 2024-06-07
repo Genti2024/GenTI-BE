@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gt.genti.application.service.UserService;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.converter.EnumUtil;
-import com.gt.genti.dto.UserRoleUpdateRequestDto;
-import com.gt.genti.dto.UserStatusUpdateRequestDto;
-import com.gt.genti.dto.UserFindByAdminResponseDto;
+import com.gt.genti.dto.admin.UserRoleUpdateRequestDto;
+import com.gt.genti.dto.admin.UserStatusUpdateRequestDto;
+import com.gt.genti.dto.admin.UserFindByAdminResponseDto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +34,13 @@ public class AdminUserController {
 
 	@PostMapping("/users/{userId}/status")
 	public ResponseEntity<ApiResult<Boolean>> changeUserStatus(@PathVariable Long userId,
-		@RequestBody UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
+		@RequestBody @Valid UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		return success(userService.updateUserStatus(userId, userStatusUpdateRequestDto));
 	}
 
 	@PostMapping("/users/{userId}/role")
 	public ResponseEntity<ApiResult<Boolean>> changeUserRole(@PathVariable Long userId,
-		@RequestBody UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
+		@RequestBody @Valid UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
 		return success(userService.updateUserRole(userId, userRoleUpdateRequestDto));
 	}
 

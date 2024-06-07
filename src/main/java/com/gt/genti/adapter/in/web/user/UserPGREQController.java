@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
-import com.gt.genti.dto.PGREQBriefFindByUserResponseDto;
-import com.gt.genti.dto.PGREQDetailFindByUserResponseDto;
-import com.gt.genti.dto.PGREQSaveRequestDto;
-import com.gt.genti.dto.PGREQUpdateRequestDto;
+import com.gt.genti.dto.user.PGREQBriefFindByUserResponseDto;
+import com.gt.genti.dto.user.PGREQDetailFindByUserResponseDto;
+import com.gt.genti.dto.user.PGREQSaveRequestDto;
+import com.gt.genti.dto.user.PGREQUpdateRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "유저의 사진 생성 요청", description = "사진 생성 요청을 생성, 조회, 수정합니다.")
@@ -117,7 +118,7 @@ public class UserPGREQController {
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody PGREQSaveRequestDto PGREQSaveRequestDto) {
+		@RequestBody @Valid PGREQSaveRequestDto PGREQSaveRequestDto) {
 		pictureGenerateRequestUseCase.createPictureGenerateRequest(userDetails.getId(),
 			PGREQSaveRequestDto);
 		return success(true);
@@ -126,7 +127,7 @@ public class UserPGREQController {
 	@PutMapping("")
 	public ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody PGREQUpdateRequestDto PGREQUpdateRequestDto) {
+		@RequestBody @Valid PGREQUpdateRequestDto PGREQUpdateRequestDto) {
 		pictureGenerateRequestUseCase.modifyPictureGenerateRequest(userDetails.getId(),
 			PGREQUpdateRequestDto);
 		return success(true);

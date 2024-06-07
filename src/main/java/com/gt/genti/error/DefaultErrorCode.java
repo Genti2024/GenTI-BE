@@ -27,7 +27,7 @@ public enum DefaultErrorCode implements ErrorCode {
 	DBToEnumFailed(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.DBToEnumFailed,
 		"DB -> ENUM 값 불러오기 실패  enum : %s value :  %s detail : %s"),
 	ValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError, "%s"),
-	NoHandlerFoundException(HttpStatus.NOT_FOUND, ErrorUtils.NoHandlerFoundException, "요청 uri : [%s] 핸들러를 찾지 못했습니다.");
+	NoHandlerFoundException(HttpStatus.NOT_FOUND, ErrorUtils.NoHandlerFoundException, "요청 uri : [%s] 핸들러가 없습니다.");
 
 
 	private final HttpStatusCode httpStatusCode;

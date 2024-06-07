@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.gt.genti.domain.Post;
-import com.gt.genti.dto.PostBriefFindResponseDto;
+import com.gt.genti.dto.user.PostBriefFindResponseDto;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {

@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.PromptOnlyExampleFindResponseDto;
-import com.gt.genti.dto.ExampleWithPictureFindResponseDto;
+import com.gt.genti.dto.admin.ExampleWithPictureFindResponseDto;
 import com.gt.genti.service.ResponseExampleService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,11 +23,6 @@ public class UserExampleController {
 	@GetMapping("/with-picture")
 	public ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamples() {
 		return success(responseExampleService.getAllResponseExamples());
-	}
-
-	@GetMapping("/prompt-only")
-	public ResponseEntity<ApiResult<List<PromptOnlyExampleFindResponseDto>>> getAllPromptOnlyExamples() {
-		return success(responseExampleService.getAllPromptOnlyExamples());
 	}
 
 }

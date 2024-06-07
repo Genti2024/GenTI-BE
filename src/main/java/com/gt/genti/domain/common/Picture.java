@@ -1,6 +1,6 @@
 package com.gt.genti.domain.common;
 
-import com.gt.genti.dto.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.CommonPictureUrlResponseDto;
 
 public interface Picture {
 	Long getId();

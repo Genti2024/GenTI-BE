@@ -31,20 +31,10 @@ public class LoginController {
 	}
 
 	@GetMapping("/login/testjwt")
-	public ResponseEntity<ApiResult<TestJwtResponseDto>> getTestJwt(@PathParam(value = "role") String role) {
-		UserRole tempRole = null;
-		for (UserRole userRole : UserRole.class.getEnumConstants()) {
-			if (userRole.getStringValue().contains(role.toUpperCase())) {
-				tempRole = userRole;
-				break;
-			}
-		}
-		if (tempRole == null) {
-			throw new RuntimeException();
-		}
+	public ResponseEntity<ApiResult<TestJwtResponseDto>> getTestJwt(@PathParam(value = "role") UserRole role) {
 		Map<UserRole, String> userIdMapper = Map.of(UserRole.USER, "2", UserRole.ADMIN, "1", UserRole.CREATOR, "4");
-		String userId = userIdMapper.get(tempRole);
-		Map<String, Object> tempClaim = Map.of("auth", tempRole.getStringValue(), "sub", userId);
+		String userId = userIdMapper.get(role);
+		Map<String, Object> tempClaim = Map.of("auth", role.getRoleString(), "sub", userId);
 		String accessToken = jwtTokenProvider.generateToken(tempClaim, 1000000);
 		return success(TestJwtResponseDto.builder().accessToken(accessToken).refreshToken(accessToken).build());
 	}
@@ -54,10 +44,10 @@ public class LoginController {
 		return "oauth2";
 	}
 
-	// @GetMapping("/login/success")
-	// public String successRedirect() {
-	// 	return "redirecttest";
-	// }
+	@GetMapping("/login/success")
+	public String successRedirect() {
+		return "로그인 성공";
+	}
 
 	@GetMapping("/logout")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthenticationPrincipal UserDetailsImpl userDetails) {

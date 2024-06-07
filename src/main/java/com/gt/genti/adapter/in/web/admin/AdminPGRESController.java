@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
-import com.gt.genti.dto.PGRESUpdateByAdminResponseDto;
-import com.gt.genti.dto.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.admin.PGRESUpdateByAdminResponseDto;
+import com.gt.genti.dto.common.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,7 +35,7 @@ public class AdminPGRESController {
 	@PostMapping("/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<Boolean>> updatePictureList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody List<CommonPictureKeyUpdateRequestDto> reuqestDtoList,
+		@RequestBody @Valid List<CommonPictureKeyUpdateRequestDto> reuqestDtoList,
 		@PathVariable Long pictureGenerateResponseId) {
 		return success(pictureGenerateWorkService.updatePictureListCreatedByAdmin(userDetails.getId(), reuqestDtoList,
 			pictureGenerateResponseId));

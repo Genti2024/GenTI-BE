@@ -13,8 +13,8 @@ import com.gt.genti.domain.enums.converter.CameraAngleConverter;
 import com.gt.genti.domain.enums.converter.EnumUtil;
 import com.gt.genti.domain.enums.converter.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.ShotCoverageConverter;
-import com.gt.genti.dto.PGREQUpdateRequestDto;
-import com.gt.genti.dto.PGREQSaveRequestDto;
+import com.gt.genti.dto.user.PGREQUpdateRequestDto;
+import com.gt.genti.dto.user.PGREQSaveRequestDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 

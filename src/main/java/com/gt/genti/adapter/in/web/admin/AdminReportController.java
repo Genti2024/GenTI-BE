@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.ReportService;
-import com.gt.genti.dto.ReportFindResponseDto;
-import com.gt.genti.dto.ReportUpdateRequestDto;
+import com.gt.genti.dto.admin.ReportFindResponseDto;
+import com.gt.genti.dto.admin.ReportUpdateRequestDto;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,8 @@ public class AdminReportController {
 	}
 
 	@PostMapping("")
-	public ResponseEntity<ApiResult<Boolean>> updateReport(@RequestBody ReportUpdateRequestDto reportUpdateRequestDto){
+	public ResponseEntity<ApiResult<Boolean>> updateReport(
+		@RequestBody @Valid ReportUpdateRequestDto reportUpdateRequestDto){
 		return success(reportService.updateReport(reportUpdateRequestDto));
 	}
 

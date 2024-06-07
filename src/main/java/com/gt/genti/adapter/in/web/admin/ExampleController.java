@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.PromptOnlyExampleSaveRequestDto;
-import com.gt.genti.dto.ExampleSaveRequestDto;
-import com.gt.genti.dto.PromptOnlyExampleFindResponseDto;
-import com.gt.genti.dto.ExampleWithPictureFindResponseDto;
+import com.gt.genti.dto.admin.ExampleSaveRequestDto;
+import com.gt.genti.dto.admin.ExampleWithPictureFindResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.service.ResponseExampleService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,26 +31,12 @@ public class ExampleController {
 		return success(responseExampleService.getAllResponseExamples());
 	}
 
-	@GetMapping("/prompt-only")
-	public ResponseEntity<ApiResult<List<PromptOnlyExampleFindResponseDto>>> getAllPromptOnlyExamples() {
-		return success(responseExampleService.getAllPromptOnlyExamples());
-	}
-
 	@PostMapping("/with-picture")
 	public ResponseEntity<ApiResult<Boolean>> addResponseExample(
-		@RequestBody List<ExampleSaveRequestDto> requestDtoList,
+		@RequestBody @Valid List<ExampleSaveRequestDto> requestDtoList,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		responseExampleService.addResponseExamples(requestDtoList, userDetails.getId());
-		return success(true);
-	}
-
-	@PostMapping("/prompt-only")
-	public ResponseEntity<ApiResult<Boolean>> addPromptOnlyExample(
-		@RequestBody List<PromptOnlyExampleSaveRequestDto> requestDtoList,
-		@AuthenticationPrincipal UserDetailsImpl userDetails
-	) {
-		responseExampleService.addPromptOnlyExamples(requestDtoList, userDetails.getId());
 		return success(true);
 	}
 

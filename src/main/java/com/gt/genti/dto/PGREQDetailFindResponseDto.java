@@ -9,6 +9,7 @@ import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
+import com.gt.genti.dto.admin.PGRESDetailFindByAdminResponseDto;
 import com.gt.genti.other.util.TimeUtils;
 
 import lombok.AccessLevel;

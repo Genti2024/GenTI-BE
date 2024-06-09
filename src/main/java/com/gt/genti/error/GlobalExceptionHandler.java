@@ -2,6 +2,7 @@ package com.gt.genti.error;
 
 import static com.gt.genti.other.util.ApiUtils.*;
 
+import java.util.Arrays;
 import java.util.MissingFormatArgumentException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -9,7 +10,6 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -38,11 +38,37 @@ public class GlobalExceptionHandler {
 		return error(exception);
 	}
 
-	@ExceptionHandler({MissingFormatArgumentException.class, NoHandlerFoundException.class,
-		NoResourceFoundException.class})
-	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
+	@ExceptionHandler(MissingFormatArgumentException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleMissingFormatArgumentException(
 		MissingFormatArgumentException ex) {
+		log.error("ex.getFormatSpecifier() :" + ex.getFormatSpecifier());
+		log.error("ex.getMessage() :" + ex.getMessage());
 		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException));
+	}
+
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
+		NoHandlerFoundException ex) {
+		log.error("ex.getMessage() :" + ex.getMessage());
+		log.error("ex.getRequestURL() :" + ex.getRequestURL());
+		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException));
+	}
+
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleHttpRequestMethodNotSupportedException(
+		HttpRequestMethodNotSupportedException ex) {
+
+		return error(new ExpectedException(DefaultErrorCode.MethodNowSupported,
+			ex.getMessage() + "allowed methods : " + Arrays.toString(ex.getSupportedMethods())));
+	}
+
+	// 없는 url로 요청 시
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleNoResourceFoundException(
+		NoResourceFoundException ex) {
+		log.error("ex.getResourcePath() :" + ex.getResourcePath());
+		log.error("ex.getMessage() :" + ex.getMessage());
+		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException, ex.getResourcePath()));
 	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
@@ -53,13 +79,15 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(UnrecognizedPropertyException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> unRecognizedPropertyException(UnrecognizedPropertyException exception) {
+	protected ResponseEntity<ApiResult<ExpectedException>> unRecognizedPropertyException(
+		UnrecognizedPropertyException exception) {
 		String errorMessage = exception.getMessage();
 		return error(new ExpectedException(DefaultErrorCode.UnrecognizedPropertyException, errorMessage));
 	}
 
 	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> invalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception){
+	protected ResponseEntity<ApiResult<ExpectedException>> invalidDataAccessApiUsageException(
+		InvalidDataAccessApiUsageException exception) {
 		String errorMessage = exception.getMessage();
 
 		return error(new ExpectedException(DefaultErrorCode.InvalidDataAccessApiUsageException, errorMessage));
@@ -77,16 +105,10 @@ public class GlobalExceptionHandler {
 		return error(new ExpectedException(DefaultErrorCode.ValidationError, error));
 	}
 
-
 	// @ExceptionHandler(HttpMessageNotReadableException.class)
 	// public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
 	// 	return new ResponseEntity<>("Malformed JSON request", HttpStatus.BAD_REQUEST);
 	// }
-	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	public ResponseEntity<String> handleHttpRequestMethodNotSupportedException(
-		HttpRequestMethodNotSupportedException ex) {
-		return new ResponseEntity<>("Method not allowed", HttpStatus.METHOD_NOT_ALLOWED);
-	}
 
 	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시
 

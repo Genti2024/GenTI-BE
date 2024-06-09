@@ -11,31 +11,35 @@ use genti;
 #
 # set @creatorId := 1; # 공급자의 CreatorId
 # set @adminCreatorId := 3; # 어드민의 공급자 id
+
 insert ignore into user (id, created_at, modified_at, deleted_at, email, email_verified, introduction,
-                         last_login_social_platform, login_id, nickname, password, user_role, roles, user_status,
-                         username, sex)
+                         last_login_date, last_login_social_platform, login, login_id, nickname, password,
+                         sex, user_role, user_status, username, request_task_count)
+values (1, localtime, localtime, null, 'admin@gmail.com', true, null,
+        localtime, 'GOOGLE', true, null, '어드민_닉네임', null,
+        'NONE', 'ADMIN', 'ACTIVATED', '어드민_이름', 0),
+       (2, localtime, localtime, null, 'user@gmail.com', true, '유저_소개1', localtime, 'GOOGLE', true, null,
+        '유저테스트1_닉네임', null, 'W', 'USER', 'ACTIVATED', '유저이름1', 9),
+       (3, localtime, localtime, null, 'emptyUser@gmail.com', true, '유저_소개2', localtime, 'GOOGLE', true, null,
+        '유저테스트2_닉네임', null, 'M', 'USER', 'ACTIVATED', '유저이름2', 0),
+       (4, localtime, localtime, null, 'creator@gmail.com', true, '공급자_소개1', localtime, 'GOOGLE', true, null,
+        '유저테스트3_닉네임', null, 'NONE', 'CREATOR', 'ACTIVATED', '공급자이름1', 0),
+       (5, localtime, localtime, null, 'emptyCreator@gmail.com', true, '공급자_소개2', localtime, 'GOOGLE', true, null,
+        '공급자2_닉네임', null, 'NONE', 'CREATOR', 'ACTIVATED', '공급자이름2', 0),
+       (6, localtime, localtime, null, 'oauthFirstJoin@gmail.com', true, '최초가입자_소개', localtime, 'GOOGLE', true, null,
+        '최초가입자_닉네임', null, 'NONE', 'OAUTH_FIRST_JOIN', 'ACTIVATED', '최초가입자이름', 0),
+       (7, localtime, localtime, null, 'deactivatedUser@gmail.com', true, '비활성화된유저_소개', localtime, 'GOOGLE', true, null,
+        '비활성화된유저_닉네임', null, 'M', 'USER', 'DEACTIVATED', '비활성화된유저이름', 0),
+       (8, localtime, localtime, null, 'deactivatedCreator@gmail.com', true, '비활성화된공급자_소개', localtime, 'GOOGLE', true,
+        null,
+        '비활성화된공급자_닉네임', null, 'NONE', 'CREATOR', 'DEACTIVATED', '비활성화된공급자이름', 0);
 
-VALUES (1, localtime, localtime, null, 'admin@gmail.com', true, null, 'GOOGLE', null, '어드민테스트1_닉네임', null, 'ROLE_ADMIN',
-        'ROLE_ADMIN,ROLE_MANAGER,ROLE_CREATOR,ROLE_USER', 'ACTIVATED', '어드민이름', 'NONE'),
-       (2, localtime, localtime, null, 'user@gmail.com', true, '유저_소개1', 'GOOGLE', null, '유저테스`트1_닉네임', null,
-        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름1', 'M'),
-       (3, localtime, localtime, null, 'emptyUser@gmail.com', true, '유저_소개2', 'GOOGLE', null, '유저테스트1_닉네임', null,
-        'ROLE_USER', 'ROLE_USER', 'ACTIVATED', '유저이름2', 'W'),
-       (4, localtime, localtime, null, 'creator@gmail.com', true, '공급자_소개', 'GOOGLE', null, '유저테스트2_닉네임', null,
-        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름1', 'M'),
-       (5, localtime, localtime, null, 'emptyCreator@gmail.com', true, '공급자_소개2', 'GOOGLE', null, '공급자테스트2_닉네임', null,
-        'ROLE_CREATOR', 'ROLE_CREATOR', 'ACTIVATED', '공급자이름2', 'M'),
-       (6, localtime, localtime, null, 'oauthFirstJoin@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '최초가입자_닉네임', null,
-        'ROLE_OAUTH_FIRST_JOIN', 'ROLE_OAUTH_FIRST_JOIN,ROLE_USER', 'ACTIVATED', '최초가입자이름', 'M'),
-       (7, localtime, localtime, null, 'deactivatedUser@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된유저_닉네임',
-        null, 'ROLE_USER', 'ROLE_USER', 'DEACTIVATED', '비활성화된유저이름', 'M'),
-       (8, localtime, localtime, null, 'deactivatedCreator@gmail.com', true, '최초가입자_소개', 'GOOGLE', null, '비활성화된공급자_닉네임',
-        null, 'ROLE_CREATOR', 'ROLE_CREATOR', 'DEACTIVATED', '비활성화된공급자이름', 'M');
+insert ignore into creator (id, created_at, modified_at, account_holder, account_number, bank_type, workable, user_id,
+                            completed_task_count)
 
-insert ignore into creator (id, created_at, modified_at, account_holder, account_number, bank_type, workable, user_id)
-values (1, localtime, localtime, '서병렬', '123-4142-2523331-123', '국민은행', true, 4),
-       (2, localtime, localtime, null, null, null, false, 5),
-       (3, localtime, localtime, null, null, null, true, 1);
+values (1, localtime, localtime, '서병렬', '123-4142-2523331-123', '국민은행', true, 4, 1),
+       (2, localtime, localtime, null, null, null, false, 5, 0),
+       (3, localtime, localtime, null, null, null, true, 1, 0);
 
 insert ignore into picture_pose (id, created_at, modified_at, `key`, uploaded_by)
 values (1, LOCALTIME, LOCALTIME, 'pose_picture_url1', 2),
@@ -67,9 +71,11 @@ VALUES (1, null, 4, 2, '생성된요청', 'prompt_advanced_test_1', 'ABOVE', 'CR
         '2024-05-29 08:00:00', '2024-05-29 08:00:00'),
        (5, 1, 2, 2, '매칭 후 진행중인 요청', 'prompt_advanced_test_5', 'BELOW', 'IN_PROGRESS', 'THREE_TWO', 'KNEE_UP',
         '2024-05-29 09:00:00', '2024-05-29 09:00:00'),
-       (6, 1, 2, 2, '신고된 요청', 'prompt_advanced_test_6', 'BELOW', 'REPORTED', 'THREE_TWO', 'KNEE_UP', '2024-05-29 10:00:00',
+       (6, 1, 2, 2, '신고된 요청', 'prompt_advanced_test_6', 'BELOW', 'REPORTED', 'THREE_TWO', 'KNEE_UP',
+        '2024-05-29 10:00:00',
         '2024-05-29 10:00:00'),
-       (7, 1, 1, 2, '완료된 요청', 'prompt_advanced_test_7', 'ABOVE', 'COMPLETED', 'TWO_THREE', 'FULL_BODY', '2024-05-29 10:00:00',
+       (7, 1, 1, 2, '완료된 요청', 'prompt_advanced_test_7', 'ABOVE', 'COMPLETED', 'TWO_THREE', 'FULL_BODY',
+        '2024-05-29 10:00:00',
         '2024-05-29 11:00:00'),
        (8, 1, 1, 2, '신고된 요청', 'prompt_advanced_test_8', 'ABOVE', 'REPORTED', 'THREE_TWO', 'ANY', '2024-05-29 12:00:00',
         '2024-05-29 12:00:00'),

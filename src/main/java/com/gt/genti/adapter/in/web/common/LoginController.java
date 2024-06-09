@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.gt.genti.application.service.UserService;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.fortest.TestJwtResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoginController {
 
 	private final JwtTokenProvider jwtTokenProvider;
+	private final UserService userService;
 
 	@GetMapping("/oauth2")
 	public String index() {
@@ -51,6 +53,6 @@ public class LoginController {
 
 	@GetMapping("/logout")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return null;
+		return success(userService.logout(userDetails));
 	}
 }

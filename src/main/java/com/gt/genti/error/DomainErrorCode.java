@@ -51,7 +51,8 @@ public enum DomainErrorCode implements ErrorCode {
 	WithDrawnUser(HttpStatus.BAD_REQUEST, ErrorUtils.WithDrawnUser, "탈퇴한 사용자입니다."),
 	OnlyRequesterCanViewRequest(HttpStatus.FORBIDDEN, ErrorUtils.OnlyRequesterCanViewRequest,
 		"사진생성요청을 요청한 유저만 볼 수 있습니다."),
-	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotAllowedOauthProvider, "허가되지 않은 oauth type %s");
+	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotAllowedOauthProvider, "허가되지 않은 oauth type %s"),
+	UserNotLoggedIn(HttpStatus.UNAUTHORIZED, ErrorUtils.UserNotLoggedIn, "로그아웃되었습니다. 다시 로그인해주세요");
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

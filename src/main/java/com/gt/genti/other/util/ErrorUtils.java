@@ -74,4 +74,6 @@ public class ErrorUtils {
 	public static final String NoHandlerFoundException = CODE(SERVER, 2);
 	public static final String UnrecognizedPropertyException = CODE(SERVER, 3);
 	public static final String InvalidDataAccessApiUsageException = CODE(SERVER, 4);
+	public static final String UserNotLoggedIn = CODE(USER, 6);
+	public static final String MethodNowSupported = CODE(SERVER, 5);
 }

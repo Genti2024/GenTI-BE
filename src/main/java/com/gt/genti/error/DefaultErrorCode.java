@@ -29,7 +29,8 @@ public enum DefaultErrorCode implements ErrorCode {
 	ValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError, "%s"),
 	UnrecognizedPropertyException(HttpStatus.BAD_REQUEST, ErrorUtils.UnrecognizedPropertyException, "%s"),
 	InvalidDataAccessApiUsageException(HttpStatus.BAD_REQUEST, ErrorUtils.InvalidDataAccessApiUsageException, "%s"),
-	NoHandlerFoundException(HttpStatus.NOT_FOUND, ErrorUtils.NoHandlerFoundException, "요청 uri : [%s] 핸들러가 없습니다.");
+	NoHandlerFoundException(HttpStatus.NOT_FOUND, ErrorUtils.NoHandlerFoundException, "요청 uri : [%s] 핸들러가 없습니다."),
+	MethodNowSupported(HttpStatus.METHOD_NOT_ALLOWED, ErrorUtils.MethodNowSupported, " %s ");
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

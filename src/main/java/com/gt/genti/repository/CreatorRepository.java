@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.gt.genti.domain.Creator;
+import com.gt.genti.domain.User;
 
 public interface CreatorRepository extends JpaRepository<Creator, Long> {
 
@@ -22,6 +23,8 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 	@Query("select c from Creator c "
 		+ "where c.user.id = :userId ")
 	Optional<Creator> findByUserId(Long userId);
+
+	Optional<Creator> findByUser(User user);
 
 	@Query("select c from Creator c "
 		+ "where c.user.userRole = com.gt.genti.domain.enums.UserRole.ADMIN ")

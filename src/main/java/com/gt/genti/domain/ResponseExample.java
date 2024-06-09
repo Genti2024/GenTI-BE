@@ -35,5 +35,4 @@ public class ResponseExample extends PictureEntity implements Picture {
 		this.examplePrompt = dto.getPrompt();
 		this.setUploadedBy(uploadedBy);
 	}
-
 }

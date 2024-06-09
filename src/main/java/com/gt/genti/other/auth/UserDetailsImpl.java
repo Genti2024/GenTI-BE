@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 
 import com.gt.genti.domain.User;
 
-import lombok.Builder;
 import lombok.Getter;
 
 public class UserDetailsImpl implements Principal, UserDetails, OAuth2User, Serializable {
@@ -35,8 +34,11 @@ public class UserDetailsImpl implements Principal, UserDetails, OAuth2User, Seri
 	private User user;
 	private Map<String, Object> attributes;
 
-	@Builder
-	public UserDetailsImpl(User user, String roles) {
+	public static UserDetailsImpl CreateRegisteredUserDetails(User user, String roles) {
+		return new UserDetailsImpl(user, roles);
+	}
+
+	private UserDetailsImpl(User user, String roles) {
 		this.user = user;
 		this.email = user.getEmail();
 		this.nickname = user.getNickname();
@@ -45,13 +47,12 @@ public class UserDetailsImpl implements Principal, UserDetails, OAuth2User, Seri
 	}
 
 	//social 최초가입
-	@Builder
 	public UserDetailsImpl(User user, Map<String, Object> attributes) {
 		this.user = user;
 		this.email = user.getEmail();
 		this.nickname = user.getNickname();
 		this.id = user.getId().toString();
-		this.authorities = createAuthorities(user.getRoles());
+		this.authorities = createAuthorities(user.getUserRole().getRoleString());
 		this.attributes = attributes;
 	}
 
@@ -59,7 +60,6 @@ public class UserDetailsImpl implements Principal, UserDetails, OAuth2User, Seri
 		return Long.parseLong(this.id);
 	}
 
-	@Builder
 	public UserDetailsImpl(Long authId, String roles, String userEmail, String userPw, boolean emailVerified,
 		boolean locked) {
 		this.id = String.valueOf(authId);

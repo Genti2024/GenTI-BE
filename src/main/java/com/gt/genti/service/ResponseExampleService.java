@@ -9,8 +9,6 @@ import com.gt.genti.domain.ResponseExample;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.admin.request.ExampleSaveRequestDto;
 import com.gt.genti.dto.admin.response.ExampleWithPictureFindResponseDto;
-import com.gt.genti.error.DomainErrorCode;
-import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.ResponseExampleRepository;
 import com.gt.genti.repository.UserRepository;
 
@@ -19,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ResponseExampleService {
-	private final UserRepository userRepository;
 	private final ResponseExampleRepository responseExampleRepository;
 
 	public List<ExampleWithPictureFindResponseDto> getAllResponseExamples() {
@@ -31,12 +28,9 @@ public class ResponseExampleService {
 
 	@Transactional
 	public void addResponseExamples(List<ExampleSaveRequestDto> requestDtoList,
-		Long userId) {
-		User findAdmin = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
-
+		User user) {
 		responseExampleRepository.saveAll(
-			requestDtoList.stream().map(dto -> new ResponseExample(dto, findAdmin)).toList());
+			requestDtoList.stream().map(dto -> new ResponseExample(dto, user)).toList());
 	}
 
 }

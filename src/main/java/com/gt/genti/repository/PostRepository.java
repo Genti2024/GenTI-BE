@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.gt.genti.domain.Post;
+import com.gt.genti.domain.User;
 import com.gt.genti.dto.user.response.PostBriefFindResponseDto;
 
 @Repository
@@ -23,21 +24,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	@Query("select p "
 		+ "from Post p "
 		+ "join p.user u "
-		+ "where p.user.id = u.id and "
-		+ "u.id = :userId and "
+		+ "where p.user =:user and "
 		+ "p.postStatus != 'DELETED' "
 		+ "order by p.createdAt desc ")
-	Slice<Post> findPostsTopByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, PageRequest pageRequest);
+	Slice<Post> findPostsTopByUserOrderByCreatedAtDesc(@Param("user") User user, PageRequest pageRequest);
 
 	@Query("select p "
 		+ "from Post p "
 		+ "join p.user u "
-		+ "where p.user.id = u.id and "
-		+ "u.id = :userId and "
+		+ "where p.user = u and "
+		+ "u = :user and "
 		+ "p.id < :cursor and "
 		+ "p.postStatus != 'DELETED' "
 		+ "order by p.createdAt desc ")
-	Slice<Post> findPostsNextCursorByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId,
+	Slice<Post> findPostsNextCursorByUserIdOrderByCreatedAtDesc(@Param("user") User user,
 		@Param("cursor") Long cursor, PageRequest pageRequest);
 
 	@Query("select new com.gt.genti.dto.user.response.PostBriefFindResponseDto( "
@@ -47,7 +47,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		+ "join p.mainPicture pic "
 		+ "join p.user u "
 		+ "where p.mainPicture.id = pic.id and "
-		+ "p.user.id = :userId "
+		+ "p.user = u and "
+		+ "p.user = :user "
 		+ "order by p.createdAt desc ")
-	List<PostBriefFindResponseDto> findPostBriefByUserId(@Param("userId") Long userId);
+	List<PostBriefFindResponseDto> findPostBriefByUser(@Param("user") User user);
+
+
 }

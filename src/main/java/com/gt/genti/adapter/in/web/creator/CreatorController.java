@@ -29,20 +29,20 @@ public class CreatorController {
 	@GetMapping("")
 	public ResponseEntity<ApiResult<CreatorFindResponseDto>> getCreatorInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return success(creatorService.getCreatorInfo(userDetails.getId()));
+		return success(creatorService.getCreatorInfo(userDetails.getUser()));
 	}
 
 	@PostMapping("/account")
 	public ResponseEntity<ApiResult<Boolean>> updateAccountInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid AccountUpdateRequestDto accountUpdateRequestDto) {
-		return success(creatorService.updateAccountInfo(userDetails.getId(), accountUpdateRequestDto));
+		return success(creatorService.updateAccountInfo(userDetails.getUser(), accountUpdateRequestDto));
 	}
 	@PostMapping("/status")
 	public ResponseEntity<ApiResult<CreatorStatusUpdateResponseDto>> updateCreatorStatus(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid CreatorStatusUpdateRequestDto creatorStatusUpdateRequestDto) {
-		return success(creatorService.updateCreatorStatus(userDetails.getId(), creatorStatusUpdateRequestDto));
+		return success(creatorService.updateCreatorStatus(userDetails.getUser(), creatorStatusUpdateRequestDto));
 	}
 
 

@@ -17,6 +17,7 @@ import com.gt.genti.domain.enums.converter.UserStatusConverter;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.OAuthAttributes;
+import com.gt.genti.other.util.RandomUtils;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -88,9 +89,6 @@ public class User extends BaseTimeEntity {
 	@Convert(converter = UserRoleConverter.class)
 	UserRole userRole;
 
-	@Column(name = "roles", nullable = false)
-	String roles;
-
 	@Column(name = "last_login_social_platform")
 	@Convert(converter = OauthTypeConverterIgnoreCase.class)
 	OauthType lastLoginSocialPlatform;
@@ -98,46 +96,24 @@ public class User extends BaseTimeEntity {
 	@Column(name = "deleted_at")
 	LocalDateTime deletedAt;
 
+	@Column(name = "last_login_date", nullable = false)
+	LocalDateTime lastLoginDate;
+
+	@Column(name = "login", nullable = false)
+	Boolean login;
+
 	// user hard delete시 deposit도 삭제
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private Deposit deposit;
 
-	public static User createPrincipalOnlyUser(Long id) {
-		return new User(id);
-	}
-
-	public static User createNewSocialUser(String email, String username, OauthType oauthType) {
-		//TODO 최초가입자 이름 랜덤 생성
-		// edited at 2024-04-25
-		// author
-		return new User(email, username, "최초로그인시닉네임", oauthType, UserRole.USER);
-	}
-
-	/**
-	 * 소셜유저로그인
-	 */
-	private User(String email, String username, String nickname, OauthType oauthType, UserRole userRole) {
-		this.email = email;
-		this.username = username;
-		this.nickname = nickname;
-		this.userRole = userRole;
-		this.roles = userRole.getStringValue();
-		this.lastLoginSocialPlatform = oauthType;
-		this.userStatus = UserStatus.ACTIVATED;
-	}
-
-	private User(Long id) {
-		this.id = id;
-	}
+	@Column(name = "request_task_count")
+	int requestTaskCount;
 
 	public static User createNewSocialUser(OAuthAttributes oauthAttributes) {
 		String email = oauthAttributes.getEmail();
 		String username = oauthAttributes.getUsername();
-		//TODO 최초가입자 닉네임 랜덤 생성 && Oauth타입알아내기
-		// edited at 2024-04-25
-		// author
 		OauthType oauthType = oauthAttributes.getOauthType();
-		String nickname = "최초로그인시닉네임";
+		String nickname = RandomUtils.generateRandomNickname();
 		return new User(email, username, nickname, oauthType, UserRole.OAUTH_FIRST_JOIN);
 	}
 
@@ -159,7 +135,6 @@ public class User extends BaseTimeEntity {
 			throw new ExpectedException(DomainErrorCode.CannotRestoreUser);
 		}
 		this.userStatus = UserStatus.ACTIVATED;
-
 	}
 
 	public Boolean isActivate() {
@@ -172,14 +147,37 @@ public class User extends BaseTimeEntity {
 
 	public void updateUserRole(UserRole userRole) {
 		this.userRole = userRole;
-		this.roles = userRole.getStringValue();
+	}
+
+	private User(String email, String username, String nickname, OauthType oauthType, UserRole userRole) {
+		this.email = email;
+		this.username = username;
+		this.nickname = nickname;
+		this.userRole = userRole;
+		this.lastLoginSocialPlatform = oauthType;
+		this.userStatus = UserStatus.ACTIVATED;
+		this.login();
+		this.requestTaskCount = 0;
+	}
+
+	public void login() {
+		this.login = true;
+		this.lastLoginDate = LocalDateTime.now();
+	}
+
+	public void logout() {
+		this.login = false;
+	}
+
+	public Boolean isLogin() {
+		return this.login;
 	}
 
 	@Builder
 	public User(List<PictureProfile> pictureProfileList, List<PictureUserFace> pictureUserFaceList, String email,
 		String introduction,
 		String username, String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password,
-		Creator creator, UserRole userRole, String roles, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt) {
+		Creator creator, UserRole userRole, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt) {
 		this.pictureProfileList = pictureProfileList;
 		this.pictureUserFaceList = pictureUserFaceList;
 		this.email = email;
@@ -192,7 +190,6 @@ public class User extends BaseTimeEntity {
 		this.password = password;
 		this.creator = creator;
 		this.userRole = userRole;
-		this.roles = roles;
 		this.lastLoginSocialPlatform = lastLoginSocialPlatform;
 		this.deletedAt = deletedAt;
 	}

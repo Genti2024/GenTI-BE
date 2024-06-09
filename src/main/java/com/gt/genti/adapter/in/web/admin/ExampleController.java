@@ -36,7 +36,7 @@ public class ExampleController {
 		@RequestBody @Valid List<ExampleSaveRequestDto> requestDtoList,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		responseExampleService.addResponseExamples(requestDtoList, userDetails.getId());
+		responseExampleService.addResponseExamples(requestDtoList, userDetails.getUser());
 		return success(true);
 	}
 

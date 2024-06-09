@@ -84,7 +84,7 @@ public class MatchTest {
 
 		// when
 		PictureGenerateRequest createdPGREQ = pictureGenerateRequestService.createPictureGenerateRequest(
-			requester.getId(), req);
+			requester, req);
 
 		// then
 		Creator adminCreator = adminService.getAdminCreator();
@@ -98,7 +98,6 @@ public class MatchTest {
 	private User getTestAdminUser() {
 		return User.builder()
 			.userRole(UserRole.ADMIN)
-			.roles(UserRole.ADMIN.getStringValue())
 			.userStatus(UserStatus.ACTIVATED)
 			.lastLoginSocialPlatform(OauthType.GOOGLE)
 			.username("adminusername")
@@ -140,7 +139,6 @@ public class MatchTest {
 			.email("test@test.com")
 			.emailVerified(false)
 			.introduction("소개")
-			.roles(UserRole.USER.getStringValue())
 			.loginId(null)
 			.password(null)
 			.pictureProfileList(null)

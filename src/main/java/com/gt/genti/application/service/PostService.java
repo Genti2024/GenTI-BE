@@ -7,9 +7,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.gt.genti.domain.Post;
+import com.gt.genti.domain.User;
 import com.gt.genti.dto.user.response.PostBriefFindResponseDto;
 import com.gt.genti.dto.user.response.PostDetailResponseDto;
+import com.gt.genti.error.DomainErrorCode;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.PostRepository;
+import com.gt.genti.repository.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,7 @@ public class PostService {
 
 	private static final int PAGE_SIZE = 10;
 	private final PostRepository postRepository;
+	private final UserRepository userRepository;
 
 	public List<PostDetailResponseDto> getPostDetailAllPagination(Long cursor) {
 		PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE);
@@ -32,15 +37,20 @@ public class PostService {
 		return mapToPostResponseDto(postList);
 	}
 
-	public List<PostDetailResponseDto> getPostDetailAllByUserIdPagination(Long userId, Long cursor) {
+	public List<PostDetailResponseDto> getPostDetailAllByUserPagination(User user, Long cursor) {
 		PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE);
 		Slice<Post> postList;
 		if (cursor == null || cursor <= 0) {
-			postList = postRepository.findPostsTopByUserIdOrderByCreatedAtDesc(userId, pageRequest);
+			postList = postRepository.findPostsTopByUserOrderByCreatedAtDesc(user, pageRequest);
 		} else {
-			postList = postRepository.findPostsNextCursorByUserIdOrderByCreatedAtDesc(userId, cursor, pageRequest);
+			postList = postRepository.findPostsNextCursorByUserIdOrderByCreatedAtDesc(user, cursor, pageRequest);
 		}
 		return mapToPostResponseDto(postList);
+	}
+
+	public List<PostDetailResponseDto> getPostDetailAllByUserIdPagination(Long userId, Long cursor) {
+		User foundUser = findUser(userId);
+		return getPostDetailAllByUserPagination(foundUser, cursor);
 	}
 
 	private static List<PostDetailResponseDto> mapToPostResponseDto(Slice<Post> postList) {
@@ -57,6 +67,17 @@ public class PostService {
 	}
 
 	public List<PostBriefFindResponseDto> getPostBriefAllByUserId(Long userId) {
-		return postRepository.findPostBriefByUserId(userId);
+		User foundUser = findUser(userId);
+		return postRepository.findPostBriefByUser(foundUser);
 	}
+
+	public List<PostBriefFindResponseDto> getPostBriefAllByUser(User user) {
+		return postRepository.findPostBriefByUser(user);
+	}
+
+	private User findUser(Long userId) {
+		return userRepository.findById(userId)
+			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
+	}
+
 }

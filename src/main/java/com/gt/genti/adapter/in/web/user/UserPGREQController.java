@@ -51,7 +51,7 @@ public class UserPGREQController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(
-			pictureGenerateRequestUseCase.getAllPictureGenerateRequestForUser(userDetails.getId()));
+			pictureGenerateRequestUseCase.getAllPictureGenerateRequestForUser(userDetails.getUser()));
 	}
 
 	@Deprecated
@@ -68,7 +68,7 @@ public class UserPGREQController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(
-			pictureGenerateRequestUseCase.findActivePGREQByUser(userDetails.getId()));
+			pictureGenerateRequestUseCase.findActivePGREQByUser(userDetails.getUser()));
 	}
 
 	@Operation(summary = "유저의 활성된 사진생성요청 1개 조회", description = "작업이 진행중인 사진생성요청을 조회한다.")
@@ -84,7 +84,7 @@ public class UserPGREQController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(
-			pictureGenerateRequestUseCase.isActivePGREQExists(userDetails.getId()));
+			pictureGenerateRequestUseCase.isActivePGREQExists(userDetails.getUser()));
 	}
 
 	@Operation(summary = "유저의 사진생성요청 조회", description = "사진생성요청 id로 사진생성요청을 조회한다.")
@@ -103,7 +103,7 @@ public class UserPGREQController {
 		Long pictureGenerateRequestId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(
-			pictureGenerateRequestUseCase.findPGREQByUserAndId(userDetails.getId(), pictureGenerateRequestId));
+			pictureGenerateRequestUseCase.findPGREQByUserAndId(userDetails.getUser(), pictureGenerateRequestId));
 	}
 
 	@Operation(summary = "사진생성요청 생성", description = "사진생성요청을 생성한다.")
@@ -119,7 +119,7 @@ public class UserPGREQController {
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid PGREQSaveRequestDto PGREQSaveRequestDto) {
-		pictureGenerateRequestUseCase.createPictureGenerateRequest(userDetails.getId(),
+		pictureGenerateRequestUseCase.createPictureGenerateRequest(userDetails.getUser(),
 			PGREQSaveRequestDto);
 		return success(true);
 	}
@@ -128,7 +128,7 @@ public class UserPGREQController {
 	public ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid PGREQUpdateRequestDto PGREQUpdateRequestDto) {
-		pictureGenerateRequestUseCase.modifyPictureGenerateRequest(userDetails.getId(),
+		pictureGenerateRequestUseCase.modifyPictureGenerateRequest(userDetails.getUser(),
 			PGREQUpdateRequestDto);
 		return success(true);
 	}
@@ -137,7 +137,7 @@ public class UserPGREQController {
 	public ResponseEntity<ApiResult<List<PGREQBriefFindByUserResponseDto>>> getAllMyRequests(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		return success(pictureGenerateRequestUseCase.getAllMyPictureGenerateRequests(userDetails.getId()));
+		return success(pictureGenerateRequestUseCase.getAllMyPictureGenerateRequests(userDetails.getUser()));
 	}
 
 }

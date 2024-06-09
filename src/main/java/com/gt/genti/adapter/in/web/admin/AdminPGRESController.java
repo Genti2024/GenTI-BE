@@ -37,7 +37,7 @@ public class AdminPGRESController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid List<CommonPictureKeyUpdateRequestDto> reuqestDtoList,
 		@PathVariable Long pictureGenerateResponseId) {
-		return success(pictureGenerateWorkService.updatePictureListCreatedByAdmin(userDetails.getId(), reuqestDtoList,
+		return success(pictureGenerateWorkService.updatePictureListCreatedByAdmin(userDetails.getUser(), reuqestDtoList,
 			pictureGenerateResponseId));
 	}
 }

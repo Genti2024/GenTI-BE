@@ -23,10 +23,10 @@ public interface PictureGenerateRequestRepository
 	// RequestStatus Active means "Before_Work" or "In_Progress"
 	@Query("select pqr "
 		+ "from PictureGenerateRequest pqr "
-		+ "where pqr.requester.id = :userId and "
+		+ "where pqr.requester = :requester and "
 		+ "pqr.pictureGenerateRequestStatus  = :requestStatus "
 		+ "order by pqr.createdAt desc")
-	List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus, Long userId);
+	List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus, User requester);
 
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
@@ -46,8 +46,8 @@ public interface PictureGenerateRequestRepository
 
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.id = :id "
-		+ "and pgr.requester.id = :requesterId ")
-	Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, Long requesterId);
+		+ "and pgr.requester = :requester ")
+	Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, User requester);
 
 	List<PictureGenerateRequest> findAllByCreatorIsOrderByCreatedAtDesc(Creator creator);
 
@@ -60,11 +60,11 @@ public interface PictureGenerateRequestRepository
 		PictureGenerateRequestStatus status);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
-		+ "where pgr.requester.id = :userId "
+		+ "where pgr.requester = :requester "
 		+ "and pgr.pictureGenerateRequestStatus in :statusList "
 		+ "order by pgr.createdAt desc "
 		+ "limit 1 ")
-	Optional<PictureGenerateRequest> findByUserIdAndRequestStatusIn(Long userId,
+	Optional<PictureGenerateRequest> findByUserIdAndRequestStatusIn(User requester,
 		List<PictureGenerateRequestStatus> statusList);
 
 	//TODO 성능 이슈 때문에 dto를 select하도록 변경해야함

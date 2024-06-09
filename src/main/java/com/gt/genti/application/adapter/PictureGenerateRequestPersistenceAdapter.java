@@ -24,9 +24,9 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 
 
 	@Override
-	public List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus,
-		Long userId) {
-		return pictureGenerateRequestRepository.findByRequestStatusAndUserId(requestStatus, userId);
+	public List<PictureGenerateRequest> findByRequestStatusAndUser(PictureGenerateRequestStatus requestStatus,
+		User requester) {
+		return pictureGenerateRequestRepository.findByRequestStatusAndUserId(requestStatus, requester);
 	}
 
 	@Override
@@ -51,8 +51,8 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, Long requesterId){
-		return pictureGenerateRequestRepository.findByIdAndRequesterId(id, requesterId);
+	public Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester){
+		return pictureGenerateRequestRepository.findByIdAndRequesterId(id, requester);
 	}
 
 	@Override
@@ -61,13 +61,13 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByUserIdOrderByCreatedByDesc(Long requesterId) {
+	public Optional<PictureGenerateRequest> findByRequesterOrderByCreatedByDesc(User requester) {
 
 		List<PictureGenerateRequestStatus> activeStatusList = new ArrayList<>();
 		activeStatusList.add(PictureGenerateRequestStatus.CREATED);
 		activeStatusList.add(PictureGenerateRequestStatus.ASSIGNING);
 		activeStatusList.add(PictureGenerateRequestStatus.IN_PROGRESS);
-		return pictureGenerateRequestRepository.findByUserIdAndRequestStatusIn(requesterId, activeStatusList);
+		return pictureGenerateRequestRepository.findByUserIdAndRequestStatusIn(requester, activeStatusList);
 	}
 
 	@Override

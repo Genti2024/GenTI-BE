@@ -36,28 +36,28 @@ public class CreatorPGRESController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestBrief(
-			userDetails.getId(), PictureGenerateRequestStatus.ASSIGNING));
+			userDetails.getUser(), PictureGenerateRequestStatus.ASSIGNING));
 	}
 
 	@GetMapping("/picture-generate-requests/in-progress")
 	public ResponseEntity<ApiResult<List<PGREQDetailFindResponseDto>>> getInProgressPictureGenerateRequestDetail(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail3(userDetails.getId()));
+		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail3(userDetails.getUser()));
 	}
 
 	@PostMapping("/picture-generate-requests/{pictureGenerateRequestId}/accept")
 	public ResponseEntity<ApiResult<Boolean>> acceptPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateRequestId) {
-		return success(pictureGenerateWorkService.acceptPictureGenerateRequest(userDetails.getId(), pictureGenerateRequestId));
+		return success(pictureGenerateWorkService.acceptPictureGenerateRequest(userDetails.getUser(), pictureGenerateRequestId));
 	}
 
 	@PostMapping("/picture-generate-requests/{pictureGenerateRequestId}/reject")
 	public ResponseEntity<ApiResult<Boolean>> rejectPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateRequestId) {
-		return success(pictureGenerateWorkService.rejectPictureGenerateRequest(userDetails.getId(), pictureGenerateRequestId));
+		return success(pictureGenerateWorkService.rejectPictureGenerateRequest(userDetails.getUser(), pictureGenerateRequestId));
 	}
 
 	@GetMapping("/picture-generate-requests/{pictureGenerateRequestId}")
@@ -65,7 +65,7 @@ public class CreatorPGRESController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateRequestId) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail(
-			userDetails.getId(), pictureGenerateRequestId));
+			userDetails.getUser(), pictureGenerateRequestId));
 	}
 
 	@GetMapping("/picture-generate-requests/all")
@@ -73,7 +73,7 @@ public class CreatorPGRESController {
 		@AuthenticationPrincipal
 		UserDetailsImpl userDetails) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestDetailAll(
-			userDetails.getId()));
+			userDetails.getUser()));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/pictures")
@@ -84,14 +84,14 @@ public class CreatorPGRESController {
 	) {
 		return success(
 			pictureGenerateWorkService.updatePictureCreatedByCreatorList(pictureGenerateResponseId,
-				commonPictureKeyUpdateRequestDtoList, userDetails.getId()));
+				commonPictureKeyUpdateRequestDtoList, userDetails.getUser()));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESUpdateByCreatorResponseDto>> submitPictureGenerateResponse(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@PathVariable Long pictureGenerateResponseId) {
-		return success(pictureGenerateWorkService.submitToAdmin(userDetails.getId(), pictureGenerateResponseId));
+		return success(pictureGenerateWorkService.submitToAdmin(userDetails.getUser(), pictureGenerateResponseId));
 	}
 
 	@PostMapping("/picture-generate-responses/{pictureGenerateResponseId}/memo")

@@ -51,17 +51,20 @@ public class Creator extends BaseTimeEntity {
 	@Column(name = "bank_type")
 	BankType bankType;
 
-
 	@Column(name = "account_number")
 	String accountNumber;
 
 	@Column(name = "account_holder")
 	String accountHolder;
 
+	@Column(name = "completed_task_count", nullable = false)
+	int completedTaskCount;
+
 	public Creator(User user) {
 		this.workable = true;
 		this.user = user;
 		this.bankType = BankType.NONE;
+		this.completedTaskCount = 0;
 	}
 
 	public void updateAccountInfo(BankType bankType, String accountNumber, String accountHolder){

@@ -29,7 +29,6 @@ public class CommonLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException {
-		log.info("--------------------------- CommonLoginSuccessHandler ---------------------------");
 		OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken)authentication;
 		UserDetailsImpl userDetails = (UserDetailsImpl)oAuth2AuthenticationToken.getPrincipal(); //
 		String registrationId = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId(); // oauth platform

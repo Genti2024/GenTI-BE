@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.User;
-import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.repository.UserRepository;
 
 import lombok.AccessLevel;
@@ -30,23 +29,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		String email = oAuth2User.getAttribute("email");
-		String roles;
 
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		User user;
 		if (optionalUser.isEmpty()) {
-			// String userNameAttributeName = userRequest.getClientRegistration()
-			// 	.getProviderDetails()
-			// 	.getUserInfoEndpoint()
-			// 	.getUserNameAttributeName();
-
 			OAuthAttributes oauthAttributes = OAuthAttributeBuilder.of(registrationId, oAuth2User.getAttributes());
 			user = User.createNewSocialUser(oauthAttributes);
 			user = userRepository.save(user);
 		} else {
 			user = optionalUser.get();
 		}
-
+		user.login();
 		return new UserDetailsImpl(
 			user, oAuth2User.getAttributes());
 	}

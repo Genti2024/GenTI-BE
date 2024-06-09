@@ -14,14 +14,15 @@ import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
-import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
-import com.gt.genti.dto.user.response.UserFindResponseDto;
-import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
 import com.gt.genti.dto.admin.request.UserRoleUpdateRequestDto;
 import com.gt.genti.dto.admin.request.UserStatusUpdateRequestDto;
+import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
+import com.gt.genti.dto.user.response.UserFindResponseDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
+import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.UserRepository;
@@ -41,28 +42,26 @@ public class UserService {
 	private final PictureCompletedRepository pictureCompletedRepository;
 
 	@Transactional
-	public UserFindResponseDto getUserInfo(Long userId) {
-		User foundUser = findActivateUserByUserId(userId);
-		return new UserFindResponseDto(foundUser);
+	public UserFindResponseDto getUserInfo(User user) {
+		return new UserFindResponseDto(user);
 	}
 
 	@Transactional
-	public UserFindResponseDto updateUserInfo(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		User foundUser = findActivateUserByUserId(userId);
-		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
+	public UserFindResponseDto updateUserInfo(User user, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
+		user.updateName(userInfoUpdateRequestDto.getUserName());
 		if (!(userInfoUpdateRequestDto.getProfilePictureUrl().isEmpty()
 			|| userInfoUpdateRequestDto.getProfilePictureUrl().isBlank())) {
 			PictureProfile foundPictureProfile = pictureService.findByUrlPictureProfile(
 				userInfoUpdateRequestDto.getProfilePictureUrl());
-			foundUser.addProfilePicture(foundPictureProfile);
+			user.addProfilePicture(foundPictureProfile);
 		}
 
-		return new UserFindResponseDto(foundUser);
+		return new UserFindResponseDto(user);
 	}
 
 	@Transactional
 	public Boolean updateUserRole(Long userId, UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
-		User foundUser = findActivateUserByUserId(userId);
+		User foundUser = findUser(userId);
 		UserRole userRole = userRoleUpdateRequestDto.getUserRole();
 		foundUser.updateUserRole(userRole);
 		if (userRole == UserRole.CREATOR) {
@@ -77,30 +76,26 @@ public class UserService {
 	}
 
 	@Transactional
-	public Boolean deleteUserInfoSoft(Long userId) {
-		User foundUser = findActivateUserByUserId(userId);
-		foundUser.softDelete();
+	public Boolean deleteUserInfoSoft(User user) {
+		user.softDelete();
 		return true;
 	}
 
 	@Transactional
-	public Boolean restoreSoftDeletedUser(Long userId) {
-		User foundUser = findDeactivatedUserByUserId(userId);
-		foundUser.restore();
+	public Boolean restoreSoftDeletedUser(User user) {
+		user.restore();
 		return true;
 	}
 
 	@Transactional
 	public Boolean updateUserStatus(Long userId, UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
-		User foundUser = findActivateUserByUserId(userId);
+		User foundUser = findUser(userId);
 		foundUser.updateStatus(userStatusUpdateRequestDto.getUserStatus());
 		return true;
 	}
 
-	public List<CommonPictureUrlResponseDto> getAllMyGeneratedPicture(Long userId) {
-		User foundUser = findActivateUserByUserId(userId);
-		log.info("userId" + userId);
-		List<PictureCompleted> pictureCompletedList = pictureCompletedRepository.findAllByUser(foundUser);
+	public List<CommonPictureUrlResponseDto> getAllMyGeneratedPicture(User user) {
+		List<PictureCompleted> pictureCompletedList = pictureCompletedRepository.findAllByUser(user);
 		return pictureCompletedList.stream()
 			.map(PictureEntity::mapToCommonResponse)
 			.toList();
@@ -119,23 +114,14 @@ public class UserService {
 		return null;
 	}
 
-	private User findDeactivatedUserByUserId(Long userId) {
-		User foundUser = userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
-
-		if (foundUser.isActivate()) {
-			throw new ExpectedException(DomainErrorCode.AlreadyActivatedUser);
-		}
-		return foundUser;
+	@Transactional
+	public Boolean logout(UserDetailsImpl userDetails) {
+		userDetails.getUser().logout();
+		return true;
 	}
 
-	private User findActivateUserByUserId(Long userId) {
-		User foundUser = userRepository.findById(userId)
+	private User findUser(Long userId) {
+		return userRepository.findById(userId)
 			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
-
-		if (!foundUser.isActivate()) {
-			throw new ExpectedException(DomainErrorCode.UserDeactivated);
-		}
-		return foundUser;
 	}
 }

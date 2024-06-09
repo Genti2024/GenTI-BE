@@ -42,7 +42,7 @@ public class PostController {
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getMyAllPostsDetailPagination(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestParam(value = "cursor", required = false) Long cursor) {
-		return success(postService.getPostDetailAllByUserIdPagination(userDetails.getId(), cursor));
+		return success(postService.getPostDetailAllByUserPagination(userDetails.getUser(), cursor));
 	}
 
 	@ToBeUpdated
@@ -54,6 +54,7 @@ public class PostController {
 		return success(postService.getPostDetailAllByUserIdPagination(userId, cursor));
 	}
 
+	@Deprecated
 	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/brief/users/{userId}")
@@ -62,12 +63,13 @@ public class PostController {
 		return success(postService.getPostBriefAllByUserId(userId));
 	}
 
+	@Deprecated
 	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/brief/my")
 	public ResponseEntity<ApiResult<List<PostBriefFindResponseDto>>> getUsersAllPostBrief(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return success(postService.getPostBriefAllByUserId(userDetails.getId()));
+		return success(postService.getPostBriefAllByUser(userDetails.getUser()));
 	}
 
 }

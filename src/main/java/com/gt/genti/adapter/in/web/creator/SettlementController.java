@@ -28,6 +28,6 @@ public class SettlementController {
 		// edited at 2024-05-19
 		// author 서병렬
 
-		return success(settlementService.getAllSettlements(userDetails.getId()));
+		return success(settlementService.getAllSettlements(userDetails.getUser()));
 	}
 }

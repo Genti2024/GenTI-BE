@@ -1,6 +1,5 @@
 package com.gt.genti.application.port.in;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 
 public interface PictureGenerateRequestPort {
 
-	List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus, Long userId);
+	List<PictureGenerateRequest> findByRequestStatusAndUser(PictureGenerateRequestStatus requestStatus, User user);
 
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
@@ -24,11 +23,12 @@ public interface PictureGenerateRequestPort {
 
 	Optional<PictureGenerateRequest> findById(Long id);
 
-	Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, Long requesterId);
+	Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester);
 
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 
-	Optional<PictureGenerateRequest> findByUserIdOrderByCreatedByDesc(Long userId);
+	Optional<PictureGenerateRequest> findByRequesterOrderByCreatedByDesc(User requester);
 
 	Page<PictureGenerateRequest> findAll(Pageable pageable);
+
 }

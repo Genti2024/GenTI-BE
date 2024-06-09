@@ -35,7 +35,7 @@ public class UserController {
 	@GetMapping("")
 	public ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return success(userService.getUserInfo(userDetails.getId()));
+		return success(userService.getUserInfo(userDetails.getUser()));
 	}
 
 	@ToBeUpdated
@@ -44,7 +44,7 @@ public class UserController {
 	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		return success(userService.updateUserInfo(userDetails.getId(), userInfoUpdateRequestDto));
+		return success(userService.updateUserInfo(userDetails.getUser(), userInfoUpdateRequestDto));
 	}
 
 
@@ -52,19 +52,19 @@ public class UserController {
 	@DeleteMapping("")
 	public ResponseEntity<ApiResult<Boolean>> deleteUserSoft(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return success(userService.deleteUserInfoSoft(userDetails.getId()));
+		return success(userService.deleteUserInfoSoft(userDetails.getUser()));
 	}
 
 	@PutMapping("/restore")
 	public ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return success(userService.restoreSoftDeletedUser(userDetails.getId()));
+		return success(userService.restoreSoftDeletedUser(userDetails.getUser()));
 	}
 
 	@GetMapping("/pictures/my")
 	public ResponseEntity<ApiResult<List<CommonPictureUrlResponseDto>>> getAllMyGeneratedPicture(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	){
-		return success(userService.getAllMyGeneratedPicture(userDetails.getId()));
+		return success(userService.getAllMyGeneratedPicture(userDetails.getUser()));
 	}
 }

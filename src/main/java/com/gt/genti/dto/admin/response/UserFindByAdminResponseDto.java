@@ -38,8 +38,6 @@ public class UserFindByAdminResponseDto {
 
 	UserRole userRole;
 
-	String roles;
-
 	OauthType lastLoginSocialPlatform;
 
 	LocalDateTime deletedAt;
@@ -60,7 +58,6 @@ public class UserFindByAdminResponseDto {
 			this.creator = new CreatorFindResponseDto(user.getCreator());
 		}
 		this.userRole = user.getUserRole();
-		this.roles = user.getRoles();
 		this.lastLoginSocialPlatform = user.getLastLoginSocialPlatform();
 		this.deletedAt = user.getDeletedAt();
 		this.deposit = new DepositFindResponseDto(user.getDeposit());

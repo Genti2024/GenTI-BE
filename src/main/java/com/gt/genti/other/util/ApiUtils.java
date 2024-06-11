@@ -7,7 +7,9 @@ import com.gt.genti.error.ErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ApiUtils {
 
 	public static <T> ResponseEntity<ApiResult<T>> success(T response) {
@@ -15,8 +17,15 @@ public class ApiUtils {
 	}
 
 	public static ResponseEntity<ApiResult<ExpectedException>> error(ExpectedException exception) {
+		if (exception.shouldLogError()) {
+			log.error(exception.toString());
+		}
 		return new ResponseEntity<>(new ApiResult<>(false, null, exception),
 			exception.getErrorCode().getHttpStatusCode());
+	}
+
+	public static ResponseEntity<ApiResult<String>> error(String error) {
+		return new ResponseEntity<>(new ApiResult<>(false, error), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@Getter

@@ -3,7 +3,7 @@ package com.gt.genti.domain;
 import java.util.List;
 
 import com.gt.genti.domain.enums.PostStatus;
-import com.gt.genti.domain.enums.converter.PostStatusConverter;
+import com.gt.genti.domain.enums.converter.db.PostStatusConverter;
 import com.gt.genti.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.Convert;

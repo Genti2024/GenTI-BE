@@ -27,9 +27,9 @@ public class JwtController {
 		@RequestBody @Valid TokenRefreshRequestDto tokenRefreshRequestDto) {
 
 		if (authHeader == null) {
-			throw new ExpectedException(DefaultErrorCode.TOKEN_NOT_PROVIDED);
+			throw ExpectedException.withLogging(DefaultErrorCode.TOKEN_NOT_PROVIDED);
 		} else if (!authHeader.startsWith(JwtConstants.JWT_PREFIX)) {
-			throw new ExpectedException(DefaultErrorCode.INVALID_TOKEN);
+			throw ExpectedException.withLogging(DefaultErrorCode.INVALID_TOKEN);
 		}
 
 		String receiveAccessToken = jwtTokenProvider.getTokenFromHeader(authHeader);

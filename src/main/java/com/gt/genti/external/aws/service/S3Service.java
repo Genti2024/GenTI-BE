@@ -39,7 +39,7 @@ public class S3Service {
 		String fileName = preSignedUrlRequestDto.getFileName();
 		String fileType = preSignedUrlRequestDto.getFileType().getStringValue();
 		if (fileType == null) {
-			throw new ExpectedException(DomainErrorCode.ActivePictureGenerateRequestNotExists);
+			throw ExpectedException.withLogging(DomainErrorCode.ActivePictureGenerateRequestNotExists);
 		}
 		String s3Key = createPath(fileType, fileName);
 

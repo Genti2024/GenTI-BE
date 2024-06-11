@@ -10,10 +10,10 @@ import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.Sex;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
-import com.gt.genti.domain.enums.converter.OauthTypeConverterIgnoreCase;
-import com.gt.genti.domain.enums.converter.SexConverter;
-import com.gt.genti.domain.enums.converter.UserRoleConverter;
-import com.gt.genti.domain.enums.converter.UserStatusConverter;
+import com.gt.genti.domain.enums.converter.db.OauthTypeConverterIgnoreCase;
+import com.gt.genti.domain.enums.converter.db.SexConverter;
+import com.gt.genti.domain.enums.converter.db.UserRoleConverter;
+import com.gt.genti.domain.enums.converter.db.UserStatusConverter;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.OAuthAttributes;
@@ -85,7 +85,7 @@ public class User extends BaseTimeEntity {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	Creator creator;
 
-	@Column(name = "userRole", nullable = false)
+	@Column(name = "user_role", nullable = false)
 	@Convert(converter = UserRoleConverter.class)
 	UserRole userRole;
 
@@ -132,7 +132,7 @@ public class User extends BaseTimeEntity {
 
 	public void restore() {
 		if (Period.between(this.deletedAt.toLocalDate(), LocalDate.now()).getMonths() >= 1) {
-			throw new ExpectedException(DomainErrorCode.CannotRestoreUser);
+			throw ExpectedException.withLogging(DomainErrorCode.CannotRestoreUser);
 		}
 		this.userStatus = UserStatus.ACTIVATED;
 	}

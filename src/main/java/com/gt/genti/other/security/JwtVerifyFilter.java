@@ -1,5 +1,7 @@
 package com.gt.genti.other.security;
 
+import static com.gt.genti.error.DefaultErrorCode.*;
+
 import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
@@ -9,7 +11,6 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.gt.genti.error.DefaultErrorCode;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.config.SecurityConfig;
 
@@ -23,19 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtVerifyFilter extends OncePerRequestFilter {
-
 	private final JwtTokenProvider jwtTokenProvider;
-	// 상품 이미지가 보이지 않기에 상품 이미지를 출력하는 /api/items/view 경로를 추가
+	private final DirectoryTraversalChecker directoryTraversalChecker;
 
-	private static void checkAuthorizationHeader(String header) {
-		if (header == null) {
-			throw new ExpectedException(DefaultErrorCode.TOKEN_NOT_PROVIDED);
-		} else if (!header.startsWith(JwtConstants.JWT_PREFIX)) {
-			throw new ExpectedException(DefaultErrorCode.INVALID_TOKEN);
-		}
-	}
-
-	// 필터를 거치지 않을 URL 을 설정하고, true 를 return 하면 현재 필터를 건너뛰고 다음 필터로 이동
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		return PatternMatchUtils.simpleMatch(SecurityConfig.COMMON_RESOURCE_AND_ALLOWED_URL, request.getRequestURI());
@@ -45,18 +36,45 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
-			String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
-			checkAuthorizationHeader(authHeader);
-			String token = jwtTokenProvider.getTokenFromHeader(authHeader);
-			Authentication authentication = jwtTokenProvider.getAuthentication(token);
-			SecurityContext context = SecurityContextHolder.createEmptyContext();
-			context.setAuthentication(authentication);
-			SecurityContextHolder.setContext(context);
+			authenticateRequest(request);
+		} catch (ExpectedException expectedException) {
+			handleExpectedException(request, response, expectedException);
 		} catch (Exception e) {
 			request.setAttribute("exception", e);
 		}
+		filterChain.doFilter(request, response);
+	}
 
-		filterChain.doFilter(request, response);    // 다음 필터로 이동
+	private void authenticateRequest(HttpServletRequest request) {
+		String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
+		checkAuthorizationHeader(authHeader);
+		String token = jwtTokenProvider.getTokenFromHeader(authHeader);
+		Authentication authentication = jwtTokenProvider.getAuthentication(token);
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		context.setAuthentication(authentication);
+		SecurityContextHolder.setContext(context);
+	}
 
+	private void handleExpectedException(HttpServletRequest request, HttpServletResponse response,
+		ExpectedException expectedException) throws IOException {
+		if (TOKEN_NOT_PROVIDED.equals(expectedException.getErrorCode())) {
+			String url = request.getRequestURI();
+			if (directoryTraversalChecker.isPreviousAttackedUrl(url)) {
+				log.info(url + " 에 대한 허가되지 않은 접근");
+				request.setAttribute("exception", expectedException.notLogging());
+			} else {
+				request.setAttribute("exception", expectedException);
+			}
+		} else {
+			request.setAttribute("exception", expectedException);
+		}
+	}
+
+	private static void checkAuthorizationHeader(String header) {
+		if (header == null) {
+			throw ExpectedException.withLogging(TOKEN_NOT_PROVIDED);
+		} else if (!header.startsWith(JwtConstants.JWT_PREFIX)) {
+			throw ExpectedException.withLogging(DefaultErrorCode.INVALID_TOKEN);
+		}
 	}
 }

@@ -1,10 +1,10 @@
-package com.gt.genti.domain.enums.converter;
+package com.gt.genti.domain.enums.converter.db;
 
 import com.gt.genti.domain.enums.ConvertableEnum;
 
-public class IgnoreCaseStringAttributeConverter<T extends Enum<T> & ConvertableEnum>
-	extends DefaultStringAttributeConverter<T> {
-	public IgnoreCaseStringAttributeConverter(Class<T> enumClassType) {
+public class IgnoreCaseEnumDBConverter<T extends Enum<T> & ConvertableEnum>
+	extends DefaultEnumDBConverter<T> {
+	public IgnoreCaseEnumDBConverter(Class<T> enumClassType) {
 		super(enumClassType);
 	}
 

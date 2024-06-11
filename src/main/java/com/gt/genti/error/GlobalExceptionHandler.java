@@ -3,21 +3,24 @@ package com.gt.genti.error;
 import static com.gt.genti.other.util.ApiUtils.*;
 
 import java.util.Arrays;
-import java.util.MissingFormatArgumentException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -26,63 +29,48 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExpectedException.class)
 	protected ResponseEntity<ApiResult<ExpectedException>> handleExpectedException(final HttpServletRequest request,
 		final ExpectedException exception) {
-		log.error("""
-			\n[Error] uri : %s \n%s""".formatted(request.getRequestURI(), exception.toString()));
 		return error(exception);
-	}
-
-	@ExceptionHandler(MissingFormatArgumentException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleMissingFormatArgumentException(
-		MissingFormatArgumentException ex) {
-		log.error("ex.getFormatSpecifier() :" + ex.getFormatSpecifier());
-		log.error("ex.getMessage() :" + ex.getMessage());
-		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException));
 	}
 
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
 		NoHandlerFoundException ex) {
-		log.error("ex.getMessage() :" + ex.getMessage());
-		log.error("ex.getRequestURL() :" + ex.getRequestURL());
-		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException));
+		String errorMessage = ex.getRequestURL();
+		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
 	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<ApiResult<ExpectedException>> handleHttpRequestMethodNotSupportedException(
 		HttpRequestMethodNotSupportedException ex) {
-
-		return error(new ExpectedException(DefaultErrorCode.MethodNowSupported,
-			ex.getMessage() + "allowed methods : " + Arrays.toString(ex.getSupportedMethods())));
+		return error(ExpectedException.withLogging(DefaultErrorCode.MethodNotSupported, ex.getMessage(), Arrays.toString(ex.getSupportedMethods())));
 	}
 
 	// 없는 url로 요청 시
 	@ExceptionHandler(NoResourceFoundException.class)
 	public ResponseEntity<ApiResult<ExpectedException>> handleNoResourceFoundException(
 		NoResourceFoundException ex) {
-		log.error("ex.getResourcePath() :" + ex.getResourcePath());
-		log.error("ex.getMessage() :" + ex.getMessage());
-		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException, ex.getResourcePath()));
+		String errorMessage = ex.getResourcePath();
+		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
 	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
 	protected ResponseEntity<ApiResult<ExpectedException>> processValidationError(WebExchangeBindException exception) {
 		String errorMessage = exception.getBindingResult().getFieldErrors().stream().map(
 			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
-		return error(new ExpectedException(DefaultErrorCode.ValidationError, errorMessage));
+		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, errorMessage));
 	}
 
 	@ExceptionHandler(UnrecognizedPropertyException.class)
 	protected ResponseEntity<ApiResult<ExpectedException>> unRecognizedPropertyException(
 		UnrecognizedPropertyException exception) {
 		String errorMessage = exception.getMessage();
-		return error(new ExpectedException(DefaultErrorCode.UnrecognizedPropertyException, errorMessage));
+		return error(ExpectedException.withLogging(DefaultErrorCode.UnrecognizedPropertyException, errorMessage));
 	}
 
 	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
@@ -90,7 +78,8 @@ public class GlobalExceptionHandler {
 		InvalidDataAccessApiUsageException exception) {
 		String errorMessage = exception.getMessage();
 
-		return error(new ExpectedException(DefaultErrorCode.InvalidDataAccessApiUsageException, errorMessage));
+		return error(
+			ExpectedException.withLogging(DefaultErrorCode.InvalidDataAccessApiUsageException, errorMessage));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -102,13 +91,14 @@ public class GlobalExceptionHandler {
 			.stream()
 			.map(GlobalExceptionHandler::formatError)
 			.collect(Collectors.joining());
-		return error(new ExpectedException(DefaultErrorCode.ValidationError, error));
+		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, error));
 	}
 
-	// @ExceptionHandler(HttpMessageNotReadableException.class)
-	// public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-	// 	return new ResponseEntity<>("Malformed JSON request", HttpStatus.BAD_REQUEST);
-	// }
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+
+		return error(ExpectedException.withLogging(DefaultErrorCode.MethodArgumentTypeMismatch, ex.getMessage()));
+	}
 
 	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시
 
@@ -121,20 +111,25 @@ public class GlobalExceptionHandler {
 		String errorMessage = resolvable.getDefaultMessage();
 		String error = fieldName + " 필드는 " + errorMessage;
 
-		return error(new ExpectedException(DefaultErrorCode.ValidationError, error));
+		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, error));
 	}
-	// @ExceptionHandler(RuntimeException.class)
-	// protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final RuntimeException exception) {
-	// 	String error = """
-	// 		Class : %s
-	// 		Cause : %s
-	// 		Message : %s
-	// 		StackTrace : %s
-	// 		""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
-	// 		exception.getStackTrace());
-	// 	log.error(error);
-	// 	return error(new ExpectedException(DefaultErrorCode.UnHandledException, error));
-	// }
+
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleValidationExceptions(
+		MissingServletRequestParameterException exception) {
+		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, exception.getMessage()));
+	}
+	@ExceptionHandler(Exception.class)
+	protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final Exception exception) {
+		String errorMessage = """
+			Class : %s
+			Cause : %s
+			Message : %s
+			StackTrace : %s
+			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
+			exception.getStackTrace());
+		return error(ExpectedException.withLogging(DefaultErrorCode.UnHandledException, errorMessage));
+	}
 
 	@NotNull
 	private static String makeFieldErrorMessage(FieldError fieldError) {

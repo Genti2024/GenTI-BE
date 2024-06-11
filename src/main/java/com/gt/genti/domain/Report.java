@@ -2,7 +2,7 @@ package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.ReportStatus;
-import com.gt.genti.domain.enums.converter.ReportStatusConverter;
+import com.gt.genti.domain.enums.converter.db.ReportStatusConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

@@ -20,7 +20,6 @@ public class ErrorUtils {
 	private static final String OAUTH = "OAUTH";
 	private static final String VALIDATION = "VALIDATION";
 
-
 	private static String CODE(String type, int seq) {
 		return type + String.format("-%05d", seq);
 	}
@@ -76,4 +75,8 @@ public class ErrorUtils {
 	public static final String InvalidDataAccessApiUsageException = CODE(SERVER, 4);
 	public static final String UserNotLoggedIn = CODE(USER, 6);
 	public static final String MethodNowSupported = CODE(SERVER, 5);
+
+	public static final String QueryParameterNotGiven = CODE(SERVER, 6);
+
+	public static final String MethodArgumentTypeMismatch = CODE(SERVER, 7);
 }

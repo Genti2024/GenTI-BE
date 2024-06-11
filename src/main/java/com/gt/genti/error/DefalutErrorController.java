@@ -19,7 +19,7 @@ public class DefalutErrorController implements ErrorController {
 		HttpServletResponse response) {
 		String requestURI = request.getRequestURI();
 
-		return error(new ExpectedException(DefaultErrorCode.NoHandlerFoundException, requestURI));
+		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, requestURI));
 	}
 
 }

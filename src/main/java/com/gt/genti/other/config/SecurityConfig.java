@@ -26,6 +26,7 @@ import com.gt.genti.other.auth.CustomOAuth2UserService;
 import com.gt.genti.other.handler.CommonLoginFailHandler;
 import com.gt.genti.other.handler.CommonLoginSuccessHandler;
 import com.gt.genti.other.security.AuthenticationEntryPointImpl;
+import com.gt.genti.other.security.DirectoryTraversalChecker;
 import com.gt.genti.other.security.JwtTokenProvider;
 import com.gt.genti.other.security.JwtVerifyFilter;
 
@@ -40,6 +41,8 @@ public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthenticationEntryPointImpl authenticationEntryPointImpl;
+	private final DirectoryTraversalChecker directoryTraversalChecker;
+
 	public static final String oauthLoginPath = "/oauth2/login";
 	public static final String ROLE_USER = "ROLE_USER";
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -110,7 +113,7 @@ public class SecurityConfig {
 
 	@Bean
 	public JwtVerifyFilter jwtVerifyFilter() {
-		return new JwtVerifyFilter(jwtTokenProvider);
+		return new JwtVerifyFilter(jwtTokenProvider, directoryTraversalChecker);
 	}
 
 	@Bean

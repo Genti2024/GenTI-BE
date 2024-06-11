@@ -48,6 +48,6 @@ public class CreatorService {
 
 	private Creator findCreatorByUser(User user) {
 		return creatorRepository.findByUser(user)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.CreatorNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.CreatorNotFound));
 	}
 }

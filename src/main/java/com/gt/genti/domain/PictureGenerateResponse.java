@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
-import com.gt.genti.domain.enums.converter.PictureGenerateResponseStatusConverter;
+import com.gt.genti.domain.enums.converter.db.PictureGenerateResponseStatusConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

@@ -27,7 +27,7 @@ public class ReportService {
 	public Boolean createReport(ReportSaveRequestDto reportSaveRequestDto) {
 		Long pictureGenerateResponseId = reportSaveRequestDto.getPictureGenerateResponseId();
 		PictureGenerateResponse findPictureGenerateResponse = pictureGenerateResponseRepository.findById(
-			pictureGenerateResponseId).orElseThrow(() -> new ExpectedException(
+			pictureGenerateResponseId).orElseThrow(() -> ExpectedException.withLogging(
 			DomainErrorCode.PictureGenerateResponseNotFound));
 
 		Report createReport = new Report(findPictureGenerateResponse, reportSaveRequestDto.getContent());
@@ -45,7 +45,7 @@ public class ReportService {
 	public Boolean updateReport(ReportUpdateRequestDto reportUpdateRequestDto) {
 		Long id = reportUpdateRequestDto.getId();
 		ReportStatus status = reportUpdateRequestDto.getReportStatus();
-		Report findReport = reportRepository.findById(id).orElseThrow(() -> new ExpectedException(DomainErrorCode.ReportNotFound));
+		Report findReport = reportRepository.findById(id).orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.ReportNotFound));
 		findReport.updateStatus(status);
 		return true;
 	}

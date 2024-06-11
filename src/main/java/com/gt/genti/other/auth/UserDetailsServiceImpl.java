@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return userRepository.findByEmail(email)
 			.map(
 				UserDetailsServiceImpl::convertToUserDetails)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound, email));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound, email));
 	}
 
 	@Transactional
@@ -38,13 +38,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return userRepository.findById(id)
 			.map(
 				UserDetailsServiceImpl::convertToUserDetails)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound, "찾은 id : " + id));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound, "찾은 id : " + id));
 	}
 
 	@NotNull
 	private static UserDetailsImpl convertToUserDetails(User foundUser) {
 		if (!foundUser.isLogin()) {
-			throw new ExpectedException(DomainErrorCode.UserNotLoggedIn);
+			throw ExpectedException.withLogging(DomainErrorCode.UserNotLoggedIn);
 		}
 		foundUser.login();
 		return CreateRegisteredUserDetails(foundUser,

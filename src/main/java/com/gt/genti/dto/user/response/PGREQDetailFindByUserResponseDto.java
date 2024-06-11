@@ -64,7 +64,7 @@ public class PGREQDetailFindByUserResponseDto {
 				.filter(response ->
 					response.getStatus() == PictureGenerateResponseStatus.SUBMITTED_FINAL
 						|| response.getStatus() == PictureGenerateResponseStatus.COMPLETED)
-				.findFirst().orElseThrow(() -> new ExpectedException(DefaultErrorCode.UnHandledException));
+				.findFirst().orElseThrow(() -> ExpectedException.withLogging(DefaultErrorCode.UnHandledException));
 			this.pictureCompletedList = realResponse.getCompletedPictureList()
 				.stream()
 				.map(PictureEntity::mapToCommonResponse)

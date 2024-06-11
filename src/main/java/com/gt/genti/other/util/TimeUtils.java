@@ -28,7 +28,7 @@ public class TimeUtils {
 				return timeReward[1];
 			}
 		}
-		throw new ExpectedException(DefaultErrorCode.UnHandledException,
+		throw ExpectedException.withLogging(DefaultErrorCode.UnHandledException,
 			"""
 				요청-응답의 공급자의 응답 소요 시간 계산 중 문제 발생,
 				계산된 응답소요시간은 [%d분]"""

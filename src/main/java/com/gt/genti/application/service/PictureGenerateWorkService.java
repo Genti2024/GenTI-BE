@@ -61,11 +61,11 @@ public class PictureGenerateWorkService {
 					foundCreator);
 			case ASSIGNING ->
 				foundPGR = pictureGenerateRequestRepository.findByStatusOrderByCreatedAtDesc(foundCreator, status);
-			default -> throw new ExpectedException(DomainErrorCode.NotSupportedTemp);
+			default -> throw ExpectedException.withLogging(DomainErrorCode.NotSupportedTemp);
 		}
 
 		return foundPGR.map(PGREQBriefFindByCreatorResponseDto::new)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureGenerateRequestNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureGenerateRequestNotFound));
 
 	}
 
@@ -74,9 +74,9 @@ public class PictureGenerateWorkService {
 		Creator foundCreator = findCreatorByUser(user);
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
 		if (foundPictureGenerateRequest.getCreator() == null) {
-			throw new ExpectedException(DomainErrorCode.NotMatchedYet);
+			throw ExpectedException.withLogging(DomainErrorCode.NotMatchedYet);
 		} else if (!Objects.equals(foundPictureGenerateRequest.getCreator().getId(), foundCreator.getId())) {
-			throw new ExpectedException(DomainErrorCode.NotAssignedToMe);
+			throw ExpectedException.withLogging(DomainErrorCode.NotAssignedToMe);
 		}
 
 		return new PGREQDetailFindResponseDto(foundPictureGenerateRequest);
@@ -122,7 +122,7 @@ public class PictureGenerateWorkService {
 	public Boolean acceptPictureGenerateRequest(User user, Long pictureGenerateRequestId) {
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
 		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser(), user)) {
-			throw new ExpectedException(DomainErrorCode.NotAssignedToMe);
+			throw ExpectedException.withLogging(DomainErrorCode.NotAssignedToMe);
 		}
 		foundPictureGenerateRequest.accept();
 		return true;
@@ -131,14 +131,14 @@ public class PictureGenerateWorkService {
 	private PictureGenerateRequest findPGREQ(Long pictureGenerateRequestId) {
 		return pictureGenerateRequestRepository.findById(
 				pictureGenerateRequestId)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureGenerateRequestNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureGenerateRequestNotFound));
 	}
 
 	@Transactional
 	public Boolean rejectPictureGenerateRequest(User user, Long pictureGenerateRequestId) {
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
 		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser(), user)) {
-			throw new ExpectedException(DomainErrorCode.NotAssignedToMe);
+			throw ExpectedException.withLogging(DomainErrorCode.NotAssignedToMe);
 		}
 
 		foundPictureGenerateRequest.reject();
@@ -152,7 +152,7 @@ public class PictureGenerateWorkService {
 		Creator foundCreator = findCreatorByUser(user);
 
 		if (!Objects.equals(foundPGRES.getCreator().getId(), foundCreator.getId())) {
-			throw new ExpectedException(DomainErrorCode.NotAssignedToMe);
+			throw ExpectedException.withLogging(DomainErrorCode.NotAssignedToMe);
 		}
 
 		pictureService.findPictureCreatedByCreatorByPictureGenerateResponse(foundPGRES);
@@ -162,7 +162,7 @@ public class PictureGenerateWorkService {
 		Duration elapsedDuration = foundPGRES.getElapsedTime();
 
 		if (elapsedDuration.compareTo(Duration.ofHours(TimeUtils.PGRES_LIMIT_HOUR)) > 0) {
-			throw new ExpectedException(DomainErrorCode.ExpiredPictureGenerateRequest);
+			throw ExpectedException.withLogging(DomainErrorCode.ExpiredPictureGenerateRequest);
 		}
 
 		Long reword = calculateReward(elapsedDuration.toMinutes());
@@ -174,7 +174,7 @@ public class PictureGenerateWorkService {
 
 		settlementRepository.save(settlement);
 		Deposit foundDeposit = depositRepository.findByUser(user)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.DepositNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.DepositNotFound));
 
 		foundDeposit.add(reword);
 
@@ -189,7 +189,7 @@ public class PictureGenerateWorkService {
 		List<PictureCompleted> pictureCompletedList = pictureService.findAllPictureCompletedByPictureGenerateResponse(
 			foundPGRES);
 		if (pictureCompletedList.isEmpty()) {
-			throw new ExpectedException(DomainErrorCode.FinalPictureNotUploadedYet);
+			throw ExpectedException.withLogging(DomainErrorCode.FinalPictureNotUploadedYet);
 		}
 		foundPGRES.adminSubmit();
 		Duration elapsedDuration = foundPGRES.getElapsedTime();
@@ -212,7 +212,7 @@ public class PictureGenerateWorkService {
 		Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPictureGenerateResponse = pictureGenerateResponseRepository.findById(
 				pictureGenerateResponseId)
-			.orElseThrow(() -> new ExpectedException(
+			.orElseThrow(() -> ExpectedException.withLogging(
 				DomainErrorCode.PictureGenerateResponseNotFound));
 
 		List<CreatePictureCompletedCommand> commandList = requestDtoList.stream().map(
@@ -241,12 +241,12 @@ public class PictureGenerateWorkService {
 	private PictureGenerateResponse findPGRES(Long pictureGenerateResponseId) {
 		return pictureGenerateResponseRepository.findById(
 				pictureGenerateResponseId)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureGenerateResponseNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureGenerateResponseNotFound));
 	}
 
 	private Creator findCreatorByUser(User user) {
 		return creatorRepository.findByUser(user)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.CreatorNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.CreatorNotFound));
 	}
 }
 

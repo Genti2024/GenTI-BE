@@ -53,7 +53,7 @@ public class PictureService {
 
 	public PictureUserFace findByUrlPictureUserFace(String key) {
 		return pictureUserFaceRepository.findByKey(key)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureUserFaceNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureUserFaceNotFound));
 	}
 
 	// public PictureCompleted findByUrlPictureCompleted(String key) {
@@ -62,7 +62,7 @@ public class PictureService {
 
 	public PictureCreatedByCreator findByUrlPictureCreatedByCreator(String key) {
 		return pictureCreatedByCreatorRepository.findByKey(key)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureCreatedByCreatorNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureCreatedByCreatorNotFound));
 	}
 
 	public Optional<PicturePose> findByUrlPicturePose(String key) {
@@ -71,13 +71,13 @@ public class PictureService {
 
 	public PictureProfile findByUrlPictureProfile(String key) {
 		return pictureProfileRepository.findByKey(key)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureProfileNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureProfileNotFound));
 	}
 
 	public PictureCreatedByCreator findPictureCreatedByCreatorByPictureGenerateResponse(
 		PictureGenerateResponse pictureGenerateResponse) {
 		return pictureCreatedByCreatorRepository.findByPictureGenerateResponse(pictureGenerateResponse)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.PictureCreatedByCreatorNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureCreatedByCreatorNotFound));
 	}
 
 	public Picture updatePicture(CreatePictureCompletedCommand command) {
@@ -189,7 +189,7 @@ public class PictureService {
 
 	private User findUser(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound));
 	}
 
 	public List<PictureProfile> findAllProfilePicture(User foundUser) {

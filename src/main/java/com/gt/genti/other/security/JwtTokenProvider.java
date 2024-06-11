@@ -102,9 +102,9 @@ public class JwtTokenProvider {
 				.parseClaimsJws(token) // 파싱 및 검증, 실패 시 에러
 				.getBody();
 		} catch (ExpiredJwtException expiredJwtException) {
-			throw new ExpectedException(DefaultErrorCode.TOKEN_EXPIRED);
+			throw ExpectedException.withLogging(DefaultErrorCode.TOKEN_EXPIRED);
 		} catch (Exception e) {
-			throw new ExpectedException(DefaultErrorCode.INVALID_TOKEN);
+			throw ExpectedException.withLogging(DefaultErrorCode.INVALID_TOKEN);
 		}
 	}
 

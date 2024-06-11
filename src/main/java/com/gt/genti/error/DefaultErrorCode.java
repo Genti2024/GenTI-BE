@@ -26,11 +26,13 @@ public enum DefaultErrorCode implements ErrorCode {
 	NotNullableEnum(HttpStatus.BAD_REQUEST, ErrorUtils.NotNullableEnum, " [%s] 값은 null 값을 허용하지 않습니다."),
 	DBToEnumFailed(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.DBToEnumFailed,
 		"DB -> ENUM 값 불러오기 실패  enum : %s value :  %s detail : %s"),
-	ValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError, "%s"),
-	UnrecognizedPropertyException(HttpStatus.BAD_REQUEST, ErrorUtils.UnrecognizedPropertyException, "%s"),
+	ControllerValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError, "%s"),
+	QueryParameterNotGiven(HttpStatus.BAD_REQUEST, ErrorUtils.QueryParameterNotGiven, "%s"),
+	UnrecognizedPropertyException(HttpStatus.BAD_REQUEST, ErrorUtils.UnrecognizedPropertyException, "json property parsing 중 오류 발생, %s"),
 	InvalidDataAccessApiUsageException(HttpStatus.BAD_REQUEST, ErrorUtils.InvalidDataAccessApiUsageException, "%s"),
 	NoHandlerFoundException(HttpStatus.NOT_FOUND, ErrorUtils.NoHandlerFoundException, "요청 uri : [%s] 핸들러가 없습니다."),
-	MethodNowSupported(HttpStatus.METHOD_NOT_ALLOWED, ErrorUtils.MethodNowSupported, " %s ");
+	MethodNotSupported(HttpStatus.METHOD_NOT_ALLOWED, ErrorUtils.MethodNowSupported, "%s, allowed methods : [%s]"),
+	MethodArgumentTypeMismatch(HttpStatus.BAD_REQUEST,ErrorUtils.MethodArgumentTypeMismatch , "%s" );
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

@@ -34,7 +34,7 @@ public class Deposit extends BaseTimeEntity {
 
 	public void add(Long amount){
 		if(amount < 0){
-			throw new ExpectedException(DomainErrorCode.AddPointAmountCannotBeMinus);
+			throw ExpectedException.withLogging(DomainErrorCode.AddPointAmountCannotBeMinus);
 		}
 		this.depositAmount += amount;
 	}

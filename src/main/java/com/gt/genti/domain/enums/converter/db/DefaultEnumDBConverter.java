@@ -1,8 +1,7 @@
-package com.gt.genti.domain.enums.converter;
+package com.gt.genti.domain.enums.converter.db;
 
 import com.gt.genti.domain.enums.ConvertableEnum;
 import com.gt.genti.error.DefaultErrorCode;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.AttributeConverter;
@@ -11,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class DefaultStringAttributeConverter<T extends Enum<T> & ConvertableEnum>
+public class DefaultEnumDBConverter<T extends Enum<T> & ConvertableEnum>
 	implements AttributeConverter<T, String> {
 	private final Class<T> enumClassType;
 
@@ -23,7 +22,7 @@ public class DefaultStringAttributeConverter<T extends Enum<T> & ConvertableEnum
 			if (enumClassType.getEnumConstants()[0].isNullable()) {
 				return null;
 			} else {
-				throw new ExpectedException(DefaultErrorCode.NotNullableEnum, enumClassType.getName());
+				throw ExpectedException.withLogging(DefaultErrorCode.NotNullableEnum, enumClassType.getName());
 			}
 		}
 	}

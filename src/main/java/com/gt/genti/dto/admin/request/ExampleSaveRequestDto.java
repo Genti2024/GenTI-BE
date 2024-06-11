@@ -1,6 +1,6 @@
 package com.gt.genti.dto.admin.request;
 
-import com.gt.genti.other.valid.Key;
+import com.gt.genti.other.valid.ValidKey;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ExampleSaveRequestDto {
-	@Key
+	@ValidKey
 	String key;
 	@NotNull
 	String prompt;

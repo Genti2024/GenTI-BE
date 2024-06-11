@@ -10,9 +10,9 @@ import jakarta.validation.Constraint;
 @Target(ElementType.FIELD) // 1
 @Retention(RetentionPolicy.RUNTIME) // 2
 @Constraint(validatedBy = KeyValidator.class) // 3
-public @interface Key {
+public @interface ValidKey {
 
-	String message() default "휴대폰 번호"; // 4
+	String message() default "S3 KEY 형식"; // 4
 
 	Class[] groups() default {};
 

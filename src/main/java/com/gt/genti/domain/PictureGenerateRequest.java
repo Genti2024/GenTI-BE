@@ -10,11 +10,11 @@ import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureRatio;
 import com.gt.genti.domain.enums.ShotCoverage;
-import com.gt.genti.domain.enums.converter.CameraAngleConverter;
-import com.gt.genti.domain.enums.converter.EnumUtil;
-import com.gt.genti.domain.enums.converter.PictureRatioConverter;
-import com.gt.genti.domain.enums.converter.RequestStatusConverter;
-import com.gt.genti.domain.enums.converter.ShotCoverageConverter;
+import com.gt.genti.domain.enums.converter.db.CameraAngleConverter;
+import com.gt.genti.domain.enums.converter.db.EnumUtil;
+import com.gt.genti.domain.enums.converter.db.PictureRatioConverter;
+import com.gt.genti.domain.enums.converter.db.RequestStatusConverter;
+import com.gt.genti.domain.enums.converter.db.ShotCoverageConverter;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.error.DomainErrorCode;
@@ -125,7 +125,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 
 	public void accept() {
 		if (LocalDateTime.now().isAfter(this.getModifiedAt().plusMinutes(ACCEPTABLE_TIME_MINUTE))) {
-			throw new ExpectedException(DomainErrorCode.ExpiredPictureGenerateRequest);
+			throw ExpectedException.withLogging(DomainErrorCode.ExpiredPictureGenerateRequest);
 		}
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;
 	}

@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class KeyValidator implements ConstraintValidator<Key, String> {
+public class KeyValidator implements ConstraintValidator<ValidKey, String> {
 
 	public static final String MESSAGE_TEMPLATE = "key 값은 /로 시작하는 문자열이여야합니다.";
 	public static final String KEY_VALIDATE = "key validate";

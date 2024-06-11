@@ -1,6 +1,6 @@
 package com.gt.genti.dto.common.request;
 
-import com.gt.genti.other.valid.Key;
+import com.gt.genti.other.valid.ValidKey;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommonPictureKeyUpdateRequestDto {
 
-	@Key
+	@ValidKey
 	String key;
 }

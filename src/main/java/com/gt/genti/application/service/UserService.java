@@ -122,6 +122,6 @@ public class UserService {
 
 	private User findUser(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(() -> new ExpectedException(DomainErrorCode.UserNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound));
 	}
 }

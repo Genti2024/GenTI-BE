@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.BankType;
-import com.gt.genti.domain.enums.converter.BankTypeConverter;
+import com.gt.genti.domain.enums.converter.db.BankTypeConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -17,7 +17,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

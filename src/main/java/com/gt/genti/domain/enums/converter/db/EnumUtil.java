@@ -1,4 +1,4 @@
-package com.gt.genti.domain.enums.converter;
+package com.gt.genti.domain.enums.converter.db;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class EnumUtil {
 				return enumValue;
 			}
 		}
-		throw new ExpectedException(DefaultErrorCode.NotNullableEnum, enumType);
+		throw ExpectedException.withLogging(DefaultErrorCode.NotNullableEnum, enumType);
 	}
 
 	public static <E extends Enum<E> & ConvertableEnum> E stringToEnum(Class<E> enumType, String value) {
@@ -33,7 +33,8 @@ public class EnumUtil {
 		try {
 			return convertNullToEnum(enumType);
 		} catch (Exception e) {
-			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed, enumType.getName(), value, e.getMessage());
+			throw ExpectedException.withLogging(DefaultErrorCode.DBToEnumFailed, enumType.getName(), value,
+				e.getMessage());
 		}
 	}
 
@@ -47,8 +48,17 @@ public class EnumUtil {
 		try {
 			return convertNullToEnum(enumType);
 		} catch (Exception e) {
-			throw new ExpectedException(DefaultErrorCode.DBToEnumFailed,
+			throw ExpectedException.withLogging(DefaultErrorCode.DBToEnumFailed,
 				List.of(enumType.getName(), value, e.getMessage()));
 		}
+	}
+
+	public static <E extends Enum<E>> boolean validateInputString(Class<E> enumType, String inputValue) {
+		for (E enumValue : enumType.getEnumConstants()) {
+			if (enumValue.name().equals(inputValue)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

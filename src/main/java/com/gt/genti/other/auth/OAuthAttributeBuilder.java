@@ -3,7 +3,7 @@ package com.gt.genti.other.auth;
 import java.util.Map;
 
 import com.gt.genti.domain.enums.OauthType;
-import com.gt.genti.domain.enums.converter.EnumUtil;
+import com.gt.genti.domain.enums.converter.db.EnumUtil;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
@@ -43,6 +43,6 @@ public class OAuthAttributeBuilder {
 
 			}
 		}
-		throw new ExpectedException(DomainErrorCode.NotAllowedOauthProvider,registrationId );
+		throw ExpectedException.withLogging(DomainErrorCode.NotAllowedOauthProvider,registrationId );
 	}
 }

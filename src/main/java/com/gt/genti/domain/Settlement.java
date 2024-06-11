@@ -4,7 +4,7 @@ import java.time.Duration;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.SettlementStatus;
-import com.gt.genti.domain.enums.converter.SettlementStatusConverter;
+import com.gt.genti.domain.enums.converter.db.SettlementStatusConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

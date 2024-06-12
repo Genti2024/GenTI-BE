@@ -14,8 +14,8 @@ import lombok.Builder;
 
 public class PictureEntityUtils {
 	@Builder
-	public static PictureCompleted makePictureCompleted(String url, PictureGenerateResponse pgres, User uploadedBy) {
-		return new PictureCompleted(url, pgres, uploadedBy);
+	public static PictureCompleted makePictureCompleted(String url, PictureGenerateResponse pgres, User uploadedBy, User requester) {
+		return new PictureCompleted(url, pgres, uploadedBy, requester);
 	}
 
 	@Builder

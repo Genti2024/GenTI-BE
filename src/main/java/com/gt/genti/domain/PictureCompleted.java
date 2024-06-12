@@ -32,13 +32,14 @@ public class PictureCompleted extends PictureEntity {
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCompleted(String key, PictureGenerateResponse pictureGenerateResponse, User uploadedBy) {
+	public PictureCompleted(String key, PictureGenerateResponse pictureGenerateResponse, User uploadedBy, User requester) {
 		this.key = key;
 		this.pictureGenerateResponse = pictureGenerateResponse;
 		this.setUploadedBy(uploadedBy);
+		this.requester =requester;
 	}
 
-	public void modify(String url) {
-		this.key = url;
+	public void modify(String key) {
+		this.key = key;
 	}
 }

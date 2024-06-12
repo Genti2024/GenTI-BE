@@ -28,5 +28,3 @@ springdoc:
     - /api/**
     - /logout
     - /
-
-

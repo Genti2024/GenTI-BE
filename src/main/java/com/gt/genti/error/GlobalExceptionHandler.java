@@ -27,6 +27,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jdk.jfr.StackTrace;
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
@@ -38,12 +39,12 @@ public class GlobalExceptionHandler {
 		return error(exception);
 	}
 
-	@ExceptionHandler(NoHandlerFoundException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
-		NoHandlerFoundException ex) {
-		String errorMessage = ex.getRequestURL();
-		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
-	}
+	// @ExceptionHandler(NoHandlerFoundException.class)
+	// public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
+	// 	NoHandlerFoundException ex) {
+	// 	String errorMessage = ex.getRequestURL();
+	// 	return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
+	// }
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<ApiResult<ExpectedException>> handleHttpRequestMethodNotSupportedException(
@@ -52,12 +53,12 @@ public class GlobalExceptionHandler {
 	}
 
 	// 없는 url로 요청 시
-	@ExceptionHandler(NoResourceFoundException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleNoResourceFoundException(
-		NoResourceFoundException ex) {
-		String errorMessage = ex.getResourcePath();
-		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
-	}
+	// @ExceptionHandler(NoResourceFoundException.class)
+	// public ResponseEntity<ApiResult<ExpectedException>> handleNoResourceFoundException(
+	// 	NoResourceFoundException ex) {
+	// 	String errorMessage = ex.getResourcePath();
+	// 	return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
+	// }
 
 	@ExceptionHandler(WebExchangeBindException.class)
 	protected ResponseEntity<ApiResult<ExpectedException>> processValidationError(WebExchangeBindException exception) {
@@ -119,17 +120,17 @@ public class GlobalExceptionHandler {
 		MissingServletRequestParameterException exception) {
 		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, exception.getMessage()));
 	}
-	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final Exception exception) {
-		String errorMessage = """
-			Class : %s
-			Cause : %s
-			Message : %s
-			StackTrace : %s
-			""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
-			exception.getStackTrace());
-		return error(ExpectedException.withLogging(DefaultErrorCode.UnHandledException, errorMessage));
-	}
+	// @ExceptionHandler(Exception.class)
+	// protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final Exception exception) {
+	// 	String errorMessage = """
+	// 		Class : %s
+	// 		Cause : %s
+	// 		Message : %s
+	// 		StackTrace : %s
+	// 		""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
+	// 		exception.getStackTrace());
+	// 	return error(ExpectedException.withLogging(DefaultErrorCode.UnHandledException, errorMessage));
+	// }
 
 	@NotNull
 	private static String makeFieldErrorMessage(FieldError fieldError) {

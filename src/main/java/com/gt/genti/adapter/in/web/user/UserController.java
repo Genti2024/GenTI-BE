@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
 import com.gt.genti.dto.user.response.UserFindResponseDto;
+import com.gt.genti.dto.user.response.UserInfoUpdateResponseDto;
 import com.gt.genti.other.annotation.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.auth.UserDetailsImpl;
@@ -41,7 +42,7 @@ public class UserController {
 	@ToBeUpdated
 	@CheckUserIsQuit
 	@PutMapping("")
-	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
+	public ResponseEntity<ApiResult<UserInfoUpdateResponseDto>> updateUserInfo(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		return success(userService.updateUserInfo(userDetails.getUser(), userInfoUpdateRequestDto));

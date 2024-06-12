@@ -15,6 +15,6 @@ public class CommonPictureUrlResponseDto {
 	public CommonPictureUrlResponseDto(Long id, String key) {
 		this.id = id;
 		this.key = key;
-		this.url = AwsUtils.CLOUDFRONT_BASEURL + key;
+		this.url = AwsUtils.CLOUDFRONT_BASEURL +"/" +key;
 	}
 }

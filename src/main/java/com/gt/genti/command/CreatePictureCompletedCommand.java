@@ -12,5 +12,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class CreatePictureCompletedCommand extends CommonPictureSaveCommand {
 	PictureGenerateResponse pictureGenerateResponse;
-
+	User requester;
 }

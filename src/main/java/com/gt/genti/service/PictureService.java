@@ -13,7 +13,6 @@ import com.gt.genti.command.CreatePictureCreatedByCreatorCommand;
 import com.gt.genti.command.CreatePicturePoseCommand;
 import com.gt.genti.command.CreatePictureUserFaceCommand;
 import com.gt.genti.command.PictureProfileSaveCommand;
-import com.gt.genti.domain.common.Picture;
 import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureCreatedByCreator;
 import com.gt.genti.domain.PictureGenerateResponse;
@@ -21,6 +20,7 @@ import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.common.Picture;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.util.PictureEntityUtils;
@@ -95,7 +95,9 @@ public class PictureService {
 		List<PictureCompleted> pictureCompletedList = commandList.stream().map(
 			command -> PictureEntityUtils.makePictureCompleted(
 				command.getKey(),
-				command.getPictureGenerateResponse(), command.getUploader())
+				command.getPictureGenerateResponse(),
+				command.getUploader(),
+				command.getRequester())
 		).toList();
 
 		return pictureCompletedRepository.saveAll(pictureCompletedList);

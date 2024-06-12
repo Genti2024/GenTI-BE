@@ -13,10 +13,9 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class CustomErrorController {
-
+	//
 	// @GetMapping("/error")
 	// public ResponseEntity<ApiUtils.ApiResult<String>> error(HttpServletRequest request) {
-	// 	return ApiUtils.error("""
-	// 		오류 path : [%s] """.formatted(request.getRequestURI()));
+	// 	return ApiUtils.error());
 	// }
 }

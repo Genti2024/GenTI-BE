@@ -1,10 +1,13 @@
 package com.gt.genti.application.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +23,11 @@ import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
 import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
 import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
 import com.gt.genti.dto.user.response.UserFindResponseDto;
+import com.gt.genti.dto.user.response.UserInfoUpdateResponseDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
+import com.gt.genti.other.auth.OAuthAttributeBuilder;
+import com.gt.genti.other.auth.OAuthAttributes;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureCompletedRepository;
@@ -43,20 +49,43 @@ public class UserService {
 
 	@Transactional
 	public UserFindResponseDto getUserInfo(User user) {
-		return new UserFindResponseDto(user);
+		User foundUser = findUser(user.getId());
+		List<CommonPictureUrlResponseDto> profilePictureResponseList = null;
+		if (!foundUser.getPictureProfileList().isEmpty()) {
+			profilePictureResponseList = foundUser.getPictureProfileList()
+				.stream()
+				.map(PictureEntity::mapToCommonResponse)
+				.toList();
+		}
+
+		return new UserFindResponseDto(foundUser.getId(), foundUser.getUsername(), foundUser.getNickname(),
+			profilePictureResponseList);
 	}
 
 	@Transactional
-	public UserFindResponseDto updateUserInfo(User user, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		user.updateName(userInfoUpdateRequestDto.getUserName());
+	public UserInfoUpdateResponseDto updateUserInfo(User user, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
+		User foundUser = findUser(user.getId());
+		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
 		if (!(userInfoUpdateRequestDto.getProfilePictureUrl().isEmpty()
 			|| userInfoUpdateRequestDto.getProfilePictureUrl().isBlank())) {
 			PictureProfile foundPictureProfile = pictureService.findByUrlPictureProfile(
 				userInfoUpdateRequestDto.getProfilePictureUrl());
-			user.addProfilePicture(foundPictureProfile);
+			foundUser.addProfilePicture(foundPictureProfile);
+		}
+		List<CommonPictureUrlResponseDto> profilePictureResponseList = null;
+		if (!foundUser.getPictureProfileList().isEmpty()) {
+			profilePictureResponseList = foundUser.getPictureProfileList()
+				.stream()
+				.map(PictureEntity::mapToCommonResponse)
+				.toList();
 		}
 
-		return new UserFindResponseDto(user);
+		return UserInfoUpdateResponseDto.builder()
+			.profilePictureList(profilePictureResponseList)
+			.id(foundUser.getId())
+			.nickname(foundUser.getNickname())
+			.username(foundUser.getUsername())
+			.build();
 	}
 
 	@Transactional
@@ -123,5 +152,14 @@ public class UserService {
 	private User findUser(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound));
+	}
+
+	public Optional<User> findOptionalUser(String email){
+		return userRepository.findByEmail(email);
+	}
+
+	public User createNewUser(User user) {
+		depositService.createDeposit(user);
+		return userRepository.save(user);
 	}
 }

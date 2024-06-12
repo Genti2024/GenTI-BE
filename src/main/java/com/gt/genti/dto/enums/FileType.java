@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum FileType {
 	CREATED_IMAGE("CREATED_IMAGE"),
+	ADMIN_UPLOADED_IMAGE("ADMIN_UPLOADED_IMAGE"),
 	USER_UPLOADED_IMAGE("USER_UPLOADED_IMAGE");
 
 	private final String stringValue;

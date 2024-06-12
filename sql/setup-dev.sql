@@ -61,6 +61,7 @@ values (1, LOCALTIME, LOCALTIME, 'user_face_picture_url1', 2),
 insert ignore into picture_generate_request (id, creator_id, picture_pose_id, requester_id, prompt, prompt_advanced,
                                              camera_angle,
                                              request_status, picture_ratio, shot_coverage, created_at, modified_at)
+
 VALUES (1, null, 4, 2, '생성된요청', 'prompt_advanced_test_1', 'ABOVE', 'CREATED', 'THREE_TWO', 'FACE',
         '2024-05-08 07:00:00', '2024-05-08 07:00:00'),
        (2, null, 3, 2, '취소된요청', 'prompt_advanced_test_2', 'EYE_LEVEL', 'CANCELED', 'THREE_TWO', 'UPPER_BODY',

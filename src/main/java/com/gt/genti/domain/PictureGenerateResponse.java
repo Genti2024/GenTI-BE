@@ -75,5 +75,12 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	public void adminSubmit() {
 		this.submittedByAdminAt = LocalDateTime.now();
 		this.status = PictureGenerateResponseStatus.SUBMITTED_FINAL;
+		this.request.completed();
+	}
+
+	public PictureGenerateResponse(Creator creator, PictureGenerateRequest request) {
+		this.creator = creator;
+		this.request = request;
+		this.status = PictureGenerateResponseStatus.BEFORE_WORK;
 	}
 }

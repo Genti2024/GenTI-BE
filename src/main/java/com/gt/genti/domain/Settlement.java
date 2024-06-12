@@ -44,9 +44,10 @@ public class Settlement extends BaseTimeEntity {
 	SettlementStatus settlementStatus;
 
 	@Builder
-	public Settlement(PictureGenerateResponse pictureGenerateResponse, Duration elapsed, Long reward) {
+	public Settlement(PictureGenerateResponse pictureGenerateResponse, Long elapsedMinutes, Long reward) {
 		this.pictureGenerateResponse = pictureGenerateResponse;
-		this.elapsedMinutes = elapsed.toMinutes();
+		this.elapsedMinutes = elapsedMinutes;
 		this.reward = reward;
+		this.settlementStatus = SettlementStatus.CREATED;
 	}
 }

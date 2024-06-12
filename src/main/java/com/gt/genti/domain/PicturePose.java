@@ -23,6 +23,8 @@ public class PicturePose extends PictureEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
+
+
 	public PicturePose(String key, User uploadedBy) {
 		this.key = key;
 		this.setUploadedBy(uploadedBy);

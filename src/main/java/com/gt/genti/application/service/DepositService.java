@@ -16,6 +16,5 @@ public class DepositService {
 	public Deposit createDeposit(User user) {
 		Deposit newDeposit = new Deposit(user);
 		return depositRepository.save(newDeposit);
-
 	}
 }

@@ -14,12 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class DefalutErrorController implements ErrorController {
 
 	// Controller 이전의 예외를 잡기위함
-	@RequestMapping("/error")
-	public ResponseEntity<ApiResult<ExpectedException>> handleError(HttpServletRequest request,
-		HttpServletResponse response) {
-		String requestURI = request.getRequestURI();
-
-		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, requestURI));
-	}
+	// @RequestMapping("/error")
+	// public ResponseEntity<ApiResult<ExpectedException>> handleError(HttpServletRequest request,
+	// 	HttpServletResponse response) {
+	// 	String requestURI = request.getRequestURI();
+	//
+	// 	return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, requestURI));
+	// }
 
 }

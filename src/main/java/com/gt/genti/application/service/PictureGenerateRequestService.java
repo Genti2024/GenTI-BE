@@ -91,7 +91,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				pictureGenerateRequestId)
 			.orElseThrow(() ->
 				ExpectedException.withLogging(DomainErrorCode.PictureGenerateRequestNotFound));
-		if (!Objects.equals(foundPictureGenerateRequest.getRequester().getId(), user)) {
+		if (!Objects.equals(foundPictureGenerateRequest.getRequester().getId(), user.getId())) {
 			throw ExpectedException.withLogging(DomainErrorCode.OnlyRequesterCanViewRequest);
 		}
 		return new PGREQDetailFindByUserResponseDto(foundPictureGenerateRequest);

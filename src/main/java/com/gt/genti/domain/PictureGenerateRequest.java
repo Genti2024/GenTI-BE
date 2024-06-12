@@ -31,6 +31,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -90,6 +91,12 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Convert(converter = PictureRatioConverter.class)
 	PictureRatio pictureRatio;
 
+	@Column(name = "memo")
+	String memo;
+
+	@Column(name = "admin_in_charge")
+	String adminInCharge;
+
 	@Builder
 	public PictureGenerateRequest(User requester, PGREQSaveRequestDto pgreqSaveRequestDto,
 		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced, PictureRatio pictureRatio) {
@@ -120,6 +127,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}
+		this.requester.addRequestCount();
 		this.creator = creator;
 	}
 
@@ -136,7 +144,12 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	}
 
 	public void assignToAdmin(Creator creator) {
+		this.requester.addRequestCount();
 		this.creator = creator;
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.MATCH_TO_ADMIN;
+	}
+
+	public void completed(){
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.COMPLETED;
 	}
 }

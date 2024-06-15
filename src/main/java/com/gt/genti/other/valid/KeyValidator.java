@@ -4,13 +4,16 @@ import com.gt.genti.dto.enums.FileType;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
-public class KeyValidator implements ConstraintValidator<ValidKey, String> {
+@AllArgsConstructor
+public class KeyValidator extends MyStringValidator implements ConstraintValidator<ValidKey, String> {
 
-	public static final String MESSAGE_TEMPLATE = "key 값은 FILE_TYPE 으로 시작해야합니다.";
-	public static final String KEY_VALIDATE = "key validate";
+	public static final String MESSAGE_TEMPLATE = "key 값은 FILE_TYPE 으로 시작해야합니다. 입력된 값 [%s]";
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
@@ -19,11 +22,7 @@ public class KeyValidator implements ConstraintValidator<ValidKey, String> {
 				return true;
 			}
 		}
-		constraintValidatorContext.disableDefaultConstraintViolation();
-		constraintValidatorContext
-			.buildConstraintViolationWithTemplate(MESSAGE_TEMPLATE)
-			.addPropertyNode(KEY_VALIDATE).addConstraintViolation();
+		addConstraintViolation(constraintValidatorContext, MESSAGE_TEMPLATE, value);
 		return false;
 	}
-
 }

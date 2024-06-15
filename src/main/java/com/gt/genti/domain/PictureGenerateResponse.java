@@ -68,7 +68,7 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 		this.memo = memo;
 	}
 
-	public Duration getElapsedTime() {
+	public Duration getCreatorElapsedTime() {
 		return Duration.between(this.getCreatedAt(), this.getSubmittedByCreatorAt());
 	}
 
@@ -82,5 +82,9 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 		this.creator = creator;
 		this.request = request;
 		this.status = PictureGenerateResponseStatus.BEFORE_WORK;
+	}
+
+	public Duration getAdminElapsedTime() {
+		return Duration.between(this.getCreatedAt(), this.getSubmittedByAdminAt());
 	}
 }

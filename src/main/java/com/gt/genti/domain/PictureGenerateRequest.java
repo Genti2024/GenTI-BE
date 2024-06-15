@@ -20,6 +20,7 @@ import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -61,7 +62,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@OneToMany(mappedBy = "request")
 	List<PictureGenerateResponse> responseList;
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.REMOVE)
 	@JoinTable(name = "picture_generate_request_picture_user_face")
 	List<PictureUserFace> userFacePictureList;
 
@@ -104,7 +105,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.prompt = pgreqSaveRequestDto.getPrompt();
 		this.promptAdvanced = promptAdvanced;
 		this.picturePose = picturePose;
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.ASSIGNING;
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.CREATED;
 		this.cameraAngle = pgreqSaveRequestDto.getCameraAngle();
 		this.shotCoverage = pgreqSaveRequestDto.getShotCoverage();
 		this.userFacePictureList = userFacePictureList;
@@ -127,6 +128,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.ASSIGNING;
 		this.requester.addRequestCount();
 		this.creator = creator;
 	}

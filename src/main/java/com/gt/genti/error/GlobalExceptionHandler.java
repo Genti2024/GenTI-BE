@@ -15,6 +15,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -99,6 +100,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
 
 		return error(ExpectedException.withLogging(DefaultErrorCode.MethodArgumentTypeMismatch, ex.getMessage()));
+	}
+
+	@ExceptionHandler(MissingPathVariableException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleMissingPathVariableException(MissingPathVariableException ex) {
+
+		return error(ExpectedException.withLogging(DefaultErrorCode.MissingPathVariableException, ex.getMessage()));
 	}
 
 	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시

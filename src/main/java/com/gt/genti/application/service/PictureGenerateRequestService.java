@@ -6,7 +6,6 @@ import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
@@ -108,7 +107,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	@Transactional
 	public PictureGenerateRequest createPictureGenerateRequest(User requester,
 		PGREQSaveRequestDto pgreqSaveRequestDto) {
 
@@ -146,8 +144,10 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.pictureRatio(pgreqSaveRequestDto.getPictureRatio())
 			.build();
 
-		requestMatchService.matchNewRequest(pgr);
-		return pictureGenerateRequestPort.save(pgr);
+		PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(pgr);
+		requestMatchService.matchNewRequest(savedPGREQ);
+
+		return savedPGREQ;
 	}
 
 	@Override

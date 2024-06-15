@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.UserService;
 import com.gt.genti.domain.enums.UserRole;
-import com.gt.genti.domain.enums.converter.db.EnumUtil;
 import com.gt.genti.dto.admin.request.UserRoleUpdateRequestDto;
 import com.gt.genti.dto.admin.request.UserStatusUpdateRequestDto;
 import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
@@ -47,20 +46,15 @@ public class AdminUserController {
 
 	@GetMapping("/users")
 	public ResponseEntity<ApiResult<Page<UserFindByAdminResponseDto>>> getAllUserInfo(
-		@RequestParam(value = "role") @ValidUserRole @NotNull UserRole role,
+		@RequestParam(value = "role") @ValidUserRole @NotNull String role,
 		@RequestParam(value = "page") @NotNull @Min(0) int page,
 		@RequestParam(value = "size") @NotNull @Min(1) int size
 	) {
-
-		//TODO Role에 따라 분기
-		// edited at 2024-05-24
-		// author 서병렬
 		Page<UserFindByAdminResponseDto> result;
 		if (Objects.equals(role, "ALL")) {
-			result = userService.getAllUserInfo(page,size);
+			result = userService.getAllUserInfo(page, size);
 		} else {
-			// UserRole userRole = EnumUtil.stringToEnum(UserRole.class, role);
-			result = userService.getAllUserInfo(role, page,size);
+			result = userService.getAllUserInfo(UserRole.valueOf(role), page, size);
 		}
 		return success(result);
 	}

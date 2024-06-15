@@ -52,7 +52,8 @@ public enum DomainErrorCode implements ErrorCode {
 	OnlyRequesterCanViewRequest(HttpStatus.FORBIDDEN, ErrorUtils.OnlyRequesterCanViewRequest,
 		"사진생성요청을 요청한 유저만 볼 수 있습니다."),
 	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotAllowedOauthProvider, "허가되지 않은 oauth type %s"),
-	UserNotLoggedIn(HttpStatus.UNAUTHORIZED, ErrorUtils.UserNotLoggedIn, "로그아웃되었습니다. 다시 로그인해주세요");
+	UserNotLoggedIn(HttpStatus.UNAUTHORIZED, ErrorUtils.UserNotLoggedIn, "로그아웃되었습니다. 다시 로그인해주세요"),
+	AlreadyCompletedResponse(HttpStatus.BAD_REQUEST, ErrorUtils.AlreadyCompletedRequest, "이미 완료된 응답을 수정할 수 없습니다.");
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

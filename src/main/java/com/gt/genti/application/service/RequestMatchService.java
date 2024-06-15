@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
+import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.enums.RequestMatchStrategy;
 import com.gt.genti.external.discord.controller.DiscordController;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
+import com.gt.genti.repository.PictureGenerateResponseRepository;
 import com.gt.genti.service.AdminService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,11 +26,15 @@ import lombok.extern.slf4j.Slf4j;
 public class RequestMatchService {
 	private final CreatorRepository creatorRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
+	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final DiscordController discordController;
-	private final MatchingRegistry matchingRegistry;
 	private final AdminService adminService;
 
 	public static RequestMatchStrategy CURRENT_STRATEGY = RequestMatchStrategy.ADMIN_ONLY;
+	public static RequestMatchStrategy changeMatchingStrategy(RequestMatchStrategy strategy){
+		CURRENT_STRATEGY = strategy;
+		return CURRENT_STRATEGY;
+	}
 
 	@Transactional
 	public void matchPictureGenerateRequests() {
@@ -38,32 +44,38 @@ public class RequestMatchService {
 			""".formatted(CURRENT_STRATEGY.getStringValue())).append('\n');
 
 		List<PictureGenerateRequest> pendingRequestList = pictureGenerateRequestRepository.findPendingRequests();
-		List<Creator> creatorList = creatorRepository.findAllAvailableCreator();
+		List<Creator> creatorList = getCreatorListExceptAdmin();
+
 		matchRequest(pendingRequestList, creatorList, resultSB);
-
 	}
-
+	@Transactional
 	public void matchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
 		StringBuilder resultSB = new StringBuilder();
 		resultSB.append("신규 요청에 대하여 매칭 시도");
 		matchRequest(pictureGenerateRequest, resultSB);
 	}
+
 	public void matchRejectedRequest(PictureGenerateRequest pictureGenerateRequest) {
 		StringBuilder resultSB = new StringBuilder();
 		resultSB.append("거절된 요청에 대해서 재 매칭 시도");
 		matchRequest(pictureGenerateRequest, resultSB);
 	}
+
 	private void matchRequestToAdmin(List<PictureGenerateRequest> pendingRequestList, StringBuilder resultSB) {
 		Creator adminCreator = adminService.getAdminCreator();
 		int requestCount = pendingRequestList.size();
 		List<String> matchResultList = new ArrayList<>();
+		List<PictureGenerateResponse> pgresList = new ArrayList<>();
 		pendingRequestList.forEach(pgr -> {
 			pgr.assignToAdmin(adminCreator);
+			pgresList.add(new PictureGenerateResponse(adminCreator, pgr));
 			String result = """
-				email : [%s] id : [%d] 요청을 어드민에게 매칭
+				email : [%s] 가 요청한 id : [%d] 요청을 어드민에게 매칭
 				  """.formatted(pgr.getRequester().getEmail(), pgr.getId());
 			matchResultList.add(result);
 		});
+
+		pictureGenerateResponseRepository.saveAll(pgresList);
 
 		String result = """
 			대기중이던 요청 [%d]개 전부를 어드민에게 매칭함
@@ -83,7 +95,7 @@ public class RequestMatchService {
 				PictureGenerateRequest pgr = pendingRequestList.get(i);
 				pgr.assign(creator);
 				String result = """
-					email : [%s] id : [%d] 요청을 작업자 email : [%s] id : [%d]에게 매칭
+					email : [%s]가 요청한 id : [%d] 요청을 작업자 email : [%s] id : [%d]에게 매칭
 					  """.formatted(pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(),
 					creator.getId());
 				resultSB.append(result).append('\n');
@@ -155,20 +167,11 @@ public class RequestMatchService {
 
 	}
 
+
 	private void matchRequest(PictureGenerateRequest pictureGenerateRequest, StringBuilder resultSB) {
-		List<Creator> availableCreatorList = creatorRepository.findAllAvailableCreator();
+		List<Creator> availableCreatorList = getCreatorListExceptAdmin();
 		List<PictureGenerateRequest> justOneRequest = List.of(pictureGenerateRequest);
 		matchRequest(justOneRequest, availableCreatorList, resultSB);
-	}
-
-	private static String newRequestNotAvailable(PictureGenerateRequest pictureGenerateRequest) {
-		return """
-			새로운 요청 id : [%d]에 대하여 작업 가능한 작업자가 없음 어드민에게 매칭""".formatted(pictureGenerateRequest.getId());
-	}
-
-	private static String notHaveNewCreatorMessage(PictureGenerateRequest pictureGenerateRequest) {
-		return """
-			매칭 취소되었던 요청 id : [%d]에 대하여 작업 가능한 작업자가 없음 어드민에게 매칭""".formatted(pictureGenerateRequest.getId());
 	}
 
 	private void pushToCreator(Creator creator) {
@@ -181,6 +184,12 @@ public class RequestMatchService {
 		String result = sb.toString();
 		sb.setLength(0);
 		return result;
+	}
 
+	private List<Creator> getCreatorListExceptAdmin(){
+		List<Creator> allCreator = creatorRepository.findAllAvailableCreator();
+		Creator adminCreator = adminService.getAdminCreator();
+		allCreator.removeIf(creator -> creator.getId().equals(adminCreator.getId()));
+		return allCreator;
 	}
 }

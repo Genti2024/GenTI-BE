@@ -167,7 +167,7 @@ public class PictureGenerateWorkService {
 
 		foundPGRES.creatorSubmit();
 
-		Duration elapsedDuration = foundPGRES.getElapsedTime();
+		Duration elapsedDuration = foundPGRES.getCreatorElapsedTime();
 
 		if (elapsedDuration.compareTo(Duration.ofHours(TimeUtils.PGRES_LIMIT_HOUR)) > 0) {
 			throw ExpectedException.withLogging(DomainErrorCode.ExpiredPictureGenerateRequest);
@@ -186,6 +186,7 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.DepositNotFound));
 
 		foundDeposit.add(reword);
+		foundCreator.completeTask();
 
 		return PGRESUpdateByCreatorResponseDto.builder()
 			.elapsedTime(getTimeString(elapsedDuration))
@@ -202,7 +203,7 @@ public class PictureGenerateWorkService {
 			throw ExpectedException.withLogging(DomainErrorCode.FinalPictureNotUploadedYet);
 		}
 		foundPGRES.adminSubmit();
-		Duration elapsedDuration = foundPGRES.getElapsedTime();
+		Duration elapsedDuration = foundPGRES.getAdminElapsedTime();
 
 		//TODO 어드민은 시간 체크 할 필요 없겠지?
 		// edited at 2024-05-20
@@ -224,6 +225,10 @@ public class PictureGenerateWorkService {
 				pictureGenerateResponseId)
 			.orElseThrow(() -> ExpectedException.withLogging(
 				DomainErrorCode.PictureGenerateResponseNotFound));
+
+		if (PictureGenerateResponseStatus.COMPLETED.equals(foundPGRES.getStatus())) {
+			throw ExpectedException.withLogging(DomainErrorCode.AlreadyCompletedResponse);
+		}
 
 		List<CreatePictureCompletedCommand> commandList = requestDtoList.stream().map(
 			dto -> (CreatePictureCompletedCommand)CreatePictureCompletedCommand.builder()

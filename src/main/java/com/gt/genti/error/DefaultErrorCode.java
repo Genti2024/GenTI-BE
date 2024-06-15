@@ -31,8 +31,9 @@ public enum DefaultErrorCode implements ErrorCode {
 	UnrecognizedPropertyException(HttpStatus.BAD_REQUEST, ErrorUtils.UnrecognizedPropertyException, "json property parsing 중 오류 발생, %s"),
 	InvalidDataAccessApiUsageException(HttpStatus.BAD_REQUEST, ErrorUtils.InvalidDataAccessApiUsageException, "%s"),
 	NoHandlerFoundException(HttpStatus.NOT_FOUND, ErrorUtils.NoHandlerFoundException, "요청 uri : [%s] 핸들러가 없습니다."),
-	MethodNotSupported(HttpStatus.METHOD_NOT_ALLOWED, ErrorUtils.MethodNowSupported, "%s, allowed methods : [%s]"),
-	MethodArgumentTypeMismatch(HttpStatus.BAD_REQUEST,ErrorUtils.MethodArgumentTypeMismatch , "%s" );
+	MethodNotSupported(HttpStatus.METHOD_NOT_ALLOWED, ErrorUtils.MethodNotSupported, "%s, allowed methods : [%s]"),
+	MethodArgumentTypeMismatch(HttpStatus.BAD_REQUEST,ErrorUtils.MethodArgumentTypeMismatch , "%s" ),
+	MissingPathVariableException(HttpStatus.BAD_REQUEST,ErrorUtils.MethodArgumentTypeMismatch , "query param 에러 %s ");
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

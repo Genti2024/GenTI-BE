@@ -74,9 +74,11 @@ public class ErrorUtils {
 	public static final String UnrecognizedPropertyException = CODE(SERVER, 3);
 	public static final String InvalidDataAccessApiUsageException = CODE(SERVER, 4);
 	public static final String UserNotLoggedIn = CODE(USER, 6);
-	public static final String MethodNowSupported = CODE(SERVER, 5);
+	public static final String MethodNotSupported = CODE(SERVER, 5);
 
 	public static final String QueryParameterNotGiven = CODE(SERVER, 6);
 
 	public static final String MethodArgumentTypeMismatch = CODE(SERVER, 7);
+	public static final String AlreadyCompletedRequest = CODE(RESPONSE, 4);
+
 }

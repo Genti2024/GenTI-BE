@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gt.genti.domain.PictureGenerateResponse;
-import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.other.util.PictureEntityUtils;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,11 +26,11 @@ public class PGRESDetailFindByAdminResponseDto {
 		this.memo = pgres.getMemo();
 		this.pictureCompletedList = pgres.getCompletedPictureList()
 			.stream()
-			.map(PictureEntity::mapToCommonResponse)
+			.map(PictureEntityUtils::toCommonResponse)
 			.toList();
 		this.pictureCreatedByCreatorList = pgres.getCreatedByCreatorPictureList()
 			.stream()
-			.map(PictureEntity::mapToCommonResponse)
+			.map(PictureEntityUtils::toCommonResponse)
 			.toList();
 		this.responseStatus = pgres.getStatus();
 		this.createdAt = pgres.getCreatedAt();

@@ -66,9 +66,13 @@ public class Creator extends BaseTimeEntity {
 		this.completedTaskCount = 0;
 	}
 
-	public void updateAccountInfo(BankType bankType, String accountNumber, String accountHolder){
+	public void updateAccountInfo(BankType bankType, String accountNumber, String accountHolder) {
 		this.bankType = bankType;
 		this.accountNumber = accountNumber;
 		this.accountHolder = accountHolder;
+	}
+
+	public void completeTask() {
+		this.completedTaskCount += 1;
 	}
 }

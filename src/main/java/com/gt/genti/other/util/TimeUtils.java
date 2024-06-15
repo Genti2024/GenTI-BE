@@ -34,4 +34,8 @@ public class TimeUtils {
 				계산된 응답소요시간은 [%d분]"""
 				.formatted(elapsedMinutes));
 	}
+
+	public static String getZeroTime() {
+		return "00:00:00";
+	}
 }

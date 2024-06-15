@@ -24,6 +24,7 @@ public abstract class PictureEntity extends BaseTimeEntity implements Picture {
 
 	@Override
 	public CommonPictureUrlResponseDto mapToCommonResponse() {
+
 		return new CommonPictureUrlResponseDto(this.getId(), this.getKey());
 	}
 

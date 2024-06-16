@@ -12,8 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.UserRole;
 
-import io.lettuce.core.Value;
-
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email);
 

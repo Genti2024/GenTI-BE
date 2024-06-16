@@ -31,11 +31,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Table(name = "users") // h2 예약어 해결법 못찾음
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,7 +60,7 @@ public class User extends BaseTimeEntity {
 	@Column(name = "email")
 	String email;
 
-	@Column(name = "sex")
+	@Column(name = "sex", nullable = false)
 	@Convert(converter = SexConverter.class)
 	Sex sex;
 
@@ -103,6 +106,7 @@ public class User extends BaseTimeEntity {
 	LocalDateTime lastLoginDate;
 
 	@Column(name = "login", nullable = false)
+	@ColumnDefault("false")
 	Boolean login;
 
 	// user hard delete시 deposit도 삭제
@@ -115,6 +119,19 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "birth_date")
 	LocalDate birthDate;
+
+	@PrePersist
+	public void prePersist() {
+		if (this.userStatus == null) {
+			this.userStatus = UserStatus.ACTIVATED;  // 기본값 설정
+		}
+		if (this.login == null) {
+			this.login = true;
+		}
+		if (this.sex == null){
+			this.sex = Sex.NONE;
+		}
+	}
 
 	public static User createNewSocialUser(OAuthAttributes oauthAttributes) {
 		String email = oauthAttributes.getEmail();
@@ -184,7 +201,7 @@ public class User extends BaseTimeEntity {
 	public User(List<PictureProfile> pictureProfileList, List<PictureUserFace> pictureUserFaceList, String email,
 		String introduction,
 		String username, String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password,
-		Creator creator, UserRole userRole, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt) {
+		Creator creator, UserRole userRole, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate) {
 		this.pictureProfileList = pictureProfileList;
 		this.pictureUserFaceList = pictureUserFaceList;
 		this.email = email;
@@ -199,6 +216,7 @@ public class User extends BaseTimeEntity {
 		this.userRole = userRole;
 		this.lastLoginSocialPlatform = lastLoginSocialPlatform;
 		this.deletedAt = deletedAt;
+		this.lastLoginDate = lastLoginDate;
 	}
 
 	public void addRequestCount() {

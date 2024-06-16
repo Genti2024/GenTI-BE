@@ -3,6 +3,7 @@ package com.gt.genti.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.UserRepository;
 import com.gt.genti.service.config.TestConfig;
 
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "common", "secret"})
 @SpringBootTest(classes = TestConfig.class)
 public class MatchTest {
 	@Autowired
@@ -43,10 +44,10 @@ public class MatchTest {
 	PictureService pictureService;
 
 	@Autowired
-	UserRepository uploaderRepository;
+	UserRepository userRepository;
 
 	@Autowired
-	UserService uploaderService;
+	UserService userService;
 
 	@Autowired
 	AdminService adminService;
@@ -58,12 +59,12 @@ public class MatchTest {
 	public void oneRequestWithAdminStrategy() {
 		// given
 		User requester = getTestUser();
-		User savedUser = uploaderRepository.save(requester);
+		User savedUser = userRepository.save(requester);
 
 		User adminUser = getTestAdminUser();
-		User savedAdmin = uploaderRepository.save(adminUser);
+		User savedAdmin = userRepository.save(adminUser);
 		// admin으로 uploaderrole 변경시 admin creator 생성됨
-		uploaderService.updateUserRole(savedAdmin.getId(),
+		userService.updateUserRole(savedAdmin.getId(),
 			UserRoleUpdateRequestDto.builder().userRole(UserRole.ADMIN).build());
 
 		CreatePicturePoseCommand command = getCreatePicturePoseCommand(savedUser);
@@ -101,6 +102,7 @@ public class MatchTest {
 			.userStatus(UserStatus.ACTIVATED)
 			.lastLoginSocialPlatform(OauthType.GOOGLE)
 			.username("adminusername")
+			.lastLoginDate(LocalDateTime.now())
 			.build();
 	}
 
@@ -146,6 +148,7 @@ public class MatchTest {
 			.nickname("nickname")
 			.pictureUserFaceList(null)
 			.username("username")
+			.lastLoginDate(LocalDateTime.now())
 			.build();
 	}
 }

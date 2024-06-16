@@ -63,7 +63,9 @@ public class SecurityConfig {
 		"/swagger-ui/**",
 		"/swagger-resources/**",
 		"/v3/api-docs/**",
-		"/api-docs/**"
+		"/api-docs/**",
+		"/h2-console/**",
+		"/h2-console"
 	};
 
 	public static String[] COMMON_RESOURCE_AND_ALLOWED_URL;

@@ -3,6 +3,7 @@ spring:
     group:
       local:
       deploy:
+      test:
     include:
       - secret
       - common

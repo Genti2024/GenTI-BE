@@ -6,6 +6,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.BankType;
+import com.gt.genti.domain.enums.Sex;
+import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.db.BankTypeConverter;
 
 import jakarta.persistence.Column;
@@ -17,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -50,7 +53,6 @@ public class Creator extends BaseTimeEntity {
 
 	@Convert(converter = BankTypeConverter.class)
 	@Column(name = "bank_type", nullable = false)
-		@ColumnDefault("NONE")
 	BankType bankType;
 
 	@Column(name = "account_number", nullable = false)
@@ -63,6 +65,16 @@ public class Creator extends BaseTimeEntity {
 
 	@Column(name = "completed_task_count", nullable = false)
 	int completedTaskCount;
+
+	@PrePersist
+	public void prePersist() {
+		if (this.bankType == null) {
+			this.bankType = BankType.NONE;
+		}
+		if(this.workable == null){
+			this.workable = true;
+		}
+	}
 
 	public Creator(User user) {
 		this.workable = true;

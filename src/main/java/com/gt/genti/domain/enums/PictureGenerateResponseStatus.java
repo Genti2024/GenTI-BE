@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum PictureGenerateResponseStatus implements ConvertableEnum {
 	BEFORE_WORK("BEFORE_WORK"),
 	SUBMITTED_FIRST("SUBMITTED_FIRST"),
+	ADMIN_IN_PROGRESS("ADMIN_IN_PROGRESS"),
 	SUBMITTED_FINAL("SUBMITTED_FINAL"),
 	REPORTED("REPORTED"),
 	COMPLETED("COMPLETED");

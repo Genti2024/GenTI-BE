@@ -53,7 +53,13 @@ public enum DomainErrorCode implements ErrorCode {
 		"사진생성요청을 요청한 유저만 볼 수 있습니다."),
 	NotAllowedOauthProvider(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotAllowedOauthProvider, "허가되지 않은 oauth type %s"),
 	UserNotLoggedIn(HttpStatus.UNAUTHORIZED, ErrorUtils.UserNotLoggedIn, "로그아웃되었습니다. 다시 로그인해주세요"),
-	AlreadyCompletedResponse(HttpStatus.BAD_REQUEST, ErrorUtils.AlreadyCompletedRequest, "이미 완료된 응답을 수정할 수 없습니다.");
+	PGRESStateException(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.PGRESStateException,
+		"현재 사진생성응답 status [%s] 해당 요청을 수행할 수 없습니다."),
+	NoSettlementForWithdrawalException(HttpStatus.BAD_REQUEST, ErrorUtils.NoSettlementForWithdrawalException,
+		"출금 가능한 정산 내역이 없습니다."),
+	AlreadyCompletedResponse(HttpStatus.BAD_REQUEST, ErrorUtils.AlreadyCompletedRequest, "이미 완료된 응답을 수정할 수 없습니다."),
+	WithdrawRequestNotFound(HttpStatus.NOT_FOUND, ErrorUtils.WithdrawRequestNotFound, "해당 출금 요청을 찾을 수 없습니다."),
+	NotEnoughBalance(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotEnoughBalance, "해당 공급자의 출금가능 잔액이 부족하여 요청을 완료할 수 없습니다.");
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

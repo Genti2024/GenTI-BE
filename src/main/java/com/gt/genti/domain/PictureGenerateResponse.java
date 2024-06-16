@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.domain.enums.converter.db.PictureGenerateResponseStatusConverter;
@@ -45,31 +47,42 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	@JoinColumn(name = "request_id")
 	PictureGenerateRequest request;
 
-	@Column(name = "memo")
-	String memo;
-
 	@Convert(converter = PictureGenerateResponseStatusConverter.class)
 	PictureGenerateResponseStatus status;
+
+	@Column(name = "memo", nullable = false)
+	@ColumnDefault("")
+	String memo;
+
+	@Column(name = "admin_in_charge", nullable = false)
+	@ColumnDefault("")
+	String adminInCharge;
 
 	@Column(name = "submitted_by_creator_at")
 	LocalDateTime submittedByCreatorAt;
 	@Column(name = "submitted_by_admin_at")
 	LocalDateTime submittedByAdminAt;
 
-	public void creatorSubmit() {
+	public Duration creatorSubmitAndGetElaspedTime() {
 		//TODO 공급자가 제출시 불가한 상태가 있는지 생각해볼것
 		// edited at 2024-05-20
 		// author 서병렬
 		this.submittedByCreatorAt = LocalDateTime.now();
 		this.status = PictureGenerateResponseStatus.SUBMITTED_FIRST;
+		return getCreatorElapsedTime();
+	}
+
+	private Duration getCreatorElapsedTime() {
+		return Duration.between(this.getCreatedAt(), this.getSubmittedByCreatorAt());
 	}
 
 	public void updateMemo(String memo) {
 		this.memo = memo;
 	}
 
-	public Duration getCreatorElapsedTime() {
-		return Duration.between(this.getCreatedAt(), this.getSubmittedByCreatorAt());
+	public void updateInChargeAdmin(String adminInCharge) {
+		this.adminInCharge = adminInCharge;
+		this.status = PictureGenerateResponseStatus.ADMIN_IN_PROGRESS;
 	}
 
 	public void adminSubmit() {

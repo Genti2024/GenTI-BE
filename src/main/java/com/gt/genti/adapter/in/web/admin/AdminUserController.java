@@ -5,6 +5,8 @@ import static com.gt.genti.other.util.ApiUtils.*;
 import java.util.Objects;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,17 +48,13 @@ public class AdminUserController {
 
 	@GetMapping("/users")
 	public ResponseEntity<ApiResult<Page<UserFindByAdminResponseDto>>> getAllUserInfo(
-		@RequestParam(value = "role") @ValidUserRole @NotNull String role,
+		@RequestParam(value = "role", defaultValue = "ALL") @ValidUserRole @NotNull String role,
 		@RequestParam(value = "page") @NotNull @Min(0) int page,
 		@RequestParam(value = "size") @NotNull @Min(1) int size
 	) {
-		Page<UserFindByAdminResponseDto> result;
-		if (Objects.equals(role, "ALL")) {
-			result = userService.getAllUserInfo(page, size);
-		} else {
-			result = userService.getAllUserInfo(UserRole.valueOf(role), page, size);
-		}
-		return success(result);
+		Pageable pageable = PageRequest.of(page, size);
+
+		return success(userService.getAllUserInfo(pageable, role));
 	}
 
 }

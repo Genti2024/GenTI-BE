@@ -1,13 +1,10 @@
 package com.gt.genti.application.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +23,6 @@ import com.gt.genti.dto.user.response.UserFindResponseDto;
 import com.gt.genti.dto.user.response.UserInfoUpdateResponseDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
-import com.gt.genti.other.auth.OAuthAttributeBuilder;
-import com.gt.genti.other.auth.OAuthAttributes;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.PictureCompletedRepository;
@@ -130,17 +125,18 @@ public class UserService {
 			.toList();
 	}
 
-	public Page<UserFindByAdminResponseDto> getAllUserInfo(int page, int size) {
-		if (page < 0) {
-			page = 0;
-		}
+	public Page<UserFindByAdminResponseDto> getAllUserInfo(Pageable pageable) {
 
-		Pageable pageable = PageRequest.of(page, size);
 		return userRepository.findAll(pageable).map(UserFindByAdminResponseDto::new);
 	}
 
-	public Page<UserFindByAdminResponseDto> getAllUserInfo(UserRole userRole, int page, int size) {
-		return null;
+	public Page<UserFindByAdminResponseDto> getAllUserInfo(Pageable pageable, String userRoleString) {
+		if (userRoleString.equals("ALL")) {
+			return userRepository.findAll(pageable).map(UserFindByAdminResponseDto::new);
+		} else {
+			return userRepository.findAllByUserRole(pageable, UserRole.valueOf(userRoleString))
+				.map(UserFindByAdminResponseDto::new);
+		}
 	}
 
 	@Transactional
@@ -154,7 +150,7 @@ public class UserService {
 			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound));
 	}
 
-	public Optional<User> findOptionalUser(String email){
+	public Optional<User> findOptionalUser(String email) {
 		return userRepository.findByEmail(email);
 	}
 

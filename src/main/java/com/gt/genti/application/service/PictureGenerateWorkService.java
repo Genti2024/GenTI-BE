@@ -23,13 +23,17 @@ import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.dto.PGREQDetailFindResponseDto;
-import com.gt.genti.dto.admin.response.PGRESUpdateByAdminResponseDto;
+import com.gt.genti.dto.admin.request.PGRESUpdateAdminInChargeRequestDto;
+import com.gt.genti.dto.admin.response.PGRESSubmitByAdminResponseDto;
+import com.gt.genti.dto.admin.response.PGRESUpdateAdminInChargeResponseDto;
 import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
 import com.gt.genti.dto.creator.request.MemoUpdateRequestDto;
 import com.gt.genti.dto.creator.response.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.dto.creator.response.PGRESUpdateByCreatorResponseDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
+import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.other.util.TimeUtils;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.DepositRepository;
@@ -162,40 +166,40 @@ public class PictureGenerateWorkService {
 		if (!Objects.equals(foundPGRES.getCreator().getId(), foundCreator.getId())) {
 			throw ExpectedException.withLogging(DomainErrorCode.NotAssignedToMe);
 		}
-
 		pictureService.findPictureCreatedByCreatorByPictureGenerateResponse(foundPGRES);
 
-		foundPGRES.creatorSubmit();
-
-		Duration elapsedDuration = foundPGRES.getCreatorElapsedTime();
-
+		Duration elapsedDuration = foundPGRES.creatorSubmitAndGetElaspedTime();
 		if (elapsedDuration.compareTo(Duration.ofHours(TimeUtils.PGRES_LIMIT_HOUR)) > 0) {
 			throw ExpectedException.withLogging(DomainErrorCode.ExpiredPictureGenerateRequest);
 		}
+		Long reward = calculateReward(elapsedDuration.toMinutes());
 
-		Long reword = calculateReward(elapsedDuration.toMinutes());
-
-		Settlement settlement = Settlement.builder()
-			.pictureGenerateResponse(foundPGRES)
-			.elapsedMinutes(elapsedDuration.toMinutes())
-			.reward(reword)
-			.build();
-
-		settlementRepository.save(settlement);
-		Deposit foundDeposit = depositRepository.findByUser(user)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.DepositNotFound));
-
-		foundDeposit.add(reword);
-		foundCreator.completeTask();
+		createSettlementAndDeposit(foundPGRES, elapsedDuration, reward, foundCreator);
 
 		return PGRESUpdateByCreatorResponseDto.builder()
 			.elapsedTime(getTimeString(elapsedDuration))
-			.reward(reword)
+			.reward(reward)
 			.build();
 	}
 
+	private void createSettlementAndDeposit(PictureGenerateResponse foundPGRES, Duration elapsedDuration, Long reward,
+		Creator foundCreator) {
+		Settlement settlement = Settlement.builder()
+			.pictureGenerateResponse(foundPGRES)
+			.elapsedMinutes(elapsedDuration.toMinutes())
+			.reward(reward)
+			.build();
+
+		settlementRepository.save(settlement);
+
+		Deposit foundDeposit = depositRepository.findByCreator(foundCreator)
+			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.DepositNotFound));
+		foundDeposit.add(reward);
+		foundCreator.completeTask();
+	}
+
 	@Transactional
-	public PGRESUpdateByAdminResponseDto submitFinal(Long pictureGenerateResponseId) {
+	public PGRESSubmitByAdminResponseDto submitFinal(Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
 		List<PictureCompleted> pictureCompletedList = pictureService.findAllPictureCompletedByPictureGenerateResponse(
 			foundPGRES);
@@ -213,12 +217,13 @@ public class PictureGenerateWorkService {
 		// edited at 2024-05-21
 		// author 서병렬
 
-		return PGRESUpdateByAdminResponseDto.builder()
+		return PGRESSubmitByAdminResponseDto.builder()
+			.id(foundPGRES.getId())
 			.elapsedTime(getTimeString(elapsedDuration))
 			.build();
 	}
 
-	public Boolean updatePictureListCreatedByAdmin(User uploader,
+	public List<CommonPictureUrlResponseDto> updatePictureListCreatedByAdmin(User uploader,
 		List<CommonPictureKeyUpdateRequestDto> requestDtoList,
 		Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(
@@ -237,8 +242,9 @@ public class PictureGenerateWorkService {
 				.requester(foundPGRES.getRequest().getRequester())
 				.uploader(uploader).build()
 		).toList();
-		pictureService.updatePictures(commandList);
-		return true;
+		return pictureService.updatePictures(commandList)
+			.stream().map(PictureEntityUtils::toCommonResponse)
+			.toList();
 	}
 
 	public List<PGREQDetailFindResponseDto> getPictureGenerateRequestDetail3(User user) {
@@ -268,6 +274,25 @@ public class PictureGenerateWorkService {
 	private Creator findCreatorByUserId(Long id) {
 		return creatorRepository.findByUserId(id)
 			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.CreatorNotFound));
+	}
+
+	@Transactional
+	public PGRESUpdateAdminInChargeResponseDto updateAdminInCharge(Long pgresId,
+		PGRESUpdateAdminInChargeRequestDto requestDto) {
+		PictureGenerateResponse foundPGRES = findPGRES(pgresId);
+		List<PictureGenerateResponseStatus> canUpdateStatus = List.of(
+			PictureGenerateResponseStatus.SUBMITTED_FIRST,
+			PictureGenerateResponseStatus.ADMIN_IN_PROGRESS);
+		if (!canUpdateStatus.contains(foundPGRES.getStatus())) {
+			throw ExpectedException.withLogging(DomainErrorCode.PGRESStateException,
+				foundPGRES.getStatus().getResponse());
+		}
+		foundPGRES.updateInChargeAdmin(requestDto.getAdminInCharge());
+		return PGRESUpdateAdminInChargeResponseDto.builder()
+			.id(foundPGRES.getId())
+			.adminInCharge(foundPGRES.getAdminInCharge())
+			.status(foundPGRES.getStatus())
+			.build();
 	}
 }
 

@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DepositFindResponseDto {
 	Long id;
-	Long depositAmount;
+	Long nowAmount;
 
 	public DepositFindResponseDto(Deposit deposit) {
 		this.id = deposit.getId();
-		this.depositAmount = deposit.getDepositAmount();
+		this.nowAmount = deposit.getNowAmount();
 	}
 }

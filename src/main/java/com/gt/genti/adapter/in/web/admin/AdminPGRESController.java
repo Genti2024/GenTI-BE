@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
-import com.gt.genti.dto.admin.response.PGRESUpdateByAdminResponseDto;
+import com.gt.genti.dto.admin.request.PGRESUpdateAdminInChargeRequestDto;
+import com.gt.genti.dto.admin.response.PGRESSubmitByAdminResponseDto;
+import com.gt.genti.dto.admin.response.PGRESUpdateAdminInChargeResponseDto;
 import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import jakarta.validation.Valid;
@@ -27,17 +30,24 @@ public class AdminPGRESController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
 	@PostMapping("/{pictureGenerateResponseId}/submit")
-	public ResponseEntity<ApiResult<PGRESUpdateByAdminResponseDto>> submit(
+	public ResponseEntity<ApiResult<PGRESSubmitByAdminResponseDto>> submit(
 		@PathVariable Long pictureGenerateResponseId) {
 		return success(pictureGenerateWorkService.submitFinal(pictureGenerateResponseId));
 	}
 
 	@PostMapping("/{pictureGenerateResponseId}/pictures")
-	public ResponseEntity<ApiResult<Boolean>> updatePictureList(
+	public ResponseEntity<ApiResult<List<CommonPictureUrlResponseDto>>> updatePictureList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid List<CommonPictureKeyUpdateRequestDto> reuqestDtoList,
 		@PathVariable Long pictureGenerateResponseId) {
 		return success(pictureGenerateWorkService.updatePictureListCreatedByAdmin(userDetails.getUser(), reuqestDtoList,
 			pictureGenerateResponseId));
+	}
+
+	@PostMapping("/{pictureGenerateResponseId}/admin-in-charge")
+	public ResponseEntity<ApiResult<PGRESUpdateAdminInChargeResponseDto>> updateAdminInCharge(
+		@PathVariable Long pictureGenerateResponseId,
+		@RequestBody PGRESUpdateAdminInChargeRequestDto requestDto) {
+		return success(pictureGenerateWorkService.updateAdminInCharge(pictureGenerateResponseId, requestDto));
 	}
 }

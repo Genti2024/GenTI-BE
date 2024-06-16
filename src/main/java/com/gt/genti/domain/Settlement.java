@@ -1,18 +1,14 @@
 package com.gt.genti.domain;
 
-import java.time.Duration;
-
 import com.gt.genti.domain.common.BaseTimeEntity;
-import com.gt.genti.domain.enums.SettlementStatus;
-import com.gt.genti.domain.enums.converter.db.SettlementStatusConverter;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -39,15 +35,19 @@ public class Settlement extends BaseTimeEntity {
 	@Column(name = "reward")
 	Long reward;
 
-	@Convert(converter = SettlementStatusConverter.class)
-	@Column(name = "settlement_status")
-	SettlementStatus settlementStatus;
+	@ManyToOne
+	@JoinColumn(name = "withdraw_request_id")
+	WithdrawRequest withdrawRequest;
 
 	@Builder
 	public Settlement(PictureGenerateResponse pictureGenerateResponse, Long elapsedMinutes, Long reward) {
 		this.pictureGenerateResponse = pictureGenerateResponse;
 		this.elapsedMinutes = elapsedMinutes;
 		this.reward = reward;
-		this.settlementStatus = SettlementStatus.CREATED;
 	}
+
+	public void requestWithdraw(WithdrawRequest withdrawRequest) {
+		this.withdrawRequest = withdrawRequest;
+	}
+
 }

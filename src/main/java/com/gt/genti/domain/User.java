@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.OauthType;
 import com.gt.genti.domain.enums.Sex;
@@ -23,7 +25,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,7 +61,8 @@ public class User extends BaseTimeEntity {
 	@Convert(converter = SexConverter.class)
 	Sex sex;
 
-	@Column(name = "introduction")
+	@Column(name = "introduction", nullable = false)
+	@ColumnDefault("")
 	String introduction;
 
 	@Column(name = "username", nullable = false)
@@ -107,8 +109,12 @@ public class User extends BaseTimeEntity {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private Deposit deposit;
 
-	@Column(name = "request_task_count")
+	@Column(name = "request_task_count", nullable = false)
+	@ColumnDefault("0")
 	int requestTaskCount;
+
+	@Column(name = "birth_date")
+	LocalDate birthDate;
 
 	public static User createNewSocialUser(OAuthAttributes oauthAttributes) {
 		String email = oauthAttributes.getEmail();
@@ -195,7 +201,7 @@ public class User extends BaseTimeEntity {
 		this.deletedAt = deletedAt;
 	}
 
-	public void addRequestCount(){
-		this.requestTaskCount +=1;
+	public void addRequestCount() {
+		this.requestTaskCount += 1;
 	}
 }

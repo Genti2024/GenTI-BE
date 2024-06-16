@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PGRESUpdateByAdminResponseDto {
+public class PGRESSubmitByAdminResponseDto {
+	Long id;
 	String elapsedTime;
 
 	@Builder
-	public PGRESUpdateByAdminResponseDto(String elapsedTime) {
+	public PGRESSubmitByAdminResponseDto(Long id, String elapsedTime) {
+		this.id = id;
 		this.elapsedTime = elapsedTime;
 	}
 }

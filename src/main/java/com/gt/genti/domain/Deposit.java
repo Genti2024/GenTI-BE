@@ -1,5 +1,7 @@
 package com.gt.genti.domain;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -29,18 +31,25 @@ public class Deposit extends BaseTimeEntity {
 	@JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
 	User user;
 
-	@Column(name = "deposit_amount")
-	Long depositAmount;
+	@Column(name = "now_amount", nullable = false)
+	@ColumnDefault("0")
+	Long nowAmount;
 
-	public void add(Long amount){
-		if(amount < 0){
+	public void add(Long amount) {
+		if (amount < 0) {
 			throw ExpectedException.withLogging(DomainErrorCode.AddPointAmountCannotBeMinus);
 		}
-		this.depositAmount += amount;
+		this.nowAmount += amount;
+	}
+
+	public void completeWithdraw(Long amount){
+		if(this.nowAmount < amount){
+			throw ExpectedException.withLogging(DomainErrorCode.NotEnoughBalance);
+		}
+		this.nowAmount -= amount;
 	}
 
 	public Deposit(User user) {
 		this.user = user;
-		this.depositAmount = 0L;
 	}
 }

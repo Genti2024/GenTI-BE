@@ -14,6 +14,7 @@ public class ErrorUtils {
 
 	private static final String AUTH = "AUTH";
 	private static final String DEPOSIT = "DEPOSIT";
+	private static final String WITHDRAW = "WITHDRAW";
 	private static final String ENUM = "ENUM";
 	private static final String UNDEFINED = "UNDEFINED";
 
@@ -80,5 +81,9 @@ public class ErrorUtils {
 
 	public static final String MethodArgumentTypeMismatch = CODE(SERVER, 7);
 	public static final String AlreadyCompletedRequest = CODE(RESPONSE, 4);
+	public static final String PGRESStateException = CODE(RESPONSE, 5);
+	public static final String NoSettlementForWithdrawalException = CODE(WITHDRAW, 1);
+	public static final String WithdrawRequestNotFound = CODE(WITHDRAW, 2);
+	public static final String NotEnoughBalance = CODE(WITHDRAW, 3);
 
 }

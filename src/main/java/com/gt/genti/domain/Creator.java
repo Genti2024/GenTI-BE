@@ -2,6 +2,8 @@ package com.gt.genti.domain;
 
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.BankType;
 import com.gt.genti.domain.enums.converter.db.BankTypeConverter;
@@ -47,13 +49,16 @@ public class Creator extends BaseTimeEntity {
 	List<PictureGenerateRequest> pictureGenerateRequest;
 
 	@Convert(converter = BankTypeConverter.class)
-	@Column(name = "bank_type")
+	@Column(name = "bank_type", nullable = false)
+		@ColumnDefault("NONE")
 	BankType bankType;
 
-	@Column(name = "account_number")
+	@Column(name = "account_number", nullable = false)
+	@ColumnDefault("")
 	String accountNumber;
 
-	@Column(name = "account_holder")
+	@Column(name = "account_holder", nullable = false)
+	@ColumnDefault("")
 	String accountHolder;
 
 	@Column(name = "completed_task_count", nullable = false)

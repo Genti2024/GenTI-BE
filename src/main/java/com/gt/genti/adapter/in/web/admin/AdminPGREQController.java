@@ -27,7 +27,7 @@ public class AdminPGREQController {
 
 	@GetMapping("/all")
 	public ResponseEntity<ApiResult<Page<PGREQDetailFindResponseDto>>> getAllPictureGenerateRequest(
-		@RequestParam @NotNull int page,
+		@RequestParam @NotNull @Min(0) int page,
 		@RequestParam @NotNull @Min(1) int size,
 		@RequestParam(defaultValue = "id") String sortBy,
 		@RequestParam(defaultValue = "asc") String direction

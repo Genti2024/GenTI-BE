@@ -15,8 +15,8 @@ import com.gt.genti.domain.enums.converter.db.EnumUtil;
 import com.gt.genti.domain.enums.converter.db.PictureRatioConverter;
 import com.gt.genti.domain.enums.converter.db.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.db.ShotCoverageConverter;
-import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
+import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
@@ -32,7 +32,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -92,15 +91,10 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Convert(converter = PictureRatioConverter.class)
 	PictureRatio pictureRatio;
 
-	@Column(name = "memo")
-	String memo;
-
-	@Column(name = "admin_in_charge")
-	String adminInCharge;
-
 	@Builder
 	public PictureGenerateRequest(User requester, PGREQSaveRequestDto pgreqSaveRequestDto,
-		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced, PictureRatio pictureRatio) {
+		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced,
+		PictureRatio pictureRatio) {
 		this.requester = requester;
 		this.prompt = pgreqSaveRequestDto.getPrompt();
 		this.promptAdvanced = promptAdvanced;
@@ -151,7 +145,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.MATCH_TO_ADMIN;
 	}
 
-	public void completed(){
+	public void completed() {
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.COMPLETED;
 	}
 }

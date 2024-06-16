@@ -77,9 +77,9 @@ public class MatchTest {
 		PGREQSaveRequestDto req = PGREQSaveRequestDto.builder()
 			.prompt("밤에 한강공원에서 벤치에 앉은 사진이요")
 			.posePictureKey(savedPicturePose.getKey())
-			.cameraAngle(CameraAngle.ABOVE)
+			.cameraAngle(CameraAngle.HIGH)
 			.pictureRatio(PictureRatio.THREE_TWO)
-			.shotCoverage(ShotCoverage.FACE)
+			.shotCoverage(ShotCoverage.UPPER_BODY)
 			.facePictureKeyList(savedPictureUserfaceList.stream().map(PictureUserFace::getKey).toList())
 			.build();
 

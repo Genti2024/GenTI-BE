@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,8 +33,15 @@ public class Deposit extends BaseTimeEntity {
 	User user;
 
 	@Column(name = "now_amount", nullable = false)
-	@ColumnDefault("0")
 	Long nowAmount;
+
+
+	@PrePersist
+	public void prePersist(){
+		if(this.nowAmount == null){
+			this.nowAmount = 0L;
+		}
+	}
 
 	public void add(Long amount) {
 		if (amount < 0) {

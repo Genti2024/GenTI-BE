@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,16 +34,28 @@ public class WithdrawRequest extends BaseEntity {
 	Creator creator;
 
 	@Column(name = "amount", nullable = false)
-	@ColumnDefault("0")
-	long amount;
+	Long amount;
 
 	@Column(name = "task_count", nullable = false)
-	@ColumnDefault("0")
-	int taskCount;
+	Integer taskCount;
 
 	@Convert(converter = WithdrawRequestStatusConverter.class)
 	@Column(name = "status", nullable = false)
 	WithdrawRequestStatus status;
+
+
+	@PrePersist
+	public void prePersist(){
+		if(this.amount == null){
+			this.amount = 0L;
+		}
+		if(this.taskCount == null){
+			this.taskCount = 0;
+		}
+		if(this.status == null){
+			this.status = WithdrawRequestStatus.IN_PROGRESS;
+		}
+	}
 
 	public WithdrawRequest(Creator creator) {
 		this.creator = creator;

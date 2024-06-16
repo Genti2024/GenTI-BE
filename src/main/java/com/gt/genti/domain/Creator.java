@@ -2,12 +2,8 @@ package com.gt.genti.domain;
 
 import java.util.List;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.BankType;
-import com.gt.genti.domain.enums.Sex;
-import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.domain.enums.converter.db.BankTypeConverter;
 
 import jakarta.persistence.Column;
@@ -56,11 +52,9 @@ public class Creator extends BaseTimeEntity {
 	BankType bankType;
 
 	@Column(name = "account_number", nullable = false)
-	@ColumnDefault("''")
 	String accountNumber;
 
 	@Column(name = "account_holder", nullable = false)
-	@ColumnDefault("''")
 	String accountHolder;
 
 	@Column(name = "completed_task_count", nullable = false)
@@ -71,8 +65,14 @@ public class Creator extends BaseTimeEntity {
 		if (this.bankType == null) {
 			this.bankType = BankType.NONE;
 		}
-		if(this.workable == null){
+		if (this.workable == null) {
 			this.workable = true;
+		}
+		if (this.accountNumber == null) {
+			this.accountNumber = "";
+		}
+		if (this.accountHolder == null) {
+			this.accountHolder = "";
 		}
 	}
 

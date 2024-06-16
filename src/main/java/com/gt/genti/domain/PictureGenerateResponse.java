@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -51,11 +52,9 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	PictureGenerateResponseStatus status;
 
 	@Column(name = "memo", nullable = false)
-	@ColumnDefault("''")
 	String memo;
 
 	@Column(name = "admin_in_charge", nullable = false)
-	@ColumnDefault("''")
 	String adminInCharge;
 
 	@Column(name = "submitted_by_creator_at")
@@ -63,6 +62,15 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	@Column(name = "submitted_by_admin_at")
 	LocalDateTime submittedByAdminAt;
 
+	@PrePersist
+	public void prePersist(){
+		if(this.memo == null){
+			this.memo = "";
+		}
+		if(this.adminInCharge == null){
+			this.adminInCharge = "";
+		}
+	}
 	public Duration creatorSubmitAndGetElaspedTime() {
 		//TODO 공급자가 제출시 불가한 상태가 있는지 생각해볼것
 		// edited at 2024-05-20

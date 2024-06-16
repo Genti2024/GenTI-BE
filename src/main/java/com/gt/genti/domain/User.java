@@ -65,7 +65,6 @@ public class User extends BaseTimeEntity {
 	Sex sex;
 
 	@Column(name = "introduction", nullable = false)
-	@ColumnDefault("''")
 	String introduction;
 
 	@Column(name = "username", nullable = false)
@@ -106,7 +105,6 @@ public class User extends BaseTimeEntity {
 	LocalDateTime lastLoginDate;
 
 	@Column(name = "login", nullable = false)
-	@ColumnDefault("false")
 	Boolean login;
 
 	// user hard delete시 deposit도 삭제
@@ -114,8 +112,7 @@ public class User extends BaseTimeEntity {
 	private Deposit deposit;
 
 	@Column(name = "request_task_count", nullable = false)
-	@ColumnDefault("0")
-	int requestTaskCount;
+	Integer requestTaskCount;
 
 	@Column(name = "birth_date")
 	LocalDate birthDate;
@@ -130,6 +127,13 @@ public class User extends BaseTimeEntity {
 		}
 		if (this.sex == null){
 			this.sex = Sex.NONE;
+		}
+		if(this.introduction == null){
+			this.introduction = "";
+		}
+
+		if(this.requestTaskCount == null){
+			this.requestTaskCount = 0;
 		}
 	}
 

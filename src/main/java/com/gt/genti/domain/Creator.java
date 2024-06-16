@@ -56,11 +56,11 @@ public class Creator extends BaseTimeEntity {
 	BankType bankType;
 
 	@Column(name = "account_number", nullable = false)
-	@ColumnDefault("")
+	@ColumnDefault("''")
 	String accountNumber;
 
 	@Column(name = "account_holder", nullable = false)
-	@ColumnDefault("")
+	@ColumnDefault("''")
 	String accountHolder;
 
 	@Column(name = "completed_task_count", nullable = false)

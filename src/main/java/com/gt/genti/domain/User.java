@@ -65,7 +65,7 @@ public class User extends BaseTimeEntity {
 	Sex sex;
 
 	@Column(name = "introduction", nullable = false)
-	@ColumnDefault("")
+	@ColumnDefault("''")
 	String introduction;
 
 	@Column(name = "username", nullable = false)

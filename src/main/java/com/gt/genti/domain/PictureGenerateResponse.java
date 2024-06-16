@@ -51,11 +51,11 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	PictureGenerateResponseStatus status;
 
 	@Column(name = "memo", nullable = false)
-	@ColumnDefault("")
+	@ColumnDefault("''")
 	String memo;
 
 	@Column(name = "admin_in_charge", nullable = false)
-	@ColumnDefault("")
+	@ColumnDefault("''")
 	String adminInCharge;
 
 	@Column(name = "submitted_by_creator_at")

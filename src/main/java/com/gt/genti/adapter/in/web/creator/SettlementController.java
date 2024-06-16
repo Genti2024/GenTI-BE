@@ -29,10 +29,10 @@ public class SettlementController {
 	@GetMapping("")
 	public ResponseEntity<ApiResult<SettlementAndWithdrawPageResponseDto>> getMySettlements(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestParam @NotNull @Min(0) int page,
-		@RequestParam @NotNull @Min(1) int size,
-		@RequestParam(defaultValue = "createdAt") String sortBy,
-		@RequestParam(defaultValue = "desc") String direction
+		@RequestParam(name = "page") @NotNull @Min(0) int page,
+		@RequestParam(name = "size") @NotNull @Min(1) int size,
+		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+		@RequestParam(name = "direction", defaultValue = "desc") String direction
 	) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));

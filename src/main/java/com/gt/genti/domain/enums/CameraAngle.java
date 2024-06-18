@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CameraAngle implements ConvertableEnum {
-	HIGH("HIGH", "하이"),
-	MIDDLE("MIDDLE", "미들"),
-	LOW("LOW", "로우"),
+	HIGH("HIGH", "위에서 촬영"),
+	MIDDLE("MIDDLE", "눈높이에서 촬영"),
+	LOW("LOW", "아래에서 촬영"),
 	ANY("ANY", "아무거나 상관없어요");
 
 	private final String stringValue;

@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ShotCoverage implements ConvertableEnum {
-	UPPER_BODY("UPPER_BODY", "상반신"),
-	KNEE_SHOT("KNEE_SHOT", "니샷"),
-	FULL_BODY("FULL_BODY", "전신"),
+	UPPER_BODY("UPPER_BODY", "바스트샷(상반신)"),
+	KNEE_SHOT("KNEE_SHOT", "니샷(무릎 위)"),
+	FULL_BODY("FULL_BODY", "풀샷(전신)"),
 	ANY("ANY", "아무거나 상관없어요");
 
 	private final String stringValue;

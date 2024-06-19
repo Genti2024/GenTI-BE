@@ -77,15 +77,15 @@ public class MatchTest {
 		PGREQSaveRequestDto req = PGREQSaveRequestDto.builder()
 			.prompt("밤에 한강공원에서 벤치에 앉은 사진이요")
 			.posePictureKey(savedPicturePose.getKey())
-			.cameraAngle(CameraAngle.HIGH)
-			.pictureRatio(PictureRatio.THREE_TWO)
-			.shotCoverage(ShotCoverage.UPPER_BODY)
+			.cameraAngle(CameraAngle.HIGH.getStringValue())
+			.pictureRatio(PictureRatio.THREE_TWO.getStringValue())
+			.shotCoverage(ShotCoverage.UPPER_BODY.getStringValue())
 			.facePictureKeyList(savedPictureUserfaceList.stream().map(PictureUserFace::getKey).toList())
 			.build();
 
 		// when
 		PictureGenerateRequest createdPGREQ = pictureGenerateRequestService.createPictureGenerateRequest(
-			requester, req);
+			requester, req.toCommand());
 
 		// then
 		Creator adminCreator = adminService.getAdminCreator();

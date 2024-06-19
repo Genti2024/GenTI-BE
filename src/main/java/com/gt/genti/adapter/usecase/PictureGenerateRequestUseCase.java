@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.command.user.PGREQSaveCommand;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
@@ -23,7 +24,7 @@ public interface PictureGenerateRequestUseCase {
 
 	@Transactional
 	public PictureGenerateRequest createPictureGenerateRequest(User requester,
-		PGREQSaveRequestDto PGREQSaveRequestDto);
+		PGREQSaveCommand pgreqSaveCommand);
 
 	@Transactional
 	public void modifyPictureGenerateRequest(User user,

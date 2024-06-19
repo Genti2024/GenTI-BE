@@ -118,9 +118,10 @@ public class UserPGREQController {
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody @Valid PGREQSaveRequestDto PGREQSaveRequestDto) {
+		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {
+
 		pictureGenerateRequestUseCase.createPictureGenerateRequest(userDetails.getUser(),
-			PGREQSaveRequestDto);
+			pgreqSaveRequestDto.toCommand());
 		return success(true);
 	}
 

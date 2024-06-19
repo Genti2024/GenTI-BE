@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.command.CreatePicturePoseCommand;
+import com.gt.genti.command.user.PGREQSaveCommand;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.PGREQDetailFindResponseDto;
-import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.dto.user.response.PGREQDetailFindByUserResponseDto;
@@ -108,12 +108,12 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	@Override
 	public PictureGenerateRequest createPictureGenerateRequest(User requester,
-		PGREQSaveRequestDto pgreqSaveRequestDto) {
+		PGREQSaveCommand pgreqSaveCommand) {
 
 		String posePictureKey = "";
 		PicturePose foundPicturePose = null;
-		if (!Objects.isNull(pgreqSaveRequestDto.getPosePictureKey())) {
-			posePictureKey = pgreqSaveRequestDto.getPosePictureKey();
+		if (!Objects.isNull(pgreqSaveCommand.getPosePictureKey())) {
+			posePictureKey = pgreqSaveCommand.getPosePictureKey();
 			String finalPosePictureKey = posePictureKey;
 			foundPicturePose = pictureService.findByUrlPicturePose(posePictureKey)
 				.orElseGet(() -> {
@@ -127,21 +127,20 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				});
 		}
 
-		List<String> facePictureUrl = pgreqSaveRequestDto.getFacePictureKeyList();
+		List<String> facePictureUrl = pgreqSaveCommand.getFacePictureKeyList();
 		List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(facePictureUrl,
 			requester);
 
 		String promptAdvanced = openAIService.getAdvancedPrompt(
-			new PromptAdvancementRequestCommand(pgreqSaveRequestDto.getPrompt()));
+			new PromptAdvancementRequestCommand(pgreqSaveCommand.getPrompt()));
 		log.info(promptAdvanced);
 
 		PictureGenerateRequest pgr = PictureGenerateRequest.builder()
 			.requester(requester)
 			.promptAdvanced(promptAdvanced)
-			.pgreqSaveRequestDto(pgreqSaveRequestDto)
+			.pgreqSaveCommand(pgreqSaveCommand)
 			.picturePose(foundPicturePose)
 			.userFacePictureList(uploadedFacePictureList)
-			.pictureRatio(pgreqSaveRequestDto.getPictureRatio())
 			.build();
 
 		PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(pgr);

@@ -2,8 +2,6 @@ package com.gt.genti.adapter.in.web.admin;
 
 import static com.gt.genti.other.util.ApiUtils.*;
 
-import java.util.Objects;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +19,7 @@ import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.dto.admin.request.UserRoleUpdateRequestDto;
 import com.gt.genti.dto.admin.request.UserStatusUpdateRequestDto;
 import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
-import com.gt.genti.other.valid.ValidUserRole;
+import com.gt.genti.other.valid.ValidEnum;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -48,7 +46,7 @@ public class AdminUserController {
 
 	@GetMapping("/users")
 	public ResponseEntity<ApiResult<Page<UserFindByAdminResponseDto>>> getAllUserInfo(
-		@RequestParam(value = "role", defaultValue = "ALL") @ValidUserRole @NotNull String role,
+		@RequestParam(value = "role") @ValidEnum(value = UserRole.class, hasAllOption = true) @NotNull String role,
 		@RequestParam(value = "page") @NotNull @Min(0) int page,
 		@RequestParam(value = "size") @NotNull @Min(1) int size
 	) {

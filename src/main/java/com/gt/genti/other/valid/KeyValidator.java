@@ -11,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @AllArgsConstructor
-public class KeyValidator extends MyStringValidator implements ConstraintValidator<ValidKey, String> {
-
-	public static final String MESSAGE_TEMPLATE = "key 값은 FILE_TYPE 으로 시작해야합니다. 입력된 값 [%s]";
+public class KeyValidator extends BaseValidator implements ConstraintValidator<ValidKey, String> {
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
@@ -22,7 +20,7 @@ public class KeyValidator extends MyStringValidator implements ConstraintValidat
 				return true;
 			}
 		}
-		addConstraintViolation(constraintValidatorContext, MESSAGE_TEMPLATE, value);
+		addConstraintViolation(constraintValidatorContext);
 		return false;
 	}
 }

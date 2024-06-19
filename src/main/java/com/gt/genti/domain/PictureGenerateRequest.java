@@ -5,6 +5,7 @@ import static com.gt.genti.other.util.TimeUtils.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.gt.genti.command.user.PGREQSaveCommand;
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
@@ -15,7 +16,6 @@ import com.gt.genti.domain.enums.converter.db.EnumUtil;
 import com.gt.genti.domain.enums.converter.db.PictureRatioConverter;
 import com.gt.genti.domain.enums.converter.db.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.db.ShotCoverageConverter;
-import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
@@ -92,18 +92,17 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	PictureRatio pictureRatio;
 
 	@Builder
-	public PictureGenerateRequest(User requester, PGREQSaveRequestDto pgreqSaveRequestDto,
-		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced,
-		PictureRatio pictureRatio) {
+	public PictureGenerateRequest(User requester, PGREQSaveCommand pgreqSaveCommand,
+		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced) {
 		this.requester = requester;
-		this.prompt = pgreqSaveRequestDto.getPrompt();
+		this.prompt = pgreqSaveCommand.getPrompt();
 		this.promptAdvanced = promptAdvanced;
 		this.picturePose = picturePose;
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.CREATED;
-		this.cameraAngle = pgreqSaveRequestDto.getCameraAngle();
-		this.shotCoverage = pgreqSaveRequestDto.getShotCoverage();
+		this.cameraAngle = pgreqSaveCommand.getCameraAngle();
+		this.shotCoverage = pgreqSaveCommand.getShotCoverage();
 		this.userFacePictureList = userFacePictureList;
-		this.pictureRatio = pictureRatio;
+		this.pictureRatio = pgreqSaveCommand.getPictureRatio();
 	}
 
 	public void modify(PGREQUpdateRequestDto PGREQUpdateRequestDto, PicturePose picturePose,

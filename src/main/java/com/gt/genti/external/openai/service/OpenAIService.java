@@ -28,17 +28,17 @@ public class OpenAIService {
 		} catch (HttpClientErrorException.TooManyRequests e) {
 			// 429 Too Many Requests 예외 처리
 			log.error("""
-				open ai prompt advance 요청 중 Too Many Requests 에러 발생 \n 오류내용 : \n %s""".formatted(e.getMessage()));
+				open ai prompt advance 요청 중 Too Many Requests 오류 발생 : %s""".formatted(e.getMessage()));
 			return null;
 		} catch (HttpClientErrorException e) {
 			// 다른 HTTP 예외 처리
 			log.error("""
-				open ai prompt advance 요청 중 정의되지 않은 오류 발생 \n 오류내용 : \n %s""".formatted(e));
+				open ai prompt advance 요청 중 정의되지 않은 오류 발생 : %s""".formatted(e));
 			return null;
 		} catch (Exception e) {
 			// 기타 예외 처리
 			log.error("""
-				open ai prompt advance 요청 중 HttpClient(외부 api 통신) 이외의 오류 발생 \n 오류내용 : \n %s""".formatted(e));
+				open ai prompt advance 요청 중 HttpClient(외부 api 통신) 이외의 오류 발생 : %s""".formatted(e));
 			return null;
 		}
 

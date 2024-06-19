@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 
 @Documented
-@Target(ElementType.FIELD) // 1
+@Target({ElementType.TYPE_USE, ElementType.FIELD}) // 1
 @Retention(RetentionPolicy.RUNTIME) // 2
 @Constraint(validatedBy = KeyValidator.class) // 3
 public @interface ValidKey {

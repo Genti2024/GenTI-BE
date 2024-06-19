@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.command.admin.ExampleSaveCommand;
 import com.gt.genti.domain.ResponseExample;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.admin.request.ExampleSaveRequestDto;
@@ -27,10 +28,10 @@ public class ResponseExampleService {
 	}
 
 	@Transactional
-	public void addResponseExamples(List<ExampleSaveRequestDto> requestDtoList,
+	public void addResponseExamples(List<ExampleSaveCommand> commandList,
 		User user) {
 		responseExampleRepository.saveAll(
-			requestDtoList.stream().map(dto -> new ResponseExample(dto, user)).toList());
+			commandList.stream().map(command -> new ResponseExample(command, user)).toList());
 	}
 
 }

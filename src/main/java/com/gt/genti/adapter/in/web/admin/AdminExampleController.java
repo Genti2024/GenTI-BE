@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin/examples")
 @RequiredArgsConstructor
-public class ExampleController {
+public class AdminExampleController {
 	private final ResponseExampleService responseExampleService;
 
 	@GetMapping("/with-picture")
@@ -36,7 +36,7 @@ public class ExampleController {
 		@RequestBody @Valid List<ExampleSaveRequestDto> requestDtoList,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		responseExampleService.addResponseExamples(requestDtoList, userDetails.getUser());
+		responseExampleService.addResponseExamples(requestDtoList.stream().map(ExampleSaveRequestDto::toCommand).toList(), userDetails.getUser());
 		return success(true);
 	}
 

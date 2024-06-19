@@ -1,8 +1,8 @@
 package com.gt.genti.domain;
 
+import com.gt.genti.command.admin.ExampleSaveCommand;
 import com.gt.genti.domain.common.Picture;
 import com.gt.genti.domain.common.PictureEntity;
-import com.gt.genti.dto.admin.request.ExampleSaveRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,10 +29,11 @@ public class ResponseExample extends PictureEntity implements Picture {
 	@Column(name = "prompt_only")
 	Boolean promptOnly;
 
-	public ResponseExample(ExampleSaveRequestDto dto, User uploadedBy) {
+	public ResponseExample(ExampleSaveCommand command, User uploadedBy) {
 		this.promptOnly = false;
-		this.key = dto.getKey();
-		this.examplePrompt = dto.getPrompt();
+		this.key = command.getKey();
+		this.examplePrompt = command.getPrompt();
 		this.setUploadedBy(uploadedBy);
+		this.pictureRatio = command.getPictureRatio();
 	}
 }

@@ -21,7 +21,7 @@ public enum UserRole implements ConvertableEnum {
 	}
 
 	@Override
-	public Boolean isNullable() {
-		return false;
+	public <E extends Enum<E> & ConvertableEnum> E getNullValue() {
+		return null;
 	}
 }

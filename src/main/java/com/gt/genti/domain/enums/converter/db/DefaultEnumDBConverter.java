@@ -16,13 +16,15 @@ public class DefaultEnumDBConverter<T extends Enum<T> & ConvertableEnum>
 
 	@Override
 	public String convertToDatabaseColumn(T attribute) {
+
 		try {
 			return attribute.getStringValue();
 		} catch (NullPointerException e) {
-			if (enumClassType.getEnumConstants()[0].isNullable()) {
-				return null;
-			} else {
+			T enumNullValue = enumClassType.getEnumConstants()[0].getNullValue();
+			if (enumNullValue == null) {
 				throw ExpectedException.withLogging(DefaultErrorCode.NotNullableEnum, enumClassType.getName());
+			} else {
+				return enumNullValue.getStringValue();
 			}
 		}
 	}

@@ -7,5 +7,7 @@ public interface ConvertableEnum {
 	String getStringValue();
 
 	String getResponse();
-	Boolean isNullable();
+
+
+	<E extends Enum<E> & ConvertableEnum> E getNullValue();
 }

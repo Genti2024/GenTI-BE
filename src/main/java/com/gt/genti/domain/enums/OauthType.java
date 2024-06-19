@@ -19,7 +19,7 @@ public enum OauthType implements ConvertableEnum {
 	}
 
 	@Override
-	public Boolean isNullable() {
-		return true;
+	public <E extends Enum<E> & ConvertableEnum> E getNullValue() {
+		return (E)NONE;
 	}
 }

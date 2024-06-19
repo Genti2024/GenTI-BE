@@ -17,7 +17,7 @@ import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.dto.admin.request.UserRoleUpdateRequestDto;
 import com.gt.genti.dto.admin.request.UserStatusUpdateRequestDto;
 import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
 import com.gt.genti.dto.user.response.UserFindResponseDto;
 import com.gt.genti.dto.user.response.UserInfoUpdateResponseDto;
@@ -45,7 +45,7 @@ public class UserService {
 	@Transactional
 	public UserFindResponseDto getUserInfo(User user) {
 		User foundUser = findUser(user.getId());
-		List<CommonPictureUrlResponseDto> profilePictureResponseList = null;
+		List<CommonPictureResponseDto> profilePictureResponseList = null;
 		if (!foundUser.getPictureProfileList().isEmpty()) {
 			profilePictureResponseList = foundUser.getPictureProfileList()
 				.stream()
@@ -53,8 +53,7 @@ public class UserService {
 				.toList();
 		}
 
-		return new UserFindResponseDto(foundUser.getId(), foundUser.getUsername(), foundUser.getNickname(),
-			profilePictureResponseList);
+		return UserFindResponseDto.of(foundUser);
 	}
 
 	@Transactional
@@ -67,7 +66,7 @@ public class UserService {
 				userInfoUpdateRequestDto.getProfilePictureUrl());
 			foundUser.addProfilePicture(foundPictureProfile);
 		}
-		List<CommonPictureUrlResponseDto> profilePictureResponseList = null;
+		List<CommonPictureResponseDto> profilePictureResponseList = null;
 		if (!foundUser.getPictureProfileList().isEmpty()) {
 			profilePictureResponseList = foundUser.getPictureProfileList()
 				.stream()
@@ -118,7 +117,7 @@ public class UserService {
 		return true;
 	}
 
-	public List<CommonPictureUrlResponseDto> getAllMyGeneratedPicture(User user) {
+	public List<CommonPictureResponseDto> getAllMyGeneratedPicture(User user) {
 		List<PictureCompleted> pictureCompletedList = pictureCompletedRepository.findAllByUser(user);
 		return pictureCompletedList.stream()
 			.map(PictureEntity::mapToCommonResponse)

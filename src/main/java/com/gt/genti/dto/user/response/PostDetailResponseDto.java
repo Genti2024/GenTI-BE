@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.gt.genti.domain.PicturePost;
 import com.gt.genti.domain.PictureProfile;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.other.util.PictureEntityUtils;
 
 import lombok.Builder;
@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 public class PostDetailResponseDto {
 	Long postId;
 	Long userId;
-	CommonPictureUrlResponseDto profilePicture;
-	List<CommonPictureUrlResponseDto> postPictureList;
+	CommonPictureResponseDto profilePicture;
+	List<CommonPictureResponseDto> postPictureList;
 	String content;
 	Integer likes;
 	LocalDateTime createdAt;

@@ -10,20 +10,24 @@ import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.Post;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.common.PictureEntity;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.domain.enums.PictureRatio;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 
 import lombok.Builder;
 
 public class PictureEntityUtils {
-	public static CommonPictureUrlResponseDto toCommonResponse(PictureEntity pictureEntity){
-		if(pictureEntity == null){
+	public static CommonPictureResponseDto toCommonResponse(PictureEntity pictureEntity) {
+		if (pictureEntity == null) {
 			return null;
 		}
 		return pictureEntity.mapToCommonResponse();
 	}
+
 	@Builder
-	public static PictureCompleted makePictureCompleted(String url, PictureGenerateResponse pgres, User uploadedBy, User requester) {
-		return new PictureCompleted(url, pgres, uploadedBy, requester);
+	public static PictureCompleted makePictureCompleted(String url, PictureGenerateResponse pgres, User uploadedBy,
+		User requester,
+		PictureRatio pictureRatio) {
+		return new PictureCompleted(url, pgres, uploadedBy, requester, pictureRatio);
 	}
 
 	@Builder

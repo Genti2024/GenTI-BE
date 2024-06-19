@@ -25,13 +25,13 @@ public class PGREQSaveRequestDto {
 	@NotBlank
 	@JsonProperty("prompt")
 	String prompt;
-	@ValidKey @NotNull @JsonProperty("posePictureKey")
+	@ValidKey @JsonProperty("posePictureKey")
 	String posePictureKey;
 
 	@NotNull
 	@Size(max = 3, min = 1, message = "사용자의 얼굴 사진 개수는 최소 1개, 최대 3개입니다.")
 	@JsonProperty("facePictureKeyList")
-	List<@ValidKey String> facePictureKeyList;
+	List<@ValidKey @NotNull String> facePictureKeyList;
 
 	@NotNull
 	@ValidEnum(value = CameraAngle.class)

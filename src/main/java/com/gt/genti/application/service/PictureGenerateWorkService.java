@@ -27,7 +27,7 @@ import com.gt.genti.dto.admin.request.PGRESUpdateAdminInChargeRequestDto;
 import com.gt.genti.dto.admin.response.PGRESSubmitByAdminResponseDto;
 import com.gt.genti.dto.admin.response.PGRESUpdateAdminInChargeResponseDto;
 import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.dto.creator.request.MemoUpdateRequestDto;
 import com.gt.genti.dto.creator.response.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.dto.creator.response.PGRESUpdateByCreatorResponseDto;
@@ -223,7 +223,7 @@ public class PictureGenerateWorkService {
 			.build();
 	}
 
-	public List<CommonPictureUrlResponseDto> updatePictureListCreatedByAdmin(User uploader,
+	public List<CommonPictureResponseDto> updatePictureListCreatedByAdmin(User uploader,
 		List<CommonPictureKeyUpdateRequestDto> requestDtoList,
 		Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(
@@ -240,7 +240,9 @@ public class PictureGenerateWorkService {
 				.pictureGenerateResponse(foundPGRES)
 				.key(dto.getKey())
 				.requester(foundPGRES.getRequest().getRequester())
-				.uploader(uploader).build()
+				.uploader(uploader)
+				.pictureRatio(foundPGRES.getRequest().getPictureRatio())
+				.build()
 		).toList();
 		return pictureService.updatePictures(commandList)
 			.stream().map(PictureEntityUtils::toCommonResponse)

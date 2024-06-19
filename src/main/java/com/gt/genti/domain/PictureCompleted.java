@@ -1,6 +1,7 @@
 package com.gt.genti.domain;
 
 import com.gt.genti.domain.common.PictureEntity;
+import com.gt.genti.domain.enums.PictureRatio;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,11 +33,12 @@ public class PictureCompleted extends PictureEntity {
 	PictureGenerateResponse pictureGenerateResponse;
 
 	@Builder
-	public PictureCompleted(String key, PictureGenerateResponse pictureGenerateResponse, User uploadedBy, User requester) {
+	public PictureCompleted(String key, PictureGenerateResponse pictureGenerateResponse, User uploadedBy, User requester, PictureRatio pictureRatio) {
 		this.key = key;
 		this.pictureGenerateResponse = pictureGenerateResponse;
 		this.setUploadedBy(uploadedBy);
 		this.requester =requester;
+		this.pictureRatio =pictureRatio;
 	}
 
 	public void modify(String key) {

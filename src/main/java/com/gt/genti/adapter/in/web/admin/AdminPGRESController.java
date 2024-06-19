@@ -17,7 +17,7 @@ import com.gt.genti.dto.admin.request.PGRESUpdateAdminInChargeRequestDto;
 import com.gt.genti.dto.admin.response.PGRESSubmitByAdminResponseDto;
 import com.gt.genti.dto.admin.response.PGRESUpdateAdminInChargeResponseDto;
 import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 
 import jakarta.validation.Valid;
@@ -36,7 +36,7 @@ public class AdminPGRESController {
 	}
 
 	@PostMapping("/{pictureGenerateResponseId}/pictures")
-	public ResponseEntity<ApiResult<List<CommonPictureUrlResponseDto>>> updatePictureList(
+	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> updatePictureList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody @Valid List<CommonPictureKeyUpdateRequestDto> reuqestDtoList,
 		@PathVariable Long pictureGenerateResponseId) {

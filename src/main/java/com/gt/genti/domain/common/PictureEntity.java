@@ -1,9 +1,12 @@
 package com.gt.genti.domain.common;
 
 import com.gt.genti.domain.User;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.domain.enums.PictureRatio;
+import com.gt.genti.domain.enums.converter.db.PictureRatioConverter;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
@@ -22,10 +25,13 @@ public abstract class PictureEntity extends BaseTimeEntity implements Picture {
 	@Column(name = "`key`", nullable = false)
 	protected String key;
 
-	@Override
-	public CommonPictureUrlResponseDto mapToCommonResponse() {
+	@Column(name = "picture_ratio")
+	@Convert(converter = PictureRatioConverter.class)
+	protected PictureRatio pictureRatio;
 
-		return new CommonPictureUrlResponseDto(this.getId(), this.getKey());
+	@Override
+	public CommonPictureResponseDto mapToCommonResponse() {
+		return new CommonPictureResponseDto(this.getId(), this.getKey(), this.getPictureRatio(), this.getClass().getSimpleName());
 	}
 
 }

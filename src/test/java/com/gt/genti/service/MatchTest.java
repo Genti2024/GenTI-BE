@@ -78,7 +78,7 @@ public class MatchTest {
 			.prompt("밤에 한강공원에서 벤치에 앉은 사진이요")
 			.posePictureKey(savedPicturePose.getKey())
 			.cameraAngle(CameraAngle.HIGH.getStringValue())
-			.pictureRatio(PictureRatio.THREE_TWO.getStringValue())
+			.pictureRatio(PictureRatio.RATIO_3_2.getStringValue())
 			.shotCoverage(ShotCoverage.UPPER_BODY.getStringValue())
 			.facePictureKeyList(savedPictureUserfaceList.stream().map(PictureUserFace::getKey).toList())
 			.build();

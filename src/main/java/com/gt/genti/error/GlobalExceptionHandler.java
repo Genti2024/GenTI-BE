@@ -25,6 +25,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
+import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -134,6 +135,7 @@ public class GlobalExceptionHandler {
 		String msg = exception.getMessage();
 		return error(ExpectedException.withLogging(DefaultErrorCode.UnHandledException, msg));
 	}
+
 
 	@NotNull
 	private static String makeFieldErrorMessage(FieldError fieldError) {

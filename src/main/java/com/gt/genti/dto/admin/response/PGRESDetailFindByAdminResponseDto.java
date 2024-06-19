@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.other.util.PictureEntityUtils;
 
 import lombok.Getter;
@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class PGRESDetailFindByAdminResponseDto {
 	Long id;
 	String memo;
-	List<CommonPictureUrlResponseDto> pictureCreatedByCreatorList;
-	List<CommonPictureUrlResponseDto> pictureCompletedList;
+	List<CommonPictureResponseDto> pictureCreatedByCreatorList;
+	List<CommonPictureResponseDto> pictureCompletedList;
 	PictureGenerateResponseStatus responseStatus;
 	LocalDateTime createdAt;
 

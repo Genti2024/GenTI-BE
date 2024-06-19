@@ -25,7 +25,7 @@ public enum DefaultErrorCode implements ErrorCode {
 		"예기치 못한 문제가 발생했습니다. 오류내용 : %s"),
 	NotNullableEnum(HttpStatus.BAD_REQUEST, ErrorUtils.NotNullableEnum, " [%s] 값은 null 값을 허용하지 않습니다."),
 	DBToEnumFailed(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.DBToEnumFailed,
-		"DB -> ENUM 값 불러오기 실패  enum : %s value :  %s detail : %s"),
+		"DB -> ENUM 값 불러오기 실패  enum : %s 불러온 string 값 :  %s"),
 	ControllerValidationError(HttpStatus.BAD_REQUEST, ErrorUtils.ControllerValidationError, "%s"),
 	QueryParameterNotGiven(HttpStatus.BAD_REQUEST, ErrorUtils.QueryParameterNotGiven, "%s"),
 	UnrecognizedPropertyException(HttpStatus.BAD_REQUEST, ErrorUtils.UnrecognizedPropertyException, "json property parsing 중 오류 발생, %s"),

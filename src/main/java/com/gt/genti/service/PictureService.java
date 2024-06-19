@@ -97,7 +97,8 @@ public class PictureService {
 				command.getKey(),
 				command.getPictureGenerateResponse(),
 				command.getUploader(),
-				command.getRequester())
+				command.getRequester(),
+				command.getPictureRatio())
 		).toList();
 
 		return pictureCompletedRepository.saveAll(pictureCompletedList);

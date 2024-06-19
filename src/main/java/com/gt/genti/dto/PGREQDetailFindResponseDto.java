@@ -9,7 +9,7 @@ import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.dto.admin.response.PGRESDetailFindByAdminResponseDto;
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.other.util.TimeUtils;
 
@@ -25,8 +25,8 @@ public class PGREQDetailFindResponseDto {
 	String requesterEmail;
 	String prompt;
 	String promptAdvanced;
-	List<CommonPictureUrlResponseDto> facePictureList;
-	CommonPictureUrlResponseDto posePicture;
+	List<CommonPictureResponseDto> facePictureList;
+	CommonPictureResponseDto posePicture;
 	CameraAngle cameraAngle;
 	ShotCoverage shotCoverage;
 	PictureGenerateRequestStatus requestStatus;

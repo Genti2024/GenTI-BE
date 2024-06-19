@@ -15,6 +15,8 @@ public class KeyValidator extends BaseValidator implements ConstraintValidator<V
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
+		if (value == null)
+			return true;
 		for (FileType type : FileType.values()) {
 			if (value.startsWith(type.getStringValue())) {
 				return true;

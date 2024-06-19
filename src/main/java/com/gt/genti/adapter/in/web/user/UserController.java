@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.common.response.CommonPictureUrlResponseDto;
+import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.dto.user.response.UserFindResponseDto;
 import com.gt.genti.dto.user.response.UserInfoUpdateResponseDto;
 import com.gt.genti.other.annotation.ToBeUpdated;
@@ -63,7 +63,7 @@ public class UserController {
 	}
 
 	@GetMapping("/pictures/my")
-	public ResponseEntity<ApiResult<List<CommonPictureUrlResponseDto>>> getAllMyGeneratedPicture(
+	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> getAllMyGeneratedPicture(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	){
 		return success(userService.getAllMyGeneratedPicture(userDetails.getUser()));

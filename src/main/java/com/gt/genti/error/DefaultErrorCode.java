@@ -22,7 +22,7 @@ public enum DefaultErrorCode implements ErrorCode {
 	TOKEN_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.TOKEN_CREATION_FAILED, "토큰 생성에 실패했습니다."),
 	TOKEN_REFRESH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.TOKEN_REFRESH_FAILED, "토큰 갱신에 실패했습니다."),
 	UnHandledException(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.UnHandledException,
-		"예기치 못한 문제가 발생했습니다.\n오류내용 : \n%s"),
+		"예기치 못한 문제가 발생했습니다. 오류내용 : %s"),
 	NotNullableEnum(HttpStatus.BAD_REQUEST, ErrorUtils.NotNullableEnum, " [%s] 값은 null 값을 허용하지 않습니다."),
 	DBToEnumFailed(HttpStatus.INTERNAL_SERVER_ERROR, ErrorUtils.DBToEnumFailed,
 		"DB -> ENUM 값 불러오기 실패  enum : %s value :  %s detail : %s"),

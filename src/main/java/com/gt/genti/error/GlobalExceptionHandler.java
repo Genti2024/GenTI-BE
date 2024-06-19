@@ -9,9 +9,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,8 +26,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jdk.jfr.StackTrace;
-import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -40,26 +36,27 @@ public class GlobalExceptionHandler {
 		return error(exception);
 	}
 
-	// @ExceptionHandler(NoHandlerFoundException.class)
-	// public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
-	// 	NoHandlerFoundException ex) {
-	// 	String errorMessage = ex.getRequestURL();
-	// 	return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
-	// }
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
+		NoHandlerFoundException ex) {
+		String errorMessage = ex.getRequestURL();
+		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
+	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<ApiResult<ExpectedException>> handleHttpRequestMethodNotSupportedException(
 		HttpRequestMethodNotSupportedException ex) {
-		return error(ExpectedException.withLogging(DefaultErrorCode.MethodNotSupported, ex.getMessage(), Arrays.toString(ex.getSupportedMethods())));
+		return error(ExpectedException.withLogging(DefaultErrorCode.MethodNotSupported, ex.getMessage(),
+			Arrays.toString(ex.getSupportedMethods())));
 	}
 
-	// 없는 url로 요청 시
-	// @ExceptionHandler(NoResourceFoundException.class)
-	// public ResponseEntity<ApiResult<ExpectedException>> handleNoResourceFoundException(
-	// 	NoResourceFoundException ex) {
-	// 	String errorMessage = ex.getResourcePath();
-	// 	return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
-	// }
+	//없는 url로 요청 시
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleNoResourceFoundException(
+		NoResourceFoundException ex) {
+		String errorMessage = ex.getResourcePath();
+		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
+	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
 	protected ResponseEntity<ApiResult<ExpectedException>> processValidationError(WebExchangeBindException exception) {
@@ -88,27 +85,30 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentNotValidException(
 		MethodArgumentNotValidException exception) {
 		exception.getMessage();
+
 		String error = exception.getBindingResult()
 			.getFieldErrors()
 			.stream()
-			.map(GlobalExceptionHandler::formatError)
+			.map(GlobalExceptionHandler::makeFieldErrorMessage)
 			.collect(Collectors.joining());
 		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, error));
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentTypeMismatchException(
+		MethodArgumentTypeMismatchException ex) {
 
 		return error(ExpectedException.withLogging(DefaultErrorCode.MethodArgumentTypeMismatch, ex.getMessage()));
 	}
 
 	@ExceptionHandler(MissingPathVariableException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleMissingPathVariableException(MissingPathVariableException ex) {
+	public ResponseEntity<ApiResult<ExpectedException>> handleMissingPathVariableException(
+		MissingPathVariableException ex) {
 
 		return error(ExpectedException.withLogging(DefaultErrorCode.MissingPathVariableException, ex.getMessage()));
 	}
 
-	// Controller에서 @Min @NotNull 등의 어노테이션 유효성 검사 오류시
+	// Controller에서 @Min @NotNull 등의 기본적인 어노테이션 유효성 검사 오류시
 
 	@ExceptionHandler(HandlerMethodValidationException.class)
 	public ResponseEntity<ApiResult<ExpectedException>> handleValidationExceptions(
@@ -127,29 +127,20 @@ public class GlobalExceptionHandler {
 		MissingServletRequestParameterException exception) {
 		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, exception.getMessage()));
 	}
-	// @ExceptionHandler(Exception.class)
-	// protected ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(final Exception exception) {
-	// 	String errorMessage = """
-	// 		Class : %s
-	// 		Cause : %s
-	// 		Message : %s
-	// 		StackTrace : %s
-	// 		""".formatted(exception.getClass(), exception.getCause(), exception.getMessage(),
-	// 		exception.getStackTrace());
-	// 	return error(ExpectedException.withLogging(DefaultErrorCode.UnHandledException, errorMessage));
-	// }
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(
+		Exception exception) {
+		String msg = exception.getMessage();
+		return error(ExpectedException.withLogging(DefaultErrorCode.UnHandledException, msg));
+	}
 
 	@NotNull
 	private static String makeFieldErrorMessage(FieldError fieldError) {
 		return """
-			%s 은(는) %s
-			입력된 값 : %s
-			""".formatted(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue());
+			[%s] 변수에 대해서 %s 입력된 값 : [%s]  """.formatted(fieldError.getField(), fieldError.getDefaultMessage(),
+			fieldError.getRejectedValue());
+
 	}
 
-	private static String formatError(FieldError fieldError) {
-		return """
-			[%s]는 %s 입력된 값 : [%s]""".formatted(fieldError.getField(), fieldError.getDefaultMessage(),
-			fieldError.getRejectedValue());
-	}
 }

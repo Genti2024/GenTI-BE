@@ -12,6 +12,7 @@ public enum PictureGenerateRequestStatus implements ConvertableEnum {
 	CANCELED("CANCELED"),
 	REPORTED("REPORTED"),
 	MATCH_TO_ADMIN("MATCH_TO_ADMIN"),
+	AWAIT_USER_VERIFICATION("AWAIT_USER_VERIFICATION"),
 	COMPLETED("COMPLETED");
 
 	private final String stringValue;

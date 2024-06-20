@@ -84,7 +84,7 @@ public class MatchTest {
 			.build();
 
 		// when
-		PictureGenerateRequest createdPGREQ = pictureGenerateRequestService.createPictureGenerateRequest(
+		PictureGenerateRequest createdPGREQ = pictureGenerateRequestService.createPGREQ(
 			requester, req.toCommand());
 
 		// then

@@ -4,8 +4,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.domain.enums.converter.db.PictureGenerateResponseStatusConverter;
@@ -96,7 +94,7 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	public void adminSubmit() {
 		this.submittedByAdminAt = LocalDateTime.now();
 		this.status = PictureGenerateResponseStatus.SUBMITTED_FINAL;
-		this.request.completed();
+		this.request.completeButNotVerified();
 	}
 
 	public PictureGenerateResponse(Creator creator, PictureGenerateRequest request) {

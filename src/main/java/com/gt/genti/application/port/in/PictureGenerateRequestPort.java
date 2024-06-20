@@ -27,7 +27,7 @@ public interface PictureGenerateRequestPort {
 
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 
-	Optional<PictureGenerateRequest> findByRequesterOrderByCreatedByDesc(User requester);
+	Optional<PictureGenerateRequest> findByRequesterAndStatusInOrderByCreatedByDesc(User requester, List<PictureGenerateRequestStatus> statusList);
 
 	Page<PictureGenerateRequest> findAll(Pageable pageable);
 

@@ -144,7 +144,11 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.MATCH_TO_ADMIN;
 	}
 
-	public void completed() {
+	public void completeButNotVerified() {
+		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION;
+	}
+
+	public void userVerified(){
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.COMPLETED;
 	}
 }

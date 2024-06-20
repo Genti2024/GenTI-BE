@@ -10,24 +10,22 @@ import com.gt.genti.domain.User;
 import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.dto.user.response.PGREQDetailFindByUserResponseDto;
-import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 
 public interface PictureGenerateRequestUseCase {
-	public List<PGREQDetailFindByUserResponseDto> getAllPictureGenerateRequestForUser(User user);
+	public List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(User user);
 
-	public PGREQDetailFindByUserResponseDto findActivePGREQByUser(User user);
-	public Boolean isActivePGREQExists(User user);
+	public Boolean isPendingPGREQExists(User user);
 
-	public PGREQDetailFindByUserResponseDto findPGREQByUserAndId(User user, Long id);
+	public PGREQDetailFindByUserResponseDto findPGREQByRequestAndId(User user, Long id);
 
-	public List<PGREQBriefFindByUserResponseDto> getAllMyPictureGenerateRequests(User user);
 
 	@Transactional
-	public PictureGenerateRequest createPictureGenerateRequest(User requester,
+	public PictureGenerateRequest createPGREQ(User requester,
 		PGREQSaveCommand pgreqSaveCommand);
 
 	@Transactional
-	public void modifyPictureGenerateRequest(User user,
+	public void modifyPGREQ(User user,
 		PGREQUpdateRequestDto PGREQUpdateRequestDto);
 
+	PGREQBriefFindByUserResponseDto findCompletedPGREQByRequester(User requester);
 }

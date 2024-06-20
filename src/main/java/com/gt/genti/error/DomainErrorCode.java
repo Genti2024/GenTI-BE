@@ -18,6 +18,8 @@ public enum DomainErrorCode implements ErrorCode {
 	FileTypeNotProvided(HttpStatus.BAD_REQUEST, ErrorUtils.FileTypeNotProvided, "파일 형식이 주어지지 않았습니다."),
 	PictureGenerateRequestNotFound(HttpStatus.NOT_FOUND, ErrorUtils.PictureGenerateRequestNotFound,
 		"사진 생성 요청을 찾지 못했습니다."),
+	NoPictureGenerateRequest(HttpStatus.NO_CONTENT, ErrorUtils.NoPictureGenerateRequest,
+		"사진 생성요청이 없습니다."),
 	UserNotFound(HttpStatus.NOT_FOUND, ErrorUtils.UserNotFound, "존재하지 않는 사용자입니다. [%s]"),
 	RequestAlreadyInProgress(HttpStatus.BAD_REQUEST, ErrorUtils.RequestAlreadyInProgress, "이미 작업이 진행중인 요청은 수정이 불가합니다."),
 	ZeroMatchingRequests(HttpStatus.NO_CONTENT, ErrorUtils.ZeroMatchingRequests, "매칭된 요청이 없습니다."),
@@ -59,7 +61,8 @@ public enum DomainErrorCode implements ErrorCode {
 		"출금 가능한 정산 내역이 없습니다."),
 	AlreadyCompletedResponse(HttpStatus.BAD_REQUEST, ErrorUtils.AlreadyCompletedRequest, "이미 완료된 응답을 수정할 수 없습니다."),
 	WithdrawRequestNotFound(HttpStatus.NOT_FOUND, ErrorUtils.WithdrawRequestNotFound, "해당 출금 요청을 찾을 수 없습니다."),
-	NotEnoughBalance(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotEnoughBalance, "해당 공급자의 출금가능 잔액이 부족하여 요청을 완료할 수 없습니다.");
+	NotEnoughBalance(HttpStatus.NOT_ACCEPTABLE, ErrorUtils.NotEnoughBalance, "해당 공급자의 출금가능 잔액이 부족하여 요청을 완료할 수 없습니다."),
+	NoPendingUserVerificationPGREQ(HttpStatus.NOT_FOUND, ErrorUtils.NoPendingUserVerificationPGREQ, "현재 사용자의 확인 대기중인 사진생성요청이 없습니다.");
 
 	private final HttpStatusCode httpStatusCode;
 	private final String code;

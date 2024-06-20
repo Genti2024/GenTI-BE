@@ -1,5 +1,7 @@
 package com.gt.genti.application.adapter;
 
+import static com.gt.genti.domain.enums.converter.db.EnumUtil.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PictureGenerateRequestPersistenceAdapter implements PictureGenerateRequestPort {
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
-
 
 	@Override
 	public List<PictureGenerateRequest> findByRequestStatusAndUser(PictureGenerateRequestStatus requestStatus,
@@ -61,13 +62,8 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByRequesterOrderByCreatedByDesc(User requester) {
-
-		List<PictureGenerateRequestStatus> activeStatusList = new ArrayList<>();
-		activeStatusList.add(PictureGenerateRequestStatus.CREATED);
-		activeStatusList.add(PictureGenerateRequestStatus.ASSIGNING);
-		activeStatusList.add(PictureGenerateRequestStatus.IN_PROGRESS);
-		return pictureGenerateRequestRepository.findByUserIdAndRequestStatusIn(requester, activeStatusList);
+	public Optional<PictureGenerateRequest> findByRequesterAndStatusInOrderByCreatedByDesc(User requester, List<PictureGenerateRequestStatus> statusList) {
+		return pictureGenerateRequestRepository.findByUserIdAndRequestStatusIn(requester, statusList);
 	}
 
 	@Override

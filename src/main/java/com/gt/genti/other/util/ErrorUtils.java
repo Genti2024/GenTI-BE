@@ -85,5 +85,7 @@ public class ErrorUtils {
 	public static final String NoSettlementForWithdrawalException = CODE(WITHDRAW, 1);
 	public static final String WithdrawRequestNotFound = CODE(WITHDRAW, 2);
 	public static final String NotEnoughBalance = CODE(WITHDRAW, 3);
+	public static final String NoPictureGenerateRequest = CODE(REQUEST, 9);
+	public static final String NoPendingUserVerificationPGREQ = CODE(REQUEST, 10);
 
 }

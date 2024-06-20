@@ -32,20 +32,21 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExpectedException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> handleExpectedException(final HttpServletRequest request,
+	protected ResponseEntity<ApiResult<?>> handleExpectedException(final HttpServletRequest request,
 		final ExpectedException exception) {
+
 		return error(exception);
 	}
 
 	@ExceptionHandler(NoHandlerFoundException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleNoHandlerFoundException(
+	public ResponseEntity<ApiResult<?>> handleNoHandlerFoundException(
 		NoHandlerFoundException ex) {
 		String errorMessage = ex.getRequestURL();
 		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
 	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleHttpRequestMethodNotSupportedException(
+	public ResponseEntity<ApiResult<?>> handleHttpRequestMethodNotSupportedException(
 		HttpRequestMethodNotSupportedException ex) {
 		return error(ExpectedException.withLogging(DefaultErrorCode.MethodNotSupported, ex.getMessage(),
 			Arrays.toString(ex.getSupportedMethods())));
@@ -53,28 +54,28 @@ public class GlobalExceptionHandler {
 
 	//없는 url로 요청 시
 	@ExceptionHandler(NoResourceFoundException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleNoResourceFoundException(
+	public ResponseEntity<ApiResult<?>> handleNoResourceFoundException(
 		NoResourceFoundException ex) {
 		String errorMessage = ex.getResourcePath();
 		return error(ExpectedException.withLogging(DefaultErrorCode.NoHandlerFoundException, errorMessage));
 	}
 
 	@ExceptionHandler(WebExchangeBindException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> processValidationError(WebExchangeBindException exception) {
+	protected ResponseEntity<ApiResult<?>> processValidationError(WebExchangeBindException exception) {
 		String errorMessage = exception.getBindingResult().getFieldErrors().stream().map(
 			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
 		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, errorMessage));
 	}
 
 	@ExceptionHandler(UnrecognizedPropertyException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> unRecognizedPropertyException(
+	protected ResponseEntity<ApiResult<?>> unRecognizedPropertyException(
 		UnrecognizedPropertyException exception) {
 		String errorMessage = exception.getMessage();
 		return error(ExpectedException.withLogging(DefaultErrorCode.UnrecognizedPropertyException, errorMessage));
 	}
 
 	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
-	protected ResponseEntity<ApiResult<ExpectedException>> invalidDataAccessApiUsageException(
+	protected ResponseEntity<ApiResult<?>> invalidDataAccessApiUsageException(
 		InvalidDataAccessApiUsageException exception) {
 		String errorMessage = exception.getMessage();
 
@@ -83,7 +84,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentNotValidException(
+	public ResponseEntity<ApiResult<?>> handleMethodArgumentNotValidException(
 		MethodArgumentNotValidException exception) {
 		exception.getMessage();
 
@@ -96,14 +97,14 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleMethodArgumentTypeMismatchException(
+	public ResponseEntity<ApiResult<?>> handleMethodArgumentTypeMismatchException(
 		MethodArgumentTypeMismatchException ex) {
 
 		return error(ExpectedException.withLogging(DefaultErrorCode.MethodArgumentTypeMismatch, ex.getMessage()));
 	}
 
 	@ExceptionHandler(MissingPathVariableException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleMissingPathVariableException(
+	public ResponseEntity<ApiResult<?>> handleMissingPathVariableException(
 		MissingPathVariableException ex) {
 
 		return error(ExpectedException.withLogging(DefaultErrorCode.MissingPathVariableException, ex.getMessage()));
@@ -112,7 +113,7 @@ public class GlobalExceptionHandler {
 	// Controller에서 @Min @NotNull 등의 기본적인 어노테이션 유효성 검사 오류시
 
 	@ExceptionHandler(HandlerMethodValidationException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleValidationExceptions(
+	public ResponseEntity<ApiResult<?>> handleValidationExceptions(
 		HandlerMethodValidationException exception) {
 		MessageSourceResolvable resolvable = exception.getAllValidationResults().get(0).getResolvableErrors().get(0);
 		String fieldName = Objects.requireNonNull(resolvable.getCodes())[0];
@@ -124,13 +125,13 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MissingServletRequestParameterException.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleValidationExceptions(
+	public ResponseEntity<ApiResult<?>> handleValidationExceptions(
 		MissingServletRequestParameterException exception) {
 		return error(ExpectedException.withLogging(DefaultErrorCode.ControllerValidationError, exception.getMessage()));
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ApiResult<ExpectedException>> handleUnExpectedException(
+	public ResponseEntity<ApiResult<?>> handleUnExpectedException(
 		Exception exception) {
 		String msg = exception.getMessage();
 		return error(ExpectedException.withLogging(DefaultErrorCode.UnHandledException, msg));

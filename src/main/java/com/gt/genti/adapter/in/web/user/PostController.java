@@ -15,18 +15,28 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gt.genti.application.service.PostService;
 import com.gt.genti.dto.user.response.PostBriefFindResponseDto;
 import com.gt.genti.dto.user.response.PostDetailResponseDto;
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.other.annotation.ToBeUpdated;
 import com.gt.genti.other.aop.annotation.CheckUserIsQuit;
 import com.gt.genti.other.auth.UserDetailsImpl;
+import com.gt.genti.other.swagger.EnumResponse;
+import com.gt.genti.other.swagger.EnumResponses;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "[PostController] 포스트 컨트롤러", description = "포스트(피드) 조회,생성,수정 요청")
+@Deprecated
 @RestController
 @RequestMapping("/api/feeds")
 @RequiredArgsConstructor
 public class PostController {
 	private final PostService postService;
 
+	@Deprecated
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
 	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/detail")
@@ -36,6 +46,10 @@ public class PostController {
 		return success(postService.getPostDetailAllPagination(cursor));
 	}
 
+	@Deprecated
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
 	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/detail/my")
@@ -45,6 +59,10 @@ public class PostController {
 		return success(postService.getPostDetailAllByUserPagination(userDetails.getUser(), cursor));
 	}
 
+	@Deprecated
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
 	@ToBeUpdated
 	@CheckUserIsQuit
 	@GetMapping("/detail/users/{userId}")
@@ -54,6 +72,9 @@ public class PostController {
 		return success(postService.getPostDetailAllByUserIdPagination(userId, cursor));
 	}
 
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
 	@Deprecated
 	@ToBeUpdated
 	@CheckUserIsQuit
@@ -63,6 +84,9 @@ public class PostController {
 		return success(postService.getPostBriefAllByUserId(userId));
 	}
 
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
 	@Deprecated
 	@ToBeUpdated
 	@CheckUserIsQuit

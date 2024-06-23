@@ -1,5 +1,7 @@
 package com.gt.genti.service;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +23,6 @@ import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.common.Picture;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.repository.PictureCompletedRepository;
@@ -53,7 +54,7 @@ public class PictureService {
 
 	public PictureUserFace findByUrlPictureUserFace(String key) {
 		return pictureUserFaceRepository.findByKey(key)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureUserFaceNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(PictureUserFaceNotFound));
 	}
 
 	// public PictureCompleted findByUrlPictureCompleted(String key) {
@@ -62,7 +63,7 @@ public class PictureService {
 
 	public PictureCreatedByCreator findByUrlPictureCreatedByCreator(String key) {
 		return pictureCreatedByCreatorRepository.findByKey(key)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureCreatedByCreatorNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(PictureCreatedByCreatorNotFound));
 	}
 
 	public Optional<PicturePose> findByUrlPicturePose(String key) {
@@ -71,13 +72,13 @@ public class PictureService {
 
 	public PictureProfile findByUrlPictureProfile(String key) {
 		return pictureProfileRepository.findByKey(key)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureProfileNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(PictureProfileNotFound));
 	}
 
 	public PictureCreatedByCreator findPictureCreatedByCreatorByPictureGenerateResponse(
 		PictureGenerateResponse pictureGenerateResponse) {
 		return pictureCreatedByCreatorRepository.findByPictureGenerateResponse(pictureGenerateResponse)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureCreatedByCreatorNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(PictureCreatedByCreatorNotFound));
 	}
 
 	public Picture updatePicture(CreatePictureCompletedCommand command) {
@@ -188,11 +189,6 @@ public class PictureService {
 				.build())
 			.toList();
 		return pictureCreatedByCreatorRepository.saveAll(uploadEntityList);
-	}
-
-	private User findUser(Long userId) {
-		return userRepository.findById(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound));
 	}
 
 	public List<PictureProfile> findAllProfilePicture(User foundUser) {

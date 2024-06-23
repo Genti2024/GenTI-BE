@@ -1,8 +1,5 @@
 package com.gt.genti.application.adapter;
 
-import static com.gt.genti.domain.enums.converter.db.EnumUtil.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +12,12 @@ import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.other.aop.annotation.AutoLogging;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@AutoLogging
 @Component
 @RequiredArgsConstructor
 public class PictureGenerateRequestPersistenceAdapter implements PictureGenerateRequestPort {
@@ -36,7 +35,8 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(Creator creator) {
+	public Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
+		Creator creator) {
 
 		return pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(creator);
 	}
@@ -52,17 +52,18 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester){
+	public Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester) {
 		return pictureGenerateRequestRepository.findByIdAndRequesterId(id, requester);
 	}
 
 	@Override
-	public PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest){
+	public PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest) {
 		return pictureGenerateRequestRepository.save(pictureGenerateRequest);
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByRequesterAndStatusInOrderByCreatedByDesc(User requester, List<PictureGenerateRequestStatus> statusList) {
+	public Optional<PictureGenerateRequest> findByRequesterAndStatusInOrderByCreatedByDesc(User requester,
+		List<PictureGenerateRequestStatus> statusList) {
 		return pictureGenerateRequestRepository.findByUserIdAndRequestStatusIn(requester, statusList);
 	}
 

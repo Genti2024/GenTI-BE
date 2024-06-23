@@ -1,5 +1,7 @@
 package com.gt.genti.application.service;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -10,7 +12,6 @@ import com.gt.genti.domain.Post;
 import com.gt.genti.domain.User;
 import com.gt.genti.dto.user.response.PostBriefFindResponseDto;
 import com.gt.genti.dto.user.response.PostDetailResponseDto;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.PostRepository;
 import com.gt.genti.repository.UserRepository;
@@ -77,7 +78,7 @@ public class PostService {
 
 	private User findUser(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(UserNotFound, userId.toString()));
 	}
 
 }

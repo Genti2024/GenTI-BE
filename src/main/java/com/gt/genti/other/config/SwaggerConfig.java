@@ -1,8 +1,11 @@
 package com.gt.genti.other.config;
 
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.gt.genti.other.swagger.SwaggerEnumOperationCustomizer;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -54,4 +57,11 @@ public class SwaggerConfig {
 			.components(components);
 	}
 
+	@Bean
+	public GroupedOpenApi publicApi(SwaggerEnumOperationCustomizer swaggerEnumOperationCustomizer) {
+		return GroupedOpenApi.builder()
+			.group("GenTI")
+			.addOperationCustomizer(swaggerEnumOperationCustomizer)
+			.build();
+	}
 }

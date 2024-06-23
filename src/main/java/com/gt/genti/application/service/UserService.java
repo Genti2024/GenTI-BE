@@ -1,5 +1,7 @@
 package com.gt.genti.application.service;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +23,6 @@ import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
 import com.gt.genti.dto.user.response.UserFindResponseDto;
 import com.gt.genti.dto.user.response.UserInfoUpdateResponseDto;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.repository.CreatorRepository;
@@ -146,7 +147,7 @@ public class UserService {
 
 	private User findUser(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(UserNotFound, userId.toString()));
 	}
 
 	public Optional<User> findOptionalUser(String email) {

@@ -1,11 +1,11 @@
 package com.gt.genti.domain;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
-
-import org.hibernate.annotations.ColumnDefault;
 
 import com.gt.genti.domain.common.BaseTimeEntity;
 import com.gt.genti.domain.enums.OauthType;
@@ -16,7 +16,6 @@ import com.gt.genti.domain.enums.converter.db.OauthTypeConverterIgnoreCase;
 import com.gt.genti.domain.enums.converter.db.SexConverter;
 import com.gt.genti.domain.enums.converter.db.UserRoleConverter;
 import com.gt.genti.domain.enums.converter.db.UserStatusConverter;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.OAuthAttributes;
 import com.gt.genti.other.util.RandomUtils;
@@ -160,7 +159,7 @@ public class User extends BaseTimeEntity {
 
 	public void restore() {
 		if (Period.between(this.deletedAt.toLocalDate(), LocalDate.now()).getMonths() >= 1) {
-			throw ExpectedException.withLogging(DomainErrorCode.CannotRestoreUser);
+			throw ExpectedException.withLogging(CannotRestoreUser);
 		}
 		this.userStatus = UserStatus.ACTIVATED;
 	}

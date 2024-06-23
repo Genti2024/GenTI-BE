@@ -11,18 +11,26 @@ import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.domain.enums.converter.db.EnumUtil;
 import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Schema
 @Getter
 @NoArgsConstructor
 public class PGREQBriefFindByUserResponseDto {
+	@Schema(name = "requestId")
 	Long requestId;
+	@Schema(name = "prompt")
 	String prompt;
+	@Schema(name = "cameraAngle")
 	CameraAngle cameraAngle;
+	@Schema(name = "shotCoverage")
 	ShotCoverage shotCoverage;
+	@Schema(name = "status")
 	PictureGenerateRequestStatus status;
+	@Schema(name = "pictureCompletedList")
 	List<CommonPictureResponseDto> pictureCompletedList;
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
 
 	public PGREQBriefFindByUserResponseDto(PictureGenerateRequest pgreq) {

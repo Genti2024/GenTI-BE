@@ -1,5 +1,6 @@
 package com.gt.genti.domain;
 
+import static com.gt.genti.error.ResponseCode.*;
 import static com.gt.genti.other.util.TimeUtils.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,6 @@ import com.gt.genti.domain.enums.converter.db.PictureRatioConverter;
 import com.gt.genti.domain.enums.converter.db.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.db.ShotCoverageConverter;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.CascadeType;
@@ -128,7 +128,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 
 	public void accept() {
 		if (LocalDateTime.now().isAfter(this.getModifiedAt().plusMinutes(ACCEPTABLE_TIME_MINUTE))) {
-			throw ExpectedException.withLogging(DomainErrorCode.ExpiredPictureGenerateRequest);
+			throw ExpectedException.withLogging(ExpiredPictureGenerateRequest);
 		}
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;
 	}

@@ -6,17 +6,22 @@ import com.gt.genti.domain.User;
 import com.gt.genti.domain.common.PictureEntity;
 import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Schema
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFindResponseDto {
+	@Schema(name = "id")
 	Long id;
+	@Schema(name = "username")
 	String username;
+	@Schema(name = "nickname")
 	String nickname;
+	@Schema(name = "profilePictureList")
 	List<CommonPictureResponseDto> profilePictureList;
 
 	@Builder

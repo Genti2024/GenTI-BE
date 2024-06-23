@@ -1,8 +1,9 @@
 package com.gt.genti.other.util;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import java.time.Duration;
 
-import com.gt.genti.error.DefaultErrorCode;
 import com.gt.genti.error.ExpectedException;
 
 public class TimeUtils {
@@ -28,11 +29,9 @@ public class TimeUtils {
 				return timeReward[1];
 			}
 		}
-		throw ExpectedException.withLogging(DefaultErrorCode.UnHandledException,
-			"""
-				요청-응답의 공급자의 응답 소요 시간 계산 중 문제 발생,
-				계산된 응답소요시간은 [%d분]"""
-				.formatted(elapsedMinutes));
+		throw ExpectedException.withLogging(UnHandledException,
+			String.format("요청-응답의 공급자의 응답 소요 시간 계산 중 문제 발생,\n"
+				+ "계산된 응답소요시간은 [%d분]", elapsedMinutes));
 	}
 
 	public static String getZeroTime() {

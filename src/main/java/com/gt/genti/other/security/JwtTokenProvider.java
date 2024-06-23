@@ -1,5 +1,7 @@
 package com.gt.genti.other.security;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -15,8 +17,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.gt.genti.error.DefaultErrorCode;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.other.auth.UserDetailsServiceImpl;
@@ -102,9 +102,9 @@ public class JwtTokenProvider {
 				.parseClaimsJws(token) // 파싱 및 검증, 실패 시 에러
 				.getBody();
 		} catch (ExpiredJwtException expiredJwtException) {
-			throw ExpectedException.withLogging(DefaultErrorCode.TOKEN_EXPIRED);
+			throw ExpectedException.withLogging(TOKEN_EXPIRED);
 		} catch (Exception e) {
-			throw ExpectedException.withLogging(DefaultErrorCode.INVALID_TOKEN);
+			throw ExpectedException.withLogging(INVALID_TOKEN);
 		}
 	}
 

@@ -4,36 +4,41 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gt.genti.domain.PictureGenerateRequest;
-import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.dto.common.response.CommonPictureResponseDto;
-import com.gt.genti.error.DefaultErrorCode;
-import com.gt.genti.error.ExpectedException;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema
 @Getter
 @NoArgsConstructor
 public class PGREQDetailFindByUserResponseDto {
+
+	@Schema(name = "id")
 	Long id;
-
+	@Schema(name = "prompt")
 	String prompt;
+	@Schema(name = "promptAdvanced")
 	String promptAdvanced;
-
+	@Schema(name = "facePictureUrlList")
 	List<CommonPictureResponseDto> facePictureUrlList;
+	@Schema(name = "posePictureUrl")
 	CommonPictureResponseDto posePictureUrl;
-
+	@Schema(name = "cameraAngle")
 	CameraAngle cameraAngle;
+	@Schema(name = "shotCoverage")
 	ShotCoverage shotCoverage;
-
+	@Schema(name = "requestStatus")
 	PictureGenerateRequestStatus requestStatus;
-
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
+	@Schema(name = "pictureGenerateResponse")
 	PGRESFindByUserResponseDto pictureGenerateResponse;
 
 	public PGREQDetailFindByUserResponseDto(PictureGenerateRequest pictureGenerateRequest) {
@@ -55,14 +60,14 @@ public class PGREQDetailFindByUserResponseDto {
 		this.requestStatus = pictureGenerateRequest.getPictureGenerateRequestStatus();
 		this.createdAt = pictureGenerateRequest.getCreatedAt();
 
-		PictureGenerateResponse lastResponse = pictureGenerateRequest.getResponseList()
+		pictureGenerateRequest.getResponseList()
 			.stream()
 			.filter(response ->
 				response.getStatus() == PictureGenerateResponseStatus.SUBMITTED_FINAL
 					|| response.getStatus() == PictureGenerateResponseStatus.COMPLETED)
 			.min((res1, res2) -> res2.getModifiedAt().compareTo(res1.getModifiedAt()))
-			.orElseThrow(() -> ExpectedException.withLogging(DefaultErrorCode.UnHandledException));
-		this.pictureGenerateResponse = new PGRESFindByUserResponseDto(lastResponse);
+			.ifPresent(generateResponse ->
+				this.pictureGenerateResponse = new PGRESFindByUserResponseDto(generateResponse));
 
 	}
 }

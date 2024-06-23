@@ -2,7 +2,6 @@ package com.gt.genti.other.aop;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -17,17 +16,22 @@ public class LoggingAspect {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Pointcut("within(@org.springframework.stereotype.Service *) || within(@org.springframework.stereotype.Component *) || within(@org.springframework.web.bind.annotation.RestController *)")
-	public void springBeanPointcut() {
+	@Pointcut("within(@org.springframework.stereotype.Service *) || within(@com.gt.genti.other.aop.annotation.AutoLogging *) || within(@org.springframework.web.bind.annotation.RestController *)")
+	public void needLogPoint() {
 		// 포인트컷
 	}
 
 	@Pointcut("within(com.gt.genti..*)")
-	public void applicationPackagePointcut() {
+	public void myPackage() {
 		// 포인트컷
 	}
 
-	@Before("springBeanPointcut() && applicationPackagePointcut()")
+	@Pointcut("within(com.gt.genti..*) && @annotation(org.springframework.web.bind.annotation.ExceptionHandler)")
+	public void exceptionHandlerMethods() {
+		// Pointcut for methods annotated with @ExceptionHandler
+	}
+
+	@Before("needLogPoint() && myPackage()")
 	public void logBefore(JoinPoint joinPoint) {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 		String className = signature.getDeclaringTypeName();
@@ -35,7 +39,7 @@ public class LoggingAspect {
 		log.info("Executing method: {}.{}", className, methodName);
 	}
 
-	@AfterReturning(pointcut = "springBeanPointcut() && applicationPackagePointcut()", returning = "result")
+	@AfterReturning(pointcut = "needLogPoint() && myPackage()", returning = "result")
 	public void logAfterReturning(JoinPoint joinPoint, Object result) {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 		String className = signature.getDeclaringTypeName();
@@ -43,11 +47,4 @@ public class LoggingAspect {
 		log.info("Method {}.{} executed successfully, returning: {}", className, methodName, result);
 	}
 
-	@AfterThrowing(pointcut = "springBeanPointcut() && applicationPackagePointcut()", throwing = "error")
-	public void logAfterThrowing(JoinPoint joinPoint, Throwable error) {
-		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
-		String className = signature.getDeclaringTypeName();
-		String methodName = signature.getName();
-		log.error("Method {}.{} threw an exception: {}", className, methodName, error.getMessage());
-	}
 }

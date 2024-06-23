@@ -21,7 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.other.auth.CustomOAuth2UserService;
 import com.gt.genti.other.handler.CommonLoginFailHandler;
 import com.gt.genti.other.handler.CommonLoginSuccessHandler;

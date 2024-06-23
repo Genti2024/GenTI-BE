@@ -1,6 +1,6 @@
 package com.gt.genti.other.security;
 
-import static com.gt.genti.error.DefaultErrorCode.*;
+import static com.gt.genti.error.ResponseCode.*;
 
 import java.io.IOException;
 
@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.gt.genti.error.DefaultErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.config.SecurityConfig;
 
@@ -57,7 +56,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 
 	private void handleExpectedException(HttpServletRequest request, HttpServletResponse response,
 		ExpectedException expectedException) throws IOException {
-		if (TOKEN_NOT_PROVIDED.equals(expectedException.getErrorCode())) {
+		if (TOKEN_NOT_PROVIDED.equals(expectedException.getResponseCode())) {
 			String url = request.getRequestURI();
 			if (directoryTraversalChecker.isPreviousAttackedUrl(url)) {
 				log.info(url + " 에 대한 허가되지 않은 접근");
@@ -74,7 +73,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 		if (header == null) {
 			throw ExpectedException.withLogging(TOKEN_NOT_PROVIDED);
 		} else if (!header.startsWith(JwtConstants.JWT_PREFIX)) {
-			throw ExpectedException.withLogging(DefaultErrorCode.INVALID_TOKEN);
+			throw ExpectedException.withLogging(INVALID_TOKEN);
 		}
 	}
 }

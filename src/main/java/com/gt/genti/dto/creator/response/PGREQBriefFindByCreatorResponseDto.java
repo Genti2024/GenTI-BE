@@ -9,18 +9,26 @@ import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.other.util.TimeUtils;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Schema
 @Getter
 @NoArgsConstructor
 public class PGREQBriefFindByCreatorResponseDto {
+	@Schema(name = "requestId")
 	Long requestId;
+	@Schema(name = "prompt")
 	String prompt;
+	@Schema(name = "cameraAngle")
 	CameraAngle cameraAngle;
+	@Schema(name = "shotCoverage")
 	ShotCoverage shotCoverage;
+	@Schema(name = "status")
 	PictureGenerateRequestStatus status;
+	@Schema(name = "remainTimeForAccept")
 	String remainTimeForAccept;
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
 
 	public PGREQBriefFindByCreatorResponseDto(PictureGenerateRequest pgreq) {

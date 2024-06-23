@@ -1,5 +1,7 @@
 package com.gt.genti.service;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,7 +11,6 @@ import com.gt.genti.dto.creator.request.AccountUpdateRequestDto;
 import com.gt.genti.dto.creator.request.CreatorStatusUpdateRequestDto;
 import com.gt.genti.dto.creator.response.CreatorFindResponseDto;
 import com.gt.genti.dto.creator.response.CreatorStatusUpdateResponseDto;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.CreatorRepository;
 
@@ -48,6 +49,6 @@ public class CreatorService {
 
 	private Creator findCreatorByUser(User user) {
 		return creatorRepository.findByUser(user)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.CreatorNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(CreatorNotFound, user.getId().toString()));
 	}
 }

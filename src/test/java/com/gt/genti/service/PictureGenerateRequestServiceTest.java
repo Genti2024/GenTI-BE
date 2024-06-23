@@ -21,7 +21,7 @@
 // import com.gt.genti.domain.enums.CameraAngle;
 // import com.gt.genti.domain.enums.RequestStatus;
 // import com.gt.genti.domain.enums.ShotCoverage;
-// import com.gt.genti.dto.PGREQDetailFindResponseDto;
+// import com.gt.genti.dto.admin.response.PGREQDetailFindResponseDto;
 // import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 // import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 // import com.gt.genti.repository.PictureGenerateRequestRepository;

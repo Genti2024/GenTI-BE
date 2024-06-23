@@ -8,17 +8,24 @@ import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.other.util.PictureEntityUtils;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Schema
 @Getter
 @NoArgsConstructor
 public class PGRESDetailFindByAdminResponseDto {
+	@Schema(name = "id")
 	Long id;
+	@Schema(name = "memo")
 	String memo;
+	@Schema(name = "pictureCreatedByCreatorList")
 	List<CommonPictureResponseDto> pictureCreatedByCreatorList;
+	@Schema(name = "pictureCompletedList")
 	List<CommonPictureResponseDto> pictureCompletedList;
+	@Schema(name = "responseStatus")
 	PictureGenerateResponseStatus responseStatus;
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
 
 	public PGRESDetailFindByAdminResponseDto(PictureGenerateResponse pgres) {

@@ -8,20 +8,28 @@ import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.other.util.PictureEntityUtils;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Schema
 @Deprecated
 @Getter
 @NoArgsConstructor
 public class PostDetailResponseDto {
+	@Schema(name = "postId")
 	Long postId;
+	@Schema(name = "userId")
 	Long userId;
+	@Schema(name = "profilePicture")
 	CommonPictureResponseDto profilePicture;
+	@Schema(name = "postPictureList")
 	List<CommonPictureResponseDto> postPictureList;
+	@Schema(name = "content")
 	String content;
+	@Schema(name = "likes")
 	Integer likes;
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
 
 	@Builder

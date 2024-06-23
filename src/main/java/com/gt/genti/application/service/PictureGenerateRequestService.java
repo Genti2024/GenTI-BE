@@ -1,6 +1,7 @@
 package com.gt.genti.application.service;
 
 import static com.gt.genti.domain.enums.converter.db.EnumUtil.*;
+import static com.gt.genti.error.ResponseCode.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,12 +19,10 @@ import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.dto.PGREQDetailFindResponseDto;
+import com.gt.genti.dto.admin.response.PGREQDetailFindResponseDto;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.dto.user.response.PGREQDetailFindByUserResponseDto;
-import com.gt.genti.error.DefaultErrorCode;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.external.openai.dto.PromptAdvancementRequestCommand;
 import com.gt.genti.external.openai.service.OpenAIService;
@@ -39,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PictureGenerateRequestService implements PictureGenerateRequestUseCase {
 	private final PictureGenerateRequestPort pictureGenerateRequestPort;
 	private final CreatorRepository creatorRepository;
-	// private final UserRepository userRepository;
 	private final OpenAIService openAIService;
 	private final PictureService pictureService;
 	private final RequestMatchService requestMatchService;
@@ -51,7 +49,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			PGREQDetailFindResponseDto::new
 		);
 		if (result.isEmpty()) {
-			throw ExpectedException.withLogging(DefaultErrorCode.UnHandledException, "사진생성요청이 1개도 없음");
+			throw ExpectedException.withLogging(NoPictureGenerateRequest);
 		}
 		return result;
 	}
@@ -63,17 +61,15 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			PGREQBriefFindByUserResponseDto::new
 		).sorted((dto1, dto2) -> dto2.getCreatedAt().compareTo(dto1.getCreatedAt())).toList();
 		if (result.isEmpty()) {
-			throw ExpectedException.withLogging(DomainErrorCode.PictureGenerateRequestNotFound);
+			throw ExpectedException.withLogging(PictureGenerateRequestNotFound);
 		}
 		return result;
 	}
 
 	@Override
 	public Boolean isPendingPGREQExists(User user) {
-		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(
-			user, PGREQ_STATUS_PENDING).orElse(null);
-		return foundPictureGenerateRequest != null;
-
+		return pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(
+			user, PGREQ_STATUS_PENDING).isPresent();
 	}
 
 	@Override
@@ -81,9 +77,9 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findById(
 				pictureGenerateRequestId)
 			.orElseThrow(() ->
-				ExpectedException.withLogging(DomainErrorCode.PictureGenerateRequestNotFound));
+				ExpectedException.withLogging(PictureGenerateRequestNotFound));
 		if (!Objects.equals(foundPictureGenerateRequest.getRequester().getId(), user.getId())) {
-			throw ExpectedException.withLogging(DomainErrorCode.OnlyRequesterCanViewRequest);
+			throw ExpectedException.withLogging(OnlyRequesterCanViewRequest);
 		}
 		return new PGREQDetailFindByUserResponseDto(foundPictureGenerateRequest);
 	}
@@ -137,10 +133,10 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequester(
 				modifyDto.getPictureGenerateRequestId(), requester)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.PictureGenerateRequestNotFound));
+			.orElseThrow(() -> ExpectedException.withLogging(PictureGenerateRequestNotFound));
 
 		if (findPictureGenerateRequest.getCreator() != null) {
-			throw ExpectedException.withLogging(DomainErrorCode.RequestAlreadyInProgress);
+			throw ExpectedException.withLogging(RequestAlreadyInProgress);
 		}
 
 		PicturePose picturePose = findPictureGenerateRequest.getPicturePose();
@@ -158,11 +154,11 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public PGREQBriefFindByUserResponseDto findCompletedPGREQByRequester(User requester) {
-		return pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(requester, List.of(
-				PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION))
+	public PGREQBriefFindByUserResponseDto findByRequestAndStatusIs(User requester,
+		PictureGenerateRequestStatus status) {
+		return pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(requester, List.of(status))
 			.map(PGREQBriefFindByUserResponseDto::new)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.NoPendingUserVerificationPGREQ));
+			.orElseThrow(() -> ExpectedException.withLogging(NoPendingUserVerificationPGREQ));
 	}
 
 }

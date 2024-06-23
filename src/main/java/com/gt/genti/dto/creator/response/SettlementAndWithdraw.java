@@ -6,16 +6,22 @@ import java.util.Map;
 
 import com.gt.genti.domain.enums.WithdrawRequestStatus;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Schema
 @Getter
 @NoArgsConstructor
 public class SettlementAndWithdraw {
+	@Schema(name = "id")
 	Long id;
+	@Schema(name = "isSettlement")
 	Boolean isSettlement;
+	@Schema(name = "amount")
 	Long amount;
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
+	@Schema(name = "status")
 	WithdrawRequestStatus status;
 
 	public SettlementAndWithdraw(Map<String, Object> attributes) {

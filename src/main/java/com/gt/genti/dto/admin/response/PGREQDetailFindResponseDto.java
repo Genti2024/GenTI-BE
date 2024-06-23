@@ -1,4 +1,4 @@
-package com.gt.genti.dto;
+package com.gt.genti.dto.admin.response;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,25 +13,41 @@ import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.other.util.TimeUtils;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PGREQDetailFindResponseDto {
+
+	@Schema(name = "id")
 	Long id;
+	@Schema(name = "requesterId")
 	Long requesterId;
+	@Schema(name = "requesterEmail")
 	String requesterEmail;
+	@Schema(name = "prompt")
 	String prompt;
+	@Schema(name = "promptAdvanced")
 	String promptAdvanced;
+	@Schema(name = "facePictureList")
 	List<CommonPictureResponseDto> facePictureList;
+	@Schema(name = "posePicture")
 	CommonPictureResponseDto posePicture;
+	@Schema(name = "cameraAngle")
 	CameraAngle cameraAngle;
+	@Schema(name = "shotCoverage")
 	ShotCoverage shotCoverage;
+	@Schema(name = "requestStatus")
 	PictureGenerateRequestStatus requestStatus;
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
+	@Schema(name = "remainTime")
 	String remainTime;
+	@Schema(name = "responseList")
 	List<PGRESDetailFindByAdminResponseDto> responseList;
 
 	public PGREQDetailFindResponseDto(PictureGenerateRequest pgreq) {
@@ -59,7 +75,7 @@ public class PGREQDetailFindResponseDto {
 				pgreq.getCreatedAt().plusHours(TimeUtils.PGREQ_LIMIT_HOUR));
 			if (!duration.isNegative()) {
 				this.remainTime = TimeUtils.getTimeString(duration);
-			} else{
+			} else {
 				this.remainTime = TimeUtils.getZeroTime();
 			}
 		}

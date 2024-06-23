@@ -1,5 +1,6 @@
 package com.gt.genti.other.auth;
 
+import static com.gt.genti.error.ResponseCode.*;
 import static com.gt.genti.other.auth.UserDetailsImpl.*;
 
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.User;
-import com.gt.genti.error.DomainErrorCode;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.UserRepository;
 
@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return userRepository.findByEmail(email)
 			.map(
 				UserDetailsServiceImpl::convertToUserDetails)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound, email));
+			.orElseThrow(() -> ExpectedException.withLogging(UserNotFound, email));
 	}
 
 	@Transactional
@@ -38,13 +38,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return userRepository.findById(id)
 			.map(
 				UserDetailsServiceImpl::convertToUserDetails)
-			.orElseThrow(() -> ExpectedException.withLogging(DomainErrorCode.UserNotFound, "찾은 id : " + id));
+			.orElseThrow(() -> ExpectedException.withLogging(UserNotFound, id.toString()));
 	}
 
 	@NotNull
 	private static UserDetailsImpl convertToUserDetails(User foundUser) {
 		if (!foundUser.isLogin()) {
-			throw ExpectedException.withLogging(DomainErrorCode.UserNotLoggedIn);
+			throw ExpectedException.withLogging(UserNotLoggedIn);
 		}
 		foundUser.login();
 		return CreateRegisteredUserDetails(foundUser,

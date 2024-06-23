@@ -10,6 +10,7 @@ import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.other.valid.ValidEnum;
 import com.gt.genti.other.valid.ValidKey;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,30 +21,38 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Schema(description = "ㅁㄴㅇㄹ")
 public class PGREQSaveRequestDto {
 
 	@NotBlank
 	@JsonProperty("prompt")
+	@Schema(name = "prompt")
 	String prompt;
-	@ValidKey @JsonProperty("posePictureKey")
+	@ValidKey
+	@JsonProperty("posePictureKey")
+	@Schema(name = "posePictureKey")
 	String posePictureKey;
 
 	@NotNull
 	@Size(max = 3, min = 1, message = "사용자의 얼굴 사진 개수는 최소 1개, 최대 3개입니다.")
 	@JsonProperty("facePictureKeyList")
+	@Schema(name = "facePictureKeyList")
 	List<@ValidKey @NotNull String> facePictureKeyList;
 
 	@NotNull
 	@ValidEnum(value = CameraAngle.class)
 	@JsonProperty("cameraAngle")
+	@Schema(name = "cameraAngle")
 	String cameraAngle;
 	@NotNull
 	@ValidEnum(value = ShotCoverage.class)
 	@JsonProperty("shotCoverage")
+	@Schema(name = "shotCoverage")
 	String shotCoverage;
 	@NotNull
 	@ValidEnum(value = PictureRatio.class)
 	@JsonProperty("pictureRatio")
+	@Schema(name = "pictureRatio")
 	String pictureRatio;
 
 	@Builder

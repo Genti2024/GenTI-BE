@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.command.user.PGREQSaveCommand;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
+import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 import com.gt.genti.dto.user.response.PGREQDetailFindByUserResponseDto;
@@ -27,5 +29,5 @@ public interface PictureGenerateRequestUseCase {
 	public void modifyPGREQ(User user,
 		PGREQUpdateRequestDto PGREQUpdateRequestDto);
 
-	PGREQBriefFindByUserResponseDto findCompletedPGREQByRequester(User requester);
+	PGREQBriefFindByUserResponseDto findByRequestAndStatusIs(User requester, PictureGenerateRequestStatus status);
 }

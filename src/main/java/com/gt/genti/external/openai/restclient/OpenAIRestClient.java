@@ -7,9 +7,9 @@ import org.springframework.web.service.annotation.PostExchange;
 
 import com.gt.genti.external.openai.dto.PromptAdvancementRequestDto;
 import com.gt.genti.external.openai.dto.PromptAdvancementResponse;
-import com.gt.genti.other.aop.annotation.AutoLogging;
+import com.gt.genti.other.aop.annotation.Logged;
 
-@AutoLogging
+@Logged
 @Component
 @HttpExchange
 public interface OpenAIRestClient {

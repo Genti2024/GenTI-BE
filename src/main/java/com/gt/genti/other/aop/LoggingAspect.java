@@ -16,7 +16,7 @@ public class LoggingAspect {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Pointcut("within(@org.springframework.stereotype.Service *) || within(@com.gt.genti.other.aop.annotation.AutoLogging *) || within(@org.springframework.web.bind.annotation.RestController *)")
+	@Pointcut("within(@org.springframework.stereotype.Service *) || within(@com.gt.genti.other.aop.annotation.Logged *) || within(@org.springframework.web.bind.annotation.RestController *)")
 	public void needLogPoint() {
 		// 포인트컷
 	}

@@ -1,6 +1,6 @@
 package com.gt.genti.other.util;
 
-public class ErrorUtils {
+public class ErrorConstants {
 	private static final String USER = "USER";
 	private static final String RESPONSE = "RESPONSE";
 	private static final String REQUEST = "REQUEST";
@@ -80,12 +80,14 @@ public class ErrorUtils {
 	public static final String QueryParameterNotGiven = CODE(SERVER, 6);
 
 	public static final String MethodArgumentTypeMismatch = CODE(SERVER, 7);
-	public static final String AlreadyCompletedRequest = CODE(RESPONSE, 4);
+	public static final String AlreadyCompletedResponse = CODE(RESPONSE, 4);
 	public static final String PGRESStateException = CODE(RESPONSE, 5);
 	public static final String NoSettlementForWithdrawalException = CODE(WITHDRAW, 1);
 	public static final String WithdrawRequestNotFound = CODE(WITHDRAW, 2);
 	public static final String NotEnoughBalance = CODE(WITHDRAW, 3);
 	public static final String NoPictureGenerateRequest = CODE(REQUEST, 9);
 	public static final String NoPendingUserVerificationPGREQ = CODE(REQUEST, 10);
+	public static final String MissingPathVariableException = CODE(SERVER, 8);
+	public static final String InValidFormat = CODE(VALIDATION, 2);
 
 }

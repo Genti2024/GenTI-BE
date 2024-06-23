@@ -12,12 +12,12 @@ import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.other.aop.annotation.AutoLogging;
+import com.gt.genti.other.aop.annotation.Logged;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@AutoLogging
+@Logged
 @Component
 @RequiredArgsConstructor
 public class PictureGenerateRequestPersistenceAdapter implements PictureGenerateRequestPort {

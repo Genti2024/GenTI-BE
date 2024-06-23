@@ -1,6 +1,6 @@
 package com.gt.genti.domain;
 
-import com.gt.genti.domain.common.BaseTimeEntity;
+import com.gt.genti.domain.common.BaseEntity;
 import com.gt.genti.domain.enums.ReportStatus;
 import com.gt.genti.domain.enums.converter.db.ReportStatusConverter;
 
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Report extends BaseTimeEntity {
+public class Report extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
@@ -37,7 +37,8 @@ public class Report extends BaseTimeEntity {
 	@Convert(converter = ReportStatusConverter.class)
 	ReportStatus reportStatus;
 
-	public Report(PictureGenerateResponse pictureGenerateResponse, String content) {
+	public Report(User requester, PictureGenerateResponse pictureGenerateResponse, String content) {
+		setCreatedBy(requester);
 		this.pictureGenerateResponse = pictureGenerateResponse;
 		this.reportStatus = ReportStatus.NOT_RESOLVED;
 		this.content = content;

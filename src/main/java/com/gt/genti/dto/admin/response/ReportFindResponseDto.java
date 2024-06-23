@@ -5,19 +5,27 @@ import java.time.LocalDateTime;
 import com.gt.genti.domain.Report;
 import com.gt.genti.domain.enums.ReportStatus;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Schema
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReportFindResponseDto {
+	@Schema(name = "id")
 	Long id;
+	@Schema(name = "reporterEmail")
 	String reporterEmail;
+	@Schema(name = "creatorEmail")
 	String creatorEmail;
+	@Schema(name = "content")
 	String content;
+	@Schema(name = "reportStatus")
 	ReportStatus reportStatus;
+	@Schema(name = "pictureGenerateResponseId")
 	Long pictureGenerateResponseId;
+	@Schema(name = "createdAt")
 	LocalDateTime createdAt;
 
 	public ReportFindResponseDto(Report report, String reporterEmail, String creatorEmail,

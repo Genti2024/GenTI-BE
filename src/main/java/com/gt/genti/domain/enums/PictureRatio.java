@@ -1,5 +1,8 @@
 package com.gt.genti.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.gt.genti.domain.enums.converter.db.EnumUtil;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +20,11 @@ public enum PictureRatio implements ConvertableEnum {
 		return this.stringValue;
 	}
 
+
+	@JsonCreator
+	public static PictureRatio fromString(String value) {
+		return EnumUtil.stringToEnum(PictureRatio.class, value);
+	}
 	@Override
 	public <E extends Enum<E> & ConvertableEnum> E getNullValue() {
 		return (E)NONE;

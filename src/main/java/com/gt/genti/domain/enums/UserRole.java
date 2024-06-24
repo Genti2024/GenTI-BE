@@ -1,5 +1,8 @@
 package com.gt.genti.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.gt.genti.domain.enums.converter.db.EnumUtil;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +21,11 @@ public enum UserRole implements ConvertableEnum {
 
 	public static String getAllRoles(UserRole userRole) {
 		return userRole.getRoleString();
+	}
+
+	@JsonCreator
+	public static UserRole fromString(String value) {
+		return EnumUtil.stringToEnum(UserRole.class, value);
 	}
 
 	@Override

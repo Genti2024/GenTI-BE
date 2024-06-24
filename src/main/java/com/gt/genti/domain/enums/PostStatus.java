@@ -1,5 +1,8 @@
 package com.gt.genti.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.gt.genti.domain.enums.converter.db.EnumUtil;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +17,11 @@ public enum PostStatus implements ConvertableEnum {
 	@Override
 	public String getResponse() {
 		return stringValue;
+	}
+
+	@JsonCreator
+	public static PostStatus fromString(String value) {
+		return EnumUtil.stringToEnum(PostStatus.class, value);
 	}
 
 	@Override

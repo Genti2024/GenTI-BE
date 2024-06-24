@@ -1,5 +1,8 @@
 package com.gt.genti.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.gt.genti.domain.enums.converter.db.EnumUtil;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +17,10 @@ public enum ShotCoverage implements ConvertableEnum {
 	private final String stringValue;
 	private final String response;
 
+	@JsonCreator
+	public static ShotCoverage fromString(String value) {
+		return EnumUtil.stringToEnum(ShotCoverage.class, value);
+	}
 
 	@Override
 	public <E extends Enum<E> & ConvertableEnum> E getNullValue() {

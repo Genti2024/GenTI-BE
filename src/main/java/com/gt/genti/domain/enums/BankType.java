@@ -1,5 +1,8 @@
 package com.gt.genti.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.gt.genti.domain.enums.converter.db.EnumUtil;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +30,10 @@ public enum BankType implements ConvertableEnum {
 	NONE("NONE", "-");
 	private final String stringValue;
 	private final String response;
-
+	@JsonCreator
+	public static BankType fromString(String value) {
+		return EnumUtil.stringToEnum(BankType.class, value);
+	}
 
 	@Override
 	public <E extends Enum<E> & ConvertableEnum> E getNullValue() {

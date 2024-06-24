@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
+import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
@@ -26,7 +27,8 @@ public interface PictureGenerateRequestRepository
 		+ "where pqr.requester = :requester and "
 		+ "pqr.pictureGenerateRequestStatus  = :requestStatus "
 		+ "order by pqr.createdAt desc")
-	List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus, User requester);
+	List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus,
+		User requester);
 
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
@@ -85,4 +87,15 @@ public interface PictureGenerateRequestRepository
 
 	@NotNull
 	Page<PictureGenerateRequest> findAll(@NotNull Pageable pageable);
+
+	@Query("select pgres "
+		+ "from PictureGenerateResponse pgres "
+		+ "where pgres.request.matchToAdmin = :matchToAdmin "
+		+ "and pgres.status in :statusList "
+		+ "order by pgres.request.createdAt desc")
+	Page<PictureGenerateResponse> findByPictureGenerateResponseStatusInAndMatchToAdminIs(
+		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable);
+
+
+	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
 }

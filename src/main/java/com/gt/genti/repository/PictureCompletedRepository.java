@@ -3,6 +3,8 @@ package com.gt.genti.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -21,7 +23,6 @@ public interface PictureCompletedRepository extends JpaRepository<PictureComplet
 		+ "from PictureCompleted p "
 		+ "join PictureGenerateResponse pgres "
 		+ "where pgres.request.requester = :user "
-		+ "and p.pictureGenerateResponse.id = pgres.id "
-		+ "order by p.createdAt desc ")
-	List<PictureCompleted> findAllByUser(User user);
+		+ "and p.pictureGenerateResponse.id = pgres.id ")
+	Page<PictureCompleted> findAllByUserPagination(User user, Pageable pageable);
 }

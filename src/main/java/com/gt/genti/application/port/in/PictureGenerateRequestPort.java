@@ -6,20 +6,15 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
+import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 
 public interface PictureGenerateRequestPort {
 
-	List<PictureGenerateRequest> findByRequestStatusAndUser(PictureGenerateRequestStatus requestStatus, User user);
-
 	List<PictureGenerateRequest> findAllByRequester(User requester);
-
-	Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(Creator creator);
-
-	List<PictureGenerateRequest> findPendingRequests();
 
 	Optional<PictureGenerateRequest> findById(Long id);
 
@@ -27,8 +22,11 @@ public interface PictureGenerateRequestPort {
 
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 
-	Optional<PictureGenerateRequest> findByRequesterAndStatusInOrderByCreatedByDesc(User requester, List<PictureGenerateRequestStatus> statusList);
+	Optional<PictureGenerateRequest> findByRequesterAndStatusInOrderByCreatedByDesc(User requester,
+		List<PictureGenerateRequestStatus> statusList);
 
+	Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIs(List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable);
 	Page<PictureGenerateRequest> findAll(Pageable pageable);
 
+	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
 }

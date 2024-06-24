@@ -23,6 +23,7 @@ public interface SettlementRepository extends JpaRepository<Settlement, Long> {
 		+ "from Settlement s "
 		+ "where s.pictureGenerateResponse.creator = :creator "
 		+ "and s.withdrawRequest is null "
+		+ "and s.pictureGenerateResponse.status = com.gt.genti.domain.enums.PictureGenerateResponseStatus.COMPLETED "
 		+ "order by s.createdAt desc ")
 	List<Settlement> findAllWithdrawableByCreatorOrderByCreatedAtDesc(Creator creator);
 

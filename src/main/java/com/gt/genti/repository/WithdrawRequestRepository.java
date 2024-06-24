@@ -13,6 +13,7 @@ import com.gt.genti.domain.enums.WithdrawRequestStatus;
 
 @Repository
 public interface WithdrawRequestRepository extends JpaRepository<WithdrawRequest, Long> {
+	Page<WithdrawRequest> findAllByCreator(Creator creator, Pageable pageable);
 
 	List<WithdrawRequest> findAllByCreatorOrderByCreatedAtDesc(Creator creator);
 

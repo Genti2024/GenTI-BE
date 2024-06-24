@@ -124,14 +124,14 @@ public class User extends BaseTimeEntity {
 		if (this.login == null) {
 			this.login = true;
 		}
-		if (this.sex == null){
+		if (this.sex == null) {
 			this.sex = Sex.NONE;
 		}
-		if(this.introduction == null){
+		if (this.introduction == null) {
 			this.introduction = "";
 		}
 
-		if(this.requestTaskCount == null){
+		if (this.requestTaskCount == null) {
 			this.requestTaskCount = 0;
 		}
 	}
@@ -159,7 +159,7 @@ public class User extends BaseTimeEntity {
 
 	public void restore() {
 		if (Period.between(this.deletedAt.toLocalDate(), LocalDate.now()).getMonths() >= 1) {
-			throw ExpectedException.withLogging(CannotRestoreUser);
+			throw ExpectedException.withLogging(CannotRestoreUser, this.getId().toString());
 		}
 		this.userStatus = UserStatus.ACTIVATED;
 	}
@@ -204,7 +204,8 @@ public class User extends BaseTimeEntity {
 	public User(List<PictureProfile> pictureProfileList, List<PictureUserFace> pictureUserFaceList, String email,
 		String introduction,
 		String username, String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password,
-		Creator creator, UserRole userRole, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate) {
+		Creator creator, UserRole userRole, OauthType lastLoginSocialPlatform, LocalDateTime deletedAt,
+		LocalDateTime lastLoginDate) {
 		this.pictureProfileList = pictureProfileList;
 		this.pictureUserFaceList = pictureUserFaceList;
 		this.email = email;

@@ -61,15 +61,16 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	LocalDateTime submittedByAdminAt;
 
 	@PrePersist
-	public void prePersist(){
-		if(this.memo == null){
+	public void prePersist() {
+		if (this.memo == null) {
 			this.memo = "";
 		}
-		if(this.adminInCharge == null){
+		if (this.adminInCharge == null) {
 			this.adminInCharge = "";
 		}
 	}
-	public Duration creatorSubmitAndGetElaspedTime() {
+
+	public Duration creatorSubmitAndGetElapsedTime() {
 		//TODO 공급자가 제출시 불가한 상태가 있는지 생각해볼것
 		// edited at 2024-05-20
 		// author 서병렬
@@ -94,13 +95,13 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	public void adminSubmit() {
 		this.submittedByAdminAt = LocalDateTime.now();
 		this.status = PictureGenerateResponseStatus.SUBMITTED_FINAL;
-		this.request.completeButNotVerified();
+		this.request.submittedByAdmin();
 	}
 
 	public PictureGenerateResponse(Creator creator, PictureGenerateRequest request) {
 		this.creator = creator;
 		this.request = request;
-		this.status = PictureGenerateResponseStatus.BEFORE_WORK;
+		this.status = PictureGenerateResponseStatus.ADMIN_BEFORE_WORK;
 	}
 
 	public Duration getAdminElapsedTime() {

@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(name = "settlement")
 @Entity
@@ -35,6 +36,7 @@ public class Settlement extends BaseTimeEntity {
 	@Column(name = "reward")
 	Long reward;
 
+	@Setter
 	@ManyToOne
 	@JoinColumn(name = "withdraw_request_id")
 	WithdrawRequest withdrawRequest;
@@ -44,10 +46,6 @@ public class Settlement extends BaseTimeEntity {
 		this.pictureGenerateResponse = pictureGenerateResponse;
 		this.elapsedMinutes = elapsedMinutes;
 		this.reward = reward;
-	}
-
-	public void requestWithdraw(WithdrawRequest withdrawRequest) {
-		this.withdrawRequest = withdrawRequest;
 	}
 
 }

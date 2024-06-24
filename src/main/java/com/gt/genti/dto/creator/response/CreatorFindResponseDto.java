@@ -1,6 +1,7 @@
 package com.gt.genti.dto.creator.response;
 
 import com.gt.genti.domain.Creator;
+import com.gt.genti.domain.enums.BankType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public class CreatorFindResponseDto {
 	@Schema(description = "작업가능상태 여부")
 	Boolean workable;
 	@Schema(description = "은행 명 Enum", nullable = true, example = "국민은행")
-	String bankType;
+	BankType bankType;
 	@Schema(description = "계좌번호", nullable = true, example = "111111-22-333333")
 	String accountNumber;
 	@Schema(description = "예금주 명", nullable = true, example = "김흥국")
@@ -25,7 +26,7 @@ public class CreatorFindResponseDto {
 	int completedTaskCount;
 
 	@Builder
-	public CreatorFindResponseDto(Long creatorId, Boolean workable, String bankType, String accountNumber,
+	public CreatorFindResponseDto(Long creatorId, Boolean workable, BankType bankType, String accountNumber,
 		String accountHolder, int completedTaskCount) {
 		this.creatorId = creatorId;
 		this.workable = workable;

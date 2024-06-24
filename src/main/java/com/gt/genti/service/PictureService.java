@@ -28,10 +28,8 @@ import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.repository.PictureCompletedRepository;
 import com.gt.genti.repository.PictureCreatedByCreatorRepository;
 import com.gt.genti.repository.PicturePoseRepository;
-import com.gt.genti.repository.PicturePostRepository;
 import com.gt.genti.repository.PictureProfileRepository;
 import com.gt.genti.repository.PictureUserFaceRepository;
-import com.gt.genti.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +38,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class PictureService {
-	private final UserRepository userRepository;
 	private final PictureCreatedByCreatorRepository pictureCreatedByCreatorRepository;
 	private final PictureUserFaceRepository pictureUserFaceRepository;
-	private final PicturePostRepository picturePostRepository;
 	private final PictureProfileRepository pictureProfileRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final PicturePoseRepository picturePoseRepository;
@@ -66,11 +62,11 @@ public class PictureService {
 			.orElseThrow(() -> ExpectedException.withLogging(PictureCreatedByCreatorNotFound));
 	}
 
-	public Optional<PicturePose> findByUrlPicturePose(String key) {
+	public Optional<PicturePose> findByKeyPicturePose(String key) {
 		return picturePoseRepository.findByKey(key);
 	}
 
-	public PictureProfile findByUrlPictureProfile(String key) {
+	public PictureProfile findByKeyPictureProfile(String key) {
 		return pictureProfileRepository.findByKey(key)
 			.orElseThrow(() -> ExpectedException.withLogging(PictureProfileNotFound));
 	}

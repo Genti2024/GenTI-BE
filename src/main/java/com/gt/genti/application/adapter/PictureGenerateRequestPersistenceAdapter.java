@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.domain.Creator;
 import com.gt.genti.domain.PictureGenerateRequest;
+import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
+import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
 import com.gt.genti.other.aop.annotation.Logged;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 
@@ -24,26 +26,8 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
 	@Override
-	public List<PictureGenerateRequest> findByRequestStatusAndUser(PictureGenerateRequestStatus requestStatus,
-		User requester) {
-		return pictureGenerateRequestRepository.findByRequestStatusAndUserId(requestStatus, requester);
-	}
-
-	@Override
 	public List<PictureGenerateRequest> findAllByRequester(User requester) {
 		return pictureGenerateRequestRepository.findAllByRequester(requester);
-	}
-
-	@Override
-	public Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
-		Creator creator) {
-
-		return pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(creator);
-	}
-
-	@Override
-	public List<PictureGenerateRequest> findPendingRequests() {
-		return pictureGenerateRequestRepository.findPendingRequests();
 	}
 
 	@Override
@@ -70,5 +54,17 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	@Override
 	public Page<PictureGenerateRequest> findAll(Pageable pageable) {
 		return pictureGenerateRequestRepository.findAll(pageable);
+	}
+
+	@Override
+	public Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIs(
+		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable) {
+		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIs(statusList, matchToAdmin, pageable);
+	}
+
+	@Override
+	public Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable) {
+		return pictureGenerateRequestRepository.findByMatchToAdminIs(matchToAdmin, pageable);
+
 	}
 }

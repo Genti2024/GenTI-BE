@@ -4,14 +4,15 @@ import static com.gt.genti.error.ResponseCode.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.domain.Creator;
-import com.gt.genti.domain.PictureCompleted;
 import com.gt.genti.domain.PictureProfile;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.common.PictureEntity;
@@ -22,7 +23,6 @@ import com.gt.genti.dto.admin.response.UserFindByAdminResponseDto;
 import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import com.gt.genti.dto.user.request.UserInfoUpdateRequestDto;
 import com.gt.genti.dto.user.response.UserFindResponseDto;
-import com.gt.genti.dto.user.response.UserInfoUpdateResponseDto;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.repository.CreatorRepository;
@@ -58,13 +58,12 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserInfoUpdateResponseDto updateUserInfo(User user, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
+	public UserFindResponseDto updateUserInfo(User user, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		User foundUser = findUser(user.getId());
 		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
-		if (!(userInfoUpdateRequestDto.getProfilePictureUrl().isEmpty()
-			|| userInfoUpdateRequestDto.getProfilePictureUrl().isBlank())) {
-			PictureProfile foundPictureProfile = pictureService.findByUrlPictureProfile(
-				userInfoUpdateRequestDto.getProfilePictureUrl());
+		if (userInfoUpdateRequestDto.getProfilePicture() != null) {
+			PictureProfile foundPictureProfile = pictureService.findByKeyPictureProfile(
+				userInfoUpdateRequestDto.getProfilePicture().getKey());
 			foundUser.addProfilePicture(foundPictureProfile);
 		}
 		List<CommonPictureResponseDto> profilePictureResponseList = null;
@@ -75,7 +74,7 @@ public class UserService {
 				.toList();
 		}
 
-		return UserInfoUpdateResponseDto.builder()
+		return UserFindResponseDto.builder()
 			.profilePictureList(profilePictureResponseList)
 			.id(foundUser.getId())
 			.nickname(foundUser.getNickname())
@@ -100,7 +99,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public Boolean deleteUserInfoSoft(User user) {
+	public Boolean deleteUserSoft(User user) {
 		user.softDelete();
 		return true;
 	}
@@ -118,25 +117,18 @@ public class UserService {
 		return true;
 	}
 
-	public List<CommonPictureResponseDto> getAllMyGeneratedPicture(User user) {
-		List<PictureCompleted> pictureCompletedList = pictureCompletedRepository.findAllByUser(user);
-		return pictureCompletedList.stream()
-			.map(PictureEntity::mapToCommonResponse)
-			.toList();
+	public Page<CommonPictureResponseDto> getAllMyGeneratedPicture(User user, Pageable pageable) {
+		return pictureCompletedRepository.findAllByUserPagination(user, pageable)
+			.map(PictureEntity::mapToCommonResponse);
 	}
 
 	public Page<UserFindByAdminResponseDto> getAllUserInfo(Pageable pageable) {
-
-		return userRepository.findAll(pageable).map(UserFindByAdminResponseDto::new);
+		return userRepository.findAll(pageable).map(mapToUserFindByAdminResponseDto());
 	}
 
-	public Page<UserFindByAdminResponseDto> getAllUserInfo(Pageable pageable, String userRoleString) {
-		if (userRoleString.equals("ALL")) {
-			return userRepository.findAll(pageable).map(UserFindByAdminResponseDto::new);
-		} else {
-			return userRepository.findAllByUserRole(pageable, UserRole.valueOf(userRoleString))
-				.map(UserFindByAdminResponseDto::new);
-		}
+	public Page<UserFindByAdminResponseDto> getAllUserInfoByUserRole(UserRole userRole, Pageable pageable) {
+		return userRepository.findAllByUserRole(pageable, userRole)
+			.map(mapToUserFindByAdminResponseDto());
 	}
 
 	@Transactional
@@ -157,5 +149,22 @@ public class UserService {
 	public User createNewUser(User user) {
 		depositService.createDeposit(user);
 		return userRepository.save(user);
+	}
+
+	@NotNull
+	private Function<User, UserFindByAdminResponseDto> mapToUserFindByAdminResponseDto() {
+		return user -> UserFindByAdminResponseDto.builder()
+			.id(user.getId())
+			.email(user.getEmail())
+			.userRole(user.getUserRole())
+			.birthDate(user.getBirthDate())
+			.sex(user.getSex())
+			.userStatus(user.getUserStatus())
+			.createdAt(user.getCreatedAt())
+			.requestTaskCount(user.getRequestTaskCount())
+			.creator(user.getCreator())
+			.deposit(user.getDeposit())
+			.lastLoginDate(user.getLastLoginDate())
+			.build();
 	}
 }

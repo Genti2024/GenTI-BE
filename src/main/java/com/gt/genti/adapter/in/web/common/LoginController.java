@@ -15,6 +15,7 @@ import com.gt.genti.fortest.TestJwtResponseDto;
 import com.gt.genti.other.auth.UserDetailsImpl;
 import com.gt.genti.other.security.JwtTokenProvider;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,8 @@ public class LoginController {
 	}
 
 	@GetMapping("/login/testjwt")
-	public ResponseEntity<ApiResult<TestJwtResponseDto>> getTestJwt(@PathParam(value = "role") UserRole role) {
+	public ResponseEntity<ApiResult<TestJwtResponseDto>> getTestJwt(
+		@NotNull @PathParam(value = "role") UserRole role) {
 		Map<UserRole, String> userIdMapper = Map.of(UserRole.USER, "2", UserRole.ADMIN, "1", UserRole.CREATOR, "4");
 		String userId = userIdMapper.get(role);
 		Map<String, Object> tempClaim = Map.of("auth", role.getRoleString(), "sub", userId);

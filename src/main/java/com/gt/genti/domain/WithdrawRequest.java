@@ -1,7 +1,5 @@
 package com.gt.genti.domain;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import com.gt.genti.domain.common.BaseEntity;
 import com.gt.genti.domain.enums.WithdrawRequestStatus;
 import com.gt.genti.domain.enums.converter.db.WithdrawRequestStatusConverter;
@@ -62,7 +60,7 @@ public class WithdrawRequest extends BaseEntity {
 		this.status = WithdrawRequestStatus.IN_PROGRESS;
 	}
 
-	public void update(long amount) {
+	public void addSettlement(long amount) {
 		this.taskCount += 1;
 		this.amount += amount;
 	}

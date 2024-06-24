@@ -34,10 +34,16 @@ public class Deposit extends BaseTimeEntity {
 	@Column(name = "now_amount", nullable = false)
 	Long nowAmount;
 
+	@Column(name = "total_amount", nullable = false)
+	Long totalAmount;
+
 	@PrePersist
 	public void prePersist() {
 		if (this.nowAmount == null) {
 			this.nowAmount = 0L;
+		}
+		if (this.totalAmount == null) {
+			this.totalAmount = 0L;
 		}
 	}
 
@@ -45,7 +51,12 @@ public class Deposit extends BaseTimeEntity {
 		if (amount < 0) {
 			throw ExpectedException.withLogging(AddPointAmountCannotBeMinus);
 		}
+		addInternal(amount);
+	}
+
+	private void addInternal(Long amount){
 		this.nowAmount += amount;
+		this.totalAmount += amount;
 	}
 
 	public void completeWithdraw(Long amount) {

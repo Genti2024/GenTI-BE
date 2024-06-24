@@ -1,7 +1,7 @@
 package com.gt.genti.domain;
 
 import static com.gt.genti.error.ResponseCode.*;
-import static com.gt.genti.other.util.TimeUtils.*;
+import static com.gt.genti.other.util.DateTimeUtils.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,11 +13,10 @@ import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
 import com.gt.genti.domain.enums.PictureRatio;
 import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.domain.enums.converter.db.CameraAngleConverter;
-import com.gt.genti.domain.enums.converter.db.EnumUtil;
 import com.gt.genti.domain.enums.converter.db.PictureRatioConverter;
 import com.gt.genti.domain.enums.converter.db.RequestStatusConverter;
 import com.gt.genti.domain.enums.converter.db.ShotCoverageConverter;
-import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
+import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.error.ExpectedException;
 
 import jakarta.persistence.CascadeType;
@@ -91,6 +90,9 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Convert(converter = PictureRatioConverter.class)
 	PictureRatio pictureRatio;
 
+	@Column(name = "match_to_admin", nullable = false)
+	Boolean matchToAdmin;
+
 	@Builder
 	public PictureGenerateRequest(User requester, PGREQSaveCommand pgreqSaveCommand,
 		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced) {
@@ -105,15 +107,13 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.pictureRatio = pgreqSaveCommand.getPictureRatio();
 	}
 
-	public void modify(PGREQUpdateRequestDto PGREQUpdateRequestDto, PicturePose picturePose,
+	public void modify(PGREQSaveRequestDto pgreqSaveRequestDto, PicturePose picturePose,
 		List<PictureUserFace> pictureUserFaceList) {
-		this.prompt = PGREQUpdateRequestDto.getPrompt();
-		this.cameraAngle = EnumUtil.stringToEnum(CameraAngle.class, PGREQUpdateRequestDto.getCameraAngle());
-		this.shotCoverage = EnumUtil.stringToEnum(ShotCoverage.class,
-			PGREQUpdateRequestDto.getShotCoverage());
+		this.prompt = pgreqSaveRequestDto.getPrompt();
+		this.cameraAngle = pgreqSaveRequestDto.getCameraAngle();
+		this.shotCoverage = pgreqSaveRequestDto.getShotCoverage();
 		this.picturePose = picturePose;
 		this.userFacePictureList = pictureUserFaceList;
-
 	}
 
 	public void assign(Creator creator) {
@@ -122,18 +122,18 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 			return;
 		}
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.ASSIGNING;
-		this.requester.addRequestCount();
 		this.creator = creator;
 	}
 
-	public void accept() {
+	public void acceptByCreator() {
 		if (LocalDateTime.now().isAfter(this.getModifiedAt().plusMinutes(ACCEPTABLE_TIME_MINUTE))) {
-			throw ExpectedException.withLogging(ExpiredPictureGenerateRequest);
+			throw ExpectedException.withLogging(SubmitBlockedDueToPictureGenerateResponseIsExpired);
 		}
+		this.requester.addRequestCount();
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;
 	}
 
-	public void reject() {
+	public void rejectByCreator() {
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.CREATED;
 
 	}
@@ -144,11 +144,11 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.MATCH_TO_ADMIN;
 	}
 
-	public void completeButNotVerified() {
+	public void submittedByAdmin() {
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION;
 	}
 
-	public void userVerified(){
+	public void userVerified() {
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.COMPLETED;
 	}
 }

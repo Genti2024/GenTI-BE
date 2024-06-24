@@ -109,7 +109,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiResult<?>> handleMethodArgumentTypeMismatchException(
 		final HttpServletRequest request,
 		MethodArgumentTypeMismatchException exception) {
-		String arg1 = exception.getMessage();
+		String arg1 = String.format("[%s]변수에 대해 잘못된 입력 : [%s], 변수의 형식은 [%s] 입니다", exception.getPropertyName(), exception.getValue(), exception.getRequiredType());
 		logError(request, MethodArgumentTypeMismatch, arg1);
 		return error(MethodArgumentTypeMismatch, arg1);
 	}

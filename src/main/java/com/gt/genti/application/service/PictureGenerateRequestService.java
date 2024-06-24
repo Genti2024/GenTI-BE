@@ -1,32 +1,44 @@
 package com.gt.genti.application.service;
 
+import static com.gt.genti.domain.enums.PictureGenerateRequestStatus.*;
 import static com.gt.genti.domain.enums.converter.db.EnumUtil.*;
 import static com.gt.genti.error.ResponseCode.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.adapter.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.application.port.in.PictureGenerateRequestPort;
 import com.gt.genti.command.CreatePicturePoseCommand;
 import com.gt.genti.command.user.PGREQSaveCommand;
 import com.gt.genti.domain.PictureGenerateRequest;
+import com.gt.genti.domain.PictureGenerateResponse;
 import com.gt.genti.domain.PicturePose;
 import com.gt.genti.domain.PictureUserFace;
 import com.gt.genti.domain.User;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.dto.admin.response.PGREQDetailFindResponseDto;
-import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
+import com.gt.genti.domain.enums.PictureGenerateResponseStatus;
+import com.gt.genti.dto.admin.response.PGREQDetailFindByAdminResponseDto;
+import com.gt.genti.dto.admin.response.PGRESDetailFindByAdminResponseDto;
+import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
+import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.dto.user.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.dto.user.response.PGREQDetailFindByUserResponseDto;
+import com.gt.genti.dto.user.response.PGREQStatusResponseDto;
 import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.external.openai.dto.PromptAdvancementRequestCommand;
 import com.gt.genti.external.openai.service.OpenAIService;
-import com.gt.genti.repository.CreatorRepository;
+import com.gt.genti.other.util.PictureEntityUtils;
 import com.gt.genti.service.PictureService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,21 +49,29 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PictureGenerateRequestService implements PictureGenerateRequestUseCase {
 	private final PictureGenerateRequestPort pictureGenerateRequestPort;
-	private final CreatorRepository creatorRepository;
 	private final OpenAIService openAIService;
 	private final PictureService pictureService;
 	private final RequestMatchService requestMatchService;
 
-	public Page<PGREQDetailFindResponseDto> getAllPictureGenerateRequest(
-		Pageable pageable) {
+	@Override
+	public Page<PGREQDetailFindByAdminResponseDto> getAllByMatchToAdminIs(boolean matchToAdmin, Pageable pageable) {
+		return pictureGenerateRequestPort.findByMatchToAdminIs(matchToAdmin, pageable)
+			.map(convertPGREQToResponseDto());
+	}
 
-		Page<PGREQDetailFindResponseDto> result = pictureGenerateRequestPort.findAll(pageable).map(
-			PGREQDetailFindResponseDto::new
-		);
-		if (result.isEmpty()) {
-			throw ExpectedException.withLogging(NoPictureGenerateRequest);
-		}
-		return result;
+	public Page<PGREQDetailFindByAdminResponseDto> getAllByPGRESStatusInAndMatchToAdminIs(
+		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable) {
+		return pictureGenerateRequestPort.findByPGRESStatusInAndMatchToAdminIs(statusList, matchToAdmin, pageable)
+			.map(convertPGRESToResponseDto());
+	}
+
+	@Override
+	public PGREQBriefFindByUserResponseDto getByRequesterAndStatusIs(User requester,
+		PictureGenerateRequestStatus status) {
+		return pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(requester, List.of(status))
+			.map(PGREQBriefFindByUserResponseDto::new)
+			.orElseThrow(() -> ExpectedException.withLogging(PictureGenerateRequestNotFound,
+				"사진생성요청 상태 = " + status.getStringValue()));
 	}
 
 	@Override
@@ -61,15 +81,25 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			PGREQBriefFindByUserResponseDto::new
 		).sorted((dto1, dto2) -> dto2.getCreatedAt().compareTo(dto1.getCreatedAt())).toList();
 		if (result.isEmpty()) {
-			throw ExpectedException.withLogging(PictureGenerateRequestNotFound);
+			throw ExpectedException.withLogging(PictureGenerateRequestNotFound, "생성요청한 유저 id : " + user.getId());
 		}
 		return result;
 	}
 
 	@Override
-	public Boolean isPendingPGREQExists(User user) {
-		return pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(
-			user, PGREQ_STATUS_PENDING).isPresent();
+	public PGREQStatusResponseDto getPGREQStatusIfPendingExists(User user) {
+		Optional<PictureGenerateRequest> optionalPGREQ = pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(
+			user, PGREQ_PENDING_LIST);
+		if (optionalPGREQ.isPresent()) {
+			PictureGenerateRequest foundPGREQ = optionalPGREQ.get();
+			return PGREQStatusResponseDto.builder()
+				.pictureGenerateRequestId(foundPGREQ.getId())
+				.status(foundPGREQ.getPictureGenerateRequestStatus())
+				.build();
+		}
+		throw ExpectedException.withoutLogging(PictureGenerateRequestNotFound,
+			"사진생성요청 상태 in " + PGREQ_PENDING_LIST.stream().map(
+				PictureGenerateRequestStatus::getStringValue).collect(Collectors.joining(", ")));
 	}
 
 	@Override
@@ -77,9 +107,10 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findById(
 				pictureGenerateRequestId)
 			.orElseThrow(() ->
-				ExpectedException.withLogging(PictureGenerateRequestNotFound));
+				ExpectedException.withLogging(PictureGenerateRequestNotFound,
+					"사진생성요청 Id : " + pictureGenerateRequestId));
 		if (!Objects.equals(foundPictureGenerateRequest.getRequester().getId(), user.getId())) {
-			throw ExpectedException.withLogging(OnlyRequesterCanViewRequest);
+			throw ExpectedException.withLogging(PictureGenerateRequestVisibilityRestrictedToRequester);
 		}
 		return new PGREQDetailFindByUserResponseDto(foundPictureGenerateRequest);
 	}
@@ -93,7 +124,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		if (!Objects.isNull(pgreqSaveCommand.getPosePictureKey())) {
 			posePictureKey = pgreqSaveCommand.getPosePictureKey();
 			String finalPosePictureKey = posePictureKey;
-			foundPicturePose = pictureService.findByUrlPicturePose(posePictureKey)
+			foundPicturePose = pictureService.findByKeyPicturePose(posePictureKey)
 				.orElseGet(() -> {
 					log.info("""
 						%s 유저가 요청에 포함한 포즈참고사진 key [%s] 기존 사진을 찾을 수 없어 신규 저장"""
@@ -127,38 +158,89 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		return savedPGREQ;
 	}
 
+	@Transactional
 	@Override
 	public void modifyPGREQ(User requester,
-		PGREQUpdateRequestDto modifyDto) {
+		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto) {
 
 		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequester(
-				modifyDto.getPictureGenerateRequestId(), requester)
-			.orElseThrow(() -> ExpectedException.withLogging(PictureGenerateRequestNotFound));
+				pictureGenerateRequestId, requester)
+			.orElseThrow(() -> ExpectedException.withLogging(PictureGenerateRequestNotFound,
+				String.format("생성요청한 유저 id : %d 사진생성요청 Id : %d", requester.getId(), pictureGenerateRequestId)));
 
 		if (findPictureGenerateRequest.getCreator() != null) {
-			throw ExpectedException.withLogging(RequestAlreadyInProgress);
+			throw ExpectedException.withLogging(PictureGenerateRequestAlreadyInProgress);
 		}
 
 		PicturePose picturePose = findPictureGenerateRequest.getPicturePose();
-		String givenPicturePoseUrl = modifyDto.getPosePictureUrl();
-		picturePose.modify(givenPicturePoseUrl);
+		String givenPicturePoseKey = pgreqSaveRequestDto.getPosePicture().getKey();
+		picturePose.modify(givenPicturePoseKey);
 
 		List<PictureUserFace> pictureUserFaceList = findPictureGenerateRequest.getUserFacePictureList();
-		List<String> givenPictureUserFaceUrlList = modifyDto.getFacePictureUrlList();
+		List<String> givenPictureUserFaceKeyList = pgreqSaveRequestDto.getFacePictureList().stream().map(
+			CommonPictureKeyUpdateRequestDto::getKey).toList();
 		for (int i = 0; i < pictureUserFaceList.size(); i++) {
-			String newUrl = givenPictureUserFaceUrlList.get(i);
-			pictureUserFaceList.get(i).modify(newUrl);
+			String newKey = givenPictureUserFaceKeyList.get(i);
+			pictureUserFaceList.get(i).modify(newKey);
 		}
 
-		findPictureGenerateRequest.modify(modifyDto, picturePose, pictureUserFaceList);
+		findPictureGenerateRequest.modify(pgreqSaveRequestDto, picturePose, pictureUserFaceList);
 	}
 
+	@Transactional
 	@Override
-	public PGREQBriefFindByUserResponseDto findByRequestAndStatusIs(User requester,
-		PictureGenerateRequestStatus status) {
-		return pictureGenerateRequestPort.findByRequesterAndStatusInOrderByCreatedByDesc(requester, List.of(status))
-			.map(PGREQBriefFindByUserResponseDto::new)
-			.orElseThrow(() -> ExpectedException.withLogging(NoPendingUserVerificationPGREQ));
+	public Boolean verifyCompletedPGREQ(User requester, Long pictureGenerateRequestId) {
+		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequester(
+				pictureGenerateRequestId, requester)
+			.orElseThrow(() -> ExpectedException.withLogging(PictureGenerateRequestNotFound,
+				String.format("생성요청한 유저 id : %d 사진생성요청 Id : %d", requester.getId(), pictureGenerateRequestId)));
+
+		if (foundPictureGenerateRequest.getPictureGenerateRequestStatus() != AWAIT_USER_VERIFICATION) {
+			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
+				foundPictureGenerateRequest.getPictureGenerateRequestStatus().getStringValue());
+		}
+		foundPictureGenerateRequest.userVerified();
+		return true;
+	}
+
+	@NotNull
+	private Function<PictureGenerateResponse, PGREQDetailFindByAdminResponseDto> convertPGRESToResponseDto() {
+		return pgres -> {
+			PictureGenerateRequest pgreq = pgres.getRequest();
+			List<PGRESDetailFindByAdminResponseDto> responseList = List.of(
+				new PGRESDetailFindByAdminResponseDto(pgres));
+			return buildPGREQDetail(pgreq, responseList);
+		};
+	}
+
+	private Function<PictureGenerateRequest, PGREQDetailFindByAdminResponseDto> convertPGREQToResponseDto() {
+		return pgreq -> {
+			List<PGRESDetailFindByAdminResponseDto> responseList = pgreq.getResponseList()
+				.stream()
+				.map(PGRESDetailFindByAdminResponseDto::new)
+				.toList();
+			return buildPGREQDetail(pgreq, responseList);
+		};
+	}
+
+	private PGREQDetailFindByAdminResponseDto buildPGREQDetail(PictureGenerateRequest pgreq,
+		List<PGRESDetailFindByAdminResponseDto> responseList) {
+		return PGREQDetailFindByAdminResponseDto.builder()
+			.posePicture(PictureEntityUtils.toCommonResponse(pgreq.getPicturePose()))
+			.requesterId(pgreq.getRequester().getId())
+			.requestStatus(pgreq.getPictureGenerateRequestStatus())
+			.cameraAngle(pgreq.getCameraAngle())
+			.facePictureList(
+				pgreq.getUserFacePictureList().stream().map(PictureEntityUtils::toCommonResponse).toList())
+			.requesterEmail(pgreq.getRequester().getEmail())
+			.prompt(pgreq.getPrompt())
+			.promptAdvanced(pgreq.getPromptAdvanced())
+			.createdAt(pgreq.getCreatedAt())
+			.responseList(responseList)
+			.pictureGenerateRequestId(pgreq.getId())
+			.shotCoverage(pgreq.getShotCoverage())
+			.build();
+
 	}
 
 }

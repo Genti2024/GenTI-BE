@@ -28,6 +28,8 @@ public class CreatorService {
 			.accountNumber(foundCreator.getAccountNumber())
 			.accountHolder(foundCreator.getAccountHolder())
 			.workable(foundCreator.getWorkable())
+			.completedTaskCount(foundCreator.getCompletedTaskCount())
+			.creatorId(foundCreator.getId())
 			.build();
 	}
 

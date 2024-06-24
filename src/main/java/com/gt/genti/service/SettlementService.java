@@ -14,14 +14,12 @@ import com.gt.genti.error.ExpectedException;
 import com.gt.genti.repository.CreatorRepository;
 import com.gt.genti.repository.DepositRepository;
 import com.gt.genti.repository.SettlementAndWithdrawalRepositoryCustom;
-import com.gt.genti.repository.SettlementRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class SettlementService {
-	private final SettlementRepository settlementRepository;
 	private final CreatorRepository creatorRepository;
 	private final DepositRepository depositRepository;
 	private final SettlementAndWithdrawalRepositoryCustom settlementAndWithdrawalRepositoryCustom;
@@ -29,9 +27,8 @@ public class SettlementService {
 	public SettlementAndWithdrawPageResponseDto getAllSettlements(User user, Pageable pageable) {
 		Creator foundCreator = findCreatorByUser(user);
 		Deposit foundDeposit = findDepositByCreator(foundCreator);
-		Long balance = foundDeposit.getNowAmount();
-		;
-		return new SettlementAndWithdrawPageResponseDto(balance,
+
+		return new SettlementAndWithdrawPageResponseDto(foundDeposit,
 			settlementAndWithdrawalRepositoryCustom.findSettlementAndWithdrawByCreatorPagination(foundCreator.getId(),
 					pageable)
 				.map(SettlementAndWithdraw::new));

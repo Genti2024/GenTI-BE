@@ -29,6 +29,7 @@ import com.gt.genti.domain.enums.ShotCoverage;
 import com.gt.genti.domain.enums.UserRole;
 import com.gt.genti.domain.enums.UserStatus;
 import com.gt.genti.dto.admin.request.UserRoleUpdateRequestDto;
+import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 import com.gt.genti.repository.PictureGenerateRequestRepository;
 import com.gt.genti.repository.UserRepository;
@@ -76,11 +77,12 @@ public class MatchTest {
 
 		PGREQSaveRequestDto req = PGREQSaveRequestDto.builder()
 			.prompt("밤에 한강공원에서 벤치에 앉은 사진이요")
-			.posePictureKey(savedPicturePose.getKey())
-			.cameraAngle(CameraAngle.HIGH.getStringValue())
-			.pictureRatio(PictureRatio.RATIO_3_2.getStringValue())
-			.shotCoverage(ShotCoverage.UPPER_BODY.getStringValue())
-			.facePictureKeyList(savedPictureUserfaceList.stream().map(PictureUserFace::getKey).toList())
+			.posePicture(new CommonPictureKeyUpdateRequestDto(savedPicturePose.getKey()))
+			.cameraAngle(CameraAngle.HIGH)
+			.pictureRatio(PictureRatio.RATIO_3_2)
+			.shotCoverage(ShotCoverage.UPPER_BODY)
+			.facePictureList(
+				savedPictureUserfaceList.stream().map(d -> new CommonPictureKeyUpdateRequestDto(d.getKey())).toList())
 			.build();
 
 		// when

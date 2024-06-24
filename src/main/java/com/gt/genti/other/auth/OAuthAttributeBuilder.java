@@ -45,6 +45,6 @@ public class OAuthAttributeBuilder {
 			}
 		}
 		throw ExpectedException.withLogging(
-			NotAllowedOauthProvider, registrationId);
+			OauthProviderNotAllowed, registrationId);
 	}
 }

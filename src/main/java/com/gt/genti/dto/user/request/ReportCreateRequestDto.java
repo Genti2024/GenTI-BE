@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Schema(description = "ㅁㄴㅇㄹ")
-
+@Schema(description = "신고 생성 요청 dto")
 public class ReportCreateRequestDto {
 	@NotNull
-	@Schema(name = "pictureGenerateResponseId")
+	@Schema(description = "신고할 사진생성응답 id", example = "1")
 	Long pictureGenerateResponseId;
+
 	@NotBlank
-	@Schema(name = "content")
+	@Schema(description = "신고내용", example = "발가락 사진이 왔어요")
 	String content;
 }

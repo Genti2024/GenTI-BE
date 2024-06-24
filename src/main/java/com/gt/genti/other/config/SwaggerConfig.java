@@ -14,6 +14,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.tags.Tag;
 
 @OpenAPIDefinition(
 	info = @Info(
@@ -53,6 +54,10 @@ public class SwaggerConfig {
 
 		return new OpenAPI()
 			.addServersItem(server)
+			.addTagsItem(new Tag().name("RequestDtos").description("RequestDtos"))
+			.addTagsItem(new Tag().name("ResponseDtos").description("ResponseDtos"))
+			.addTagsItem(new Tag().name("Entities").description("db 저장되는 entity "))
+			.addTagsItem(new Tag().name("Enums").description("Enums"))
 			.addSecurityItem(securityRequirement)
 			.components(components);
 	}

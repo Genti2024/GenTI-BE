@@ -9,19 +9,26 @@ import com.gt.genti.domain.enums.WithdrawRequestStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Schema
+
+@Schema(description = "정산 및 출금내역")
 @Getter
 @NoArgsConstructor
 public class SettlementAndWithdraw {
-	@Schema(name = "id")
+	@Schema(description = "정산 혹은 출금내역 DB Id", example = "1")
 	Long id;
-	@Schema(name = "isSettlement")
+	@Schema(description = "정산 or 출금내역 구분, true : 정산내역, false : 출금내역")
 	Boolean isSettlement;
-	@Schema(name = "amount")
+	@Schema(description = "금액", example = "2000")
 	Long amount;
-	@Schema(name = "createdAt")
+	@Schema(description = "생성일시")
 	LocalDateTime createdAt;
-	@Schema(name = "status")
+	@Schema(description = "" +
+		"정산&출금내역의 상태, " + "<br/>" +
+		"[정산내역]작업 후 출금하지 않음 : AVAILABLE" + "<br/>" +
+		"[정산내역]출금요청한 정산금에 해당하는 작업인 경우 : IN_PROGRESS" + "<br/>" +
+		"[정산내역&출금내역]출금 완료된 경우 : COMPLETED " + "<br/>" +
+		"[출금내역] 출금 거절된 경우(현재 사용X) : REJECTED "
+	)
 	WithdrawRequestStatus status;
 
 	public SettlementAndWithdraw(Map<String, Object> attributes) {

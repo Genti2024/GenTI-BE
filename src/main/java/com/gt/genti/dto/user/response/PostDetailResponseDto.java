@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 @Schema
 @Deprecated
 @Getter
@@ -38,7 +39,7 @@ public class PostDetailResponseDto {
 		Integer likes, LocalDateTime createdAt) {
 		this.postId = postId;
 		this.userId = userId;
-		this.profilePicture = pictureProfile.mapToCommonResponse();
+		this.profilePicture = PictureEntityUtils.toCommonResponse(pictureProfile);
 		this.postPictureList = picturePostList.stream().map(PictureEntityUtils::toCommonResponse).toList();
 		this.content = content;
 		this.likes = likes;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
 import com.gt.genti.domain.enums.PictureGenerateRequestStatus;
-import com.gt.genti.dto.admin.response.PGREQDetailFindResponseDto;
+import com.gt.genti.dto.admin.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.dto.creator.response.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.other.auth.UserDetailsImpl;
@@ -22,6 +22,7 @@ import com.gt.genti.other.swagger.EnumResponse;
 import com.gt.genti.other.swagger.EnumResponses;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -34,7 +35,10 @@ public class CreatorPGREQController {
 
 	@Operation(summary = "내게 매칭된 요청 조회", description = "나(공급자)에게 매칭된 사진생성요청을 조회합니다. (수락할지 말지 선택하기위한 최소 정보 보여주기)")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.CreatorNotFound),
+		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
+
 	})
 	@GetMapping("/assigned")
 	public ResponseEntity<ApiResult<PGREQBriefFindByCreatorResponseDto>> getAssignedPictureGenerateRequestBrief(
@@ -46,11 +50,15 @@ public class CreatorPGREQController {
 
 	@Operation(summary = "매칭 수락", description = "내게(공급자) 매칭된 사진생성요청을 수락합니다.")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.PictureGenerateRequestNotAssignedToCreator),
+		@EnumResponse(ResponseCode.CreatorNotFound),
+		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
 	@PostMapping("/{pictureGenerateRequestId}/accept")
 	public ResponseEntity<ApiResult<Boolean>> acceptPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@Parameter(description = "수락할 사진생성요청의 id", example = "1")
 		@PathVariable Long pictureGenerateRequestId) {
 		return success(
 			pictureGenerateWorkService.acceptPictureGenerateRequest(userDetails.getUser(), pictureGenerateRequestId));
@@ -58,11 +66,14 @@ public class CreatorPGREQController {
 
 	@Operation(summary = "매칭 거절", description = "내게(공급자) 매칭된 사진생성요청을 거절합니다.")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.PictureGenerateRequestNotAssignedToCreator),
+		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
 	@PostMapping("/{pictureGenerateRequestId}/reject")
 	public ResponseEntity<ApiResult<Boolean>> rejectPictureGenerateRequest(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@Parameter(description = "거절할 사진생성요청의 id", example = "1")
 		@PathVariable Long pictureGenerateRequestId) {
 		return success(
 			pictureGenerateWorkService.rejectPictureGenerateRequest(userDetails.getUser(), pictureGenerateRequestId));
@@ -70,10 +81,11 @@ public class CreatorPGREQController {
 
 	@Operation(summary = "작업 진행중인(최대 3개) 사진생성요청 조회", description = "내가(공급자)진행중인 사진생성요청&응답을 조회합니다.")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.CreatorNotFound),
 	})
 	@GetMapping("/in-progress")
-	public ResponseEntity<ApiResult<List<PGREQDetailFindResponseDto>>> getInProgressPictureGenerateRequestDetail(
+	public ResponseEntity<ApiResult<List<PGREQDetailFindByAdminResponseDto>>> getInProgressPictureGenerateRequestDetail(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail3(userDetails.getUser()));
@@ -85,9 +97,8 @@ public class CreatorPGREQController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@GetMapping("/all")
-	public ResponseEntity<ApiResult<List<PGREQDetailFindResponseDto>>> getAssignedPictureGenerateRequestsAll(
-		@AuthenticationPrincipal
-		UserDetailsImpl userDetails) {
+	public ResponseEntity<ApiResult<List<PGREQDetailFindByAdminResponseDto>>> getAssignedPictureGenerateRequestsAll(
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestDetailAll(
 			userDetails.getUser()));
 	}
@@ -98,8 +109,9 @@ public class CreatorPGREQController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@GetMapping("/{pictureGenerateRequestId}")
-	public ResponseEntity<ApiResult<PGREQDetailFindResponseDto>> getPictureGenerateRequestDetail(
+	public ResponseEntity<ApiResult<PGREQDetailFindByAdminResponseDto>> getPictureGenerateRequestDetail(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@Parameter(description = "조회할 사진생성요청의 id", example = "1")
 		@PathVariable Long pictureGenerateRequestId) {
 		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail(
 			userDetails.getUser(), pictureGenerateRequestId));

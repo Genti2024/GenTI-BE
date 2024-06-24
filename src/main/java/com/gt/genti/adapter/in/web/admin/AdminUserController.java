@@ -5,6 +5,7 @@ import static com.gt.genti.other.util.ApiUtils.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,8 @@ import com.gt.genti.other.swagger.EnumResponses;
 import com.gt.genti.other.valid.ValidEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -64,13 +67,29 @@ public class AdminUserController {
 	})
 	@GetMapping("/users")
 	public ResponseEntity<ApiResult<Page<UserFindByAdminResponseDto>>> getAllUserInfo(
-		@RequestParam(value = "role") @ValidEnum(value = UserRole.class, hasAllOption = true) @NotNull String role,
-		@RequestParam(value = "page") @NotNull @Min(0) int page,
-		@RequestParam(value = "size") @NotNull @Min(1) int size
+		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
+		@RequestParam @NotNull @Min(0) int page,
+		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
+		@RequestParam @NotNull @Min(1) int size,
+		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"id",
+			"createdAt"}))
+		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+		@Parameter(description = "정렬 방향 - 기본값 내림차순", example = "desc", schema = @Schema(allowableValues = {"acs",
+			"desc"}))
+		@RequestParam(name = "direction", defaultValue = "desc") String direction,
+		@Parameter(description = "유저의 권한", example = "USER", schema = @Schema(
+			allowableValues = {"USER", "CREATOR", "ADMIN", "OAUTH_FIRST_JOIN", "ALL"}))
+		@RequestParam(name = "role", defaultValue = "ALL") @ValidEnum(value = UserRole.class, hasAllOption = true) String role
 	) {
-		Pageable pageable = PageRequest.of(page, size);
+		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
-		return success(userService.getAllUserInfo(pageable, role));
+		if ("ALL".equals(role)) {
+			return success(userService.getAllUserInfo(pageable));
+		} else {
+			return success(userService.getAllUserInfoByUserRole(UserRole.valueOf(role), pageable));
+		}
+
 	}
 
 }

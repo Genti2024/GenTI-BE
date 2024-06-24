@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.dto.creator.response.CreatorFindResponseDto;
 import com.gt.genti.dto.creator.request.AccountUpdateRequestDto;
 import com.gt.genti.dto.creator.request.CreatorStatusUpdateRequestDto;
+import com.gt.genti.dto.creator.response.CreatorFindResponseDto;
 import com.gt.genti.dto.creator.response.CreatorStatusUpdateResponseDto;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.other.auth.UserDetailsImpl;
@@ -34,7 +34,9 @@ public class CreatorController {
 
 	@Operation(summary = "공급자 내정보 보기", description = "공급자의 내정보 보기")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.CreatorNotFound)
+
 	})
 	@GetMapping("")
 	public ResponseEntity<ApiResult<CreatorFindResponseDto>> getCreatorInfo(
@@ -44,7 +46,8 @@ public class CreatorController {
 
 	@Operation(summary = "공급자 계좌정보 수정", description = "공급자의 내 계좌정보 수정")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.CreatorNotFound)
 	})
 	@PostMapping("/account")
 	public ResponseEntity<ApiResult<Boolean>> updateAccountInfo(
@@ -55,7 +58,8 @@ public class CreatorController {
 
 	@Operation(summary = "공급자 작업가능상태 수정", description = "공급자의 내 작업가능상태 수정")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.CreatorNotFound)
 	})
 	@PostMapping("/status")
 	public ResponseEntity<ApiResult<CreatorStatusUpdateResponseDto>> updateCreatorStatus(

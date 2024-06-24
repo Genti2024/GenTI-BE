@@ -26,7 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class UserExampleController {
 	private final ResponseExampleService responseExampleService;
 
-	@Operation(summary = "예시 전체조회", description = "예시 사진&프롬프트를 전체 조회합니다.")
+	@Operation(summary = "예시 전체조회", description = "예시 사진&프롬프트를 전체 조회합니다." + "<br/>"
+		+ "한번에 모두 조회해서 random하게 렌더링한다고 가정하고 pagination으로 안했습니다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})

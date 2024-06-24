@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.application.service.PictureGenerateWorkService;
@@ -25,8 +26,12 @@ import com.gt.genti.other.swagger.EnumResponses;
 import com.gt.genti.other.swagger.RequireImageUpload;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminPGRESController] 어드민 사진생성응답 컨트롤러", description = "사진생성응답을 조회, 수정")
@@ -42,6 +47,7 @@ public class AdminPGRESController {
 	})
 	@PostMapping("/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESSubmitByAdminResponseDto>> submit(
+		@Parameter(description = "사진생성응답 Id", example = "1", required = true)
 		@PathVariable Long pictureGenerateResponseId) {
 		return success(pictureGenerateWorkService.submitFinal(pictureGenerateResponseId));
 	}
@@ -54,6 +60,7 @@ public class AdminPGRESController {
 	@PostMapping("/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> updatePictureList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
+		@Parameter(description = "업로드한 사진 url 리스트", required = true)
 		@RequestBody @Valid List<@Valid CommonPictureKeyUpdateRequestDto> reuqestDtoList,
 		@PathVariable Long pictureGenerateResponseId) {
 		return success(pictureGenerateWorkService.updatePictureListCreatedByAdmin(userDetails.getUser(), reuqestDtoList,

@@ -11,17 +11,18 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Schema
+
+@Schema(description = "유저의 유저 정보 조회 응답 dto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFindResponseDto {
-	@Schema(name = "id")
+	@Schema(description = "유저의 DB Id")
 	Long id;
-	@Schema(name = "username")
+	@Schema(description = "유저의 이름", example = "김흥국")
 	String username;
-	@Schema(name = "nickname")
+	@Schema(description = "유저의 닉네임", example = "부끄러운 엉덩이")
 	String nickname;
-	@Schema(name = "profilePictureList")
+	@Schema(description = "프로필사진 리스트", nullable = true)
 	List<CommonPictureResponseDto> profilePictureList;
 
 	@Builder

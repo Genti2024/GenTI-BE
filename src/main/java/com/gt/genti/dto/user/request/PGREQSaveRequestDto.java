@@ -2,13 +2,11 @@ package com.gt.genti.dto.user.request;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gt.genti.command.user.PGREQSaveCommand;
 import com.gt.genti.domain.enums.CameraAngle;
 import com.gt.genti.domain.enums.PictureRatio;
 import com.gt.genti.domain.enums.ShotCoverage;
-import com.gt.genti.other.valid.ValidEnum;
-import com.gt.genti.other.valid.ValidKey;
+import com.gt.genti.dto.common.request.CommonPictureKeyUpdateRequestDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -21,46 +19,38 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Schema(description = "ㅁㄴㅇㄹ")
+@Schema(description = "사진생성요청 생성 요청 dto")
 public class PGREQSaveRequestDto {
-
 	@NotBlank
-	@JsonProperty("prompt")
-	@Schema(name = "prompt")
+	@Schema(description = "프롬프트", example = "벚꽃길에서 벤치에 앉아있는 사진이요")
 	String prompt;
-	@ValidKey
-	@JsonProperty("posePictureKey")
-	@Schema(name = "posePictureKey")
-	String posePictureKey;
+
+	@Schema(description = "포즈 사진")
+	CommonPictureKeyUpdateRequestDto posePicture;
 
 	@NotNull
 	@Size(max = 3, min = 1, message = "사용자의 얼굴 사진 개수는 최소 1개, 최대 3개입니다.")
-	@JsonProperty("facePictureKeyList")
-	@Schema(name = "facePictureKeyList")
-	List<@ValidKey @NotNull String> facePictureKeyList;
+	@Schema(description = "얼굴 사진 리스트")
+	List<@NotNull CommonPictureKeyUpdateRequestDto> facePictureList;
 
 	@NotNull
-	@ValidEnum(value = CameraAngle.class)
-	@JsonProperty("cameraAngle")
-	@Schema(name = "cameraAngle")
-	String cameraAngle;
+	@Schema(description = "카메라 앵글")
+	CameraAngle cameraAngle;
 	@NotNull
-	@ValidEnum(value = ShotCoverage.class)
-	@JsonProperty("shotCoverage")
-	@Schema(name = "shotCoverage")
-	String shotCoverage;
+	@Schema(description = "프레임")
+	ShotCoverage shotCoverage;
 	@NotNull
-	@ValidEnum(value = PictureRatio.class)
-	@JsonProperty("pictureRatio")
-	@Schema(name = "pictureRatio")
-	String pictureRatio;
+	@Schema(description = "사진 비율")
+	PictureRatio pictureRatio;
 
 	@Builder
-	public PGREQSaveRequestDto(String prompt, String posePictureKey, String cameraAngle, String shotCoverage,
-		List<String> facePictureKeyList, String pictureRatio) {
+	public PGREQSaveRequestDto(String prompt, CommonPictureKeyUpdateRequestDto posePicture,
+		List<@NotNull CommonPictureKeyUpdateRequestDto> facePictureList, CameraAngle cameraAngle,
+		ShotCoverage shotCoverage,
+		PictureRatio pictureRatio) {
 		this.prompt = prompt;
-		this.posePictureKey = posePictureKey;
-		this.facePictureKeyList = facePictureKeyList;
+		this.posePicture = posePicture;
+		this.facePictureList = facePictureList;
 		this.cameraAngle = cameraAngle;
 		this.shotCoverage = shotCoverage;
 		this.pictureRatio = pictureRatio;
@@ -69,11 +59,11 @@ public class PGREQSaveRequestDto {
 	public PGREQSaveCommand toCommand() {
 		return PGREQSaveCommand.builder()
 			.prompt(this.prompt)
-			.posePictureKey(this.posePictureKey)
-			.cameraAngle(CameraAngle.valueOf(this.cameraAngle))
-			.shotCoverage(ShotCoverage.valueOf(this.shotCoverage))
-			.pictureRatio(PictureRatio.valueOf(this.pictureRatio))
-			.facePictureKeyList(this.facePictureKeyList)
+			.posePictureKey(this.posePicture.getKey())
+			.cameraAngle(this.cameraAngle)
+			.shotCoverage(this.shotCoverage)
+			.pictureRatio(this.pictureRatio)
+			.facePictureKeyList(this.facePictureList.stream().map(CommonPictureKeyUpdateRequestDto::getKey).toList())
 			.build();
 	}
 

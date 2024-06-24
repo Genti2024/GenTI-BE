@@ -3,19 +3,21 @@ package com.gt.genti.dto.admin.request;
 import com.gt.genti.domain.enums.ReportStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "ㅁㄴㅇㄹ")
+@Schema(description = "신고 상태(해결전/후) 수정 Dto")
 
 public class ReportUpdateRequestDto {
 	@NotNull
-	@Schema(name = "id")
+	@Min(1)
+	@Schema(description = "신고 엔티티 id", example = "1")
 	Long id;
 	@NotNull
-	@Schema(name = "reportStatus")
+	@Schema(description = "변경하고자 하는 상태")
 	ReportStatus reportStatus;
 }

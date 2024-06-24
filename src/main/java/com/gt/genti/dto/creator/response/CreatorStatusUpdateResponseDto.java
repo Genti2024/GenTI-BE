@@ -4,11 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Schema
+
+@Schema(description = "공급자 작업가능상태 변경 후 응답 dto")
 @Getter
 @NoArgsConstructor
 public class CreatorStatusUpdateResponseDto {
-	@Schema(name = "workable")
+	@Schema(description = "작업가능 여부")
 	Boolean workable;
 
 	@Builder

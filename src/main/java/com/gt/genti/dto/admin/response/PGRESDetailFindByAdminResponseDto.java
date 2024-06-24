@@ -11,25 +11,26 @@ import com.gt.genti.other.util.PictureEntityUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Schema
+
+@Schema(description = "어드민의 사진생성응답 자세히 조회 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGRESDetailFindByAdminResponseDto {
-	@Schema(name = "id")
-	Long id;
-	@Schema(name = "memo")
+	@Schema(description = "사진생성응답 응답 Dto", example = "1")
+	Long pictureGenerateResponseId;
+	@Schema(description = "메모", example = "제일 먼저 할 것")
 	String memo;
-	@Schema(name = "pictureCreatedByCreatorList")
+	@Schema(description = "공급자가 생성한 사진 리스트")
 	List<CommonPictureResponseDto> pictureCreatedByCreatorList;
-	@Schema(name = "pictureCompletedList")
+	@Schema(description = "어드민이 생성한 사진 리스트")
 	List<CommonPictureResponseDto> pictureCompletedList;
-	@Schema(name = "responseStatus")
+	@Schema(description = "사진생성응답 상태", example = "SUBMITTED_FINAL")
 	PictureGenerateResponseStatus responseStatus;
-	@Schema(name = "createdAt")
+	@Schema(description = "생성일시")
 	LocalDateTime createdAt;
 
 	public PGRESDetailFindByAdminResponseDto(PictureGenerateResponse pgres) {
-		this.id = pgres.getId();
+		this.pictureGenerateResponseId = pgres.getId();
 		this.memo = pgres.getMemo();
 		this.pictureCompletedList = pgres.getCompletedPictureList()
 			.stream()

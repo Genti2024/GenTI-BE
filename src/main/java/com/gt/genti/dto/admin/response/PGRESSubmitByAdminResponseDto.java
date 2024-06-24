@@ -4,18 +4,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Schema
+
+@Schema(description = "어드민의 사진생성응답 제출시 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGRESSubmitByAdminResponseDto {
-	@Schema(name = "id")
-	Long id;
-	@Schema(name = "elapsedTime")
+	@Schema(description = "사진생성응답 DB Id", example = "1")
+	Long pictureGenerateResponseId;
+	@Schema(description = "소요시간 HH:MM:SS", example = "02:17:02")
 	String elapsedTime;
 
 	@Builder
-	public PGRESSubmitByAdminResponseDto(Long id, String elapsedTime) {
-		this.id = id;
+	public PGRESSubmitByAdminResponseDto(Long pictureGenerateResponseId, String elapsedTime) {
+		this.pictureGenerateResponseId = pictureGenerateResponseId;
 		this.elapsedTime = elapsedTime;
 	}
 }

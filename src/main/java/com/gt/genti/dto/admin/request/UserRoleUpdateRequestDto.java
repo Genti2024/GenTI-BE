@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "ㅁㄴㅇㄹ")
-
+@Schema(description = "유저 권한 수정 요청 Dto")
 public class UserRoleUpdateRequestDto {
 	@NotNull
-	@Schema(name = "userRole")
+	@Schema(description = "유저의 권한")
 	UserRole userRole;
 
 	@Builder

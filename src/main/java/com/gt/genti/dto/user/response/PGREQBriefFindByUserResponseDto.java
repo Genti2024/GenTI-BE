@@ -14,28 +14,29 @@ import com.gt.genti.dto.common.response.CommonPictureResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Schema
+
+@Schema(description = "유저의 사진생성요청 간단히 조회 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGREQBriefFindByUserResponseDto {
-	@Schema(name = "requestId")
-	Long requestId;
-	@Schema(name = "prompt")
+	@Schema(description = "사진생성요청 DB Id", example = "1")
+	Long pictureGenerateRequestId;
+	@Schema(description = "프롬프트", example = "담벼락 앞에서 브이")
 	String prompt;
-	@Schema(name = "cameraAngle")
+	@Schema(description = "앵글")
 	CameraAngle cameraAngle;
-	@Schema(name = "shotCoverage")
+	@Schema(description = "프레임")
 	ShotCoverage shotCoverage;
-	@Schema(name = "status")
+	@Schema(description = "사진생성요청 상태")
 	PictureGenerateRequestStatus status;
-	@Schema(name = "pictureCompletedList")
+	@Schema(description = "완성된 사진 리스트")
 	List<CommonPictureResponseDto> pictureCompletedList;
-	@Schema(name = "createdAt")
+	@Schema(description = "생성일시")
 	LocalDateTime createdAt;
 
 	public PGREQBriefFindByUserResponseDto(PictureGenerateRequest pgreq) {
 
-		this.requestId = pgreq.getId();
+		this.pictureGenerateRequestId = pgreq.getId();
 		this.prompt = pgreq.getPrompt();
 		this.cameraAngle = pgreq.getCameraAngle();
 		this.shotCoverage = pgreq.getShotCoverage();
@@ -44,7 +45,7 @@ public class PGREQBriefFindByUserResponseDto {
 		if (!pgreq.getResponseList().isEmpty()) {
 			pgreq.getResponseList()
 				.stream()
-				.filter(pgres -> EnumUtil.canUserSeePicture(pgres.getStatus()))
+				.filter(pgres -> EnumUtil.PICTURE_CREATE_COMPLETED(pgres.getStatus()))
 				.min((pgres1, pgres2) -> pgres2.getModifiedAt().compareTo(pgres1.getModifiedAt()))
 				.ifPresent(lastPGRES -> this.pictureCompletedList = lastPGRES.getCompletedPictureList()
 					.stream()
@@ -53,7 +54,7 @@ public class PGREQBriefFindByUserResponseDto {
 		}
 
 		// Duration duration = Duration.between(LocalDateTime.now(),
-		// 	createdAt.plusMinutes(TimeUtils.ACCEPTABLE_TIME_MINUTE));
-		// this.remainTime = TimeUtils.getTimeString(duration);
+		// 	createdAt.plusMinutes(DateTimeUtils.ACCEPTABLE_TIME_MINUTE));
+		// this.remainTime = DateTimeUtils.getTimeString(duration);
 	}
 }

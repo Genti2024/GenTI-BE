@@ -3,10 +3,11 @@ package com.gt.genti.other.util;
 import static com.gt.genti.error.ResponseCode.*;
 
 import java.time.Duration;
+import java.time.LocalDate;
 
 import com.gt.genti.error.ExpectedException;
 
-public class TimeUtils {
+public class DateTimeUtils {
 	public static Long ACCEPTABLE_TIME_MINUTE = 15L;
 	public static Long PGRES_LIMIT_HOUR = 4L;
 	public static Long PGREQ_LIMIT_HOUR = 6L;
@@ -36,5 +37,21 @@ public class TimeUtils {
 
 	public static String getZeroTime() {
 		return "00:00:00";
+	}
+
+	public static int getAge(LocalDate birthDateTime) {
+		if (birthDateTime == null) {
+			return -1;
+		}
+		LocalDate now = LocalDate.now();
+		int age = now.getYear() - birthDateTime.getYear();
+
+		// 현재 날짜가 생일 전이라면 만나이를 하나 줄입니다.
+		if (now.getMonthValue() < birthDateTime.getMonthValue() ||
+			(now.getMonthValue() == birthDateTime.getMonthValue() &&
+				now.getDayOfMonth() < birthDateTime.getDayOfMonth())) {
+			age--;
+		}
+		return age;
 	}
 }

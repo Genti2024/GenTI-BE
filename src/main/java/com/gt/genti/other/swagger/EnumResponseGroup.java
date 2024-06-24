@@ -32,7 +32,7 @@ public enum EnumResponseGroup {
 	NOT_FOUND,
 
 	@EnumResponses(value = {
-		@EnumResponse(NotAllowedOauthProvider)
+		@EnumResponse(OauthProviderNotAllowed)
 	})
 	OAUTH
 }

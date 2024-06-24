@@ -16,19 +16,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EnumUtil {
 
-	public static List<PictureGenerateResponseStatus> PICTURE_AVAILABLE_STATUS_LIST = List.of(
+	public static List<PictureGenerateResponseStatus> PGRES_PICTURE_CREATED_LIST = List.of(
 		PictureGenerateResponseStatus.COMPLETED, PictureGenerateResponseStatus.SUBMITTED_FINAL);
 
-	public static List<PictureGenerateRequestStatus> PGREQ_STATUS_PENDING =
+	public static List<PictureGenerateRequestStatus> PGREQ_PENDING_LIST =
 		List.of(
 			PictureGenerateRequestStatus.CREATED,
 			PictureGenerateRequestStatus.ASSIGNING,
 			PictureGenerateRequestStatus.IN_PROGRESS,
 			PictureGenerateRequestStatus.MATCH_TO_ADMIN
-			);
+		);
 
-	public static boolean canUserSeePicture(PictureGenerateResponseStatus status) {
-		return PICTURE_AVAILABLE_STATUS_LIST.contains(status);
+	public static List<PictureGenerateRequestStatus> PGREQ_IN_PROGRESS_LIST = List.of(
+		PictureGenerateRequestStatus.IN_PROGRESS, PictureGenerateRequestStatus.MATCH_TO_ADMIN);
+
+	public static List<PictureGenerateResponseStatus> IN_PROGRESS_PGRES_FOR_CREATOR = List.of(
+		PictureGenerateResponseStatus.BEFORE_WORK);
+
+	public static List<PictureGenerateResponseStatus> PGRES_CAN_CHANGE_ADMIN_IN_CHARGE_LIST = List.of(
+		PictureGenerateResponseStatus.SUBMITTED_FIRST,
+		PictureGenerateResponseStatus.ADMIN_BEFORE_WORK,
+		PictureGenerateResponseStatus.ADMIN_IN_PROGRESS);
+
+	public static boolean PICTURE_CREATE_COMPLETED(PictureGenerateResponseStatus status) {
+		return PGRES_PICTURE_CREATED_LIST.contains(status);
 	}
 
 	public static <E extends Enum<E> & ConvertableEnum> E stringToEnum(Class<E> enumType, String value) {

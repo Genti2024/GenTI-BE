@@ -115,6 +115,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		return new PGREQDetailFindByUserResponseDto(foundPictureGenerateRequest);
 	}
 
+	@Transactional
 	@Override
 	public PictureGenerateRequest createPGREQ(User requester,
 		PGREQSaveCommand pgreqSaveCommand) {
@@ -151,11 +152,8 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.picturePose(foundPicturePose)
 			.userFacePictureList(uploadedFacePictureList)
 			.build();
-
-		PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(pgr);
-		requestMatchService.matchNewRequest(savedPGREQ);
-
-		return savedPGREQ;
+		requestMatchService.matchNewRequest(pgr);
+		return pictureGenerateRequestPort.save(pgr);
 	}
 
 	@Transactional

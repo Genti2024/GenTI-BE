@@ -24,11 +24,9 @@ public interface PictureGenerateRequestUseCase {
 
 	public PGREQDetailFindByUserResponseDto findPGREQByRequestAndId(User user, Long id);
 
-	@Transactional
 	public PictureGenerateRequest createPGREQ(User requester,
 		PGREQSaveCommand pgreqSaveCommand);
 
-	@Transactional
 	public void modifyPGREQ(User user,
 		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto);
 

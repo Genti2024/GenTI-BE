@@ -116,13 +116,14 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.userFacePictureList = pictureUserFaceList;
 	}
 
-	public void assign(Creator creator) {
+	public void assignToCreator(Creator creator) {
 		if (this.pictureGenerateRequestStatus != PictureGenerateRequestStatus.CREATED) {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.ASSIGNING;
 		this.creator = creator;
+		this.matchToAdmin = false;
 	}
 
 	public void acceptByCreator() {
@@ -142,6 +143,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.requester.addRequestCount();
 		this.creator = creator;
 		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.MATCH_TO_ADMIN;
+		this.matchToAdmin = false;
 	}
 
 	public void submittedByAdmin() {

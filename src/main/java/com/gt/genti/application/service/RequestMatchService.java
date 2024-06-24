@@ -93,7 +93,7 @@ public class RequestMatchService {
 		IntStream.range(0, matchableCount).forEach(i -> {
 				Creator creator = availableCreatorList.get(i);
 				PictureGenerateRequest pgr = pendingRequestList.get(i);
-				pgr.assign(creator);
+				pgr.assignToCreator(creator);
 				String result = """
 					email : [%s]가 요청한 id : [%d] 요청을 작업자 email : [%s] id : [%d]에게 매칭
 					  """.formatted(pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(),

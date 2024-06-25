@@ -189,8 +189,7 @@ public class GlobalExceptionHandler {
 		}
 
 		// Log the error with all the collected information
-		log.error("[{} error] occurred for user: {}, URL: {}, Params: [{}], Message: {}",
+		log.error("[{} error] occurred for user: {} URL: {} Params: [{}] Message: {}",
 			responseCode.name(), user, requestUrl, params, errorMessage);
 	}
-
 }

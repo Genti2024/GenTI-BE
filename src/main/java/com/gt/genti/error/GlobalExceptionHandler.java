@@ -18,16 +18,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,7 +38,7 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ApiResult<?>> handleExpectedException(
 		final HttpServletRequest request,
 		final ExpectedException exception) {
-		if(exception.shouldLogError()){
+		if (exception.shouldLogError()) {
 			logError(request, exception.getResponseCode());
 		}
 		return error(exception.getResponseCode());
@@ -59,19 +56,19 @@ public class GlobalExceptionHandler {
 		final HttpServletRequest request,
 		final HttpRequestMethodNotSupportedException exception) {
 		String arg1 = Arrays.toString(exception.getSupportedMethods());
-		logError(request, MethodNotSupported, arg1);
-		return error(MethodNotSupported, arg1);
+		logError(request, HttpRequestMethodNotSupportedException, arg1);
+		return error(HttpRequestMethodNotSupportedException, arg1);
 	}
 
-	@ExceptionHandler(WebExchangeBindException.class)
-	protected ResponseEntity<ApiResult<?>> processValidationError(
-		final HttpServletRequest request,
-		final WebExchangeBindException exception) {
-		String arg1 = exception.getBindingResult().getFieldErrors().stream().map(
-			GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
-		logError(request, ControllerValidationError, arg1);
-		return error(ControllerValidationError, arg1);
-	}
+	// @ExceptionHandler(WebExchangeBindException.class)
+	// protected ResponseEntity<ApiResult<?>> processValidationError(
+	// 	final HttpServletRequest request,
+	// 	final WebExchangeBindException exception) {
+	// 	String arg1 = exception.getBindingResult().getFieldErrors().stream().map(
+	// 		GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
+	// 	logError(request, HandlerMethodValidationException, arg1);
+	// 	return error(HandlerMethodValidationException, arg1);
+	// }
 
 	@ExceptionHandler(UnrecognizedPropertyException.class)
 	protected ResponseEntity<ApiResult<?>> unRecognizedPropertyException(
@@ -101,17 +98,18 @@ public class GlobalExceptionHandler {
 			.stream()
 			.map(GlobalExceptionHandler::makeFieldErrorMessage)
 			.collect(Collectors.joining());
-		logError(request, ControllerValidationError, arg1);
-		return error(ControllerValidationError, arg1);
+		logError(request, HandlerMethodValidationException, arg1);
+		return error(HandlerMethodValidationException, arg1);
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<ApiResult<?>> handleMethodArgumentTypeMismatchException(
 		final HttpServletRequest request,
 		MethodArgumentTypeMismatchException exception) {
-		String arg1 = String.format("[%s]변수에 대해 잘못된 입력 : [%s], 변수의 형식은 [%s] 입니다", exception.getPropertyName(), exception.getValue(), exception.getRequiredType());
-		logError(request, MethodArgumentTypeMismatch, arg1);
-		return error(MethodArgumentTypeMismatch, arg1);
+		String arg1 = String.format("[%s]변수에 대해 잘못된 입력 : [%s], 변수의 형식은 [%s] 입니다", exception.getPropertyName(),
+			exception.getValue(), exception.getRequiredType());
+		logError(request, MethodArgumentTypeMismatchException, arg1);
+		return error(MethodArgumentTypeMismatchException, arg1);
 	}
 
 	@ExceptionHandler(MissingPathVariableException.class)
@@ -132,27 +130,28 @@ public class GlobalExceptionHandler {
 		String fieldName = Objects.requireNonNull(resolvable.getCodes())[0];
 		fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);
 		String arg1 = fieldName + " 필드는 " + resolvable.getDefaultMessage();
-		logError(request, ControllerValidationError, arg1);
-		return error(ControllerValidationError, arg1);
+		logError(request, HandlerMethodValidationException, arg1);
+		return error(HandlerMethodValidationException, arg1);
 	}
 
-	@ExceptionHandler(MissingServletRequestParameterException.class)
-	public ResponseEntity<ApiResult<?>> handleValidationExceptions(
-		final HttpServletRequest request,
-		MissingServletRequestParameterException exception) {
-		String arg1 = exception.getMessage();
-		logError(request, ControllerValidationError, arg1);
-		return error(ControllerValidationError, arg1);
-	}
+	// @ExceptionHandler(MissingServletRequestParameterException.class)
+	// public ResponseEntity<ApiResult<?>> handleValidationExceptions(
+	// 	final HttpServletRequest request,
+	// 	MissingServletRequestParameterException exception) {
+	// 	String arg1 = exception.getMessage();
+	// 	logError(request, ControllerValidationError, arg1);
+	// 	return error(ControllerValidationError, arg1);
+	// }
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ApiResult<?>> handleHttpMessageNotReadableException(
 		final HttpServletRequest request,
 		HttpMessageNotReadableException exception) {
 		String arg1 = exception.getMessage();
-		logError(request, InValidFormat, arg1);
-		return error(InValidFormat, arg1);
+		logError(request, HttpMessageNotReadableException, arg1);
+		return error(HttpMessageNotReadableException, arg1);
 	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiResult<?>> handleUnExpectedException(
 		final HttpServletRequest request,
@@ -162,8 +161,6 @@ public class GlobalExceptionHandler {
 		return error(UnHandledException, arg1);
 	}
 
-
-
 	@NotNull
 	private static String makeFieldErrorMessage(FieldError fieldError) {
 		return """
@@ -172,7 +169,12 @@ public class GlobalExceptionHandler {
 	}
 
 	private void logError(HttpServletRequest request, ResponseCode responseCode, Object... args) {
-		String errorMessage = responseCode.getMessage(args);
+		String errorMessage;
+		if (args != null) {
+			errorMessage = responseCode.getMessage(args);
+		} else {
+			errorMessage = responseCode.getMessage();
+		}
 		String requestUrl = request.getRequestURL().toString();
 		StringBuilder params = new StringBuilder();
 		Enumeration<String> parameterNames = request.getParameterNames();

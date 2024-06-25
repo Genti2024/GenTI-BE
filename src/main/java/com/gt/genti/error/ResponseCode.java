@@ -41,16 +41,16 @@ public enum ResponseCode {
 	NotNullableEnum(false, HttpStatus.BAD_REQUEST, ErrorConstants.NotNullableEnum, " [%s] 값은 null 값을 허용하지 않습니다."),
 	DBToEnumFailed(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.DBToEnumFailed,
 		"문자열 -> Enum 변환 실패 enum : %s 입력된 값 : %s"),
-	ControllerValidationError(false, HttpStatus.BAD_REQUEST, ErrorConstants.ControllerValidationError, "%s"),
+	HandlerMethodValidationException(false, HttpStatus.BAD_REQUEST, ErrorConstants.ControllerValidationError, "%s"),
 	UnrecognizedPropertyException(false, HttpStatus.BAD_REQUEST, ErrorConstants.UnrecognizedPropertyException,
 		"json property parsing 중 오류 발생, %s"),
 	InvalidDataAccessApiUsageException(false, HttpStatus.BAD_REQUEST, ErrorConstants.InvalidDataAccessApiUsageException,
 		"%s"),
 	NoHandlerFoundException(false, HttpStatus.NOT_FOUND, ErrorConstants.NoHandlerFoundException,
 		"요청 uri에 대한 핸들러가 없습니다."),
-	MethodNotSupported(false, HttpStatus.METHOD_NOT_ALLOWED, ErrorConstants.MethodNotSupported,
+	HttpRequestMethodNotSupportedException(false, HttpStatus.METHOD_NOT_ALLOWED, ErrorConstants.MethodNotSupported,
 		"not allowed methods, allowed methods : %s"),
-	MethodArgumentTypeMismatch(false, HttpStatus.BAD_REQUEST, ErrorConstants.MethodArgumentTypeMismatch, "%s"),
+	MethodArgumentTypeMismatchException(false, HttpStatus.BAD_REQUEST, ErrorConstants.MethodArgumentTypeMismatch, "%s"),
 	MissingPathVariableException(false, HttpStatus.BAD_REQUEST, ErrorConstants.MissingPathVariableException,
 		"query param 에러 %s "),
 	UnHandledException(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.UnHandledException,
@@ -150,7 +150,7 @@ public enum ResponseCode {
 	WithdrawRequestNotFound(false, HttpStatus.NOT_FOUND, ErrorConstants.WithdrawRequestNotFound,
 		"해당 출금 요청을 찾을 수 없습니다."),
 
-	InValidFormat(false, HttpStatus.BAD_REQUEST, ErrorConstants.InValidFormat, "잘못된 입력 : %s"),
+	HttpMessageNotReadableException(false, HttpStatus.BAD_REQUEST, ErrorConstants.InValidFormat, "잘못된 입력 : %s"),
 	FileTypeNotProvided(false, HttpStatus.BAD_REQUEST, ErrorConstants.FileTypeNotProvided, "파일 형식이 주어지지 않았습니다.");
 
 	private final boolean success;

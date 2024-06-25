@@ -42,7 +42,9 @@
     </appender>
     <springProfile name="local">
         <root level="INFO">
+            <appender-ref ref="ASYNC_DISCORD"/>
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </root>
     </springProfile>
     <springProfile name="deploy">

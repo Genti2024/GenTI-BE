@@ -24,7 +24,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 매일 새로운 로그 파일 생성 -->
             <fileNamePattern>/logs/app-%d{yyyy-MM-dd}.log</fileNamePattern>
-<!--            1년까지만 유지-->
+            <!--            1년까지만 유지-->
             <maxHistory>365</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -42,9 +42,7 @@
     </appender>
     <springProfile name="local">
         <root level="INFO">
-            <appender-ref ref="ASYNC_DISCORD"/>
             <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="FILE"/>
         </root>
     </springProfile>
     <springProfile name="deploy">

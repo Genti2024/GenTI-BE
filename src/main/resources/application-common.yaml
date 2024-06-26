@@ -28,3 +28,7 @@ springdoc:
     - /api/**
     - /logout
     - /
+spring:
+  web:
+    locale: ko_KR
+    locale-resolver: fixed

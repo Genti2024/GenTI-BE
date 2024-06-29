@@ -3,6 +3,7 @@ package com.gt.genti.picturegeneraterequest.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,6 @@ import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 import com.gt.genti.user.model.User;
 
-import jakarta.validation.constraints.NotNull;
 
 @Repository
 public interface PictureGenerateRequestRepository
@@ -87,7 +87,7 @@ public interface PictureGenerateRequestRepository
 		List<PictureGenerateRequestStatus> activeRequestStatusList,
 		List<PictureGenerateResponseStatus> activeResponseStatusList);
 
-	@NotNull
+
 	Page<PictureGenerateRequest> findAll(@NotNull Pageable pageable);
 
 	@Query("select pgres "

@@ -2,7 +2,6 @@ package com.gt.genti.aws.dto;
 
 import com.gt.genti.aws.FileType;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PreSignedUrlRequestDto {
 
-	@NotNull
 	FileType fileType;
 	String fileName;
 

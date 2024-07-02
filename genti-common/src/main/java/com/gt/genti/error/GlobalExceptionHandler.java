@@ -4,7 +4,6 @@ import static com.gt.genti.error.ResponseCode.*;
 import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -38,24 +37,26 @@ public class GlobalExceptionHandler {
 		final HttpServletRequest request,
 		final ExpectedException exception) {
 		if (exception.shouldLogError()) {
-			logError(request, exception.getResponseCode());
+			log.error(exception.getMessage(), exception);
 		}
 		return error(exception.getResponseCode());
 	}
 
 	@ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
 	public ResponseEntity<ApiResult<?>> handleNoHandlerFoundException(
-		final HttpServletRequest request) {
-		logError(request, NoHandlerFoundException);
+		final HttpServletRequest request,
+		final Exception exception) {
+		if (!request.getRequestURI().endsWith("favicon.ico")) {
+			log.error(exception.getMessage(), exception);
+		}
 		return error(NoHandlerFoundException);
 	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<ApiResult<?>> handleHttpRequestMethodNotSupportedException(
-		final HttpServletRequest request,
 		final HttpRequestMethodNotSupportedException exception) {
 		String arg1 = Arrays.toString(exception.getSupportedMethods());
-		logError(request, HttpRequestMethodNotSupportedException, arg1);
+		log.error(exception.getMessage(), exception);
 		return error(HttpRequestMethodNotSupportedException, arg1);
 	}
 
@@ -71,56 +72,51 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UnrecognizedPropertyException.class)
 	protected ResponseEntity<ApiResult<?>> unRecognizedPropertyException(
-		final HttpServletRequest request,
 		UnrecognizedPropertyException exception) {
 		String arg1 = exception.getMessage();
-		logError(request, UnrecognizedPropertyException, arg1);
+		log.error(exception.getMessage(), exception);
 		return error(UnrecognizedPropertyException, arg1);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiResult<?>> handleMethodArgumentNotValidException(
-		final HttpServletRequest request,
-		BindingResult bindingResult
+		BindingResult bindingResult,
+		final MethodArgumentNotValidException exception
 	) {
 		String arg1 = bindingResult
 			.getFieldErrors()
 			.stream()
 			.map(GlobalExceptionHandler::makeFieldErrorMessage)
 			.collect(Collectors.joining());
-		logError(request, HandlerMethodValidationException, arg1);
+		log.error(exception.getMessage(), exception);
 		return error(HandlerMethodValidationException, arg1);
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<ApiResult<?>> handleMethodArgumentTypeMismatchException(
-		final HttpServletRequest request,
 		MethodArgumentTypeMismatchException exception) {
 		String arg1 = String.format("[%s]변수에 대해 잘못된 입력 : [%s], 변수의 형식은 [%s] 입니다", exception.getPropertyName(),
 			exception.getValue(), exception.getRequiredType());
-		logError(request, MethodArgumentTypeMismatchException, arg1);
+		log.error(exception.getMessage(), exception);
 		return error(MethodArgumentTypeMismatchException, arg1);
 	}
 
 	@ExceptionHandler(MissingPathVariableException.class)
 	public ResponseEntity<ApiResult<?>> handleMissingPathVariableException(
-		final HttpServletRequest request,
-		MissingPathVariableException exception) {
-		String arg1 = exception.getMessage();
-		logError(request, MissingPathVariableException, arg1);
-		return error(MissingPathVariableException, arg1);
+		final MissingPathVariableException exception) {
+		log.error(exception.getMessage(), exception);
+		return error(MissingPathVariableException, exception.getMessage());
 	}
 
 	// Controller에서 @Min @NotNull 등의 기본적인 어노테이션 유효성 검사 오류시
 	@ExceptionHandler(HandlerMethodValidationException.class)
 	public ResponseEntity<ApiResult<?>> handleValidationExceptions(
-		final HttpServletRequest request,
 		HandlerMethodValidationException exception) {
 		MessageSourceResolvable resolvable = exception.getAllValidationResults().get(0).getResolvableErrors().get(0);
 		String fieldName = Objects.requireNonNull(resolvable.getCodes())[0];
 		fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);
 		String arg1 = fieldName + " 필드는 " + resolvable.getDefaultMessage();
-		logError(request, HandlerMethodValidationException, arg1);
+		log.error(exception.getMessage(), exception);
 		return error(HandlerMethodValidationException, arg1);
 	}
 
@@ -135,19 +131,18 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ApiResult<?>> handleHttpMessageNotReadableException(
-		final HttpServletRequest request,
 		HttpMessageNotReadableException exception) {
 		String arg1 = exception.getMessage();
-		logError(request, HttpMessageNotReadableException, arg1);
+		log.error(exception.getMessage(), exception);
+
 		return error(HttpMessageNotReadableException, arg1);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiResult<?>> handleUnExpectedException(
-		final HttpServletRequest request,
 		Exception exception) {
 		String arg1 = exception.getMessage();
-		logError(request, UnHandledException, arg1);
+		log.error(exception.getMessage(), exception);
 		return error(UnHandledException, arg1);
 	}
 
@@ -156,32 +151,5 @@ public class GlobalExceptionHandler {
 		return """
 			[%s] 변수에 대해서 %s 입력된 값 : [%s]""".formatted(fieldError.getField(), fieldError.getDefaultMessage(),
 			fieldError.getRejectedValue());
-	}
-
-	private void logError(HttpServletRequest request, ResponseCode responseCode, Object... args) {
-		String errorMessage;
-		if (args != null) {
-			errorMessage = responseCode.getMessage(args);
-		} else {
-			errorMessage = responseCode.getMessage();
-		}
-		String requestUrl = request.getRequestURL().toString();
-		StringBuilder params = new StringBuilder();
-		Enumeration<String> parameterNames = request.getParameterNames();
-
-		while (parameterNames.hasMoreElements()) {
-			String paramName = parameterNames.nextElement();
-			String paramValue = request.getParameter(paramName);
-			params.append(paramName).append("=").append(paramValue).append(", ");
-		}
-
-		String user = "Anonymous"; // Default value
-		if (request.getUserPrincipal() != null) {
-			user = request.getUserPrincipal().getName();
-		}
-
-		// Log the error with all the collected information
-		log.error("[{} error] occurred for user: {} URL: {} Params: [{}] Message: {}",
-			responseCode.name(), user, requestUrl, params, errorMessage);
 	}
 }

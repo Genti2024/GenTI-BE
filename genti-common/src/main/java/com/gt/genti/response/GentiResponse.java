@@ -3,6 +3,8 @@ package com.gt.genti.response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.gt.genti.error.ResponseCode;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,10 +28,12 @@ public class GentiResponse {
 
 	@Getter
 	@Schema
+	@JsonPropertyOrder({"success", "status", "code", "message", "data"})
 	public static class ApiResult<T> {
 		@Schema(name = "success", description = "api요청 성공 여부")
 		private final boolean success;
 		@Schema(name = "response", description = "응답 데이터, 실패시 null")
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private final T response;
 		@Schema(name = "code", description = "코드 ")
 		private final String code;

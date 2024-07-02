@@ -61,7 +61,14 @@ public enum ResponseCode {
 		"query param 에러 %s "),
 	UnHandledException(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.UnHandledException,
 		"예기치 못한 문제가 발생했습니다. 오류내용 : %s"),
-
+	DiscordException(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.UnHandledException,
+		"디스코드 오류 발생"),
+	DiscordContentException(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.UnHandledException,
+		"디스코드 오류 발생"),
+	DiscordIOException(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.UnHandledException,
+		"디스코드 IO 오류 발생"),
+	DiscordAppenderException(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.UnHandledException,
+		"디스코드 IO 오류 발생"),
 	/**
 	 * PictureGenerateRequest
 	 */

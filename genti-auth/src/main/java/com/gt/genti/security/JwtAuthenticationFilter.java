@@ -1,5 +1,7 @@
 package com.gt.genti.security;
 
+import static com.gt.genti.error.ResponseCode.*;
+
 import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
@@ -10,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.gt.genti.constants.WhiteListConstants;
+import com.gt.genti.error.ExpectedException;
 import com.gt.genti.jwt.JwtTokenProvider;
 
 import jakarta.servlet.FilterChain;
@@ -34,17 +37,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-		@NonNull FilterChain filterChain) throws IOException,
+		@NonNull FilterChain filterChain) throws
 		ServletException,
 		IOException {
+		try {
+			authenticate(request);
+		} catch (ExpectedException expectedException) {
+			handleExpectedException(request, response, expectedException);
+		} catch (Exception e) {
+			request.setAttribute("exception", e);
+		}
+		filterChain.doFilter(request, response);
+	}
 
+	private void handleExpectedException(HttpServletRequest request, HttpServletResponse response,
+		ExpectedException expectedException) throws IOException {
+		if (TOKEN_NOT_PROVIDED.equals(expectedException.getResponseCode())) {
+			request.setAttribute("exception", expectedException.notLogging());
+		} else {
+			request.setAttribute("exception", expectedException);
+		}
+	}
+
+	private void authenticate(HttpServletRequest request){
 		final String token = getJwtFromRequest(request);
 		jwtTokenProvider.validateToken(token);
 
 		Long userId = jwtTokenProvider.getUserFromJwt(token);
 		Authentication authentication = jwtTokenProvider.getAuthentication(userId);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		filterChain.doFilter(request, response);
 	}
 
 	private String getJwtFromRequest(HttpServletRequest request) {

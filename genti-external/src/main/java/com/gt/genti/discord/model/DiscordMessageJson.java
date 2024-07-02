@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class JsonObject {
+public class DiscordMessageJson {
 
 	private final HashMap<String, Object> discordMessageMap = new HashMap<>();
 
@@ -32,7 +32,7 @@ public class JsonObject {
 				builder.append(Integer.valueOf(String.valueOf(val)));
 			} else if (val instanceof Boolean) {
 				builder.append(val);
-			} else if (val instanceof JsonObject) {
+			} else if (val instanceof DiscordMessageJson) {
 				builder.append(val);
 			} else if (val.getClass().isArray()) {
 				builder.append("[");

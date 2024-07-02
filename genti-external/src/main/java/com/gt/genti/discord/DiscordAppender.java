@@ -1,112 +1,196 @@
-// package com.gt.genti.error;
-//
-// import java.awt.*;
-// import java.time.LocalDateTime;
-// import java.time.format.DateTimeFormatter;
-// import java.util.Map;
-//
-// import org.apache.commons.lang3.StringEscapeUtils;
-//
-// import com.gt.genti.error.model.EmbedObject;
-//
-// import ch.qos.logback.classic.spi.ILoggingEvent;
-// import ch.qos.logback.classic.spi.IThrowableProxy;
-// import ch.qos.logback.classic.spi.ThrowableProxyUtil;
-// import ch.qos.logback.core.UnsynchronizedAppenderBase;
-// import lombok.Setter;
-// import lombok.extern.slf4j.Slf4j;
-//
-// @Slf4j
-// @Setter
-// public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
-//
-// 	private String discordWebhookUrl;
-// 	private String username;
-// 	private String avatarUrl;
-//
-// 	private static Color getLevelColor(ILoggingEvent eventObject) {
-// 		String level = eventObject.getLevel().levelStr;
-// 		if (level.equals("WARN")) {
-// 			return Color.yellow;
-// 		} else if (level.equals("ERROR")) {
-// 			return Color.red;
-// 		}
-//
-// 		return Color.blue;
-// 	}
-//
-// 	@Override
-// 	protected void append(ILoggingEvent eventObject) {
-// 		DiscordWebHook discordWebhook = new DiscordWebHook(discordWebhookUrl, username, avatarUrl, false);
-// 		Map<String, String> mdcPropertyMap = eventObject.getMDCPropertyMap();
-// 		Color messageColor = getLevelColor(eventObject);
-//
-// 		String level = eventObject.getLevel().levelStr;
-// 		String exceptionBrief = "";
-// 		String exceptionDetail = "";
-// 		IThrowableProxy throwable = eventObject.getThrowableProxy();
-// 		log.info("{}", eventObject.getMessage());
-//
-// 		if (throwable != null) {
-// 			exceptionBrief = throwable.getClassName() + ": " + throwable.getMessage();
-// 		}
-//
-// 		if (exceptionBrief.equals("")) {
-// 			exceptionBrief = "EXCEPTION 정보가 남지 않았습니다.";
-// 		}
-//
-// 		discordWebhook.addEmbed(new EmbedObject()
-// 			.setTitle("[" + level + " - 문제 간략 내용]")
-// 			.setColor(messageColor)
-// 			.setDescription(exceptionBrief)
-// 			.addField("[" + "Exception Level" + "]",
-// 				StringEscapeUtils.escapeJson(level),
-// 				true)
-// 			.addField("[문제 발생 시각]",
-// 				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-// 				false)
-// 			.addField(
-// 				"[" + MDCUtil.REQUEST_URI_MDC + "]",
-// 				StringEscapeUtils.escapeJson(mdcPropertyMap.get(MDCUtil.REQUEST_URI_MDC)),
-// 				false)
-// 			.addField(
-// 				"[" + MDCUtil.USER_IP_MDC + "]",
-// 				StringEscapeUtils.escapeJson(mdcPropertyMap.get(MDCUtil.USER_IP_MDC)),
-// 				false)
-// 			.addField(
-// 				"[" + MDCUtil.HEADER_MAP_MDC + "]",
-// 				StringEscapeUtils.escapeJson(mdcPropertyMap.get(MDCUtil.HEADER_MAP_MDC).replaceAll("[\\{\\{\\}]", "")),
-// 				true)
-// 			.addField(
-// 				"[" + MDCUtil.USER_REQUEST_COOKIES + "]",
-// 				StringEscapeUtils.escapeJson(
-// 					mdcPropertyMap.get(MDCUtil.USER_REQUEST_COOKIES).replaceAll("[\\{\\{\\}]", "")),
-// 				false)
-// 			.addField(
-// 				"[" + MDCUtil.PARAMETER_MAP_MDC + "]",
-// 				StringEscapeUtils.escapeJson(
-// 					mdcPropertyMap.get(MDCUtil.PARAMETER_MAP_MDC).replaceAll("[\\{\\{\\}]", "")),
-// 				false)
-// 			.addField("[" + MDCUtil.BODY_MDC + "]",
-// 				StringEscapeUtils.escapeJson(StringUtil.translateEscapes(mdcPropertyMap.get(MDCUtil.BODY_MDC))),
-// 				false)
-// 		);
-//
-// 		if (throwable != null) {
-// 			exceptionDetail = ThrowableProxyUtil.asString(throwable);
-// 			String exception = exceptionDetail.substring(0, 4000);
-// 			discordWebhook.addEmbed(
-// 				new EmbedObject()
-// 					.setTitle("[Exception 상세 내용]")
-// 					.setColor(messageColor)
-// 					.setDescription(StringEscapeUtils.escapeJson(exception))
-// 			);
-// 		}
-//
-// 		try {
-// 			discordWebhook.execute();
-// 		} catch (IOException ioException) {
-// 			throw new ErrorLogAppenderException();
-// 		}
-// 	}
-// }
+package com.gt.genti.discord;
+
+import java.awt.*;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+
+import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.stereotype.Component;
+
+import com.gt.genti.discord.model.EmbedObject;
+import com.gt.genti.discord.model.Field;
+import com.gt.genti.discord.model.Thumbnail;
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
+import com.gt.genti.util.MDCUtil;
+import com.gt.genti.util.StringUtil;
+
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
+import ch.qos.logback.core.UnsynchronizedAppenderBase;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Setter
+@Component
+@RequiredArgsConstructor
+public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+
+	private String eventChannelUrl;
+	private String adminChannelUrl;
+	private String errorChannelUrl;
+	private String username;
+	private String avatarUrl;
+
+	@Override
+	protected void append(ILoggingEvent eventObject) {
+		DiscordWebHook discordWebhook = new DiscordWebHook(username, avatarUrl, false);
+		Map<String, String> mdcPropertyMap = eventObject.getMDCPropertyMap();
+		Color messageColor = getLevelColor(eventObject);
+
+		String level = eventObject.getLevel().levelStr;
+		String exceptionBrief = "";
+		String exceptionDetail = "";
+		IThrowableProxy throwable = eventObject.getThrowableProxy();
+		log.info("{}", eventObject.getMessage());
+
+		if (throwable != null) {
+			exceptionBrief = throwable.getClassName() + ": " + throwable.getMessage();
+		}
+
+		if (exceptionBrief.isEmpty()) {
+			exceptionBrief = "EXCEPTION 정보가 남지 않았습니다.";
+		}
+
+		discordWebhook.addEmbed(EmbedObject.builder()
+			.title("[" + level + " - 오류 간략 내용]")
+			.color(messageColor)
+			.description(exceptionBrief)
+			.build().addField(
+				Field.builder()
+					.name("[" + "Exception Level" + "]")
+					.value(StringEscapeUtils.escapeJson(level))
+					.inline(true)
+					.build()
+			).addField(
+				Field.builder()
+					.name("[오류 발생 시각]")
+					.value(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+					.inline(false)
+					.build()
+			).addField(
+				Field.builder()
+					.name("[" + MDCUtil.REQUEST_URI_MDC + "]")
+					.value(StringEscapeUtils.escapeJson(mdcPropertyMap.get(MDCUtil.REQUEST_URI_MDC)))
+					.inline(false)
+					.build()
+			).addField(
+				Field.builder()
+					.name("[" + MDCUtil.USER_IP_MDC + "]")
+					.value(StringEscapeUtils.escapeJson(mdcPropertyMap.get(MDCUtil.USER_IP_MDC)))
+					.inline(false)
+					.build()
+			).addField(
+				Field.builder()
+					.name("[" + MDCUtil.HEADER_MAP_MDC + "]")
+					.value(StringEscapeUtils.escapeJson(
+						mdcPropertyMap.get(MDCUtil.HEADER_MAP_MDC).replaceAll("[\\{\\{\\}]", "")))
+					.inline(true)
+					.build()
+			).addField(
+				Field.builder()
+					.name("[" + MDCUtil.USER_REQUEST_COOKIES + "]")
+					.value(StringEscapeUtils.escapeJson(
+						mdcPropertyMap.get(MDCUtil.USER_REQUEST_COOKIES).replaceAll("[\\{\\{\\}]", "")))
+					.inline(false)
+					.build()
+			).addField(
+				Field.builder()
+					.name("[" + MDCUtil.PARAMETER_MAP_MDC + "]")
+					.value(StringEscapeUtils.escapeJson(
+						mdcPropertyMap.get(MDCUtil.PARAMETER_MAP_MDC).replaceAll("[\\{\\{\\}]", "")))
+					.inline(false)
+					.build()
+			).addField(
+				Field.builder()
+					.name("[" + MDCUtil.BODY_MDC + "]")
+					.value(
+						StringEscapeUtils.escapeJson(StringUtil.translateEscapes(mdcPropertyMap.get(MDCUtil.BODY_MDC))))
+					.inline(false)
+					.build())
+		);
+
+		if (throwable != null) {
+			exceptionDetail = ThrowableProxyUtil.asString(throwable);
+			String exception = exceptionDetail.substring(0, 4000);
+			discordWebhook.addEmbed(
+				EmbedObject.builder()
+					.title("[Exception 상세 내용]")
+					.color(messageColor)
+					.description(StringEscapeUtils.escapeJson(exception))
+					.build()
+			);
+		}
+
+		try {
+			execute(discordWebhook, errorChannelUrl);
+		} catch (IOException e) {
+			throw ExpectedException.withLogging(ResponseCode.DiscordIOException);
+		}
+	}
+
+	public void execute(DiscordWebHook discordWebHook, String url) throws IOException {
+		if (discordWebHook.getEmbeds().isEmpty()) {
+			throw ExpectedException.withLogging(ResponseCode.DiscordException);
+		}
+
+		DiscordMessageSender.sendToDiscord(url, discordWebHook.createDiscordEmbedObject());
+	}
+
+	public void signInAppend(Long totalUserCount, String name, String email, String socialPlatform,
+		LocalDateTime createdAt, String imgUrl) {
+		DiscordWebHook discordWebhook = new DiscordWebHook(username, avatarUrl, false);
+
+		discordWebhook.addEmbed(EmbedObject.builder()
+			.title("[회원 가입] " + totalUserCount + "번째 유저가 가입하였습니다.")
+			.color(Color.CYAN)
+			.description("GenTI에 새로운 유저가 가입하였습니다.")
+			.thumbnail(new Thumbnail(imgUrl))
+			.build()
+			.addField(
+				Field.builder()
+					.name("[이름]")
+					.value(name)
+					.inline(false).build()
+			).addField(
+				Field.builder()
+					.name("[이메일]")
+					.value(email)
+					.inline(false).build()
+			).addField(
+				Field.builder()
+					.name("[소셜 플랫폼]")
+					.value(socialPlatform)
+					.inline(false).build()
+			).addField(
+				Field.builder()
+					.name("[가입 일시]")
+					.value(String.valueOf(createdAt))
+					.inline(false).build()
+			)
+		);
+
+		try {
+			execute(discordWebhook, eventChannelUrl);
+		} catch (IOException e) {
+			throw ExpectedException.withLogging(ResponseCode.DiscordIOException);
+		}
+
+	}
+
+	private static Color getLevelColor(ILoggingEvent eventObject) {
+		String level = eventObject.getLevel().levelStr;
+		if (level.equals("WARN")) {
+			return Color.yellow;
+		} else if (level.equals("ERROR")) {
+			return Color.red;
+		}
+
+		return Color.blue;
+	}
+}

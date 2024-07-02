@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.model.Logging;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
@@ -41,6 +42,7 @@ public class AdminPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = "PGREQ", action = "Read")
 	@GetMapping("/all")
 	public ResponseEntity<ApiResult<Page<PGREQDetailFindByAdminResponseDto>>> getAllPictureGenerateRequest(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gt.genti.aws.dto.PreSignedUrlRequestDto;
 import com.gt.genti.aws.dto.PreSignedUrlResponseDto;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.Logging;
 import com.gt.genti.picture.service.UploadUrlService;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
@@ -33,6 +34,7 @@ public class PictureController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = "presigned-url", action = "Get")
 	@PostMapping("/presigned-url")
 	public ResponseEntity<ApiResult<PreSignedUrlResponseDto>> getUploadUrl(
 		@RequestBody @Valid PreSignedUrlRequestDto preSignedUrlRequestDto) {
@@ -43,6 +45,7 @@ public class PictureController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = "presigned-url", action = "Get")
 	@PostMapping("/presigned-url/many")
 	public ResponseEntity<ApiResult<List<PreSignedUrlResponseDto>>> getUploadUrls(
 		@RequestBody @Valid List<PreSignedUrlRequestDto> requestDtoList) {

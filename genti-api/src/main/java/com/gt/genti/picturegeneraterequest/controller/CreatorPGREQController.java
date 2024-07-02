@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.model.Logging;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.error.ResponseCode;
@@ -37,8 +38,8 @@ public class CreatorPGREQController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
-
 	})
+	@Logging(item = "PGREQ", action = "Read")
 	@GetMapping("/assigned")
 	public ResponseEntity<ApiResult<PGREQBriefFindByCreatorResponseDto>> getAssignedPictureGenerateRequestBrief(
 		@AuthUser Long userId

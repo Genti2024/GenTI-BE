@@ -12,12 +12,13 @@ import com.gt.genti.creator.dto.request.CreatorStatusUpdateRequestDto;
 import com.gt.genti.creator.dto.response.CreatorFindResponseDto;
 import com.gt.genti.creator.dto.response.CreatorStatusUpdateResponseDto;
 import com.gt.genti.creator.service.CreatorService;
-import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.Logging;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
+import com.gt.genti.user.model.AuthUser;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,10 +33,10 @@ public class CreatorController {
 	private final CreatorService creatorService;
 
 	@Operation(summary = "공급자 내정보 보기", description = "공급자의 내정보 보기")
+	@Logging(item = "Creator", action = "Creator")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
-
 	})
 	@GetMapping("")
 	public ResponseEntity<ApiResult<CreatorFindResponseDto>> getCreatorInfo(
@@ -44,6 +45,7 @@ public class CreatorController {
 	}
 
 	@Operation(summary = "공급자 계좌정보 수정", description = "공급자의 내 계좌정보 수정")
+	@Logging(item = "Account", action = "Update")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
@@ -56,6 +58,7 @@ public class CreatorController {
 	}
 
 	@Operation(summary = "공급자 작업가능상태 수정", description = "공급자의 내 작업가능상태 수정")
+	@Logging(item = "Creator-workable", action = "Update")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)

@@ -6,6 +6,7 @@ spring:
     properties:
         default_batch_fetch_size: 10
     database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
 
 openai:
   model: gpt-3.5-turbo

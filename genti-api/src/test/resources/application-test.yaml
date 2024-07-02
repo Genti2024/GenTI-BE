@@ -1,13 +1,4 @@
 spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
-          apple:
-            redirectUri: "http://localhost:8080/login/oauth2/code/apple"
-
   h2:
     console:
       path: /h2-console
@@ -30,6 +21,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 redis:
   host: localhost
+  port: 6379
 
 logging:
   level:
@@ -45,5 +37,8 @@ logging:
 springdoc:
   url:
     scheme: http
-    host: localhost
+    host: 127.0.0.1
     port: 8080
+
+
+

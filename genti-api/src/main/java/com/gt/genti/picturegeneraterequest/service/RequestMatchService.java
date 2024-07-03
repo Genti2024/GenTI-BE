@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.AdminService;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
-import com.gt.genti.discord.controller.DiscordController;
 import com.gt.genti.matchingstrategy.model.RequestMatchStrategy;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
@@ -27,11 +26,11 @@ public class RequestMatchService {
 	private final CreatorRepository creatorRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
-	private final DiscordController discordController;
 	private final AdminService adminService;
 
 	public static RequestMatchStrategy CURRENT_STRATEGY = RequestMatchStrategy.ADMIN_ONLY;
-	public static RequestMatchStrategy changeMatchingStrategy(RequestMatchStrategy strategy){
+
+	public static RequestMatchStrategy changeMatchingStrategy(RequestMatchStrategy strategy) {
 		CURRENT_STRATEGY = strategy;
 		return CURRENT_STRATEGY;
 	}
@@ -48,6 +47,7 @@ public class RequestMatchService {
 
 		matchRequest(pendingRequestList, creatorList, resultSB);
 	}
+
 	@Transactional
 	public void matchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
 		StringBuilder resultSB = new StringBuilder();
@@ -83,8 +83,9 @@ public class RequestMatchService {
 			""".formatted(requestCount);
 		matchResultList.add(result);
 
-		discordController.sendToAdminChannel(String.join("\n", matchResultList));
+		// discordController.sendToAdminChannel(String.join("\n", matchResultList));
 	}
+
 	private void matchRequestCreatorAdmin(List<PictureGenerateRequest> pendingRequestList,
 		List<Creator> availableCreatorList, StringBuilder resultSB) {
 		int requestCount = pendingRequestList.size();
@@ -121,12 +122,12 @@ public class RequestMatchService {
 			대기중이던 요청 [%d]개, 작업자에게 매칭된 요청 [%d]개
 			""".formatted(requestCount, availableCreatorList.size());
 		resultSB.append(creatorMatchResult);
-		discordController.sendToEventChannel(print(resultSB));
+		// discordController.sendToEventChannel(print(resultSB));
 
 		String adminMatchResult = """
 			 어드민에게 매칭된 요청 [%d]개 -> \n 모든 남은 요청이 매칭됨
 			""".formatted(requestCount - (notMatchedIndex + 1));
-		discordController.sendToAdminChannel(adminMatchResult);
+		// discordController.sendToAdminChannel(adminMatchResult);
 	}
 
 	private void matchRequest(List<PictureGenerateRequest> pendingRequestList, List<Creator> creatorList,
@@ -137,7 +138,7 @@ public class RequestMatchService {
 			case ADMIN_ONLY -> {
 				if (pendingRequestList.isEmpty()) {
 					resultSB.append("매칭 대기중인 작업이 없음");
-					discordController.sendToEventChannel(print(resultSB));
+					// discordController.sendToEventChannel(print(resultSB));
 					return;
 				}
 
@@ -159,7 +160,7 @@ public class RequestMatchService {
 				if (creatorList.isEmpty()) {
 					resultSB.append("""
 						[%d]개의 매칭 대기중인 작업 || 작업 가능한 작업자가 없음""".formatted(pendingRequestList.size()));
-					discordController.sendToEventChannel(print(resultSB));
+					// discordController.sendToEventChannel(print(resultSB));
 					return;
 				}
 				/* dosomething */
@@ -167,7 +168,6 @@ public class RequestMatchService {
 		}
 
 	}
-
 
 	private void matchRequest(PictureGenerateRequest pictureGenerateRequest, StringBuilder resultSB) {
 		List<Creator> availableCreatorList = getCreatorListExceptAdmin();
@@ -187,7 +187,7 @@ public class RequestMatchService {
 		return result;
 	}
 
-	private List<Creator> getCreatorListExceptAdmin(){
+	private List<Creator> getCreatorListExceptAdmin() {
 		List<Creator> allCreator = creatorRepository.findAllAvailableCreator();
 		Creator adminCreator = adminService.getAdminCreator();
 		allCreator.removeIf(creator -> creator.getId().equals(adminCreator.getId()));

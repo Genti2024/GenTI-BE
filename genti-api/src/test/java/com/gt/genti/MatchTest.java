@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,6 +61,11 @@ public class MatchTest {
 	@Autowired
 	PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
+	@BeforeAll
+	public static void setup() {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+	}
+
 	@Test
 	public void oneRequestWithAdminStrategy() {
 		// given
@@ -100,16 +108,6 @@ public class MatchTest {
 			PictureGenerateRequestStatus.MATCH_TO_ADMIN);
 	}
 
-	private User getTestAdminUser() {
-		return User.builder()
-			.userRole(UserRole.ADMIN)
-			.userStatus(UserStatus.ACTIVATED)
-			.lastLoginOauthPlatform(OauthPlatform.GOOGLE)
-			.username("adminusername")
-			.lastLoginDate(LocalDateTime.now())
-			.build();
-	}
-
 	private static CreatePicturePoseCommand getCreatePicturePoseCommand(User savedUser) {
 		return CreatePicturePoseCommand
 			.builder()
@@ -136,21 +134,31 @@ public class MatchTest {
 		return List.of(command1, command2, command3);
 	}
 
-	private static User getTestUser() {
-		return User.builder()
+	private User getTestAdminUser() {
+		return User.test()
+			.socialId(UUID.randomUUID().toString())
+			.imageUrl("imageUrl")
 			.userStatus(UserStatus.ACTIVATED)
-			.userRole(UserRole.USER)
-			.creator(null)
+			.userRole(UserRole.ADMIN)
 			.deletedAt(null)
-			.email("test@test.com")
-			.emailVerified(false)
-			.introduction("소개")
-			.loginId(null)
-			.password(null)
-			.pictureProfileList(null)
+			.email("admin@admin.com")
 			.lastLoginOauthPlatform(OauthPlatform.GOOGLE)
 			.nickname("nickname")
-			.pictureUserFaceList(null)
+			.username("username")
+			.lastLoginDate(LocalDateTime.now())
+			.build();
+	}
+
+	private static User getTestUser() {
+		return User.test()
+			.socialId(UUID.randomUUID().toString())
+			.imageUrl("imageUrl")
+			.userStatus(UserStatus.ACTIVATED)
+			.userRole(UserRole.USER)
+			.deletedAt(null)
+			.email("test@test.com")
+			.lastLoginOauthPlatform(OauthPlatform.GOOGLE)
+			.nickname("nickname")
 			.username("username")
 			.lastLoginDate(LocalDateTime.now())
 			.build();

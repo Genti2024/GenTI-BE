@@ -16,7 +16,7 @@ import com.gt.genti.openai.dto.PromptAdvancementRequestCommand;
 import com.gt.genti.openai.restclient.OpenAIRestClient;
 import com.gt.genti.openai.service.OpenAIService;
 
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "common", "secret"})
 @SpringBootTest(classes = TestConfig.class)
 public class OpenAITest {
 	@InjectMocks

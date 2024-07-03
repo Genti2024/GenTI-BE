@@ -135,10 +135,10 @@ public class User extends BaseTimeEntity {
 		}
 	}
 
-	@Builder(builderMethodName = "builderWithSignIn")
+	@Builder(builderMethodName = "builderWithSignIn", builderClassName = "SignInUser")
 	public static User of(String socialId, OauthPlatform oauthPlatform, String username, String imageUrl,
 		String email) {
-		return builder()
+		return base()
 			.socialId(socialId)
 			.lastLoginOauthPlatform(oauthPlatform)
 			.lastLoginDate(LocalDateTime.now())
@@ -146,6 +146,22 @@ public class User extends BaseTimeEntity {
 			.username(username)
 			.imageUrl(imageUrl)
 			.email(email)
+			.build();
+	}
+
+	@Builder(builderMethodName = "test", builderClassName = "test")
+	public static User of(String socialId, String imageUrl, UserStatus userStatus, UserRole userRole, LocalDateTime deletedAt, String email, OauthPlatform lastLoginOauthPlatform, String nickname, String username, LocalDateTime lastLoginDate) {
+		return base()
+			.socialId(socialId)
+			.imageUrl(imageUrl)
+			.lastLoginOauthPlatform(lastLoginOauthPlatform)
+			.lastLoginDate(lastLoginDate)
+			.userRole(userRole)
+			.username(username)
+			.nickname(nickname)
+			.userStatus(userStatus)
+			.email(email)
+			.deletedAt(deletedAt)
 			.build();
 	}
 
@@ -185,8 +201,8 @@ public class User extends BaseTimeEntity {
 		this.lastLoginDate = LocalDateTime.now();
 	}
 
-	@Builder
-	public User(Long id, String socialId, String imageUrl, List<PictureProfile> pictureProfileList,
+	@Builder(builderMethodName = "base", builderClassName = "base")
+	private User(Long id, String socialId, String imageUrl, List<PictureProfile> pictureProfileList,
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
 		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate,

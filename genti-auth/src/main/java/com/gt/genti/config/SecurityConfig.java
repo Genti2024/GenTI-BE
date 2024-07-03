@@ -15,11 +15,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.gt.genti.AuthenticationEntryPointImpl;
 import com.gt.genti.constants.WhiteListConstants;
-import com.gt.genti.handler.CustomExceptionHandler;
+import com.gt.genti.security.CustomSecurityFilterExceptionHandler;
 import com.gt.genti.security.JwtAuthenticationFilter;
-import com.gt.genti.security.JwtExceptionFilter;
 import com.gt.genti.user.model.UserRole;
 
 import lombok.RequiredArgsConstructor;
@@ -29,10 +27,9 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final AuthenticationEntryPointImpl authenticationEntryPointImpl;
-	private final CustomExceptionHandler customExceptionHandler;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-	private final JwtExceptionFilter jwtExceptionFilter;
+	// private final ServletExceptionFilter jwtExceptionFilter;
+	private final CustomSecurityFilterExceptionHandler customSecurityFilterExceptionHandler;
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -45,9 +42,6 @@ public class SecurityConfig {
 
 		// config.addAllowedOrigin(serverIp);
 		// config.addAllowedOrigin(serverDomain);
-		// config.addAllowedOrigin(clientDomainA);
-		// config.addAllowedOrigin(clientDomainB);
-		// config.addAllowedOrigin(clientDomainC);
 		// config.addExposedHeader("Authorization");
 
 		// config.setAllowedOriginPatterns(List.of("*"));
@@ -78,10 +72,6 @@ public class SecurityConfig {
 			.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
 			.sessionManagement(sessionManagementConfigurer ->
 				sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.exceptionHandling(exceptionHandlingConfigurer ->
-				exceptionHandlingConfigurer.authenticationEntryPoint(customExceptionHandler))
-			.exceptionHandling(exceptionHandlingConfigurer ->
-				exceptionHandlingConfigurer.accessDeniedHandler(customExceptionHandler))
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry.requestMatchers(WhiteListConstants.SECURITY_WHITE_LIST)
 					.permitAll())
@@ -94,11 +84,8 @@ public class SecurityConfig {
 					.anyRequest().authenticated())
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class))
-			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-				http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class))
+			.exceptionHandling(handler -> handler.authenticationEntryPoint(customSecurityFilterExceptionHandler))
 			.build();
-
-		// http.exceptionHandling(handler -> handler.authenticationEntryPoint(authenticationEntryPointImpl));
 	}
 }
 

@@ -1,4 +1,4 @@
-package com.gt.genti.matchingstrategy.controller.dto.request;
+package com.gt.genti.matchingstrategy.dto.request;
 
 import com.gt.genti.matchingstrategy.model.RequestMatchStrategy;
 

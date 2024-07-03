@@ -3,13 +3,13 @@ package com.gt.genti.picturegeneraterequest.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.gt.genti.picturegeneraterequest.model.CameraAngle;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
-import com.gt.genti.picturegeneraterequest.model.ShotCoverage;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
+import com.gt.genti.picturegeneraterequest.model.CameraAngle;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
+import com.gt.genti.picturegeneraterequest.model.ShotCoverage;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESFindByUserResponseDto;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -64,6 +64,5 @@ public class PGREQDetailFindByUserResponseDto {
 			.min((res1, res2) -> res2.getModifiedAt().compareTo(res1.getModifiedAt()))
 			.ifPresent(generateResponse ->
 				this.pictureGenerateResponse = new PGRESFindByUserResponseDto(generateResponse));
-
 	}
 }

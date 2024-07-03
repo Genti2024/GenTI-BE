@@ -7,21 +7,13 @@ import org.springframework.context.annotation.Configuration;
 
 import com.gt.genti.swagger.SwaggerEnumOperationCustomizer;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 
-@OpenAPIDefinition(
-	info = @Info(
-		title = "GenTi API",
-		description = "1. 인증 관련 우측에 Authorize 버튼누르고 value에 발급받은 테스트용 토큰 앞에 prefix 'Bearer '를 빼고 입력해주시면 됩니다.",
-		version = "v1"
-	)
-)
 @Configuration
 public class SwaggerConfig {
 
@@ -62,7 +54,16 @@ public class SwaggerConfig {
 	public GroupedOpenApi publicApi(SwaggerEnumOperationCustomizer swaggerEnumOperationCustomizer) {
 		return GroupedOpenApi.builder()
 			.group("GenTI")
+			.packagesToScan("com.gt.genti")
 			.addOperationCustomizer(swaggerEnumOperationCustomizer)
 			.build();
+	}
+
+	@Bean
+	public Info info() {
+		return new Info()
+			.title("GenTi API")
+			.description("1. 인증 관련 우측에 Authorize 버튼누르고 value에 발급받은 테스트용 토큰 앞에 prefix 'Bearer '를 빼고 입력해주시면 됩니다.")
+			.version("v1");
 	}
 }

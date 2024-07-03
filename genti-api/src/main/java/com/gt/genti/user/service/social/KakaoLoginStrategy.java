@@ -62,6 +62,7 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
 				.email(null)
 				.build());
 			user = newUser;
+			userSignUpService.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
 			user.resetDeleteAt();

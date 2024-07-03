@@ -63,6 +63,7 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 				.email(userResponse.email())
 				.build());
 			user = newUser;
+			userSignUpService.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
 			user.resetDeleteAt();

@@ -1,17 +1,40 @@
 package com.gt.genti.error;
 
-import org.springframework.http.HttpStatusCode;
-
 import lombok.Getter;
 
 @Getter
 public class ExpectedException extends RuntimeException {
-	private final ErrorCode errorCode;
-	public HttpStatusCode getStatus(){
-		return errorCode.getStatus();
+	private final ResponseCode responseCode;
+	private boolean logRequired;
+
+	public static ExpectedException withLogging(ResponseCode responseCode, Object... args) {
+		return new ExpectedException(responseCode, true, args);
 	}
-	public ExpectedException(ErrorCode errorCode) {
-		super(errorCode.getMessage());
-		this.errorCode = errorCode;
+
+	public static ExpectedException withoutLogging(ResponseCode responseCode, Object... args) {
+		return new ExpectedException(responseCode, false, args);
+	}
+
+	private ExpectedException(ResponseCode responseCode, boolean logRequired, Object... args) {
+		super(responseCode.getMessage(args));
+		this.responseCode = responseCode;
+		this.logRequired = logRequired;
+	}
+
+	// public String toString() {
+	// 	return """
+	// 		HttpStatusCode : [%d]
+	// 		ExceptionCode : [%s]
+	// 		Message : [%s]
+	// 		""".formatted(responseCode.getHttpStatusCode().value(), responseCode.getCode(), this.getMessage());
+	// }
+
+	public boolean shouldLogError() {
+		return this.logRequired;
+	}
+
+	public ExpectedException notLogging(){
+		this.logRequired = false;
+		return this;
 	}
 }

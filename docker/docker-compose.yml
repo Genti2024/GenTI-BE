@@ -9,6 +9,11 @@ services:
       - ${MYSQL_BINDING_PORT}:${MYSQL_PORT}
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ${MYSQL_DATA_LOCAL}:${MYSQL_DATA_CONTAINER}
+      - ${MYSQL_CONFIG_LOCAL}:${MYSQL_CONFIG_CONTAINER}
+      - ${MYSQL_INIT_LOCAL}:${MYSQL_INIT_CONTAINER}
+      - ${MYSQL_BACKUP_DIR_LOCAL}:${MYSQL_BACKUP_DIR_CONTAINER}
 
   redis:
     image: redis:7.2.4

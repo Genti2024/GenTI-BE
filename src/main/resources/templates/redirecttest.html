@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello Spring</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script>
+        // 쿼리 파라미터에서 토큰을 추출하여 로컬 스토리지에 저장
+        window.onload = function() {
+            // URL에서 쿼리 파라미터 추출
+            const queryParams = new URLSearchParams(window.location.search);
+            const accessToken = queryParams.get('access-token');
+
+            // 로컬 스토리지에 토큰 저장
+            if (accessToken) {
+                localStorage.setItem('access-token', accessToken);
+                console.log('Access Token stored in localStorage', accessToken);
+            }
+            // 쿠키에서 refreshToken 추출
+            const cookies = document.cookie.split(';');
+            let refreshToken = null;
+            cookies.forEach(cookie => {
+                const parts = cookie.split('=');
+                if (parts[0].trim() === 'refresh-token') {
+                    refreshToken = parts[1];
+                }
+            });
+
+            // 콘솔에 refreshToken 출력
+            if (refreshToken) {
+                console.log('Refresh Token from cookie:', refreshToken);
+            }
+            // URL에서 토큰 정보 제거
+            history.replaceState(null, '', location.pathname);
+        };
+    </script>
+</head>
+<body>
+리디렉션 되었다!.
+</body>
+</html>

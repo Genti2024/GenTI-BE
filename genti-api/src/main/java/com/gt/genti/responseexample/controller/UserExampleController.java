@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.domain.picture.responseexample.dto.response.ExampleWithPictureFindResponseDto;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.responseexample.dto.response.ExampleWithPictureFindResponseDto;
 import com.gt.genti.responseexample.service.ResponseExampleService;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[UserExampleController] 유저 사진생성 예시 컨트롤러", description = "사진생성 예시를 조회합니다.")
 @RestController
-@RequestMapping("/api/v1/user/examples")
+@RequestMapping("/api/user/examples")
 @RequiredArgsConstructor
 public class UserExampleController {
 	private final ResponseExampleService responseExampleService;
@@ -31,7 +31,7 @@ public class UserExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/with-picture")
+	@GetMapping("/v1/with-picture")
 	public ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamples() {
 		return success(responseExampleService.getAllResponseExamples());
 	}

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gt.genti.common.basetimeentity.model.BaseTimeEntity;
 import com.gt.genti.common.converter.OauthPlatformConverterIgnoreCase;
 import com.gt.genti.common.converter.SexConverter;
@@ -18,6 +19,7 @@ import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.profile.model.PictureProfile;
 import com.gt.genti.picture.userface.model.PictureUserFace;
+import com.gt.genti.user.UserSerializer;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,6 +41,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users") // h2 예약어 해결법 못찾음
 @Entity
 @Getter
+@JsonSerialize(using = UserSerializer.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 

@@ -1,7 +1,8 @@
 package com.gt.genti.config;
 
+import java.util.List;
+
 import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,24 +17,18 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
-
 	private final String BEARER_TOKEN_PREFIX = "Bearer"; // Bearer직접 넣어서 주는걸로 결정
 	private final String securityJwtName = "JWT";
 
-	@Value("${springdoc.url.scheme}")
-	private String urlScheme;
-
-	@Value("${springdoc.url.host}")
-	private String urlHost;
-
-	@Value("${springdoc.url.port}")
-	private String urlPort;
-
 	@Bean
 	public OpenAPI openAPI() {
-		String serverUrl = String.format("%s://%s:%s", urlScheme, urlHost, urlPort);
-		io.swagger.v3.oas.models.servers.Server server = new Server().url(serverUrl)
-			.description("Generated Server URL");
+
+		Server localServer = new Server();
+		localServer.setDescription("FOR BE 로컬 서버");
+		localServer.setUrl("http://localhost:8080");
+		Server productionServer = new Server();
+		productionServer.setDescription("FOR FE 개발 서버");
+		productionServer.setUrl("https://genti.kr");
 
 		final SecurityRequirement securityRequirement = new SecurityRequirement().addList(securityJwtName);
 		Components components = new Components()
@@ -44,7 +39,7 @@ public class SwaggerConfig {
 				.bearerFormat(securityJwtName));
 
 		return new OpenAPI()
-			.addServersItem(server)
+			.servers(List.of(localServer, productionServer))
 			.addSecurityItem(securityRequirement)
 			.components(components);
 

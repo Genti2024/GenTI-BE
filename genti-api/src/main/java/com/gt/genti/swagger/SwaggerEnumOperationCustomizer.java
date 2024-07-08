@@ -52,8 +52,6 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 			);
 		}
 
-		log.info(operation.toString());
-
 		return operation;
 	}
 
@@ -104,7 +102,6 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 	@SuppressWarnings("rawtypes")
 	private Schema customizeSchema(ResponseCode responseCode, Type dtoType) {
 		Schema schema = ModelConverters.getInstance().readAllAsResolvedSchema(dtoType).schema;
-		log.info(schema.toString());
 		Map<String, Schema> properties = schema.getProperties();
 		Boolean success = responseCode.isSuccess();
 		Integer status = responseCode.getHttpStatusCode().value();

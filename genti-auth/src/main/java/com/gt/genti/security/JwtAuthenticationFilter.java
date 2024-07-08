@@ -3,6 +3,7 @@ package com.gt.genti.security;
 import static com.gt.genti.error.ResponseCode.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.gt.genti.constants.WhiteListConstants;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.jwt.JwtTokenProvider;
+import com.gt.genti.util.HttpRequestUtil;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+	protected boolean shouldNotFilter(HttpServletRequest request) {
 		return PatternMatchUtils.simpleMatch(WhiteListConstants.FILTER_WHITE_LIST, request.getRequestURI());
 	}
 
@@ -45,7 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		} catch (ExpectedException expectedException) {
 			handleExpectedException(request, response, expectedException);
 		} catch (Exception e) {
-			request.setAttribute("exception", e);
+			log.info(
+				HttpRequestUtil.getUserIP(Objects.requireNonNull(request)) + "의 " + request.getRequestURI() + " 으로의 접근 "
+					+ e.getClass().getSimpleName() + " 예외 발생");
+			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			return;
 		}
 		filterChain.doFilter(request, response);
 	}
@@ -59,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 	}
 
-	private void authenticate(HttpServletRequest request){
+	private void authenticate(HttpServletRequest request) {
 		final String token = getJwtFromRequest(request);
 		jwtTokenProvider.validateToken(token);
 

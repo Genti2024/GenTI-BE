@@ -11,8 +11,6 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -26,8 +24,6 @@ public class RedisConfig {
 	@Value("${redis.port}")
 	private int port;
 
-	private final ObjectMapper objectMapper;
-
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
 		return new LettuceConnectionFactory(host, port);
@@ -37,8 +33,11 @@ public class RedisConfig {
 	@Primary
 	public RedisTemplate<String, String> redisTemplate() {
 		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+		// ObjectMapper objectMapper = new ObjectMapper();
+		// objectMapper.registerModule(new JavaTimeModule());
+
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
 		return redisTemplate;
 	}

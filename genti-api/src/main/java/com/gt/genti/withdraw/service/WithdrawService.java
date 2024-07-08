@@ -27,6 +27,7 @@ import com.gt.genti.withdrawrequest.repository.WithdrawRequestRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class WithdrawService {
 	private final SettlementRepository settlementRepository;
@@ -35,7 +36,6 @@ public class WithdrawService {
 	private final UserRepository userRepository;
 	private final DepositRepository depositRepository;
 
-	@Transactional
 	public WithdrawFindByCreatorResponseDto create(Long user) {
 		Creator foundCreator = findCreatorByUserId(user);
 		List<Settlement> foundSettlementList = settlementRepository.findAllWithdrawableByCreatorOrderByCreatedAtDesc(
@@ -87,7 +87,6 @@ public class WithdrawService {
 		}
 	}
 
-	@Transactional
 	public WithdrawCompletionResponseDto complete(Long withdrawRequestId, Long userId) {
 		WithdrawRequest foundWR = findWithdrawRequest(withdrawRequestId);
 		User foundAdminUser = userRepository.findById(userId)

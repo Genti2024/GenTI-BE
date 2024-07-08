@@ -5,22 +5,24 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
+import com.gt.genti.post.dto.response.PostBriefFindResponseDto;
+import com.gt.genti.post.dto.response.PostDetailResponseDto;
 import com.gt.genti.post.model.Post;
 import com.gt.genti.post.model.response.PostBriefFindResponseModel;
 import com.gt.genti.post.repository.PostRepository;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.error.ExpectedException;
-import com.gt.genti.error.ResponseCode;
-import com.gt.genti.post.dto.response.PostBriefFindResponseDto;
-import com.gt.genti.post.dto.response.PostDetailResponseDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Deprecated
 @Service
+@Transactional
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostService {
 

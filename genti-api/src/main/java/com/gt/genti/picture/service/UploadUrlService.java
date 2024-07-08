@@ -12,16 +12,15 @@ import com.gt.genti.aws.service.S3Service;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UploadUrlService {
 	private final S3Service s3Service;
 
-	@Transactional
 	public List<PreSignedUrlResponseDto> getUploadUrls(List<PreSignedUrlRequestDto> preSignedUrlRequestDto) {
 		return s3Service.getPreSignedUrlMany(preSignedUrlRequestDto);
 	}
 
-	@Transactional
 	public PreSignedUrlResponseDto getUploadUrl(PreSignedUrlRequestDto preSignedUrlRequestDto) {
 		return s3Service.getPreSignedUrl(preSignedUrlRequestDto);
 	}

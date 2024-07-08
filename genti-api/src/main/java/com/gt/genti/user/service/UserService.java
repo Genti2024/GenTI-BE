@@ -40,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 	private final PictureService pictureService;
@@ -64,7 +65,7 @@ public class UserService {
 		return true;
 	}
 
-	@Transactional
+	
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		List<CommonPictureResponseDto> profilePictureResponseList = null;
@@ -78,7 +79,7 @@ public class UserService {
 		return UserFindResponseDto.of(foundUser);
 	}
 
-	@Transactional
+	
 	public UserFindResponseDto updateUserInfo(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		User foundUser = getUserByUserId(userId);
 		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
@@ -103,7 +104,7 @@ public class UserService {
 			.build();
 	}
 
-	@Transactional
+	
 	public Boolean updateUserRole(Long userId, UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
 		User foundUser = getUserByUserId(userId);
 		UserRole userRole = userRoleUpdateRequestDto.getUserRole();
@@ -119,21 +120,21 @@ public class UserService {
 		return true;
 	}
 
-	@Transactional
+	
 	public Boolean deleteUserSoft(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		foundUser.softDelete();
 		return true;
 	}
 
-	@Transactional
+	
 	public Boolean restoreSoftDeletedUser(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		foundUser.restore();
 		return true;
 	}
 
-	@Transactional
+	
 	public Boolean updateUserStatus(Long userId, UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		User foundUser = getUserByUserId(userId);
 		foundUser.updateStatus(userStatusUpdateRequestDto.getUserStatus());

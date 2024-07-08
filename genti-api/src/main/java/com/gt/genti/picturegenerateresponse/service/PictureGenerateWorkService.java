@@ -14,37 +14,38 @@ import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.deposit.model.Deposit;
 import com.gt.genti.deposit.repository.DepositRepository;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
-import com.gt.genti.picture.completed.model.PictureCompleted;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
-import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
-import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
-import com.gt.genti.settlement.model.Settlement;
-import com.gt.genti.settlement.repository.SettlementRepository;
-import com.gt.genti.user.model.User;
-import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.command.CreatePictureCompletedCommand;
 import com.gt.genti.picture.command.CreatePictureCreatedByCreatorCommand;
+import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.service.PictureService;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
+import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
 import com.gt.genti.picturegeneraterequest.service.RequestMatchService;
 import com.gt.genti.picturegenerateresponse.dto.request.MemoUpdateRequestDto;
 import com.gt.genti.picturegenerateresponse.dto.request.PGRESUpdateAdminInChargeRequestDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESSubmitByAdminResponseDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESSubmitByCreatorResponseDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESUpdateAdminInChargeResponseDto;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
+import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
+import com.gt.genti.settlement.model.Settlement;
+import com.gt.genti.settlement.repository.SettlementRepository;
+import com.gt.genti.user.model.User;
+import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PictureGenerateWorkService {
 	private final PictureService pictureService;
@@ -101,7 +102,6 @@ public class PictureGenerateWorkService {
 
 	}
 
-	@Transactional
 	public Boolean updatePictureCreatedByCreatorList(Long pictureGenerateResponseId,
 		List<CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList, Long userId) {
 		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
@@ -128,14 +128,14 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
 	}
 
-	@Transactional
+	
 	public Boolean updateMemo(Long pictureGenerateResponseId, MemoUpdateRequestDto memoUpdateRequestDto) {
 		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
 		foundPictureGenerateResponse.updateMemo(memoUpdateRequestDto.getMemo());
 		return true;
 	}
 
-	@Transactional
+	
 	public Boolean acceptPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
@@ -158,7 +158,7 @@ public class PictureGenerateWorkService {
 				String.format("사진생성요청 Id : %d", pictureGenerateRequestId)));
 	}
 
-	@Transactional
+	
 	public Boolean rejectPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
 		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser().getId(), userId)) {
@@ -170,7 +170,7 @@ public class PictureGenerateWorkService {
 		return true;
 	}
 
-	@Transactional
+	
 	public PGRESSubmitByCreatorResponseDto submitToAdmin(Long userId, Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
 		Creator foundCreator = findCreatorByUserId(userId);
@@ -210,7 +210,7 @@ public class PictureGenerateWorkService {
 		foundCreator.completeTask();
 	}
 
-	@Transactional
+	
 	public PGRESSubmitByAdminResponseDto submitFinal(Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
 		List<PictureCompleted> pictureCompletedList = pictureService.findAllPictureCompletedByPictureGenerateResponse(
@@ -283,7 +283,7 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
 	}
 
-	@Transactional
+	
 	public PGRESUpdateAdminInChargeResponseDto updateAdminInCharge(Long pgresId,
 		PGRESUpdateAdminInChargeRequestDto requestDto) {
 		PictureGenerateResponse foundPGRES = findPGRES(pgresId);

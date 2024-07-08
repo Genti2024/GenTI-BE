@@ -7,23 +7,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.report.model.ReportStatus;
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
-import com.gt.genti.report.model.Report;
-import com.gt.genti.report.repository.ReportRepository;
-import com.gt.genti.user.model.User;
-import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.error.ExpectedException;
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.report.dto.request.ReportCreateRequestDto;
 import com.gt.genti.report.dto.request.ReportUpdateRequestDto;
 import com.gt.genti.report.dto.response.ReportFindByAdminResponseDto;
+import com.gt.genti.report.model.Report;
+import com.gt.genti.report.model.ReportStatus;
+import com.gt.genti.report.repository.ReportRepository;
+import com.gt.genti.user.model.User;
+import com.gt.genti.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReportService {
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
@@ -76,7 +77,6 @@ public class ReportService {
 			ReportService::mapToResponseDto);
 	}
 
-	@Transactional
 	public Boolean updateReport(ReportUpdateRequestDto reportUpdateRequestDto) {
 		Long id = reportUpdateRequestDto.getId();
 		ReportStatus status = reportUpdateRequestDto.getReportStatus();

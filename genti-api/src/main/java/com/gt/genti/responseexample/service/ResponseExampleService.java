@@ -19,6 +19,7 @@ import com.gt.genti.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ResponseExampleService {
 	private final ResponseExampleRepository responseExampleRepository;
@@ -36,7 +37,6 @@ public class ResponseExampleService {
 			.toList();
 	}
 
-	@Transactional
 	public void addResponseExamples(List<ExampleSaveCommand> commandList,
 		Long userId) {
 		User foundUploader = userRepository.findById(userId).orElseThrow(() -> ExpectedException.withLogging(

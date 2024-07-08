@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Deprecated
 @Tag(name = "[AdminMatchStrategyController] 어드민 요청-공급자 매칭 전략 컨트롤러", description = "요청-공급자 매칭 전략을 조회,수정")
 @RestController
-@RequestMapping("/api/v1/admin/match-strategy")
+@RequestMapping("/api/admin/match-strategy")
 @RequiredArgsConstructor
 public class AdminMatchStrategyController {
 	@Operation(summary = "매칭전략 조회", description = "현재 시스템의 매칭전략을 조회합니다.", hidden = true)
@@ -31,7 +31,7 @@ public class AdminMatchStrategyController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = "matching-strategy", action = "Read")
-	@GetMapping("")
+	@GetMapping("/v1")
 	public ResponseEntity<ApiResult<String>> getMatchStrategy() {
 		return success(RequestMatchService.CURRENT_STRATEGY.getStringValue());
 	}
@@ -42,7 +42,7 @@ public class AdminMatchStrategyController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = "matching-strategy", action = "Update")
-	@PostMapping("")
+	@PostMapping("/v1")
 	public ResponseEntity<ApiResult<String>> setMatchStrategy(
 		@RequestBody MatchingStrategyUpdateRequestDto requestDto) {
 		return success(

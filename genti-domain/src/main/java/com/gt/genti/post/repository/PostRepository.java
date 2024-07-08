@@ -13,6 +13,7 @@ import com.gt.genti.post.model.Post;
 import com.gt.genti.post.model.response.PostBriefFindResponseModel;
 import com.gt.genti.user.model.User;
 
+@Deprecated
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 	@Query("select p from Post p where p.postStatus != 'DELETED' order by p.createdAt desc")

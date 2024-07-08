@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Deprecated
 @Table(name = "post")
 @Entity
 @Getter

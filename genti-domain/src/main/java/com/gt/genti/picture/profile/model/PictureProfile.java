@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Deprecated
 @Table(name = "picture_profile")
 @Entity
 @Getter

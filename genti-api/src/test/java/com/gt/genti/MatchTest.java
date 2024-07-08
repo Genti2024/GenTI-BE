@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.gt.genti.common.AdminService;
 import com.gt.genti.config.TestConfig;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.picture.PictureRatio;

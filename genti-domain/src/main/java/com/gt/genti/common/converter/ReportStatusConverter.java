@@ -1,6 +1,5 @@
 package com.gt.genti.common.converter;
 
-import com.gt.genti.common.DefaultEnumDBConverter;
 import com.gt.genti.report.model.ReportStatus;
 
 import jakarta.persistence.Converter;

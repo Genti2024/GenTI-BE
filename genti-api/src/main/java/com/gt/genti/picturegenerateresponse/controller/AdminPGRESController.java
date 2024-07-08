@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminPGRESController] 어드민 사진생성응답 컨트롤러", description = "사진생성응답을 조회, 수정")
 @RestController
-@RequestMapping("/api/v1/admin/picture-generate-responses")
+@RequestMapping("/api/admin/picture-generate-responses")
 @RequiredArgsConstructor
 public class AdminPGRESController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
@@ -40,7 +40,7 @@ public class AdminPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/{pictureGenerateResponseId}/submit")
+	@PostMapping("/v1/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESSubmitByAdminResponseDto>> submit(
 		@Parameter(description = "사진생성응답 Id", example = "1", required = true)
 		@PathVariable Long pictureGenerateResponseId) {
@@ -52,7 +52,7 @@ public class AdminPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/{pictureGenerateResponseId}/pictures")
+	@PostMapping("/v1/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> updatePictureList(
 		@AuthUser Long userId,
 		@Parameter(description = "업로드한 사진 url 리스트", required = true)
@@ -67,7 +67,7 @@ public class AdminPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/{pictureGenerateResponseId}/admin-in-charge")
+	@PostMapping("/v1/{pictureGenerateResponseId}/admin-in-charge")
 	public ResponseEntity<ApiResult<PGRESUpdateAdminInChargeResponseDto>> updateAdminInCharge(
 		@PathVariable Long pictureGenerateResponseId,
 		@RequestBody PGRESUpdateAdminInChargeRequestDto requestDto) {

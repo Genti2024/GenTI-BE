@@ -7,6 +7,7 @@ import com.gt.genti.common.EnumUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Deprecated
 @Getter
 @RequiredArgsConstructor
 public enum PostStatus implements ConvertableEnum {

@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[CreatorWithdrawController] 공급자 출금요청 컨트롤러", description = "공급자가 출금요청을 수행합니다.")
 @RestController
-@RequestMapping("/api/v1/creators/withdraw")
+@RequestMapping("/api/creators/withdraw")
 @RequiredArgsConstructor
 public class CreatorWithdrawController {
 	private final WithdrawService withDrawService;
@@ -41,7 +41,7 @@ public class CreatorWithdrawController {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.NoSettlementForWithdrawalException)
 	})
-	@PostMapping("")
+	@PostMapping("/v1")
 	public ResponseEntity<ApiResult<WithdrawFindByCreatorResponseDto>> createWithdrawRequest(
 		@AuthUser Long userId
 	) {
@@ -53,13 +53,13 @@ public class CreatorWithdrawController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("")
+	@GetMapping("/v1")
 	public ResponseEntity<ApiResult<Page<WithdrawFindByCreatorResponseDto>>> getWithdrawRequest(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
-		@RequestParam @NotNull @Min(0) int page,
+		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
-		@RequestParam @NotNull @Min(1) int size,
+		@RequestParam(name = "size", defaultValue = "10") @NotNull @Min(1) int size,
 		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"id",
 			"createdAt"}))
 		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,

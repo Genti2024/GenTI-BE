@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[CreatorPGRESController] 공급자의 사진생성응답 컨트롤러", description = "사진생성응답 작업 api")
 @RestController
-@RequestMapping("/api/v1/creators/picture-generate-responses")
+@RequestMapping("/api/creators/picture-generate-responses")
 @RequiredArgsConstructor
 public class CreatorPGRESController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
@@ -42,7 +42,7 @@ public class CreatorPGRESController {
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotAssignedToCreator)
 
 	})
-	@PostMapping("/{pictureGenerateResponseId}/pictures")
+	@PostMapping("/v1/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
 		@AuthUser Long userId,
 		@Parameter(description = "사진 url을 업데이트할 사진생성응답 Id", example = "1")
@@ -62,7 +62,7 @@ public class CreatorPGRESController {
 		@EnumResponse(ResponseCode.SubmitBlockedDueToPictureGenerateResponseIsExpired),
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
-	@PostMapping("/{pictureGenerateResponseId}/submit")
+	@PostMapping("/v1/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESSubmitByCreatorResponseDto>> submitPictureGenerateResponse(
 		@AuthUser Long userId,
 		@Parameter(description = "제출할 사진생성응답 Id", example = "1")
@@ -76,7 +76,7 @@ public class CreatorPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/{pictureGenerateResponseId}/memo")
+	@PostMapping("/v1/{pictureGenerateResponseId}/memo")
 	public ResponseEntity<ApiResult<Boolean>> updateMemo(
 		@Parameter(description = "메모를 수정할 사진생성응답 Id", example = "1")
 		@PathVariable Long pictureGenerateResponseId,

@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.AdminService;
+import com.gt.genti.common.AdminService;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.matchingstrategy.model.RequestMatchStrategy;

@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminPGREQController] 어드민 사진생성요청 컨트롤러", description = "사진생성요청을 조회")
 @RestController
-@RequestMapping("/api/v1/admin/picture-generate-requests")
+@RequestMapping("/api/admin/picture-generate-requests")
 @RequiredArgsConstructor
 public class AdminPGREQController {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
@@ -43,12 +43,12 @@ public class AdminPGREQController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = "PGREQ", action = "Read")
-	@GetMapping("/all")
+	@GetMapping("/v1/all")
 	public ResponseEntity<ApiResult<Page<PGREQDetailFindByAdminResponseDto>>> getAllPictureGenerateRequest(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
-		@RequestParam @NotNull @Min(0) int page,
+		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
-		@RequestParam @NotNull @Min(1) int size,
+		@RequestParam(name = "size", defaultValue = "10") @NotNull @Min(1) int size,
 		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"id",
 			"createdAt"}))
 		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,

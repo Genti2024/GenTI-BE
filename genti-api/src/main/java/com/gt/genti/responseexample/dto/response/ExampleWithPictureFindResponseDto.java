@@ -1,4 +1,4 @@
-package com.gt.genti.domain.picture.responseexample.dto.response;
+package com.gt.genti.responseexample.dto.response;
 
 import com.gt.genti.picture.responseexample.model.ResponseExample;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;

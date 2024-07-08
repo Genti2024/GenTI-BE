@@ -1,4 +1,8 @@
-package com.gt.genti.common;
+package com.gt.genti.common.converter;
+
+import com.gt.genti.common.ConvertableEnum;
+import com.gt.genti.common.EnumUtil;
+import com.gt.genti.common.converter.DefaultEnumDBConverter;
 
 public class IgnoreCaseEnumDBConverter<T extends Enum<T> & ConvertableEnum>
 	extends DefaultEnumDBConverter<T> {

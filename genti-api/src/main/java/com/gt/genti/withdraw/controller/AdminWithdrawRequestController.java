@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminWithdrawRequestController] 어드민 출금요청 컨트롤러", description = "공급자의 출금 요청을 조회,수정합니다.")
 @RestController
-@RequestMapping("/api/v1/admin/withdraw-requests")
+@RequestMapping("/api/admin/withdraw-requests")
 @RequiredArgsConstructor
 public class AdminWithdrawRequestController {
 	private final WithdrawService withDrawService;
@@ -44,12 +44,12 @@ public class AdminWithdrawRequestController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("")
+	@GetMapping("/v1")
 	public ResponseEntity<GentiResponse.ApiResult<Page<WithdrawFindByAdminResponseDto>>> getAllWithdrawList(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
-		@RequestParam @NotNull @Min(0) int page,
+		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
-		@RequestParam @NotNull @Min(1) int size,
+		@RequestParam(name = "size", defaultValue = "10") @NotNull @Min(0) int size,
 		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"id",
 			"createdAt"}))
 		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
@@ -72,7 +72,7 @@ public class AdminWithdrawRequestController {
 		@EnumResponse(ResponseCode.UserNotFound),
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
-	@PostMapping("{withdrawRequestId}")
+	@PostMapping("/v1/{withdrawRequestId}")
 	public ResponseEntity<ApiResult<WithdrawCompletionResponseDto>> complete(
 		@Parameter(description = "출금요청 Id", example = "1")
 		@PathVariable(name = "withdrawRequestId") Long withdrawRequestId,

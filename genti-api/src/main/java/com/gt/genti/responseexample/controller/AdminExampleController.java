@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.responseexample.dto.request.ExampleSaveRequestDto;
+import com.gt.genti.responseexample.dto.response.ExampleWithPictureFindResponseDto;
 import com.gt.genti.responseexample.service.ResponseExampleService;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
@@ -35,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminExampleController] 어드민 사진생성결과 예시 컨트롤러", description = "사진생성결과 예시를 조회, 업로드 합니다.")
 @RestController
-@RequestMapping("/api/v1/admin/examples")
+@RequestMapping("/api/admin/examples")
 @RequiredArgsConstructor
 public class AdminExampleController {
 	private final ResponseExampleService responseExampleService;
@@ -44,12 +45,12 @@ public class AdminExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/with-picture")
-	public ResponseEntity<ApiResult<Page<com.gt.genti.domain.picture.responseexample.dto.response.ExampleWithPictureFindResponseDto>>> getAllResponseExamples(
+	@GetMapping("/v1/with-picture")
+	public ResponseEntity<ApiResult<Page<ExampleWithPictureFindResponseDto>>> getAllResponseExamples(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
-		@RequestParam @NotNull @Min(0) int page,
+		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
-		@RequestParam @NotNull @Min(1) int size,
+		@RequestParam(name = "size", defaultValue = "10") @NotNull @Min(0) int size,
 		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"id",
 			"createdAt"}))
 		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
@@ -67,7 +68,7 @@ public class AdminExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/with-picture")
+	@PostMapping("/v1/with-picture")
 	public ResponseEntity<ApiResult<Boolean>> addResponseExample(
 		@RequestBody @Valid List<@Valid ExampleSaveRequestDto> requestDtoList,
 		@AuthUser Long userId

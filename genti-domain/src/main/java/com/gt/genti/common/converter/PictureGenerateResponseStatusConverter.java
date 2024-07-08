@@ -1,6 +1,5 @@
 package com.gt.genti.common.converter;
 
-import com.gt.genti.common.DefaultEnumDBConverter;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 
 import jakarta.persistence.Converter;

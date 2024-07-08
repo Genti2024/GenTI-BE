@@ -52,7 +52,7 @@ public enum ResponseCode {
 		"json property parsing 중 오류 발생, %s"),
 	InvalidDataAccessApiUsage(false, HttpStatus.BAD_REQUEST, ErrorConstants.InvalidDataAccessApiUsageException,
 		"%s"),
-	NoHandlerFoundException(false, HttpStatus.NOT_FOUND, ErrorConstants.NoHandlerFoundException,
+	NotFound(false, HttpStatus.NOT_FOUND, ErrorConstants.NoHandlerFoundException,
 		"요청 uri에 대한 핸들러가 없습니다."),
 	HttpRequestMethodNotSupportedException(false, HttpStatus.METHOD_NOT_ALLOWED, ErrorConstants.MethodNotSupported,
 		"not allowed methods, allowed methods : %s"),
@@ -69,6 +69,8 @@ public enum ResponseCode {
 		"디스코드 IO 오류 발생"),
 	DiscordAppenderException(false, HttpStatus.INTERNAL_SERVER_ERROR, ErrorConstants.UnHandledException,
 		"디스코드 IO 오류 발생"),
+	TimeOut(false,HttpStatus.REQUEST_TIMEOUT ,ErrorConstants.UnHandledException , "요청 시간이 초과되었습니다."),
+
 	/**
 	 * PictureGenerateRequest
 	 */
@@ -174,14 +176,13 @@ public enum ResponseCode {
 	public String getMessage(Object... args) {
 		int placeholderCount = countPlaceholders(message);
 		if (args.length != placeholderCount) {
-			// Handle the case where the number of placeholders does not match the number of arguments
-			return message.replaceAll("%s", "example");
+			return message.replaceAll("%[sd]", "example");
 		}
 		return String.format(message, args);
 	}
 
 	private int countPlaceholders(String message) {
-		Pattern pattern = Pattern.compile("%s");
+		Pattern pattern = Pattern.compile("%[sd]");
 		Matcher matcher = pattern.matcher(message);
 		int count = 0;
 		while (matcher.find()) {

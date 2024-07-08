@@ -1,4 +1,4 @@
-package com.gt.genti;
+package com.gt.genti.common;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

@@ -1,22 +1,35 @@
 package com.gt.genti.user.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 
 public class UserPrincipal implements UserDetails {
 
     private final User user;
-    private final List<GrantedAuthority> grantedAuthorities;
+    private final Collection<GrantedAuthority> grantedAuthorities;
 
     public UserPrincipal(User user) {
         this.user = user;
         this.grantedAuthorities = user.getId() == null ?
                                 List.of(new SimpleGrantedAuthority("ANONYMOUS")) :
-                                List.of(new SimpleGrantedAuthority("USER"));
+                                createAuthorities(user.getUserRole().getRoles());
+    }
+
+    private Collection<GrantedAuthority> createAuthorities(String roles) {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+        for (String role : roles.split(",")) {
+            if (!StringUtils.hasText(role))
+                continue;
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
     }
 
     @Override

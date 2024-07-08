@@ -4,10 +4,8 @@ import static com.gt.genti.error.ResponseCode.*;
 import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
@@ -49,7 +47,7 @@ public class GlobalExceptionHandler {
 		if (!request.getRequestURI().endsWith("favicon.ico")) {
 			log.error(exception.getMessage(), exception);
 		}
-		return error(NoHandlerFoundException);
+		return error(ResponseCode.NotFound);
 	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -108,14 +106,11 @@ public class GlobalExceptionHandler {
 		return error(MissingPathVariableException, exception.getMessage());
 	}
 
-	// Controller에서 @Min @NotNull 등의 기본적인 어노테이션 유효성 검사 오류시
+	// Request Validation
 	@ExceptionHandler(HandlerMethodValidationException.class)
 	public ResponseEntity<ApiResult<?>> handleValidationExceptions(
 		HandlerMethodValidationException exception) {
-		MessageSourceResolvable resolvable = exception.getAllValidationResults().get(0).getResolvableErrors().get(0);
-		String fieldName = Objects.requireNonNull(resolvable.getCodes())[0];
-		fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);
-		String arg1 = fieldName + " 필드는 " + resolvable.getDefaultMessage();
+		String arg1 = exception.getAllValidationResults().get(0).toString();
 		log.error(exception.getMessage(), exception);
 		return error(HandlerMethodValidationException, arg1);
 	}

@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.util.Objects;
 
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.util.WebUtils;
 
 import com.gt.genti.util.HttpRequestUtil;
 import com.gt.genti.util.MDCUtil;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,7 +17,7 @@ public class MDCFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-		throws ServletException, IOException {
+		throws IOException {
 
 		HttpServletRequest httpReq = WebUtils.getNativeRequest(request, HttpServletRequest.class);
 
@@ -33,7 +31,7 @@ public class MDCFilter extends OncePerRequestFilter {
 
 		try {
 			filterChain.doFilter(request, response);
-		} catch (MethodArgumentTypeMismatchException exception) {
+		} catch (Exception exception) {
 			request.setAttribute("exception", exception);
 		}
 

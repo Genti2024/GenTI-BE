@@ -15,4 +15,6 @@ public interface UserRepository extends UserJpaRepository, UserCustomRepository 
 	List<User> findAdminUser(Pageable pageable);
 
 	Page<User> findAllByUserRole(Pageable pageable, UserRole userRole);
+
+	Optional<User> findByIdWithCache(Long id);
 }

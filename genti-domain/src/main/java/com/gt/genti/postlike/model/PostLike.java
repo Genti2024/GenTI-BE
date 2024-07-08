@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Deprecated
 @Table(name = "post_like")
 @Entity
 @Getter

@@ -37,7 +37,7 @@ jobs:
       - name: make application-secret.yml
         if: contains(github.ref, 'dev') || contains(github.ref, 'main')
         run: |
-          cd ./src/main/resources
+          cd ./genti-api/src/main/resources
           touch ./application-secret.yml
           echo "${{ secrets.APPLICATION_SECRET }}" > ./application-secret.yml
         shell: bash
@@ -46,7 +46,7 @@ jobs:
       - name: make application-deploy.yml
         if: contains(github.ref, 'dev') || contains(github.ref, 'main')
         run: |
-          cd ./src/main/resources
+          cd ./genti-api/src/main/resources
           touch ./application-deploy.yml
           echo "${{ secrets.APPLICATION_DEPLOY }}" > ./application-deploy.yml
         shell: bash

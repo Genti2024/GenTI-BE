@@ -57,3 +57,5 @@ README_PRIVATE.md
 .env
 
 logs/
+
+docker/docker-compose.yml

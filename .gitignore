@@ -55,3 +55,7 @@ README_PRIVATE.md
 ### docker 환경설정
 
 .env
+
+logs/
+
+docker/docker-compose.yml

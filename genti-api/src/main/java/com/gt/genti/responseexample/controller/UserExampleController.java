@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[UserExampleController] 유저 사진생성 예시 컨트롤러", description = "사진생성 예시를 조회합니다.")
 @RestController
-@RequestMapping("/api/user/examples")
+@RequestMapping("/api/users/examples")
 @RequiredArgsConstructor
 public class UserExampleController {
 	private final ResponseExampleService responseExampleService;

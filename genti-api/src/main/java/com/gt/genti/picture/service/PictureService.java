@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.common.picture.Picture;
 import com.gt.genti.picture.completed.model.PictureCompleted;
@@ -35,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PictureService {
 	private final PictureCreatedByCreatorRepository pictureCreatedByCreatorRepository;

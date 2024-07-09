@@ -30,6 +30,7 @@ public class RequestMatchService {
 
 	public static RequestMatchStrategy CURRENT_STRATEGY = RequestMatchStrategy.ADMIN_ONLY;
 
+
 	public static RequestMatchStrategy changeMatchingStrategy(RequestMatchStrategy strategy) {
 		CURRENT_STRATEGY = strategy;
 		return CURRENT_STRATEGY;
@@ -55,6 +56,7 @@ public class RequestMatchService {
 		matchRequest(pictureGenerateRequest, resultSB);
 	}
 
+	@Transactional
 	public void matchRejectedRequest(PictureGenerateRequest pictureGenerateRequest) {
 		StringBuilder resultSB = new StringBuilder();
 		resultSB.append("거절된 요청에 대해서 재 매칭 시도");

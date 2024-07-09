@@ -15,6 +15,7 @@ import com.gt.genti.error.ResponseCode;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CreatorService {
 	private final CreatorRepository creatorRepository;
@@ -31,7 +32,6 @@ public class CreatorService {
 			.build();
 	}
 
-	@Transactional
 	public Boolean updateAccountInfo(Long userId, AccountUpdateRequestDto dto) {
 		Creator foundCreator = getCreatorByUserId(userId);
 		foundCreator.updateAccountInfo(dto.getBankType(),
@@ -39,7 +39,6 @@ public class CreatorService {
 		return true;
 	}
 
-	@Transactional
 	public CreatorStatusUpdateResponseDto updateCreatorStatus(Long userId,
 		CreatorStatusUpdateRequestDto creatorStatusUpdateRequestDto) {
 		Creator foundCreator = getCreatorByUserId(userId);

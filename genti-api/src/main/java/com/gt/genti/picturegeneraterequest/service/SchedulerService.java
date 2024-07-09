@@ -19,9 +19,8 @@ public class SchedulerService {
 
 	@PostConstruct
 	public void init() {
-		log.info(" \n\n [SchedulerConfiguration] initialized");
+		log.info("[SchedulerConfiguration] initialized");
 		log.info("matchPictureGenerateScheduleDelay : " + matchPictureGenerateScheduleDelay);
-		log.info("\n\n");
 	}
 
 	@Scheduled(fixedDelayString = "${schedule.delay.match-picture-generate-schedule}")

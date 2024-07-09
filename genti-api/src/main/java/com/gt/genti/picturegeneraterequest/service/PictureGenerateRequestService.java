@@ -46,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PictureGenerateRequestService implements PictureGenerateRequestUseCase {
 	private final PictureGenerateRequestPort pictureGenerateRequestPort;
 	private final OpenAIService openAIService;

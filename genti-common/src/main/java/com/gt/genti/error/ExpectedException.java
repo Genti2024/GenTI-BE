@@ -16,7 +16,7 @@ public class ExpectedException extends RuntimeException {
 	}
 
 	private ExpectedException(ResponseCode responseCode, boolean logRequired, Object... args) {
-		super(responseCode.getMessage(args));
+		super(responseCode.getErrorMessage(args));
 		this.responseCode = responseCode;
 		this.logRequired = logRequired;
 	}

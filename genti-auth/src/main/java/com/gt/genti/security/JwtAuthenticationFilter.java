@@ -45,6 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			authenticate(request);
 		} catch (ExpectedException expectedException) {
+			log.info(
+				HttpRequestUtil.getUserIP(Objects.requireNonNull(request)) + "의 " + request.getRequestURI() + " 으로의 접근 "
+					+ expectedException.getResponseCode().getErrorCode() + " 예외 발생");
 			handleExpectedException(request, response, expectedException);
 		} catch (Exception e) {
 			log.info(
@@ -59,9 +62,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private void handleExpectedException(HttpServletRequest request, HttpServletResponse response,
 		ExpectedException expectedException) throws IOException {
 		if (TOKEN_NOT_PROVIDED.equals(expectedException.getResponseCode())) {
-			request.setAttribute("exception", expectedException.notLogging());
+			request.setAttribute("exception", expectedException);
+			response.setStatus(expectedException.getResponseCode().getHttpStatusCode().value());
 		} else {
 			request.setAttribute("exception", expectedException);
+			response.setStatus(expectedException.getResponseCode().getHttpStatusCode().value());
 		}
 	}
 
@@ -76,10 +81,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private String getJwtFromRequest(HttpServletRequest request) {
 		String bearerToken = request.getHeader("Authorization");
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring("Bearer ".length());
+		if (!StringUtils.hasText(bearerToken)){
+			throw ExpectedException.withoutLogging(TOKEN_NOT_PROVIDED);
 		}
-		return null;
+		if(!bearerToken.startsWith("Bearer ")){
+			throw ExpectedException.withoutLogging(INVALID_TOKEN);
+		}
+		return bearerToken.substring("Bearer ".length());
 	}
 
 }

@@ -15,32 +15,40 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class GentiAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final HandlerExceptionResolver resolver;
+	private final HandlerExceptionResolver resolver;
 
-    public GentiAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
-        this.resolver = resolver;
-    }
+	public GentiAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+		this.resolver = resolver;
+	}
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
-        Exception exception;
-        switch (response.getStatus()) {
-            case 200:
-                return;
-            case 401:
-            case 403:
-                exception = (Exception) request.getAttribute("exception");
-                break;
-            case 404:
-                exception = ExpectedException.withoutLogging(ResponseCode.NotFound);
-                break;
-            case 408:
-                exception = ExpectedException.withoutLogging(ResponseCode.TimeOut);
-                break;
-            default:
-                exception = ExpectedException.withoutLogging(ResponseCode.UnHandledException);
-                break;
-        }
-        resolver.resolveException(request, response, null, exception);
-    }
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+		AuthenticationException authException) {
+		Exception exception;
+		switch (response.getStatus()) {
+			case 200:
+				return;
+			case 401:
+				exception = (Exception)request.getAttribute("exception");
+				if(exception instanceof ExpectedException){
+					if(ResponseCode.TOKEN_NOT_PROVIDED == ((ExpectedException)exception).getResponseCode()){
+						return;
+					}
+				}
+				break;
+			case 403:
+				exception = (Exception)request.getAttribute("exception");
+				break;
+			case 404:
+				exception = ExpectedException.withoutLogging(ResponseCode.NotFound);
+				break;
+			case 408:
+				exception = ExpectedException.withLogging(ResponseCode.TimeOut);
+				break;
+			default:
+				exception = ExpectedException.withLogging(ResponseCode.UnHandledException);
+				break;
+		}
+		resolver.resolveException(request, response, null, exception);
+	}
 }

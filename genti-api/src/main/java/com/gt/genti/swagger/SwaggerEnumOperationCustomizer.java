@@ -86,7 +86,7 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 
 	private ApiResponse convertErrorResponse(ResponseCode code) {
 		return convertResponseInner(
-			errorEntitySchema.description(code.getMessage()),
+			errorEntitySchema.description(code.getErrorMessage()),
 			code,
 			GentiResponse.error(code)
 		);
@@ -105,8 +105,8 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 		Map<String, Schema> properties = schema.getProperties();
 		Boolean success = responseCode.isSuccess();
 		Integer status = responseCode.getHttpStatusCode().value();
-		String code = responseCode.getCode();
-		String message = responseCode.getMessage();
+		String code = responseCode.getErrorCode();
+		String message = responseCode.getErrorMessage();
 
 		properties.get("success").setDefault(success);
 		properties.get("status").setDefault(status);
@@ -138,7 +138,7 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 						mediaType
 					)
 			)
-			.description(code.getMessage());
+			.description(code.getErrorMessage());
 	}
 
 	private Type getActualType(Type type) {

@@ -16,8 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ResponseCode {
-	OK(true, HttpStatus.OK, ResponseConstants.OK, "요청완료"),
-
+	OK(true, HttpStatus.OK, null, null),
 	/**
 	 * 인증/인가
 	 */
@@ -170,15 +169,18 @@ public enum ResponseCode {
 
 	private final boolean success;
 	private final HttpStatusCode httpStatusCode;
-	private final String code;
-	private final String message;
+	private final String errorCode;
+	private final String errorMessage;
 
-	public String getMessage(Object... args) {
-		int placeholderCount = countPlaceholders(message);
-		if (args.length != placeholderCount) {
-			return message.replaceAll("%[sd]", "example");
+	public String getErrorMessage(Object... args) {
+		if(this.success){
+			return null;
 		}
-		return String.format(message, args);
+		int placeholderCount = countPlaceholders(errorMessage);
+		if (args.length != placeholderCount) {
+			return errorMessage.replaceAll("%[sd]", "example");
+		}
+		return String.format(errorMessage, args);
 	}
 
 	private int countPlaceholders(String message) {

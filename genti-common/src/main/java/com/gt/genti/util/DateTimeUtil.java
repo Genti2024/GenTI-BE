@@ -39,17 +39,37 @@ public class DateTimeUtil {
 		return "00:00:00";
 	}
 
-	public static int getAge(LocalDate birthDateTime) {
-		if (birthDateTime == null) {
+	public static int getAge(LocalDate birthDate) {
+		if (birthDate == null) {
 			return -1;
 		}
 		LocalDate now = LocalDate.now();
-		int age = now.getYear() - birthDateTime.getYear();
+		int age = now.getYear() - birthDate.getYear();
 
 		// 현재 날짜가 생일 전이라면 만나이를 하나 줄입니다.
-		if (now.getMonthValue() < birthDateTime.getMonthValue() ||
-			(now.getMonthValue() == birthDateTime.getMonthValue() &&
-				now.getDayOfMonth() < birthDateTime.getDayOfMonth())) {
+		if (now.getMonthValue() < birthDate.getMonthValue() ||
+			(now.getMonthValue() == birthDate.getMonthValue() &&
+				now.getDayOfMonth() < birthDate.getDayOfMonth())) {
+			age--;
+		}
+		return age;
+	}
+
+	public static int getAge(String birthDate) {
+		if (birthDate == null) {
+			return -1;
+		}
+		LocalDate now = LocalDate.now();
+		String[] splittedBirthDate = birthDate.split("-");
+		int year = Integer.parseInt(splittedBirthDate[0]);
+		int month = Integer.parseInt(splittedBirthDate[1]);
+		int day = Integer.parseInt(splittedBirthDate[2]);
+		int age = now.getYear() - year;
+
+		// 현재 날짜가 생일 전이라면 만나이를 하나 줄입니다.
+		if (now.getMonthValue() < month ||
+			(now.getMonthValue() == month &&
+				now.getDayOfMonth() < day)) {
 			age--;
 		}
 		return age;

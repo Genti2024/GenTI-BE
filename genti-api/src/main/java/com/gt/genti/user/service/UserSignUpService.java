@@ -26,7 +26,7 @@ public class UserSignUpService {
                 user.getEmail() == null ? "" : user.getEmail(),
                 user.getLastLoginOauthPlatform().toString(),
                 user.getCreatedAt(),
-                user.getImageUrl()
+                user.getOauthImageUrl()
         ));
     }
 

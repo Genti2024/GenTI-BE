@@ -1,12 +1,17 @@
 package com.gt.genti.util;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.WebUtils;
 
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.filter.CachedBodyRequestWrapper;
 
 import jakarta.servlet.http.Cookie;
@@ -18,6 +23,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HttpRequestUtil {
+
+	public static HttpHeaders createRedirectHttpHeader(String uriString) {
+		try {
+
+			URI uri = new URI(uriString);
+			HttpHeaders httpHeaders = new HttpHeaders();
+			httpHeaders.setLocation(uri);
+			return httpHeaders;
+		} catch (URISyntaxException e) {
+			throw ExpectedException.withLogging(ResponseCode.UnHandledException, e.getMessage());
+		}
+	}
 
 	public static String getRequestUri(HttpServletRequest request) {
 		return request.getRequestURI();

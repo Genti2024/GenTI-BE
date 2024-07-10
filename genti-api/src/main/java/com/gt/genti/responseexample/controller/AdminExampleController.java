@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminExampleController] 어드민 사진생성결과 예시 컨트롤러", description = "사진생성결과 예시를 조회, 업로드 합니다.")
 @RestController
-@RequestMapping("/api/admin/examples")
+@RequestMapping("/api/v1/admin/examples")
 @RequiredArgsConstructor
 public class AdminExampleController {
 	private final ResponseExampleService responseExampleService;
@@ -45,7 +45,7 @@ public class AdminExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1/with-picture")
+	@GetMapping("/with-picture")
 	public ResponseEntity<ApiResult<Page<ExampleWithPictureFindResponseDto>>> getAllResponseExamples(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
@@ -68,7 +68,7 @@ public class AdminExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/v1/with-picture")
+	@PostMapping("/with-picture")
 	public ResponseEntity<ApiResult<Boolean>> addResponseExample(
 		@RequestBody @Valid List<@Valid ExampleSaveRequestDto> requestDtoList,
 		@AuthUser Long userId

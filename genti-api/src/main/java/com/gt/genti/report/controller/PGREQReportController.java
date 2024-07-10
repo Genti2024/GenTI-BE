@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[PGREQReportController] 유저의 신고 요청", description = "유저가 신고를 요청한다.")
 @RestController
-@RequestMapping("/api/users/reports")
+@RequestMapping("/api/v1/users/reports")
 @RequiredArgsConstructor
 public class PGREQReportController {
 	private final ReportService reportService;
@@ -33,7 +33,7 @@ public class PGREQReportController {
 		@EnumResponse(ResponseCode.UserNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateResponseNotFound)}
 	)
-	@PostMapping("/v1")
+	@PostMapping("/")
 	public ResponseEntity<ApiResult<Boolean>> createReport(
 		@AuthUser Long userId,
 		@RequestBody @Valid ReportCreateRequestDto reportCreateRequestDto

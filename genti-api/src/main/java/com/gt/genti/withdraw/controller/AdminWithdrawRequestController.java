@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminWithdrawRequestController] 어드민 출금요청 컨트롤러", description = "공급자의 출금 요청을 조회,수정합니다.")
 @RestController
-@RequestMapping("/api/admin/withdraw-requests")
+@RequestMapping("/api/v1/admin/withdraw-requests")
 @RequiredArgsConstructor
 public class AdminWithdrawRequestController {
 	private final WithdrawService withDrawService;
@@ -44,7 +44,7 @@ public class AdminWithdrawRequestController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1")
+	@GetMapping("/")
 	public ResponseEntity<GentiResponse.ApiResult<Page<WithdrawFindByAdminResponseDto>>> getAllWithdrawList(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
@@ -72,7 +72,7 @@ public class AdminWithdrawRequestController {
 		@EnumResponse(ResponseCode.UserNotFound),
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
-	@PostMapping("/v1/{withdrawRequestId}")
+	@PostMapping("/{withdrawRequestId}")
 	public ResponseEntity<ApiResult<WithdrawCompletionResponseDto>> complete(
 		@Parameter(description = "출금요청 Id", example = "1")
 		@PathVariable(name = "withdrawRequestId") Long withdrawRequestId,

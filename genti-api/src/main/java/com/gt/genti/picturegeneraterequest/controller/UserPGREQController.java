@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[UserPGREQController] 유저의 사진 생성 요청", description = "사진 생성 요청을 생성, 조회, 수정합니다.")
 @RestController
-@RequestMapping("/api/users/picture-generate-requests")
+@RequestMapping("/api/v1/users/picture-generate-requests")
 @RequiredArgsConstructor
 public class UserPGREQController {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
@@ -41,7 +41,7 @@ public class UserPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1/all")
+	@GetMapping("/all")
 	public ResponseEntity<ApiResult<List<PGREQBriefFindByUserResponseDto>>> getAllUsersPictureGenerateRequest(
 		@AuthUser Long userId
 	) {
@@ -54,7 +54,7 @@ public class UserPGREQController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
-	@GetMapping("/v1/pending")
+	@GetMapping("/pending")
 	public ResponseEntity<ApiResult<PGREQStatusResponseDto>> hasPendingRequests(
 		@AuthUser Long userId
 	) {
@@ -67,7 +67,7 @@ public class UserPGREQController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
-	@GetMapping("/v1/not-verified-yet")
+	@GetMapping("/not-verified-yet")
 	public ResponseEntity<ApiResult<PGREQBriefFindByUserResponseDto>> findNotVerifiedCompletedPGREQ(
 		@AuthUser Long userId
 	) {
@@ -82,7 +82,7 @@ public class UserPGREQController {
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestVisibilityRestrictedToRequester)
 	})
-	@GetMapping("/v1/{pictureGenerateRequestId}")
+	@GetMapping("/{pictureGenerateRequestId}")
 	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getPictureGenerateRequestDetail(
 		@PathVariable
 		@Schema(description = "사진생성요청id", example = "1")
@@ -96,7 +96,7 @@ public class UserPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/v1/{pictureGenerateRequestId}/verify")
+	@PostMapping("/{pictureGenerateRequestId}/verify")
 	public ResponseEntity<ApiResult<Boolean>> verifyCompletedPGREQ(
 		@AuthUser Long userId,
 		@PathVariable(name = "pictureGenerateRequestId") Long pictureGenerateRequestId) {
@@ -108,7 +108,7 @@ public class UserPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/v1")
+	@PostMapping("/")
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthUser Long userId,
 		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {
@@ -123,7 +123,7 @@ public class UserPGREQController {
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestAlreadyInProgress)
 	})
-	@PutMapping("/v1/{pictureGenerateRequestId}")
+	@PutMapping("/{pictureGenerateRequestId}")
 	public ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
 		@AuthUser Long userId,
 		@PathVariable

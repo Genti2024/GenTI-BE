@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[PictureController] 공통 사진 컨트롤러", description = "사진 업로드 url을 요청합니다.")
 @RestController
-@RequestMapping("/api/presigned-url")
+@RequestMapping("/api/v1/presigned-url")
 @RequiredArgsConstructor
 public class PictureController {
 	private final UploadUrlService uploadUrlService;
@@ -35,7 +35,7 @@ public class PictureController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = "presigned-url", action = "Get")
-	@PostMapping("/v1")
+	@PostMapping("/")
 	public ResponseEntity<ApiResult<PreSignedUrlResponseDto>> getUploadUrl(
 		@RequestBody @Valid PreSignedUrlRequestDto preSignedUrlRequestDto) {
 		return GentiResponse.success(uploadUrlService.getUploadUrl(preSignedUrlRequestDto));
@@ -46,7 +46,7 @@ public class PictureController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = "presigned-url", action = "Get")
-	@PostMapping("/v1/many")
+	@PostMapping("/many")
 	public ResponseEntity<ApiResult<List<PreSignedUrlResponseDto>>> getUploadUrls(
 		@RequestBody @Valid List<PreSignedUrlRequestDto> requestDtoList) {
 		return GentiResponse.success(uploadUrlService.getUploadUrls(requestDtoList));

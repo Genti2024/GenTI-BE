@@ -1,11 +1,10 @@
 package com.gt.genti.user.dto.response;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.gt.genti.deposit.dto.response.DepositFindByAdminResponseDto;
 import com.gt.genti.creator.dto.response.CreatorFindByAdminResponseDto;
 import com.gt.genti.creator.model.Creator;
+import com.gt.genti.deposit.dto.response.DepositFindByAdminResponseDto;
 import com.gt.genti.deposit.model.Deposit;
 import com.gt.genti.user.model.Sex;
 import com.gt.genti.user.model.UserRole;
@@ -55,7 +54,7 @@ public class UserFindByAdminResponseDto {
 	LocalDateTime lastLoginDate;
 
 	@Builder
-	public UserFindByAdminResponseDto(Long id, String email, UserRole userRole, LocalDate birthDate, Sex sex,
+	public UserFindByAdminResponseDto(Long id, String email, UserRole userRole, String birthDate, Sex sex,
 		UserStatus userStatus,
 		LocalDateTime createdAt, int requestTaskCount, Creator creator,
 		Deposit deposit, LocalDateTime lastLoginDate) {

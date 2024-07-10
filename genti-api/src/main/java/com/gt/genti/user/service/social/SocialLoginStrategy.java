@@ -5,6 +5,7 @@ import com.gt.genti.user.dto.response.SocialLoginResponse;
 
 public interface SocialLoginStrategy {
 
+    String getAuthUri();
     SocialLoginResponse login(final SocialLoginRequest request);
     boolean support(String provider);
 

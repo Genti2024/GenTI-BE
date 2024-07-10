@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +30,12 @@ import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
 import com.gt.genti.user.dto.response.SocialLoginResponse;
 import com.gt.genti.user.dto.response.UserFindByAdminResponseDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
+import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.user.service.social.SocialLoginContext;
+import com.gt.genti.util.HttpRequestUtil;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -52,10 +55,11 @@ public class UserService {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	public SocialLoginResponse login(final SocialLoginRequest request) {
-		if (socialLoginContext.support(request.oauthPlatform())) {
-			return socialLoginContext.doLogin(request);
-		}
-		throw ExpectedException.withLogging(ResponseCode.OauthProviderNotAllowed);
+		return socialLoginContext.doLogin(request);
+	}
+
+	public HttpHeaders getOauthRedirect(OauthPlatform oauthPlatform){
+		return HttpRequestUtil.createRedirectHttpHeader(socialLoginContext.getAuthUri(oauthPlatform));
 	}
 
 	public Boolean logout(final Long userId) {

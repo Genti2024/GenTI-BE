@@ -3,6 +3,7 @@ package com.gt.genti.openfeign.dto.response.google;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+@Deprecated
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record GoogleTokenResponse(
         String accessToken,

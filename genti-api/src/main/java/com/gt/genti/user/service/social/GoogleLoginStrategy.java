@@ -2,7 +2,11 @@ package com.gt.genti.user.service.social;
 
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import com.gt.genti.user.service.UserSignUpService;
 
 import lombok.RequiredArgsConstructor;
 
+@Deprecated
 @Service
 @RequiredArgsConstructor
 public class GoogleLoginStrategy implements SocialLoginStrategy {
@@ -33,6 +38,13 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 	private String googleClientSecret;
 	@Value("${google.redirect-url}")
 	private String googleRedirectUrl;
+	@Value("${server.domain}")
+	private String serverBaseUri;
+	@Value("${server.port}")
+	private String serverPort;
+
+	@Value("${google.scope}")
+	private List<String> scope;
 
 	private final GoogleAuthApiClient googleAuthApiClient;
 	private final GoogleApiClient googleApiClient;
@@ -42,13 +54,27 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 	private final UserSignUpService userSignUpService;
 
 	@Override
+	public String getAuthUri() {
+		Map<String, Object> params = new HashMap<>();
+		params.put("client_id", googleClientId);
+		params.put("redirect_uri", serverBaseUri + ":" + serverPort + googleRedirectUrl);
+		params.put("response_type", "code");
+		params.put("scope", String.join("%20", scope));
+
+		String paramStr = params.entrySet().stream()
+			.map(param -> param.getKey() + "=" + param.getValue())
+			.collect(Collectors.joining("&"));
+		return "https://accounts.google.com/o/oauth2/auth?" + paramStr;
+	}
+
+	@Override
 	@Transactional
 	public SocialLoginResponse login(SocialLoginRequest request) {
 		GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
 			request.code(),
 			googleClientId,
 			googleClientSecret,
-			googleRedirectUrl,
+			serverBaseUri + ":" + serverPort + googleRedirectUrl,
 			"authorization_code"
 		);
 		GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
@@ -59,7 +85,7 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 				.socialId(userResponse.sub())
 				.oauthPlatform(request.oauthPlatform())
 				.username(userResponse.name())
-				.imageUrl(userResponse.picture())
+				.oauthImageUrl(userResponse.picture())
 				.email(userResponse.email())
 				.build());
 			user = newUser;
@@ -79,7 +105,7 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 
 	@Override
 	public boolean support(String provider) {
-		return provider.equals("GOOGLE");
+		return false;
 	}
 
 }

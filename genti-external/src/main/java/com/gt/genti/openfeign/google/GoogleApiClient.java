@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.gt.genti.openfeign.dto.response.google.GoogleInfoResponse;
 
+@Deprecated
 @FeignClient(name = "GoogleApiClient", url = "https://www.googleapis.com")
 public interface GoogleApiClient {
 

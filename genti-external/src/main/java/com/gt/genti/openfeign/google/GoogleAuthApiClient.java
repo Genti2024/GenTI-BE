@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gt.genti.openfeign.dto.response.google.GoogleTokenResponse;
 
-@FeignClient(name = "GoogleAuthApiClient", url = "https://oauth2.googleapis.com/token")
+@Deprecated
+@FeignClient(name = "GoogleAuthApiClient", url = "https://oauth2.googleapis.com")
 public interface GoogleAuthApiClient {
 
-    @PostMapping
+    @PostMapping("/token")
     GoogleTokenResponse googleAuth(
             @RequestParam(name = "code") String code,
             @RequestParam(name = "clientId") String clientId,

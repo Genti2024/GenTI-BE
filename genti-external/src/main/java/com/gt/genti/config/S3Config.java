@@ -1,4 +1,4 @@
-package com.gt.genti.aws;
+package com.gt.genti.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

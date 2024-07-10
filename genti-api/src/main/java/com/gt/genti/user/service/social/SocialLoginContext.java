@@ -37,13 +37,21 @@ public class SocialLoginContext {
         return false;
     }
 
-    public SocialLoginResponse doLogin(final SocialLoginRequest request) {
+    private SocialLoginStrategy strategyOf(OauthPlatform oauthPlatform){
         for (SocialLoginStrategy strategy : socialLoginStrategies) {
-            if (strategy.support(request.oauthPlatform().toString())) {
-                return strategy.login(request);
+            if (strategy.support(oauthPlatform.toString())) {
+                return strategy;
             }
         }
         throw ExpectedException.withLogging(ResponseCode.OauthProviderNotAllowed);
+    }
+
+    public SocialLoginResponse doLogin(final SocialLoginRequest request) {
+        return strategyOf(request.oauthPlatform()).login(request);
+    }
+
+    public String getAuthUri(OauthPlatform oauthPlatform){
+        return strategyOf(oauthPlatform).getAuthUri();
     }
 
 }

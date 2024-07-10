@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record KakaoAccount(
-        KakaoUserProfile profile
+        KakaoUserProfile profile,
+		String name,
+		String email,
+		String birthyear,
+		String birthday
 ) {
 }

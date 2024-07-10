@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminUserController] 어드민 유저 컨트롤러", description = "유저의 활성상태,권한 등을 수정, 조회합니다.")
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
 public class AdminUserController {
 	private final UserService userService;
@@ -45,7 +45,7 @@ public class AdminUserController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/v1/users/{userId}/status")
+	@PostMapping("/users/{userId}/status")
 	public ResponseEntity<ApiResult<Boolean>> changeUserStatus(@PathVariable Long userId,
 		@RequestBody @Valid UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		return success(userService.updateUserStatus(userId, userStatusUpdateRequestDto));
@@ -55,7 +55,7 @@ public class AdminUserController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/v1/users/{userId}/role")
+	@PostMapping("/users/{userId}/role")
 	public ResponseEntity<ApiResult<Boolean>> changeUserRole(@PathVariable Long userId,
 		@RequestBody @Valid UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
 		return success(userService.updateUserRole(userId, userRoleUpdateRequestDto));
@@ -65,7 +65,7 @@ public class AdminUserController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1/users")
+	@GetMapping("/users")
 	public ResponseEntity<ApiResult<Page<UserFindByAdminResponseDto>>> getAllUserInfo(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,

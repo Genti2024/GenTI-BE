@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[UserController] 유저 컨트롤러", description = "유저의 정보를 조회,수정합니다.")
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 	private final UserService userService;
@@ -46,7 +46,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.UserNotFound)
 
 	})
-	@GetMapping("/v1")
+	@GetMapping("/")
 	public ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.getUserInfo(userId));
@@ -58,7 +58,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.UserNotFound)
 
 	})
-	@PutMapping("/v1")
+	@PutMapping("/")
 	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
 		@AuthUser Long userId,
 		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
@@ -70,7 +70,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.UserNotFound)
 	})
-	@DeleteMapping("/v1")
+	@DeleteMapping("/")
 	public ResponseEntity<ApiResult<Boolean>> deleteUserSoft(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.deleteUserSoft(userId));
@@ -83,7 +83,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.CannotRestoreUser)
 
 	})
-	@PutMapping("/v1/restore")
+	@PutMapping("/restore")
 	public ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.restoreSoftDeletedUser(userId));
@@ -94,7 +94,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.UserNotFound)
 	})
-	@GetMapping("/v1/pictures/my")
+	@GetMapping("/pictures/my")
 	public ResponseEntity<ApiResult<Page<CommonPictureResponseDto>>> getAllMyGeneratedPicture(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)

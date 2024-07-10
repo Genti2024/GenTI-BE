@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[CreatorController] 공급자 정보 컨트롤러", description = "공급자의 정보를 조회,수정합니다.")
 @RestController
-@RequestMapping("/api/creators")
+@RequestMapping("/api/v1/creators")
 @RequiredArgsConstructor
 public class CreatorController {
 	private final CreatorService creatorService;
@@ -38,7 +38,7 @@ public class CreatorController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
 	})
-	@GetMapping("/v1")
+	@GetMapping("/")
 	public ResponseEntity<ApiResult<CreatorFindResponseDto>> getCreatorInfo(
 		@AuthUser Long userId) {
 		return GentiResponse.success(creatorService.getCreatorInfo(userId));
@@ -50,7 +50,7 @@ public class CreatorController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
 	})
-	@PostMapping("/v1/account")
+	@PostMapping("/account")
 	public ResponseEntity<ApiResult<Boolean>> updateAccountInfo(
 		@AuthUser Long userId,
 		@RequestBody @Valid AccountUpdateRequestDto accountUpdateRequestDto) {
@@ -63,7 +63,7 @@ public class CreatorController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
 	})
-	@PostMapping("/v1/status")
+	@PostMapping("/status")
 	public ResponseEntity<ApiResult<CreatorStatusUpdateResponseDto>> updateCreatorStatus(
 		@AuthUser Long userId,
 		@RequestBody @Valid CreatorStatusUpdateRequestDto creatorStatusUpdateRequestDto) {

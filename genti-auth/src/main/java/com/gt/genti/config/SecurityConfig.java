@@ -71,9 +71,9 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry
 					// .anyRequest().permitAll()
-					.requestMatchers("/api/users/**").hasAuthority(UserRole.USER.getAuthority())
-					.requestMatchers("/api/admin/**").hasAuthority(UserRole.ADMIN.getAuthority())
-					.requestMatchers("/api/creators/**").hasAuthority(UserRole.CREATOR.getAuthority())
+					.requestMatchers("/api/*/users/**").hasAuthority(UserRole.USER.getAuthority())
+					.requestMatchers("/api/*/admin/**").hasAuthority(UserRole.ADMIN.getAuthority())
+					.requestMatchers("/api/*/creators/**").hasAuthority(UserRole.CREATOR.getAuthority())
 					.anyRequest().authenticated())
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class))

@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[AdminReportController] 어드민 신고 컨트롤러", description = "유저의 신고내역을 조회,수정합니다.")
 @RestController
-@RequestMapping("/api/admin/reports")
+@RequestMapping("/api/v1/admin/reports")
 @RequiredArgsConstructor
 public class AdminReportController {
 	private final ReportService reportService;
@@ -43,7 +43,7 @@ public class AdminReportController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1")
+	@GetMapping("/")
 	public ResponseEntity<ApiResult<Page<ReportFindByAdminResponseDto>>> getAllReports(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
@@ -72,7 +72,7 @@ public class AdminReportController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/v1")
+	@PostMapping("/")
 	public ResponseEntity<ApiResult<Boolean>> updateReport(
 		@RequestBody @Valid ReportUpdateRequestDto reportUpdateRequestDto) {
 		return success(reportService.updateReport(reportUpdateRequestDto));

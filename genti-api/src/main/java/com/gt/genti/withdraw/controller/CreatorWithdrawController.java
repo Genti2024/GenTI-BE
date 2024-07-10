@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[CreatorWithdrawController] 공급자 출금요청 컨트롤러", description = "공급자가 출금요청을 수행합니다.")
 @RestController
-@RequestMapping("/api/creators/withdraw")
+@RequestMapping("/api/v1/creators/withdraw")
 @RequiredArgsConstructor
 public class CreatorWithdrawController {
 	private final WithdrawService withDrawService;
@@ -41,7 +41,7 @@ public class CreatorWithdrawController {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.NoSettlementForWithdrawalException)
 	})
-	@PostMapping("/v1")
+	@PostMapping("/")
 	public ResponseEntity<ApiResult<WithdrawFindByCreatorResponseDto>> createWithdrawRequest(
 		@AuthUser Long userId
 	) {
@@ -53,7 +53,7 @@ public class CreatorWithdrawController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1")
+	@GetMapping("/")
 	public ResponseEntity<ApiResult<Page<WithdrawFindByCreatorResponseDto>>> getWithdrawRequest(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)

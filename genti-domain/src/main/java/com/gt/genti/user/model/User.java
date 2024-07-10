@@ -52,8 +52,8 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false, unique = true)
 	String socialId;
 
-	@Column(nullable = false, length = 512)
-	String imageUrl;
+	@Column(length = 512)
+	String oauthImageUrl;
 
 	// PictureProfile는 완전히 user에 종속되어있다
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -118,8 +118,8 @@ public class User extends BaseTimeEntity {
 	@Column(name = "request_task_count", nullable = false)
 	Integer requestTaskCount;
 
-	@Column(name = "birth_date")
-	LocalDate birthDate;
+	@Column(name = "birth_date", length = 10)
+	String birthDate;
 
 	@PrePersist
 	public void prePersist() {
@@ -139,24 +139,30 @@ public class User extends BaseTimeEntity {
 	}
 
 	@Builder(builderMethodName = "builderWithSignIn", builderClassName = "SignInUser")
-	public static User of(String socialId, OauthPlatform oauthPlatform, String username, String imageUrl,
+	public static User of(String socialId, String birthDate, OauthPlatform oauthPlatform, String username,
+		String nickname, String oauthImageUrl,
 		String email) {
 		return base()
 			.socialId(socialId)
+			.birthDate(birthDate)
 			.lastLoginOauthPlatform(oauthPlatform)
 			.lastLoginDate(LocalDateTime.now())
 			.userRole(UserRole.OAUTH_FIRST_JOIN)
 			.username(username)
-			.imageUrl(imageUrl)
+			.nickname(nickname)
+			.oauthImageUrl(oauthImageUrl)
 			.email(email)
 			.build();
 	}
 
 	@Builder(builderMethodName = "test", builderClassName = "test")
-	public static User of(String socialId, String imageUrl, UserStatus userStatus, UserRole userRole, LocalDateTime deletedAt, String email, OauthPlatform lastLoginOauthPlatform, String nickname, String username, LocalDateTime lastLoginDate) {
+	public static User of(String socialId, String oauthImageUrl, UserStatus userStatus, UserRole userRole,
+		LocalDateTime deletedAt, String email, OauthPlatform lastLoginOauthPlatform, String nickname, String username,
+		LocalDateTime lastLoginDate) {
 		return base()
 			.socialId(socialId)
-			.imageUrl(imageUrl)
+			.oauthImageUrl(oauthImageUrl)
+			.nickname(nickname)
 			.lastLoginOauthPlatform(lastLoginOauthPlatform)
 			.lastLoginDate(lastLoginDate)
 			.userRole(userRole)
@@ -205,14 +211,14 @@ public class User extends BaseTimeEntity {
 	}
 
 	@Builder(builderMethodName = "base", builderClassName = "base")
-	private User(Long id, String socialId, String imageUrl, List<PictureProfile> pictureProfileList,
+	private User(Long id, String socialId, String oauthImageUrl, List<PictureProfile> pictureProfileList,
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
 		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate,
-		Deposit deposit, Integer requestTaskCount, LocalDate birthDate) {
+		Deposit deposit, Integer requestTaskCount, String birthDate) {
 		this.id = id;
 		this.socialId = socialId;
-		this.imageUrl = imageUrl;
+		this.oauthImageUrl = oauthImageUrl;
 		this.pictureProfileList = pictureProfileList;
 		this.pictureUserFaceList = pictureUserFaceList;
 		this.email = email;

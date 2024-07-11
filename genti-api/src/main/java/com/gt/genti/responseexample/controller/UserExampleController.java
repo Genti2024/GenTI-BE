@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[UserExampleController] 유저 사진생성 예시 컨트롤러", description = "사진생성 예시를 조회합니다.")
 @RestController
-@RequestMapping("/api/users/examples")
+@RequestMapping("/api/v1/users/examples")
 @RequiredArgsConstructor
 public class UserExampleController {
 	private final ResponseExampleService responseExampleService;
@@ -31,7 +31,7 @@ public class UserExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1/with-picture")
+	@GetMapping("/with-picture")
 	public ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamples() {
 		return success(responseExampleService.getAllResponseExamples());
 	}

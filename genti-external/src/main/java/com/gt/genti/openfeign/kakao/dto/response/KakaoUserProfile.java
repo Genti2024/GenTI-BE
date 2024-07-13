@@ -1,4 +1,4 @@
-package com.gt.genti.openfeign.dto.response.kakao;
+package com.gt.genti.openfeign.kakao.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

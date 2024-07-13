@@ -1,11 +1,11 @@
-package com.gt.genti.openfeign.kakao;
+package com.gt.genti.openfeign.kakao.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.gt.genti.openfeign.dto.response.kakao.KakaoTokenResponse;
+import com.gt.genti.openfeign.kakao.dto.response.KakaoTokenResponse;
 
 @FeignClient(name = "kakaoAuthApiClient", url = "https://kauth.kakao.com")
 public interface KakaoAuthApiClient {

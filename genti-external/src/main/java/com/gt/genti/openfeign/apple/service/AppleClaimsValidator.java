@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AppleClaimsValidator {
 
     private static final String NONCE_KEY = "nonce";
-    private final String iss = "https://appleid.apple.com";
+    private final String iss = "https://appleid.apple.com/auth";
     private final String clientId;
     private final String nonce;
 
@@ -32,6 +32,7 @@ public class AppleClaimsValidator {
 
     public boolean isValid(Claims claims) {
         log.info(claims.toString());
+
         if(claims.getIssuer().contains(iss)){
             log.info("iss 가 같지않음");
         }

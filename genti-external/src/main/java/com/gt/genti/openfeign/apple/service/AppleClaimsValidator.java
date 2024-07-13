@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class AppleClaimsValidator {
 
-    private static final String NONCE_KEY = "nonce";
+    private static final String NONCE_KEY = "c_hash";
     private final String iss = "https://appleid.apple.com";
     private final String clientId;
     private final String nonce;
@@ -32,12 +32,16 @@ public class AppleClaimsValidator {
 
     public boolean isValid(Claims claims) {
         log.info(claims.toString());
-        log.info(claims.getAudience() == null ? "claims.getAudience() is null " : "getAudience 무넺없음");
-        log.info(claims.getIssuer() == null ? "claims.getIssuer() is null " : "getIssuer 무넺없음");
-        log.info("iss : " + iss);
-        // if(claims.getIssuer().contains(iss)){
-        //     log.info("iss 가 같지않음");
-        // }
+        log.info("애플에서 받은 iss : " + claims.getIssuer());
+        log.info("genti iss : " + iss);
+        log.info("애플에서 받은 clientid : " + claims.getAudience());
+        log.info("genti clientid : " + clientId);
+        log.info("애플에서 받은 암호화된 nonce : " + claims.get(NONCE_KEY));
+        log.info("genti 암호화 nonce : " + this.nonce);
+
+        if(claims.getIssuer().contains(iss)){
+            log.info("iss 가 같지않음");
+        }
         if(claims.getAudience().equals(clientId)){
             log.info("clientid 가 같지않음");
         }

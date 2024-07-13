@@ -11,7 +11,9 @@ import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class AppleClaimsValidator {
 
@@ -29,6 +31,16 @@ public class AppleClaimsValidator {
     }
 
     public boolean isValid(Claims claims) {
+        log.info(claims.toString());
+        if(claims.getIssuer().contains(iss)){
+            log.info("iss 가 같지않음");
+        }
+        if(claims.getAudience().equals(clientId)){
+            log.info("clientid 가 같지않음");
+        }
+        if(claims.get(NONCE_KEY, String.class).equals(nonce)){
+            log.info("nonce 변조");
+        }
         return claims.getIssuer().contains(iss) &&
                 claims.getAudience().equals(clientId) &&
                 claims.get(NONCE_KEY, String.class).equals(nonce);

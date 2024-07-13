@@ -9,19 +9,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
+import com.gt.genti.auth.service.AuthService;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.model.Logging;
-import com.gt.genti.user.dto.request.SocialLoginRequest;
+import com.gt.genti.user.dto.request.AppleLoginRequest;
+import com.gt.genti.user.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.user.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
-import com.gt.genti.user.service.UserService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,31 +34,38 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class LoginController {
+public class AuthController {
 
 	private final JwtTokenProvider jwtTokenProvider;
-	private final UserService userService;
+	private final AuthService authService;
 
-	@GetMapping("/v1/login")
+	@GetMapping("/login/oauth")
 	@Logging(item = "Oauth", action = "Get")
 	public ResponseEntity<Object> login(
 		@RequestParam(name = "oauthPlatform") OauthPlatform oauthPlatform) {
-		HttpHeaders httpHeaders = userService.getOauthRedirect(oauthPlatform);
+		HttpHeaders httpHeaders = authService.getOauthRedirect(oauthPlatform);
 		return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
 	}
+
+	@PostMapping("/login/oauth/code/apple")
+	@Logging(item = "Oauth", action = "Post")
+	public ResponseEntity<ApiResult<SocialLoginResponse>> loginApple(@RequestBody @Valid AppleLoginRequestDto request) {
+		return success(authService.login(AppleLoginRequest.of(OauthPlatform.APPLE, request.getToken())));
+	}
+
 
 	@GetMapping("/login/oauth2/code/kakao")
 	@Logging(item = "Oauth", action = "Post")
 	public ResponseEntity<ApiResult<SocialLoginResponse>> kakaoLogin(
 		@RequestParam(name = "code") final String code) {
-		return success(userService.login(SocialLoginRequest.of(OauthPlatform.KAKAO, code)));
+		return success(authService.login(SocialLoginRequestImpl.of(OauthPlatform.KAKAO, code)));
 	}
 
 	@GetMapping("/login/oauth2/code/google")
 	@Logging(item = "Oauth", action = "Post")
 	public ResponseEntity<ApiResult<SocialLoginResponse>> googleLogin(
 		@RequestParam(name = "code") final String code) {
-		return success(userService.login(SocialLoginRequest.of(OauthPlatform.GOOGLE, code)));
+		return success(authService.login(SocialLoginRequestImpl.of(OauthPlatform.GOOGLE, code)));
 	}
 
 	@Logging(item = "jwt", action = "Get")
@@ -73,13 +85,8 @@ public class LoginController {
 			TokenResponse.of(accessToken, accessToken));
 	}
 
-	@GetMapping("/login/success")
-	public String successRedirect() {
-		return "로그인 성공";
-	}
-
 	@GetMapping("/logout")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
-		return success(userService.logout(userId));
+		return success(authService.logout(userId));
 	}
 }

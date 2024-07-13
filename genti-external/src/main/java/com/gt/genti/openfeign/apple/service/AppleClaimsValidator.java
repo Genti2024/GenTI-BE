@@ -35,9 +35,9 @@ public class AppleClaimsValidator {
         log.info(claims.getAudience() == null ? "claims.getAudience() is null " : "getAudience 무넺없음");
         log.info(claims.getIssuer() == null ? "claims.getIssuer() is null " : "getIssuer 무넺없음");
         log.info("iss : " + iss);
-        if(claims.getIssuer().contains(iss)){
-            log.info("iss 가 같지않음");
-        }
+        // if(claims.getIssuer().contains(iss)){
+        //     log.info("iss 가 같지않음");
+        // }
         if(claims.getAudience().equals(clientId)){
             log.info("clientid 가 같지않음");
         }

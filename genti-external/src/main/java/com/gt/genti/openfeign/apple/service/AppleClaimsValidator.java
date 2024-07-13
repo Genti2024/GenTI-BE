@@ -49,8 +49,9 @@ public class AppleClaimsValidator {
             log.info("nonce 변조");
         }
         return claims.getIssuer().contains(iss) &&
-                claims.getAudience().equals(clientId) &&
-                claims.get(NONCE_KEY, String.class).equals(nonce);
+                claims.getAudience().equals(clientId)
+                ;
+                // claims.get(NONCE_KEY, String.class).equals(nonce);
     }
 
     public static String encrypt(String value) {

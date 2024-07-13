@@ -41,7 +41,7 @@ public class CreatorWithdrawController {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.NoSettlementForWithdrawalException)
 	})
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<ApiResult<WithdrawFindByCreatorResponseDto>> createWithdrawRequest(
 		@AuthUser Long userId
 	) {
@@ -53,7 +53,7 @@ public class CreatorWithdrawController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<ApiResult<Page<WithdrawFindByCreatorResponseDto>>> getWithdrawRequest(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)

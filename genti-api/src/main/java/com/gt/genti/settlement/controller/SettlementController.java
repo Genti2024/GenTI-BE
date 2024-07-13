@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "[SettlementController] 공급자 정산내역 컨트롤러", description = "공급자의 정산&출금내역을 조회합니다.")
 @RestController
-@RequestMapping("/api/creators/settlements")
+@RequestMapping("/api/v1/creators/settlements")
 @RequiredArgsConstructor
 public class SettlementController {
 	private final SettlementService settlementService;
@@ -39,7 +39,7 @@ public class SettlementController {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
-	@GetMapping("/v1")
+	@GetMapping("")
 	public ResponseEntity<ApiResult<SettlementAndWithdrawPageResponseDto>> getMySettlements(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)

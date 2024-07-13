@@ -33,7 +33,7 @@ public class PGREQReportController {
 		@EnumResponse(ResponseCode.UserNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateResponseNotFound)}
 	)
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createReport(
 		@AuthUser Long userId,
 		@RequestBody @Valid ReportCreateRequestDto reportCreateRequestDto

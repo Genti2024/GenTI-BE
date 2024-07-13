@@ -44,7 +44,7 @@ public class AdminWithdrawRequestController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<GentiResponse.ApiResult<Page<WithdrawFindByAdminResponseDto>>> getAllWithdrawList(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,

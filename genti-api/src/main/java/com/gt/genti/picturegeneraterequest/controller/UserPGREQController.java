@@ -108,7 +108,7 @@ public class UserPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthUser Long userId,
 		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {

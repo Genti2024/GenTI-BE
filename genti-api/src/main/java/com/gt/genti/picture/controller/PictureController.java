@@ -35,7 +35,7 @@ public class PictureController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = "presigned-url", action = "Get")
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<ApiResult<PreSignedUrlResponseDto>> getUploadUrl(
 		@RequestBody @Valid PreSignedUrlRequestDto preSignedUrlRequestDto) {
 		return GentiResponse.success(uploadUrlService.getUploadUrl(preSignedUrlRequestDto));

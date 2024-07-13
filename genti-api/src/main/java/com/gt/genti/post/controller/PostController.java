@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "[PostController] 포스트 컨트롤러", description = "포스트(피드) 조회,생성,수정 요청")
 @Deprecated
 @RestController
-@RequestMapping("/api/feeds")
+@RequestMapping("/api/v1/feeds")
 @RequiredArgsConstructor
 public class PostController {
 	private final PostService postService;
@@ -34,7 +34,7 @@ public class PostController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1/detail")
+	@GetMapping("/detail")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getAllPostsDetailPagination(
 		@RequestParam(value = "cursor", required = false) Long cursor) {
 
@@ -45,7 +45,7 @@ public class PostController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1/detail/my")
+	@GetMapping("/detail/my")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getMyAllPostsDetailPagination(
 		@AuthUser Long userId,
 		@RequestParam(value = "cursor", required = false) Long cursor) {
@@ -56,7 +56,7 @@ public class PostController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/v1/detail/users/{userId}")
+	@GetMapping("/detail/users/{userId}")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getUsersAllPostsDetailPagination(
 		@PathVariable(name = "userId") Long userId,
 		@RequestParam(value = "cursor", required = false) Long cursor) {
@@ -67,7 +67,7 @@ public class PostController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Deprecated
-	@GetMapping("/v1/brief/users/{userId}")
+	@GetMapping("/brief/users/{userId}")
 	public ResponseEntity<ApiResult<List<PostBriefFindResponseDto>>> getUsersAllPostBrief(
 		@PathVariable(name = "userId") Long userId) {
 		return GentiResponse.success(postService.getPostBriefAllByUserId(userId));
@@ -77,7 +77,7 @@ public class PostController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Deprecated
-	@GetMapping("/v1/brief/my")
+	@GetMapping("/brief/my")
 	public ResponseEntity<ApiResult<List<PostBriefFindResponseDto>>> getMyAllPostBrief(
 		@AuthUser Long userId) {
 		return GentiResponse.success(postService.getMyAllPostBrief(userId));

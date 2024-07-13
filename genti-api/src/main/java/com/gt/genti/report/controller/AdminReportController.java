@@ -43,7 +43,7 @@ public class AdminReportController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<ApiResult<Page<ReportFindByAdminResponseDto>>> getAllReports(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
@@ -72,7 +72,7 @@ public class AdminReportController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> updateReport(
 		@RequestBody @Valid ReportUpdateRequestDto reportUpdateRequestDto) {
 		return success(reportService.updateReport(reportUpdateRequestDto));

@@ -46,7 +46,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.UserNotFound)
 
 	})
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.getUserInfo(userId));
@@ -58,7 +58,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.UserNotFound)
 
 	})
-	@PutMapping("/")
+	@PutMapping("")
 	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
 		@AuthUser Long userId,
 		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
@@ -70,7 +70,7 @@ public class UserController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.UserNotFound)
 	})
-	@DeleteMapping("/")
+	@DeleteMapping("")
 	public ResponseEntity<ApiResult<Boolean>> deleteUserSoft(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.deleteUserSoft(userId));

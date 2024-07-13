@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.jwt.TokenResponse;
-import com.gt.genti.openfeign.dto.response.google.GoogleInfoResponse;
-import com.gt.genti.openfeign.dto.response.google.GoogleTokenResponse;
-import com.gt.genti.openfeign.google.GoogleApiClient;
-import com.gt.genti.openfeign.google.GoogleAuthApiClient;
+import com.gt.genti.openfeign.google.dto.response.GoogleInfoResponse;
+import com.gt.genti.openfeign.google.dto.response.GoogleTokenResponse;
+import com.gt.genti.openfeign.google.client.GoogleApiClient;
+import com.gt.genti.openfeign.google.client.GoogleAuthApiClient;
 import com.gt.genti.user.dto.request.SocialLoginRequest;
 import com.gt.genti.user.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.User;
@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 @Deprecated
 @Service
 @RequiredArgsConstructor
-public class GoogleLoginStrategy implements SocialLoginStrategy {
+public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrategy {
 
 	@Value("${google.client-id}")
 	private String googleClientId;
@@ -71,7 +71,7 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 	@Transactional
 	public SocialLoginResponse login(SocialLoginRequest request) {
 		GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
-			request.code(),
+			request.getCode(),
 			googleClientId,
 			googleClientSecret,
 			serverBaseUri + ":" + serverPort + googleRedirectUrl,
@@ -80,15 +80,17 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 		GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.sub());
 		User user;
+		boolean isNewUser = false;
 		if (isNewUser(findUser)) {
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.sub())
-				.oauthPlatform(request.oauthPlatform())
+				.oauthPlatform(request.getOauthPlatform())
 				.username(userResponse.name())
 				.oauthImageUrl(userResponse.picture())
 				.email(userResponse.email())
 				.build());
 			user = newUser;
+			isNewUser = true;
 			userSignUpService.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
@@ -100,7 +102,7 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 			.build();
 		TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), token);
+		return SocialLoginResponse.of(user.getId(), user.getUsername(), isNewUser, token);
 	}
 
 	@Override

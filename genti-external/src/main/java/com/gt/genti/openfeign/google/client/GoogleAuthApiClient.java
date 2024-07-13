@@ -1,10 +1,10 @@
-package com.gt.genti.openfeign.google;
+package com.gt.genti.openfeign.google.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.gt.genti.openfeign.dto.response.google.GoogleTokenResponse;
+import com.gt.genti.openfeign.google.dto.response.GoogleTokenResponse;
 
 @Deprecated
 @FeignClient(name = "GoogleAuthApiClient", url = "https://oauth2.googleapis.com")

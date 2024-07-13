@@ -17,8 +17,7 @@ public class ErrorConstants {
 	private static final String WITHDRAW = "WITHDRAW";
 	private static final String ENUM = "ENUM";
 	private static final String UNDEFINED = "UNDEFINED";
-
-	private static final String OAUTH = "OAUTH";
+ 	private static final String OAUTH = "OAUTH";
 	private static final String VALIDATION = "VALIDATION";
 
 	private static String CODE(String type, int seq) {
@@ -30,7 +29,6 @@ public class ErrorConstants {
 	public static final String INSUFFICIENT_PERMISSIONS = CODE(AUTH, 3);
 	public static final String REFRESH_TOKEN_EXPIRED = CODE(AUTH, 4);
 	public static final String REFRESH_TOKEN_INVALID = CODE(AUTH, 5);
-	public static final String TOKEN_CREATION_FAILED = CODE(AUTH, 6);
 	public static final String TOKEN_REFRESH_FAILED = CODE(AUTH, 7);
 
 	public static final String TOKEN_NOT_PROVIDED = CODE(AUTH, 8);
@@ -40,14 +38,12 @@ public class ErrorConstants {
 	public static final String PictureGenerateRequestNotFound = CODE(PICTURE_GENERATE_REQUEST, 2);
 	public static final String UserNotFound = CODE(USER, 1);
 	public static final String PictureGenerateRequestAlreadyInProgress = CODE(PICTURE_GENERATE_REQUEST, 3);
-	public static final String ZeroMatchingRequests = CODE(PICTURE_GENERATE_REQUEST, 4);
 	public static final String UploadFileTypeNotAvailable = CODE(UPLOAD, 2);
 	public static final String PictureGenerateResponseNotFound = CODE(PICTURE_GENERATE_RESPONSE, 1);
 	public static final String ReportNotFound = CODE(REPORT, 1);
-	public static final String NotSupportedTemp = CODE(TEMP, 1);
+
 	public static final String CreatorNotFound = CODE(CREATOR, 1);
 	public static final String PictureNotFound = CODE(PICTURE, 1);
-	public static final String NotMatchedYet = CODE(PICTURE_GENERATE_REQUEST, 5);
 	public static final String PictureGenerateRequestNotAssignedToCreator = CODE(PICTURE_GENERATE_REQUEST, 6);
 	public static final String SubmitBlockedDueToPictureGenerateResponseIsExpired = CODE(PICTURE_GENERATE_RESPONSE, 2);
 	public static final String PictureGenerateRequestNotAcceptableDueToExpired = CODE(PICTURE_GENERATE_REQUEST, 7);
@@ -66,9 +62,7 @@ public class ErrorConstants {
 	public static final String PictureProfileNotFound = CODE(PICTURE, 5);
 	public static final String NotNullableEnum = CODE(ENUM, 1);
 	public static final String DBToEnumFailed = CODE(UNDEFINED, 1);
-	public static final String Undefined = CODE(UNDEFINED, 2);
 	public static final String WithDrawnUser = CODE(USER, 5);
-	public static final String NotAllowedOauthProvider = CODE(OAUTH, 1);
 	public static final String ControllerValidationError = CODE(VALIDATION, 1);
 	public static final String OnlyRequesterCanViewRequest = CODE(PICTURE_GENERATE_REQUEST, 8);
 	public static final String NoHandlerFoundException = CODE(SERVER, 2);
@@ -84,13 +78,17 @@ public class ErrorConstants {
 	public static final String WithdrawRequestNotFound = CODE(WITHDRAW, 2);
 	public static final String NotEnoughBalance = CODE(WITHDRAW, 3);
 	public static final String NoPictureGenerateRequest = CODE(PICTURE_GENERATE_REQUEST, 9);
-	public static final String NoPGREQFound = CODE(PICTURE_GENERATE_REQUEST, 10);
 	public static final String MissingPathVariableException = CODE(SERVER, 8);
 	public static final String InValidFormat = CODE(VALIDATION, 2);
 	public static final String UnexpectedPictureGenerateRequestStatus = CODE(PICTURE_GENERATE_REQUEST, 11);
 	public static final String INVALID_REFRESH_TOKEN = CODE(AUTH, 9);
-
 	public static final String Forbidden = CODE(AUTH, 10);
 	public static final String UnAuthorized = CODE(AUTH, 11);
+	public static final String OauthProviderNotAllowed = CODE(OAUTH, 1);
+	public static final String AppleOauthIdTokenIncorrect = CODE(OAUTH, 2);
+	public static final String AppleOauthIdTokenExpired = CODE(OAUTH, 3);
+	public static final String AppleOauthIdTokenInvalid = CODE(OAUTH, 4);
+	public static final String AppleOauthClaimInvalid = CODE(OAUTH, 5);
+	public static String AppleOauthPublicKeyInvalid = CODE(OAUTH, 6);
 
 }

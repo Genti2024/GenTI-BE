@@ -6,14 +6,14 @@ public class WhiteListConstants {
 		"/login/oauth2/code/kakao",
 		"/login/oauth2/code/google",
 		"/oauth/authorize",
-		"/v1/user/login",
-		"/login",
+		"/v1/login",
 		"/login/**",
 		"/actuator/health",
-		"/v1/user/login",
-		"/users/login",
-		"/test/**",
+		//static
+		"/favicon.ico",
+		// error
 		"/error",
+		// swagger
 		"/swagger-ui",
 		"/swagger-ui/**",
 		"/swagger-resources/**",
@@ -26,7 +26,7 @@ public class WhiteListConstants {
 	public static final String[] SECURITY_WHITE_LIST = {
 		"/azcztzuzaztzozrz",
 		"/azcztzuzaztzozrz/**",
-		"/v1/user/login",
+		"/v1/login",
 		"/login/**",
 		"/users/login",
 		"/error",

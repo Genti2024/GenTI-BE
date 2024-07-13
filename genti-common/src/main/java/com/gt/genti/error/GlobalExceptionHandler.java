@@ -32,7 +32,6 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExpectedException.class)
 	protected ResponseEntity<ApiResult<?>> handleExpectedException(
-		final HttpServletRequest request,
 		final ExpectedException exception) {
 		if (exception.shouldLogError()) {
 			log.error(exception.getMessage(), exception);
@@ -44,9 +43,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiResult<?>> handleNoHandlerFoundException(
 		final HttpServletRequest request,
 		final Exception exception) {
-		if (!request.getRequestURI().endsWith("favicon.ico")) {
-			log.error(exception.getMessage(), exception);
-		}
+		log.error(exception.getMessage(), exception);
 		return error(ResponseCode.NotFound);
 	}
 
@@ -57,16 +54,6 @@ public class GlobalExceptionHandler {
 		log.error(exception.getMessage(), exception);
 		return error(HttpRequestMethodNotSupportedException, arg1);
 	}
-
-	// @ExceptionHandler(WebExchangeBindException.class)
-	// protected ResponseEntity<ApiResult<?>> processValidationError(
-	// 	final HttpServletRequest request,
-	// 	final WebExchangeBindException exception) {
-	// 	String arg1 = exception.getBindingResult().getFieldErrors().stream().map(
-	// 		GlobalExceptionHandler::makeFieldErrorMessage).collect(Collectors.joining());
-	// 	logError(request, HandlerMethodValidationException, arg1);
-	// 	return error(HandlerMethodValidationException, arg1);
-	// }
 
 	@ExceptionHandler(UnrecognizedPropertyException.class)
 	protected ResponseEntity<ApiResult<?>> unRecognizedPropertyException(
@@ -114,15 +101,6 @@ public class GlobalExceptionHandler {
 		log.error(exception.getMessage(), exception);
 		return error(HandlerMethodValidationException, arg1);
 	}
-
-	// @ExceptionHandler(MissingServletRequestParameterException.class)
-	// public ResponseEntity<ApiResult<?>> handleValidationExceptions(
-	// 	final HttpServletRequest request,
-	// 	MissingServletRequestParameterException exception) {
-	// 	String arg1 = exception.getMessage();
-	// 	logError(request, ControllerValidationError, arg1);
-	// 	return error(ControllerValidationError, arg1);
-	// }
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ApiResult<?>> handleHttpMessageNotReadableException(

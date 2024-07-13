@@ -9,7 +9,7 @@ import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeys;
 @FeignClient(name = "appleApiClient", url = "https://appleid.apple.com/auth")
 public interface AppleApiClient {
 
-    @Cacheable(value = "oauthPublicKeyCache", cacheManager = "oauthPublicKeyCacheManager")
+    // @Cacheable(value = "oauthPublicKeyCache", cacheManager = "oauthPublicKeyCacheManager")
     @GetMapping("/keys")
     ApplePublicKeys getApplePublicKeys();
 }

@@ -30,15 +30,6 @@ public class SocialOauthContext {
 		socialLoginStrategies.add(appleOauthStrategy);
 	}
 
-	public boolean support(OauthPlatform platform) {
-		for (SocialLoginStrategy strategy : socialLoginStrategies) {
-			if (strategy.support(platform.toString())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private SocialLoginStrategy loginStrategyOf(OauthPlatform oauthPlatform) {
 		for (SocialLoginStrategy strategy : socialLoginStrategies) {
 			if (strategy.support(oauthPlatform.toString())) {

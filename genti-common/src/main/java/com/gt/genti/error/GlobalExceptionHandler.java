@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
 		final HttpServletRequest request,
 		final Exception exception) {
 		log.error(exception.getMessage(), exception);
-		return error(ResponseCode.NotFound);
+		return error(ResponseCode.HandlerNotFound);
 	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
 		final HttpRequestMethodNotSupportedException exception) {
 		String arg1 = Arrays.toString(exception.getSupportedMethods());
 		log.error(exception.getMessage(), exception);
-		return error(HttpRequestMethodNotSupportedException, arg1);
+		return error(HttpRequestMethodNotSupported, arg1);
 	}
 
 	@ExceptionHandler(UnrecognizedPropertyException.class)
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
 		UnrecognizedPropertyException exception) {
 		String arg1 = exception.getMessage();
 		log.error(exception.getMessage(), exception);
-		return error(UnrecognizedPropertyException, arg1);
+		return error(UnrecognizedProperty, arg1);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
 			.map(GlobalExceptionHandler::makeFieldErrorMessage)
 			.collect(Collectors.joining());
 		log.error(exception.getMessage(), exception);
-		return error(HandlerMethodValidationException, arg1);
+		return error(HandlerMethodValidation, arg1);
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -83,14 +83,14 @@ public class GlobalExceptionHandler {
 		String arg1 = String.format("[%s]변수에 대해 잘못된 입력 : [%s], 변수의 형식은 [%s] 입니다", exception.getPropertyName(),
 			exception.getValue(), exception.getRequiredType());
 		log.error(exception.getMessage(), exception);
-		return error(MethodArgumentTypeMismatchException, arg1);
+		return error(MethodArgumentTypeMismatch, arg1);
 	}
 
 	@ExceptionHandler(MissingPathVariableException.class)
 	public ResponseEntity<ApiResult<?>> handleMissingPathVariableException(
 		final MissingPathVariableException exception) {
 		log.error(exception.getMessage(), exception);
-		return error(MissingPathVariableException, exception.getMessage());
+		return error(MissingPathVariable, exception.getMessage());
 	}
 
 	// Request Validation
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
 		HandlerMethodValidationException exception) {
 		String arg1 = exception.getAllValidationResults().get(0).toString();
 		log.error(exception.getMessage(), exception);
-		return error(HandlerMethodValidationException, arg1);
+		return error(HandlerMethodValidation, arg1);
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
 		String arg1 = exception.getMessage();
 		log.error(exception.getMessage(), exception);
 
-		return error(HttpMessageNotReadableException, arg1);
+		return error(HttpMessageNotReadable, arg1);
 	}
 
 	@ExceptionHandler(Exception.class)

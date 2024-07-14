@@ -23,7 +23,7 @@ import com.gt.genti.user.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.user.service.UserSignUpService;
+import com.gt.genti.user.service.UserSignUpEventPublisher;
 import com.gt.genti.util.RandomUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserRepository userRepository;
-	private final UserSignUpService userSignUpService;
+	private final UserSignUpEventPublisher userSignUpEventPublisher;
 
 	@Override
 	public String getAuthUri() {
@@ -90,7 +90,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 				.build());
 			user = newUser;
 			isNewUser = true;
-			userSignUpService.publishSignUpEvent(newUser);
+			userSignUpEventPublisher.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
 			user.resetDeleteAt();

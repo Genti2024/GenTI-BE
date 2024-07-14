@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserSignUpService {
+public class UserSignUpEventPublisher {
 
     private final ApplicationEventPublisher eventPublisher;
 
@@ -25,8 +25,7 @@ public class UserSignUpService {
                 user.getUsername(),
                 user.getEmail() == null ? "" : user.getEmail(),
                 user.getLastLoginOauthPlatform().toString(),
-                user.getCreatedAt(),
-                user.getOauthImageUrl()
+                user.getCreatedAt()
         ));
     }
 

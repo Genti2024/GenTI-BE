@@ -3,12 +3,11 @@ package com.gt.genti.discord;
 import java.time.LocalDateTime;
 
 public record SignUpEvent(Long totalUserCount, String name, String email, String socialPlatform,
-						  LocalDateTime createdAt, String imageUrl) {
+						  LocalDateTime createdAt) {
 
 	public static SignUpEvent of(Long totalUserCount, String name, String email, String socialPlatform,
-		LocalDateTime createdAt,
-		String imageUrl) {
-		return new SignUpEvent(totalUserCount, name, email, socialPlatform, createdAt, imageUrl);
+		LocalDateTime createdAt) {
+		return new SignUpEvent(totalUserCount, name, email, socialPlatform, createdAt);
 	}
 
 }

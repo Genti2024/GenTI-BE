@@ -134,7 +134,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		try {
 			execute(discordWebhook, errorChannelUrl);
 		} catch (IOException e) {
-			throw ExpectedException.withLogging(ResponseCode.DiscordIOException);
+			throw ExpectedException.withLogging(ResponseCode.DiscordIOException, e.getMessage());
 		}
 	}
 
@@ -173,13 +173,13 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		try {
 			execute(discordWebhook, eventChannelUrl);
 		} catch (IOException e) {
-			throw ExpectedException.withLogging(ResponseCode.DiscordIOException);
+			throw ExpectedException.withLogging(ResponseCode.DiscordIOException, e.getMessage());
 		}
 	}
 
 	public void execute(DiscordWebHook discordWebHook, String urlString) throws IOException {
 		if (discordWebHook.getEmbeds().isEmpty()) {
-			throw ExpectedException.withLogging(ResponseCode.DiscordException);
+			throw ExpectedException.withLogging(ResponseCode.NoWebhookEmbeds);
 		}
 		DiscordMessageSender.sendToDiscord(urlString, discordWebHook.createDiscordEmbedObject());
 	}

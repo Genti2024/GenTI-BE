@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.picturegenerateresponse.dto.request.MemoUpdateRequestDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESSubmitByCreatorResponseDto;
@@ -40,8 +44,8 @@ public class CreatorPGRESController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateResponseNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotAssignedToCreator)
-
 	})
+	@Logging(item = LogItem.PGRES_PICTURE_CREATED_BY_CREATOR, action = LogAction.UPDATE, requester = LogRequester.CREATOR)
 	@PostMapping("/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
 		@AuthUser Long userId,
@@ -62,6 +66,7 @@ public class CreatorPGRESController {
 		@EnumResponse(ResponseCode.SubmitBlockedDueToPictureGenerateResponseIsExpired),
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
+	@Logging(item = LogItem.PGRES_SUBMIT, action = LogAction.UPDATE, requester = LogRequester.CREATOR)
 	@PostMapping("/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESSubmitByCreatorResponseDto>> submitPictureGenerateResponse(
 		@AuthUser Long userId,
@@ -76,6 +81,7 @@ public class CreatorPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGRES_MEMO, action = LogAction.CREATE, requester = LogRequester.CREATOR)
 	@PostMapping("/{pictureGenerateResponseId}/memo")
 	public ResponseEntity<ApiResult<Boolean>> updateMemo(
 		@Parameter(description = "메모를 수정할 사진생성응답 Id", example = "1")

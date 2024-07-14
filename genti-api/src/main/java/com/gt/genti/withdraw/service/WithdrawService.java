@@ -42,7 +42,7 @@ public class WithdrawService {
 			foundCreator);
 
 		if (foundSettlementList.isEmpty()) {
-			throw ExpectedException.withoutLogging(ResponseCode.NoSettlementForWithdrawalException);
+			throw ExpectedException.withoutLogging(ResponseCode.CannotCreateWithdrawalDueToSettlementsNotAvailable);
 		}
 
 		WithdrawRequest withdrawRequest = new WithdrawRequest(foundCreator);

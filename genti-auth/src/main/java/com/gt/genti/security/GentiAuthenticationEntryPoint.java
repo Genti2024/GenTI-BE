@@ -40,7 +40,7 @@ public class GentiAuthenticationEntryPoint implements AuthenticationEntryPoint {
 				exception = (Exception)request.getAttribute("exception");
 				break;
 			case 404:
-				exception = ExpectedException.withoutLogging(ResponseCode.NotFound);
+				exception = ExpectedException.withoutLogging(ResponseCode.HandlerNotFound);
 				break;
 			case 408:
 				exception = ExpectedException.withLogging(ResponseCode.TimeOut);

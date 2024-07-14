@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.settlement.service.SettlementService;
 import com.gt.genti.settlementandwithdraw.dto.response.SettlementAndWithdrawPageResponseDto;
 import com.gt.genti.swagger.EnumResponse;
@@ -39,6 +43,7 @@ public class SettlementController {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
+	@Logging(item = LogItem.SETTLEMENT, action = LogAction.VIEW, requester = LogRequester.CREATOR)
 	@GetMapping("")
 	public ResponseEntity<ApiResult<SettlementAndWithdrawPageResponseDto>> getMySettlements(
 		@AuthUser Long userId,

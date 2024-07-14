@@ -36,7 +36,7 @@ public enum ResponseCode {
 		"토큰 갱신에 실패했습니다."),
 	UnAuthorized(ErrorConstants.UnAuthorized, HttpStatus.UNAUTHORIZED, false,
 		"인증되지 않은 사용자."),
-	EncryptAlgorithmDeprecated(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
+	EncryptAlgorithmDeprecated(ErrorConstants.EncryptAlgorithmDeprecated, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"%s 암호화 과정 중 문제가 발생했습니다."),
 
 	/**
@@ -46,44 +46,45 @@ public enum ResponseCode {
 		"허가되지 않은 oauth type %s"),
 	AppleOauthIdTokenIncorrect(ErrorConstants.AppleOauthIdTokenIncorrect, HttpStatus.BAD_REQUEST, false,
 		"Apple OAuth Identity Token 형식이 올바르지 않습니다."),
-	AppleOauthIdTokenExpired(ErrorConstants.AppleOauthIdTokenExpired, HttpStatus.BAD_REQUEST, false,
+	AppleOauthIdTokenExpired(ErrorConstants.AppleOauthIdTokenExpired, HttpStatus.REQUEST_TIMEOUT, false,
 		"Apple OAuth 로그인 중 Identity Token 유효기간이 만료됐습니다."),
-	AppleOauthIdTokenInvalid(ErrorConstants.AppleOauthIdTokenInvalid, HttpStatus.BAD_REQUEST, false,
+	AppleOauthIdTokenInvalid(ErrorConstants.AppleOauthIdTokenInvalid, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"Apple OAuth Identity Token 값이 올바르지 않습니다."),
-	AppleOauthClaimInvalid(ErrorConstants.AppleOauthClaimInvalid, HttpStatus.BAD_REQUEST, false,
+	AppleOauthClaimInvalid(ErrorConstants.AppleOauthClaimInvalid, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"Apple OAuth Claims 값이 올바르지 않습니다."),
-	AppleOauthPublicKeyInvalid(ErrorConstants.AppleOauthPublicKeyInvalid, HttpStatus.BAD_REQUEST, false,
+	AppleOauthPublicKeyInvalid(ErrorConstants.AppleOauthPublicKeyInvalid, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"Apple OAuth 로그인 중 public key 생성에 문제가 발생했습니다."),
-
+	AppleOauthJwtValueInvalid(ErrorConstants.AppleOauthJwtValueInvalid, HttpStatus.INTERNAL_SERVER_ERROR, false,
+		"Apple JWT 값의 alg, kid 정보가 올바르지 않습니다."),
 	/**
 	 * 서버 오류 및 올바르지 않은 요청
 	 */
 	NotNullableEnum(ErrorConstants.NotNullableEnum, HttpStatus.BAD_REQUEST, false, " [%s] 값은 null 값을 허용하지 않습니다."),
 	DBToEnumFailed(ErrorConstants.DBToEnumFailed, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"문자열 -> Enum 변환 실패 enum : %s 입력된 값 : %s"),
-	HandlerMethodValidationException(ControllerValidationError, HttpStatus.BAD_REQUEST, false, "%s"),
-	UnrecognizedPropertyException(ErrorConstants.UnrecognizedPropertyException, HttpStatus.BAD_REQUEST, false,
+	HandlerMethodValidation(ErrorConstants.HandlerMethodValidation, HttpStatus.BAD_REQUEST, false, "%s"),
+	UnrecognizedProperty(ErrorConstants.UnrecognizedProperty, HttpStatus.BAD_REQUEST, false,
 		"json property parsing 중 오류 발생, %s"),
-	InvalidDataAccessApiUsage(InvalidDataAccessApiUsageException, HttpStatus.BAD_REQUEST, false,
+	InvalidDataAccessApiUsage(ErrorConstants.InvalidDataAccessApiUsage, HttpStatus.BAD_REQUEST, false,
 		"%s"),
-	NotFound(NoHandlerFoundException, HttpStatus.NOT_FOUND, false,
+	HandlerNotFound(ErrorConstants.HandlerNotFound, HttpStatus.NOT_FOUND, false,
 		"요청 uri에 대한 핸들러가 없습니다."),
-	HttpRequestMethodNotSupportedException(MethodNotSupported, HttpStatus.METHOD_NOT_ALLOWED, false,
+	HttpRequestMethodNotSupported(ErrorConstants.HttpRequestMethodNotSupported, HttpStatus.METHOD_NOT_ALLOWED, false,
 		"not allowed methods, allowed methods : %s"),
-	MethodArgumentTypeMismatchException(MethodArgumentTypeMismatch, HttpStatus.BAD_REQUEST, false, "%s"),
-	MissingPathVariableException(ErrorConstants.MissingPathVariableException, HttpStatus.BAD_REQUEST, false,
+	MethodArgumentTypeMismatch(ErrorConstants.MethodArgumentTypeMismatch, HttpStatus.BAD_REQUEST, false, "%s"),
+	MissingPathVariable(ErrorConstants.MissingPathVariableException, HttpStatus.BAD_REQUEST, false,
 		"query param 에러 %s "),
 	UnHandledException(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"예기치 못한 문제가 발생했습니다. 오류내용 : %s"),
-	DiscordException(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
-		"디스코드 오류 발생"),
-	DiscordContentException(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
-		"디스코드 오류 발생"),
-	DiscordIOException(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
-		"디스코드 IO 오류 발생"),
-	DiscordAppenderException(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
-		"디스코드 IO 오류 발생"),
 	TimeOut(ErrorConstants.UnHandledException, HttpStatus.REQUEST_TIMEOUT, false, "요청 시간이 초과되었습니다."),
+
+	/**
+	 * Discord
+	 */
+	NoWebhookEmbeds(ErrorConstants.NoWebhookEmbeds, HttpStatus.INTERNAL_SERVER_ERROR, false,
+		"디스코드 Webhook embed 정보가 없습니다."),
+	DiscordIOException(ErrorConstants.DiscordIOException, HttpStatus.INTERNAL_SERVER_ERROR, false,
+		"디스코드 IO 오류 발생 상세 : %s"),
 
 	/**
 	 * PictureGenerateRequest
@@ -106,7 +107,8 @@ public enum ResponseCode {
 	PictureGenerateRequestNotAcceptableDueToExpired(ErrorConstants.PictureGenerateRequestNotAcceptableDueToExpired,
 		HttpStatus.BAD_REQUEST,
 		false, "수락 마감 시간을 초과하였습니다."),
-	PictureGenerateRequestVisibilityRestrictedToRequester(OnlyRequesterCanViewRequest, HttpStatus.FORBIDDEN,
+	OnlyRequesterCanViewPictureGenerateRequest(ErrorConstants.OnlyRequesterCanViewPictureGenerateRequest,
+		HttpStatus.FORBIDDEN,
 		false,
 		"사진생성요청을 요청한 유저만 볼 수 있습니다."),
 	/**
@@ -157,7 +159,8 @@ public enum ResponseCode {
 		ErrorConstants.SubmitBlockedDueToPictureGenerateResponseIsExpired, HttpStatus.BAD_REQUEST,
 		false,
 		"제출 마감 시간을 초과하였습니다."),
-	AlreadyCompletedPictureGenerateResponse(AlreadyCompletedResponse, HttpStatus.BAD_REQUEST, false,
+	AlreadyCompletedPictureGenerateResponse(ErrorConstants.AlreadyCompletedPictureGenerateResponse,
+		HttpStatus.BAD_REQUEST, false,
 		"이미 처리 완료된 응답입니다."),
 	/**
 	 * Report
@@ -174,11 +177,12 @@ public enum ResponseCode {
 	/**
 	 * WithdrawRequest && Settlement
 	 */
-	NoSettlementForWithdrawalException(ErrorConstants.NoSettlementForWithdrawalException, HttpStatus.BAD_REQUEST, false,
+	CannotCreateWithdrawalDueToSettlementsNotAvailable(
+		ErrorConstants.CannotCreateWithdrawalDueToSettlementsNotAvailable, HttpStatus.BAD_REQUEST, false,
 		"출금 가능한 정산 내역이 없습니다."),
 	WithdrawRequestNotFound(ErrorConstants.WithdrawRequestNotFound, HttpStatus.NOT_FOUND, false,
 		"해당 출금 요청을 찾을 수 없습니다."),
-	HttpMessageNotReadableException(InValidFormat, HttpStatus.BAD_REQUEST, false, "잘못된 입력 : %s"),
+	HttpMessageNotReadable(ErrorConstants.HttpMessageNotReadable, HttpStatus.BAD_REQUEST, false, "잘못된 입력 : %s"),
 	FileTypeNotProvided(ErrorConstants.FileTypeNotProvided, HttpStatus.BAD_REQUEST, false, "파일 형식이 주어지지 않았습니다.");
 
 	private final String errorCode;
@@ -192,7 +196,7 @@ public enum ResponseCode {
 		}
 		int placeholderCount = countPlaceholders(errorMessage);
 		if (args.length != placeholderCount) {
-			return errorMessage.replaceAll("%[sd]", "example");
+			return errorMessage.replaceAll("%[sd]", "[동적으로 생성될 부분]");
 		}
 		return String.format(errorMessage, args);
 	}

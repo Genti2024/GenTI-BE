@@ -18,6 +18,9 @@ import com.gt.genti.auth.service.AuthService;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.jwt.TokenResponse;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.user.dto.request.AppleLoginRequest;
 import com.gt.genti.user.dto.request.SocialLoginRequestImpl;
@@ -39,36 +42,34 @@ public class AuthController {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthService authService;
 
-	@GetMapping("/login/oauth")
-	@Logging(item = "Oauth", action = "Get")
+	@GetMapping("/login/v1/oauth")
+	@Logging(item = LogItem.OAUTH, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<Object> login(
 		@RequestParam(name = "oauthPlatform") OauthPlatform oauthPlatform) {
 		HttpHeaders httpHeaders = authService.getOauthRedirect(oauthPlatform);
 		return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
 	}
 
-	@PostMapping("/login/oauth/code/apple")
-	@Logging(item = "Oauth", action = "Post")
+	@PostMapping("/login/v1/oauth2/code/apple")
+	@Logging(item = LogItem.OAUTH_APPLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SocialLoginResponse>> loginApple(@RequestBody @Valid AppleLoginRequestDto request) {
 		return success(authService.login(AppleLoginRequest.of(OauthPlatform.APPLE, request.getToken())));
 	}
 
-
-	@GetMapping("/login/oauth2/code/kakao")
-	@Logging(item = "Oauth", action = "Post")
+	@GetMapping("/login/v1/oauth2/code/kakao")
+	@Logging(item = LogItem.OAUTH_KAKAO, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SocialLoginResponse>> kakaoLogin(
 		@RequestParam(name = "code") final String code) {
 		return success(authService.login(SocialLoginRequestImpl.of(OauthPlatform.KAKAO, code)));
 	}
 
-	@GetMapping("/login/oauth2/code/google")
-	@Logging(item = "Oauth", action = "Post")
+	@GetMapping("/login/v1/oauth2/code/google")
+	@Logging(item = LogItem.OAUTH_GOOGLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SocialLoginResponse>> googleLogin(
 		@RequestParam(name = "code") final String code) {
 		return success(authService.login(SocialLoginRequestImpl.of(OauthPlatform.GOOGLE, code)));
 	}
 
-	@Logging(item = "jwt", action = "Get")
 	@GetMapping("/login/testjwt")
 	public ResponseEntity<ApiResult<TokenResponse>> getTestJwt(
 		@NotNull @RequestParam(name = "role", value = "role") UserRole role) {
@@ -85,7 +86,7 @@ public class AuthController {
 			TokenResponse.of(accessToken, accessToken));
 	}
 
-	@GetMapping("/logout")
+	@GetMapping("/logout/v1")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
 		return success(authService.logout(userId));
 	}

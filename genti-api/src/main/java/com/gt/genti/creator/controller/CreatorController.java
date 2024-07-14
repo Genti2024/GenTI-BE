@@ -13,6 +13,9 @@ import com.gt.genti.creator.dto.response.CreatorFindResponseDto;
 import com.gt.genti.creator.dto.response.CreatorStatusUpdateResponseDto;
 import com.gt.genti.creator.service.CreatorService;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.response.GentiResponse.ApiResult;
@@ -33,7 +36,7 @@ public class CreatorController {
 	private final CreatorService creatorService;
 
 	@Operation(summary = "공급자 내정보 보기", description = "공급자의 내정보 보기")
-	@Logging(item = "Creator", action = "Creator")
+	@Logging(item = LogItem.CREATOR_MY, action = LogAction.VIEW, requester = LogRequester.CREATOR)
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
@@ -45,7 +48,7 @@ public class CreatorController {
 	}
 
 	@Operation(summary = "공급자 계좌정보 수정", description = "공급자의 내 계좌정보 수정")
-	@Logging(item = "Account", action = "Update")
+	@Logging(item = LogItem.CREATOR_ACCOUNT, action = LogAction.UPDATE, requester = LogRequester.CREATOR)
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
@@ -58,7 +61,7 @@ public class CreatorController {
 	}
 
 	@Operation(summary = "공급자 작업가능상태 수정", description = "공급자의 내 작업가능상태 수정")
-	@Logging(item = "Creator-workable", action = "Update")
+	@Logging(item = LogItem.CREATOR_STATUS, action = LogAction.UPDATE, requester = LogRequester.CREATOR)
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)

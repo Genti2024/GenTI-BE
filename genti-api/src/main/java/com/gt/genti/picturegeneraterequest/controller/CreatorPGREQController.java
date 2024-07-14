@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.user.model.AuthUser;
@@ -39,7 +42,7 @@ public class CreatorPGREQController {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
-	@Logging(item = "PGREQ", action = "Read")
+	@Logging(item = LogItem.PGREQ, action = LogAction.SEARCH, requester = LogRequester.CREATOR)
 	@GetMapping("/assigned")
 	public ResponseEntity<ApiResult<PGREQBriefFindByCreatorResponseDto>> getAssignedPictureGenerateRequestBrief(
 		@AuthUser Long userId
@@ -55,6 +58,7 @@ public class CreatorPGREQController {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
+	@Logging(item = LogItem.PGREQ_ACCEPT, action = LogAction.UPDATE, requester = LogRequester.CREATOR)
 	@PostMapping("/{pictureGenerateRequestId}/accept")
 	public ResponseEntity<ApiResult<Boolean>> acceptPictureGenerateRequest(
 		@AuthUser Long userId,
@@ -64,12 +68,14 @@ public class CreatorPGREQController {
 			pictureGenerateWorkService.acceptPictureGenerateRequest(userId, pictureGenerateRequestId));
 	}
 
+
 	@Operation(summary = "매칭 거절", description = "내게(공급자) 매칭된 사진생성요청을 거절합니다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotAssignedToCreator),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
+	@Logging(item = LogItem.PGREQ_REJECT, action = LogAction.UPDATE, requester = LogRequester.CREATOR)
 	@PostMapping("/{pictureGenerateRequestId}/reject")
 	public ResponseEntity<ApiResult<Boolean>> rejectPictureGenerateRequest(
 		@AuthUser Long userId,
@@ -84,6 +90,7 @@ public class CreatorPGREQController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound),
 	})
+	@Logging(item = LogItem.PGREQ_INPROGESS, action = LogAction.SEARCH, requester = LogRequester.CREATOR)
 	@GetMapping("/in-progress")
 	public ResponseEntity<ApiResult<List<PGREQDetailFindByAdminResponseDto>>> getInProgressPictureGenerateRequestDetail(
 		@AuthUser Long userId
@@ -96,6 +103,7 @@ public class CreatorPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGREQ, action = LogAction.VIEW, requester = LogRequester.CREATOR)
 	@GetMapping("/all")
 	public ResponseEntity<ApiResult<List<PGREQDetailFindByAdminResponseDto>>> getAssignedPictureGenerateRequestsAll(
 		@AuthUser Long userId) {
@@ -108,6 +116,7 @@ public class CreatorPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGREQ, action = LogAction.SEARCH, requester = LogRequester.CREATOR)
 	@GetMapping("/{pictureGenerateRequestId}")
 	public ResponseEntity<ApiResult<PGREQDetailFindByAdminResponseDto>> getPictureGenerateRequestDetail(
 		@AuthUser Long userId,

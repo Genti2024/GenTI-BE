@@ -39,13 +39,13 @@ public class AppleClaimsValidator {
         log.info("애플에서 받은 암호화된 nonce : " + claims.get(NONCE_KEY));
         log.info("genti 암호화 nonce : " + this.nonce);
 
-        if(claims.getIssuer().contains(iss)){
-            log.info("iss 가 같지않음");
+        if(!claims.getIssuer().contains(iss)){
+            log.info("iss 가 같지않음 : apple token iss : {}, genti iss {}", claims.getIssuer(), iss);
         }
-        if(claims.getAudience().equals(clientId)){
-            log.info("clientid 가 같지않음");
+        if(!claims.getAudience().equals(clientId)){
+            log.info("clientId 가 같지않음 : apple token clientId : {}, genti clientId {}", claims.getAudience(), clientId);
         }
-        if(claims.get(NONCE_KEY, String.class).equals(nonce)){
+        if(!claims.get(NONCE_KEY, String.class).equals(nonce)){
             log.info("nonce 변조");
         }
         return claims.getIssuer().contains(iss) &&

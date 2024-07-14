@@ -32,3 +32,23 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+server:
+  ip: 127.0.0.1
+  domain: localhost
+  port: 8080
+
+google:
+  client-id: "client-id"
+  redirect-url: "redirect-url"
+  scope:
+    https://www.googleapis.com/auth/userinfo.email,
+    https://www.googleapis.com/auth/userinfo.profile,
+    https://www.googleapis.com/auth/user.birthday.read
+kakao:
+  client-id: "client-id"
+  redirect-uri: "redirect-uri"
+
+apple:
+  client-id: "client-id"
+  nonce: "nonce"

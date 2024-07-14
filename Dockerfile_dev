@@ -23,4 +23,4 @@ COPY genti-api/src/main/resources/console-appender.xml /application/
 COPY genti-api/src/main/resources/discord-appender.xml /application/
 COPY genti-api/src/main/resources/file-appender.xml /application/
 
-ENTRYPOINT ["java", "-Dspring.profiles.active=deploy", "-Dlogging.config=/application/logback-spring.xml", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=deploy", "org.springframework.boot.loader.launch.JarLauncher"]

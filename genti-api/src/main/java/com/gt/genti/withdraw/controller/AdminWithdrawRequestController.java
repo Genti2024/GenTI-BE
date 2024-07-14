@@ -14,15 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.withdraw.dto.response.WithdrawCompletionResponseDto;
+import com.gt.genti.withdraw.dto.response.WithdrawFindByAdminResponseDto;
+import com.gt.genti.withdraw.service.WithdrawService;
 import com.gt.genti.error.ResponseCode;
-import com.gt.genti.response.GentiResponse;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.validator.ValidEnum;
-import com.gt.genti.withdraw.dto.response.WithdrawCompletionResponseDto;
-import com.gt.genti.withdraw.dto.response.WithdrawFindByAdminResponseDto;
-import com.gt.genti.withdraw.service.WithdrawService;
 import com.gt.genti.withdrawrequest.model.WithdrawRequestStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,12 +43,13 @@ import lombok.RequiredArgsConstructor;
 public class AdminWithdrawRequestController {
 	private final WithdrawService withDrawService;
 
+	@Logging(item = LogItem.CASHOUT, action = LogAction.VIEW, requester = LogRequester.ADMIN)
 	@Operation(summary = "출금요청 전체조회", description = "출금요청 페이지네이션 조회")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@GetMapping("")
-	public ResponseEntity<GentiResponse.ApiResult<Page<WithdrawFindByAdminResponseDto>>> getAllWithdrawList(
+	public ResponseEntity<ApiResult<Page<WithdrawFindByAdminResponseDto>>> getAllWithdrawList(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
@@ -66,6 +70,7 @@ public class AdminWithdrawRequestController {
 		return success(withDrawService.getAllWithdrawRequests(pageable, status));
 	}
 
+	@Logging(item = LogItem.CASHOUT, action = LogAction.COMPLETE, requester = LogRequester.ADMIN)
 	@Operation(summary = "출금요청 완료처리", description = "송금 완료 후 출금요청 완료처리")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),

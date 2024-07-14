@@ -30,57 +30,59 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 public class LoggerConfig {
 
-    private static final String format = "yyyy-MM-dd HH:mm:ss.SSS";
+	private static final String format = "yyyy-MM-dd HH:mm:ss.SSS";
 
-    @Around("@annotation(com.gt.genti.model.Logging) && @annotation(logging)")
-    public Object aroundLogger(ProceedingJoinPoint joinPoint, Logging logging) throws Throwable {
-        CustomLog customLog = new CustomLog();
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(format);
-        customLog.setCreatedAt(LocalDateTime.now().format(timeFormatter));
+	@Around("@annotation(com.gt.genti.model.Logging) && @annotation(logging)")
+	public Object aroundLogger(ProceedingJoinPoint joinPoint, Logging logging) throws Throwable {
+		CustomLog customLog = new CustomLog();
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(format);
+		customLog.setCreatedAt(LocalDateTime.now().format(timeFormatter));
 
-        HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        customLog.setUri(request.getRequestURI());
+		HttpServletRequest request =
+			((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+		customLog.setUri(request.getRequestURI());
 
-        Object result = null;
-        try {
-            result = joinPoint.proceed();
-        } catch (Throwable t) {
-            throw t;
-        } finally {
-            if (result instanceof ResponseEntity) {
-                ResponseEntity responseEntity = (ResponseEntity) result;
+		Object result = null;
+		try {
+			result = joinPoint.proceed();
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			if (result instanceof ResponseEntity) {
+				ResponseEntity responseEntity = (ResponseEntity)result;
 
-                if (responseEntity.getStatusCode() == OK || responseEntity.getStatusCode() == CREATED || responseEntity.getStatusCode() == NO_CONTENT) {
-                    customLog.setResult("success-" + responseEntity.getStatusCode());
-                } else {
-                    HttpStatus status = valueOf(responseEntity.getStatusCode().value());
-                    customLog.setResult("fail-" + status.getReasonPhrase());
-                }
-            }
+				if (responseEntity.getStatusCode() == OK || responseEntity.getStatusCode() == CREATED
+					|| responseEntity.getStatusCode() == NO_CONTENT) {
+					customLog.setResult("success-" + responseEntity.getStatusCode());
+				} else {
+					HttpStatus status = valueOf(responseEntity.getStatusCode().value());
+					customLog.setResult("fail-" + status.getReasonPhrase());
+				}
+			}
 
-            if (result == null) customLog.setResult("fail");
+			if (result == null)
+				customLog.setResult("fail");
 
-            MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-            customLog.setMethod(methodSignature.getName());
-            customLog.setItem(logging.item());
-            customLog.setAction(logging.action());
+			MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+			customLog.setMethod(methodSignature.getName());
+			customLog.setItem(logging.item().toString());
+			customLog.setAction(logging.action().toString());
 
-            log.info(getMessage(customLog));
-        }
-        return result;
-    }
+			log.info(getMessage(customLog));
+		}
+		return result;
+	}
 
-    private String getMessage(CustomLog customLog) throws JsonProcessingException {
-        Map<String, String> map = new LinkedHashMap<>();
+	private String getMessage(CustomLog customLog) throws JsonProcessingException {
+		Map<String, String> map = new LinkedHashMap<>();
 
-        map.put("createdAt", customLog.getCreatedAt());
-        map.put("item", customLog.getItem());
-        map.put("action", customLog.getAction());
-        map.put("result", customLog.getResult());
-        map.put("uri", customLog.getUri());
-        map.put("method", customLog.getMethod());
+		map.put("createdAt", customLog.getCreatedAt());
+		map.put("item", customLog.getItem());
+		map.put("action", customLog.getAction());
+		map.put("result", customLog.getResult());
+		map.put("uri", customLog.getUri());
+		map.put("method", customLog.getMethod());
 
-        return new ObjectMapper().writeValueAsString(map);
-    }
+		return new ObjectMapper().writeValueAsString(map);
+	}
 }

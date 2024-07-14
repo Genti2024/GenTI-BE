@@ -46,7 +46,7 @@ public class DiscordWebHook {
 
 	public DiscordMessageJson createDiscordEmbedObject() {
 		if (embeds.isEmpty()) {
-			throw ExpectedException.withLogging(ResponseCode.DiscordAppenderException);
+			throw ExpectedException.withLogging(ResponseCode.NoWebhookEmbeds);
 		}
 
 		List<DiscordMessageJson> embedObjects = new ArrayList<>();

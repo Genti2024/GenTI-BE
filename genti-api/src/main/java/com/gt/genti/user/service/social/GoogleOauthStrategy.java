@@ -15,15 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.jwt.TokenResponse;
-import com.gt.genti.openfeign.google.dto.response.GoogleInfoResponse;
-import com.gt.genti.openfeign.google.dto.response.GoogleTokenResponse;
 import com.gt.genti.openfeign.google.client.GoogleApiClient;
 import com.gt.genti.openfeign.google.client.GoogleAuthApiClient;
+import com.gt.genti.openfeign.google.dto.response.GoogleInfoResponse;
+import com.gt.genti.openfeign.google.dto.response.GoogleTokenResponse;
 import com.gt.genti.user.dto.request.SocialLoginRequest;
 import com.gt.genti.user.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.user.service.UserSignUpService;
+import com.gt.genti.user.service.UserSignUpEventPublisher;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,7 +51,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserRepository userRepository;
-	private final UserSignUpService userSignUpService;
+	private final UserSignUpEventPublisher userSignUpEventPublisher;
 
 	@Override
 	public String getAuthUri() {
@@ -91,7 +91,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 				.build());
 			user = newUser;
 			isNewUser = true;
-			userSignUpService.publishSignUpEvent(newUser);
+			userSignUpEventPublisher.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
 			user.resetDeleteAt();

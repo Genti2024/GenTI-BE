@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.responseexample.dto.request.ExampleSaveRequestDto;
 import com.gt.genti.responseexample.dto.response.ExampleWithPictureFindResponseDto;
 import com.gt.genti.responseexample.service.ResponseExampleService;
@@ -45,6 +49,7 @@ public class AdminExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.ADMIN)
 	@GetMapping("/with-picture")
 	public ResponseEntity<ApiResult<Page<ExampleWithPictureFindResponseDto>>> getAllResponseExamples(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
@@ -68,6 +73,7 @@ public class AdminExampleController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.CREATE, requester = LogRequester.ADMIN)
 	@PostMapping("/with-picture")
 	public ResponseEntity<ApiResult<Boolean>> addResponseExample(
 		@RequestBody @Valid List<@Valid ExampleSaveRequestDto> requestDtoList,

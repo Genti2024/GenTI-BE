@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.report.dto.request.ReportCreateRequestDto;
 import com.gt.genti.report.service.ReportService;
 import com.gt.genti.swagger.EnumResponse;
@@ -27,12 +31,14 @@ import lombok.RequiredArgsConstructor;
 public class PGREQReportController {
 	private final ReportService reportService;
 
+
 	@Operation(summary = "신고", description = "사진생성응답을 신고합니다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.UserNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateResponseNotFound)}
 	)
+	@Logging(item = LogItem.REPORT, action = LogAction.CREATE, requester = LogRequester.USER)
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createReport(
 		@AuthUser Long userId,

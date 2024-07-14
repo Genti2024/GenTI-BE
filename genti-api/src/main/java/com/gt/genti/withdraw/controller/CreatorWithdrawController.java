@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.withdraw.dto.response.WithdrawFindByCreatorResponseDto;
+import com.gt.genti.withdraw.service.WithdrawService;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
-import com.gt.genti.withdraw.dto.response.WithdrawFindByCreatorResponseDto;
-import com.gt.genti.withdraw.service.WithdrawService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,11 +39,12 @@ import lombok.RequiredArgsConstructor;
 public class CreatorWithdrawController {
 	private final WithdrawService withDrawService;
 
+	@Logging(item = LogItem.CASHOUT, action = LogAction.CREATE, requester = LogRequester.CREATOR)
 	@Operation(summary = "출금요청", description = "공급자가 작업한 정산결과를 바탕으로 출금요청을 생성합니다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound),
-		@EnumResponse(ResponseCode.NoSettlementForWithdrawalException)
+		@EnumResponse(ResponseCode.CannotCreateWithdrawalDueToSettlementsNotAvailable)
 	})
 	@PostMapping("")
 	public ResponseEntity<ApiResult<WithdrawFindByCreatorResponseDto>> createWithdrawRequest(
@@ -49,6 +54,7 @@ public class CreatorWithdrawController {
 		return success(withDrawService.create(userId));
 	}
 
+	@Logging(item = LogItem.CASHOUT, action = LogAction.VIEW, requester = LogRequester.CREATOR)
 	@Operation(summary = "출금요청내역조회", description = "공급자의 모든 출금요청을 페이지네이션 조회")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)

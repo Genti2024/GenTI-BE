@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.error.ResponseCode;
@@ -41,6 +45,7 @@ public class UserPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGREQ, action = LogAction.VIEW, requester = LogRequester.USER)
 	@GetMapping("/all")
 	public ResponseEntity<ApiResult<List<PGREQBriefFindByUserResponseDto>>> getAllUsersPictureGenerateRequest(
 		@AuthUser Long userId
@@ -54,6 +59,7 @@ public class UserPGREQController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
+	@Logging(item = LogItem.PGREQ_INPROGESS, action = LogAction.SEARCH, requester = LogRequester.USER)
 	@GetMapping("/pending")
 	public ResponseEntity<ApiResult<PGREQStatusResponseDto>> hasPendingRequests(
 		@AuthUser Long userId
@@ -67,6 +73,7 @@ public class UserPGREQController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
 	})
+	@Logging(item = LogItem.PGREQ_COMPLETED, action = LogAction.SEARCH, requester = LogRequester.USER)
 	@GetMapping("/not-verified-yet")
 	public ResponseEntity<ApiResult<PGREQBriefFindByUserResponseDto>> findNotVerifiedCompletedPGREQ(
 		@AuthUser Long userId
@@ -76,12 +83,14 @@ public class UserPGREQController {
 				PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION));
 	}
 
+	@Deprecated
 	@Operation(summary = "내 요청 조회", description = "내가 요청한 사진생성요청을 자세히 조회한다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound),
-		@EnumResponse(ResponseCode.PictureGenerateRequestVisibilityRestrictedToRequester)
+		@EnumResponse(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest)
 	})
+	@Logging(item = LogItem.PGREQ, action = LogAction.SEARCH, requester = LogRequester.USER)
 	@GetMapping("/{pictureGenerateRequestId}")
 	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getPictureGenerateRequestDetail(
 		@PathVariable
@@ -96,6 +105,7 @@ public class UserPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGREQ_COMPLETED, action = LogAction.COMPLETE, requester = LogRequester.USER)
 	@PostMapping("/{pictureGenerateRequestId}/verify")
 	public ResponseEntity<ApiResult<Boolean>> verifyCompletedPGREQ(
 		@AuthUser Long userId,
@@ -108,6 +118,7 @@ public class UserPGREQController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGREQ, action = LogAction.REQUEST, requester = LogRequester.USER)
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthUser Long userId,
@@ -117,12 +128,14 @@ public class UserPGREQController {
 		return GentiResponse.success(true);
 	}
 
+	@Deprecated
 	@Operation(summary = "사진생성요청 수정", description = "이전에 생성한 사진생성요청을 수정한다", deprecated = true)
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestAlreadyInProgress)
 	})
+	@Logging(item = LogItem.PGREQ, action = LogAction.UPDATE, requester = LogRequester.USER)
 	@PutMapping("/{pictureGenerateRequestId}")
 	public ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
 		@AuthUser Long userId,

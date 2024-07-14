@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.report.dto.request.ReportUpdateRequestDto;
 import com.gt.genti.report.dto.response.ReportFindByAdminResponseDto;
 import com.gt.genti.report.model.ReportStatus;
@@ -43,6 +47,7 @@ public class AdminReportController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.REPORT, action = LogAction.VIEW, requester = LogRequester.ADMIN)
 	@GetMapping("")
 	public ResponseEntity<ApiResult<Page<ReportFindByAdminResponseDto>>> getAllReports(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
@@ -72,6 +77,7 @@ public class AdminReportController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.REPORT, action = LogAction.UPDATE, requester = LogRequester.ADMIN)
 	@PostMapping("")
 	public ResponseEntity<ApiResult<Boolean>> updateReport(
 		@RequestBody @Valid ReportUpdateRequestDto reportUpdateRequestDto) {

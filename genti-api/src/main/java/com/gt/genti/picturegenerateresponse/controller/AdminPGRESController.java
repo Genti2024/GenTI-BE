@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
@@ -40,6 +44,7 @@ public class AdminPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGRES, action = LogAction.COMPLETE, requester = LogRequester.ADMIN)
 	@PostMapping("/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESSubmitByAdminResponseDto>> submit(
 		@Parameter(description = "사진생성응답 Id", example = "1", required = true)
@@ -52,6 +57,7 @@ public class AdminPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGRES_PICTURE_COMPLETED, action = LogAction.UPDATE, requester = LogRequester.ADMIN)
 	@PostMapping("/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> updatePictureList(
 		@AuthUser Long userId,
@@ -67,6 +73,7 @@ public class AdminPGRESController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
+	@Logging(item = LogItem.PGRES_ASSIGNEE, action = LogAction.UPDATE, requester = LogRequester.ADMIN)
 	@PostMapping("/{pictureGenerateResponseId}/admin-in-charge")
 	public ResponseEntity<ApiResult<PGRESUpdateAdminInChargeResponseDto>> updateAdminInCharge(
 		@PathVariable Long pictureGenerateResponseId,

@@ -1,12 +1,8 @@
 <included>
-    <bean id="discordController" class="com.gt.genti.discord.DiscordController" />
     <appender name="DISCORD" class="com.gt.genti.discord.DiscordAppender">
-        <eventChannelUrl>${BASE_URL}${EVENT_PATH}</eventChannelUrl>
-        <adminChannelUrl>${BASE_URL}${ADMIN_PATH}</adminChannelUrl>
         <errorChannelUrl>${BASE_URL}${ERROR_PATH}</errorChannelUrl>
-        <username>Error log</username>
-        <avatarUrl>https://cdn-icons-png.flaticon.com/512/1383/1383395.png</avatarUrl>
-        <tts>false</tts>
+        <adminChannelUrl>${BASE_URL}${ADMIN_PATH}</adminChannelUrl>
+        <eventChannelUrl>${BASE_URL}${EVENT_PATH}</eventChannelUrl>
     </appender>
     <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="DISCORD"/>

@@ -125,7 +125,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		User foundUser = findUserById(userId);
 
 		if (!Objects.equals(foundPictureGenerateRequest.getRequester().getId(), foundUser.getId())) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestVisibilityRestrictedToRequester);
+			throw ExpectedException.withLogging(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest);
 		}
 		return new PGREQDetailFindByUserResponseDto(foundPictureGenerateRequest);
 	}

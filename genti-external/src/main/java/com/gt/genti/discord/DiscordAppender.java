@@ -7,11 +7,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.gt.genti.discord.model.EmbedObject;
 import com.gt.genti.discord.model.Field;
-import com.gt.genti.discord.model.Thumbnail;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.util.MDCUtil;
@@ -31,11 +31,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
-	private String eventChannelUrl;
+	@Value("${discord.webhook-url.base}${discord.webhook-url.admin}")
 	private String adminChannelUrl;
+	@Value("${discord.webhook-url.base}${discord.webhook-url.event}")
+	private String eventChannelUrl;
+	@Value("${discord.webhook-url.base}${discord.webhook-url.error}")
 	private String errorChannelUrl;
-	private String username;
-	private String avatarUrl;
+	private String username = "Error log";
+	private String avatarUrl = "https://cdn-icons-png.flaticon.com/512/1383/1383395.png";
+
 
 	@Override
 	protected void append(ILoggingEvent eventObject) {
@@ -134,23 +138,14 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		}
 	}
 
-	public void execute(DiscordWebHook discordWebHook, String url) throws IOException {
-		if (discordWebHook.getEmbeds().isEmpty()) {
-			throw ExpectedException.withLogging(ResponseCode.DiscordException);
-		}
-
-		DiscordMessageSender.sendToDiscord(url, discordWebHook.createDiscordEmbedObject());
-	}
-
 	public void signInAppend(Long totalUserCount, String name, String email, String socialPlatform,
-		LocalDateTime createdAt, String imgUrl) {
-		DiscordWebHook discordWebhook = new DiscordWebHook(username, avatarUrl, false);
+		LocalDateTime createdAt) {
+		DiscordWebHook discordWebhook = new DiscordWebHook("event", avatarUrl, false);
 
 		discordWebhook.addEmbed(EmbedObject.builder()
 			.title("[회원 가입] " + totalUserCount + "번째 유저가 가입하였습니다.")
 			.color(Color.CYAN)
 			.description("GenTI에 새로운 유저가 가입하였습니다.")
-			.thumbnail(new Thumbnail(imgUrl))
 			.build()
 			.addField(
 				Field.builder()
@@ -180,7 +175,13 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		} catch (IOException e) {
 			throw ExpectedException.withLogging(ResponseCode.DiscordIOException);
 		}
+	}
 
+	public void execute(DiscordWebHook discordWebHook, String urlString) throws IOException {
+		if (discordWebHook.getEmbeds().isEmpty()) {
+			throw ExpectedException.withLogging(ResponseCode.DiscordException);
+		}
+		DiscordMessageSender.sendToDiscord(urlString, discordWebHook.createDiscordEmbedObject());
 	}
 
 	private static Color getLevelColor(ILoggingEvent eventObject) {

@@ -37,7 +37,6 @@ public class PostController {
 	@GetMapping("/detail")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getAllPostsDetailPagination(
 		@RequestParam(value = "cursor", required = false) Long cursor) {
-
 		return GentiResponse.success(postService.getPostDetailAllPagination(cursor));
 	}
 
@@ -58,7 +57,7 @@ public class PostController {
 	})
 	@GetMapping("/detail/users/{userId}")
 	public ResponseEntity<ApiResult<List<PostDetailResponseDto>>> getUsersAllPostsDetailPagination(
-		@PathVariable(name = "userId") Long userId,
+		@PathVariable(value = "userId") Long userId,
 		@RequestParam(value = "cursor", required = false) Long cursor) {
 		return GentiResponse.success(postService.getPostDetailAllByUserIdPagination(userId, cursor));
 	}
@@ -69,7 +68,7 @@ public class PostController {
 	@Deprecated
 	@GetMapping("/brief/users/{userId}")
 	public ResponseEntity<ApiResult<List<PostBriefFindResponseDto>>> getUsersAllPostBrief(
-		@PathVariable(name = "userId") Long userId) {
+		@PathVariable(value = "userId") Long userId) {
 		return GentiResponse.success(postService.getPostBriefAllByUserId(userId));
 	}
 

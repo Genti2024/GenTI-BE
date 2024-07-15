@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.gt.genti.creator.model.Creator;
@@ -16,7 +17,6 @@ import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 import com.gt.genti.user.model.User;
-
 
 @Repository
 public interface PictureGenerateRequestRepository
@@ -68,8 +68,9 @@ public interface PictureGenerateRequestRepository
 		+ "and pgr.pictureGenerateRequestStatus in :statusList "
 		+ "order by pgr.createdAt desc "
 		+ "limit 1 ")
-	Optional<PictureGenerateRequest> findByUserIdAndRequestStatusIn(User requester,
-		List<PictureGenerateRequestStatus> statusList);
+	Optional<PictureGenerateRequest> findByUserAndRequestStatusIn(
+		@Param(value = "requester") User requester,
+		@Param(value = "statusList") List<PictureGenerateRequestStatus> statusList);
 
 	//TODO 성능 이슈 때문에 dto를 select하도록 변경해야함
 	// edited at 2024-05-23

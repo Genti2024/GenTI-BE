@@ -5,33 +5,25 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.command.PGREQSaveCommand;
 import com.gt.genti.picturegeneraterequest.dto.request.PGREQSaveRequestDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 
 public interface PictureGenerateRequestUseCase {
-	public List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(Long userId);
+	List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(Long userId);
 
-	public PGREQStatusResponseDto getPGREQStatusIfPendingExists(Long userId);
+	PGREQStatusResponseDto getPendingPGREQStatusIfExists(Long userId);
 
-	@Deprecated
-	public PGREQDetailFindByUserResponseDto findPGREQByRequestAndId(Long userId, Long id);
 
-	public PictureGenerateRequest createPGREQ(Long userId,
+	PictureGenerateRequest createPGREQ(Long userId,
 		PGREQSaveCommand pgreqSaveCommand);
 
-	public void modifyPGREQ(Long userId,
+	void modifyPGREQ(Long userId,
 		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto);
-
-	PGREQBriefFindByUserResponseDto getByRequesterAndStatusIs(Long userId, PictureGenerateRequestStatus status);
-
-	Boolean verifyCompletedPGREQ(Long userId, Long pictureGenerateRequestId);
 
 	Page<PGREQDetailFindByAdminResponseDto> getAllByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
 

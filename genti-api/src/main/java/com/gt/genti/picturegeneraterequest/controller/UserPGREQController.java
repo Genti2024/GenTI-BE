@@ -18,7 +18,6 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.picturegeneraterequest.dto.request.PGREQSaveRequestDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResponseDto;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.response.GentiResponse.ApiResult;
@@ -28,7 +27,6 @@ import com.gt.genti.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.user.model.AuthUser;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -67,24 +65,6 @@ public class UserPGREQController {
 	) {
 		return GentiResponse.success(
 			pictureGenerateRequestUseCase.getPendingPGREQStatusIfExists(userId));
-	}
-
-	@Deprecated
-	@Operation(summary = "내 요청 조회", description = "내가 요청한 사진생성요청을 자세히 조회한다.")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound),
-		@EnumResponse(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest)
-	})
-	@Logging(item = LogItem.PGREQ, action = LogAction.SEARCH, requester = LogRequester.USER)
-	@GetMapping("/{pictureGenerateRequestId}")
-	public ResponseEntity<ApiResult<PGREQDetailFindByUserResponseDto>> getPictureGenerateRequestDetail(
-		@Parameter(description = "사진생성요청id", example = "1")
-		@PathVariable(value = "pictureGenerateRequestId")
-		Long pictureGenerateRequestId,
-		@AuthUser Long userId) {
-		return GentiResponse.success(
-			pictureGenerateRequestUseCase.findPGREQByRequestAndId(userId, pictureGenerateRequestId));
 	}
 
 	@Operation(summary = "사진생성요청하기", description = "사진생성요청을 생성한다.")

@@ -40,7 +40,9 @@ public class SecurityConfig {
 		config.addAllowedOrigin("https://kapi.kakao.com");
 		config.addAllowedOrigin("http://www.googleapis.com");
 		config.addAllowedOrigin("https://www.googleapis.com");
-		// config.setAllowedOriginPatterns(List.of("*"));
+
+
+		config.setAllowedOriginPatterns(List.of("*"));
 
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
 		config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));

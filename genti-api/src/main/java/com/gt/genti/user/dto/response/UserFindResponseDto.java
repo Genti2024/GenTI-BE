@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "유저의 유저 정보 조회 응답 dto")
+@Schema(name = "[User][User] 사용자조회 by 사용자 응답 dto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFindResponseDto {

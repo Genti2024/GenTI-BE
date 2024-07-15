@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Deprecated
 @Getter
 @NoArgsConstructor
-@Schema(description = "메모 수정 요청 Dto")
+@Schema(name = "[PGRES][Creator] 메모 수정 요청 Dto", deprecated = true)
 public class MemoUpdateRequestDto {
 	@NotBlank
 	@Schema(description = "메모", example = "신고당한적 있음, 까다로운 유저")

@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "유저의 사진생성요청 현재 상태 조회 응답 dto")
+@Schema(name = "[PGREQ][User] 사진생성요청 상태 조회 by 사용자 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGREQStatusResponseDto {

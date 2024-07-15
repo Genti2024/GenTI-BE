@@ -5,9 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "공급자 작업가능상태 변경 후 응답 dto")
+
 @Getter
 @NoArgsConstructor
+@Schema(name = "[Creator][Creator] 공급자 작업가능상태 변경 성공 응답 dto")
 public class CreatorStatusUpdateResponseDto {
 	@Schema(description = "작업가능 여부")
 	Boolean workable;

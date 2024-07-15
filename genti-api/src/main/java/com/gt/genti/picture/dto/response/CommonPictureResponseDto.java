@@ -9,9 +9,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "공통 사진 응답 dto")
+
 @Getter
 @NoArgsConstructor
+@Schema(name = "[Picture][Anonymous] 공통 사진 응답 dto")
 public class CommonPictureResponseDto {
 	@Schema(description = "해당 사진의 Entity id", example = "1")
 	Long id;

@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "정산&출금내역 리스트와 함께 잔액을 조회한다.")
+@Schema(name = "[Settlement][Creator] 정산&출금내역 조회 페이지네이션 응답 dto", description = "정산&출금내역 리스트와 함께 잔액을 조회한다.")
 @Getter
 @NoArgsConstructor
 public class SettlementAndWithdrawPageResponseDto {

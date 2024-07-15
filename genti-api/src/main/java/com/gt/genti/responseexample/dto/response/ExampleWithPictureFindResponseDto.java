@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "작업 예시 조회 응답 dto")
+@Schema(name = "[ResponseExample][Admin&User] 작업 예시 조회 응답 dto")
 @Getter
 @NoArgsConstructor
 public class ExampleWithPictureFindResponseDto {

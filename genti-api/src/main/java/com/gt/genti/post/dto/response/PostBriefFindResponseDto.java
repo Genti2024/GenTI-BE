@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Schema
+@Schema(deprecated = true)
 @Deprecated
 @Getter
 @NoArgsConstructor

@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민의 출금요청 조회 응답 dto")
+@Schema(name = "[Withdraw][Admin] 출금요청 조회 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor
 public class WithdrawFindByAdminResponseDto {

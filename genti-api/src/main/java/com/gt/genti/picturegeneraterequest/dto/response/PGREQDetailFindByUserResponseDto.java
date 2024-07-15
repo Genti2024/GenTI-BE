@@ -15,7 +15,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "유저가 사진생성요청에 대해 자세히 조회했을 때 응답 dto")
+@Deprecated
+@Schema(name = "[PGREQ][User] 사진생성요청 조회 by 사용자 응답 dto", deprecated = true)
 @Getter
 @NoArgsConstructor
 public class PGREQDetailFindByUserResponseDto {

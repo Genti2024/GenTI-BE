@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민의 사진생성응답 제출시 응답 dto")
+@Schema(name = "[PGRES][Admin] 사진생성응답 제출 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGRESSubmitByAdminResponseDto {

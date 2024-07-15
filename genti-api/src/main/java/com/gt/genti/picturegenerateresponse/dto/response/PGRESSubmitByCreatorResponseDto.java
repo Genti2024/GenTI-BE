@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "공급자가 응답 제출 후 소요시간 및 리워드 응답 dto")
+@Schema(name = "[PGRES][Creator] 사진생성응답 제출 by 공급자 응답 dto", description = "공급자가 응답 제출 후 소요시간 및 리워드 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGRESSubmitByCreatorResponseDto {

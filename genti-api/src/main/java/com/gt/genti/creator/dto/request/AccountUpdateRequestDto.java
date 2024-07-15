@@ -9,10 +9,9 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// @Tag(name = "RequestDtos", description = "RequestDtos")
-@Schema(description = "계좌정보 수정 요청 Dto")
 @Getter
 @NoArgsConstructor
+@Schema(name = "[Creator][Creator] 공급자 계좌정보 수정 요청 Dto", description = "계좌 정보 수정")
 public class AccountUpdateRequestDto {
 
 	@NotNull

@@ -20,6 +20,7 @@ public interface PictureGenerateRequestUseCase {
 
 	public PGREQStatusResponseDto getPGREQStatusIfPendingExists(Long userId);
 
+	@Deprecated
 	public PGREQDetailFindByUserResponseDto findPGREQByRequestAndId(Long userId, Long id);
 
 	public PictureGenerateRequest createPGREQ(Long userId,

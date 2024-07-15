@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Schema(description = "사진생성요청 생성 요청 dto")
+@Schema(name = "[PGREQ][User] 사진생성요청 생성 dto")
 public class PGREQSaveRequestDto {
 	@NotBlank
 	@Schema(description = "프롬프트", example = "벚꽃길에서 벤치에 앉아있는 사진이요")

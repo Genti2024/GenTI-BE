@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민의 신고내역 조회 응답 dto")
+@Schema(name = "[Report][Admin] 신고내역 조회 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReportFindByAdminResponseDto {

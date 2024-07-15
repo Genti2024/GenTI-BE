@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ResponseCode {
 	OK(null, HttpStatus.OK, true, null),
+	SEE_OTHER(null, HttpStatus.SEE_OTHER, true, null),
 	/**
 	 * 인증/인가
 	 */
@@ -97,7 +98,7 @@ public enum ResponseCode {
 	UnexpectedPictureGenerateRequestStatus(ErrorConstants.UnexpectedPictureGenerateRequestStatus, HttpStatus.CONFLICT,
 		false, "현재 사진생성요청의 상태가 [%s]임, 요청을 수행할 수 없습니다."),
 	NoPictureGenerateRequest(ErrorConstants.NoPictureGenerateRequest, HttpStatus.NO_CONTENT, false,
-		"사진 생성요청이 1개도 없습니다."),
+		"사진 생성요청이 없습니다."),
 	PictureGenerateRequestAlreadyInProgress(ErrorConstants.PictureGenerateRequestAlreadyInProgress,
 		HttpStatus.BAD_REQUEST, false, "이미 작업이 진행중인 요청은 수정이 불가합니다."),
 	PictureGenerateRequestNotAssignedToCreator(ErrorConstants.PictureGenerateRequestNotAssignedToCreator,

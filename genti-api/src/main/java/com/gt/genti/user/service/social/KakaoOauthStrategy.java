@@ -18,8 +18,8 @@ import com.gt.genti.openfeign.kakao.client.KakaoApiClient;
 import com.gt.genti.openfeign.kakao.client.KakaoAuthApiClient;
 import com.gt.genti.openfeign.kakao.dto.response.KakaoTokenResponse;
 import com.gt.genti.openfeign.kakao.dto.response.KakaoUserResponse;
-import com.gt.genti.user.dto.request.SocialLoginRequest;
-import com.gt.genti.user.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
@@ -85,7 +85,6 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 				.oauthPlatform(request.getOauthPlatform())
 				.username(userResponse.kakaoAccount().name())
 				.nickname(RandomUtil.generateRandomNickname())
-				// .oauthImageUrl(userResponse.kakaoAccount().profile().profileImageUrl())
 				.email(userResponse.kakaoAccount().email())
 				.build());
 			user = newUser;
@@ -102,7 +101,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			.build();
 		TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), isNewUser, token);
+		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, token);
 	}
 
 	private static String getBirthDateStringFrom(KakaoUserResponse userResponse) {

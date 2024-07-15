@@ -1,4 +1,4 @@
-package com.gt.genti.user.dto.request;
+package com.gt.genti.auth.dto.request;
 
 import com.gt.genti.user.model.OauthPlatform;
 

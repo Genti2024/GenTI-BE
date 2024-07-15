@@ -1,7 +1,7 @@
 package com.gt.genti.user.service.social;
 
-import com.gt.genti.user.dto.request.SocialLoginRequest;
-import com.gt.genti.user.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 
 public interface SocialLoginStrategy {
 

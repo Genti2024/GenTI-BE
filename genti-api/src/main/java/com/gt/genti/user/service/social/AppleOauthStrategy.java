@@ -20,8 +20,8 @@ import com.gt.genti.openfeign.apple.service.AppleClaimsValidator;
 import com.gt.genti.openfeign.apple.service.AppleJwtParser;
 import com.gt.genti.openfeign.apple.service.AppleUserResponse;
 import com.gt.genti.openfeign.apple.service.PublicKeyGenerator;
-import com.gt.genti.user.dto.request.SocialLoginRequest;
-import com.gt.genti.user.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
@@ -54,7 +54,7 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.getPlatformId())
 				.oauthPlatform(request.getOauthPlatform())
-				.username(userResponse.getEmail())
+				.username(null)
 				.nickname(RandomUtil.generateRandomNickname())
 				.email(userResponse.getEmail())
 				.build());
@@ -72,7 +72,7 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 			.build();
 		TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), isNewUser, token);
+		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, token);
 	}
 
 	@Override

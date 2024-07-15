@@ -27,7 +27,7 @@ public interface PictureGenerateRequestRepository
 		+ "where pqr.requester = :requester and "
 		+ "pqr.pictureGenerateRequestStatus  = :requestStatus "
 		+ "order by pqr.createdAt desc")
-	List<PictureGenerateRequest> findByRequestStatusAndUserId(PictureGenerateRequestStatus requestStatus,
+	List<PictureGenerateRequest> findByRequestStatusAndUser(PictureGenerateRequestStatus requestStatus,
 		User requester);
 
 	List<PictureGenerateRequest> findAllByRequester(User requester);

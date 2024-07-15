@@ -46,7 +46,8 @@ public class AdminUserController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@PostMapping("/users/{userId}/status")
-	public ResponseEntity<ApiResult<Boolean>> changeUserStatus(@PathVariable Long userId,
+	public ResponseEntity<ApiResult<Boolean>> changeUserStatus(
+		@PathVariable(value = "userId") Long userId,
 		@RequestBody @Valid UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		return success(userService.updateUserStatus(userId, userStatusUpdateRequestDto));
 	}
@@ -56,7 +57,8 @@ public class AdminUserController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@PostMapping("/users/{userId}/role")
-	public ResponseEntity<ApiResult<Boolean>> changeUserRole(@PathVariable Long userId,
+	public ResponseEntity<ApiResult<Boolean>> changeUserRole(
+		@PathVariable(value = "userId") Long userId,
 		@RequestBody @Valid UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
 		return success(userService.updateUserRole(userId, userRoleUpdateRequestDto));
 	}

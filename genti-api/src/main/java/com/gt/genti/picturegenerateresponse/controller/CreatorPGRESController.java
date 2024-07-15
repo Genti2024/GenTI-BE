@@ -50,7 +50,7 @@ public class CreatorPGRESController {
 	public ResponseEntity<ApiResult<Boolean>> updatePictureUrl(
 		@AuthUser Long userId,
 		@Parameter(description = "사진 url을 업데이트할 사진생성응답 Id", example = "1")
-		@PathVariable Long pictureGenerateResponseId,
+		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId,
 		@RequestBody @Valid List<@Valid CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList
 	) {
 		return success(
@@ -71,7 +71,7 @@ public class CreatorPGRESController {
 	public ResponseEntity<ApiResult<PGRESSubmitByCreatorResponseDto>> submitPictureGenerateResponse(
 		@AuthUser Long userId,
 		@Parameter(description = "제출할 사진생성응답 Id", example = "1")
-		@PathVariable Long pictureGenerateResponseId) {
+		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId) {
 		return success(
 			pictureGenerateWorkService.submitToAdmin(userId, pictureGenerateResponseId));
 	}
@@ -85,7 +85,7 @@ public class CreatorPGRESController {
 	@PostMapping("/{pictureGenerateResponseId}/memo")
 	public ResponseEntity<ApiResult<Boolean>> updateMemo(
 		@Parameter(description = "메모를 수정할 사진생성응답 Id", example = "1")
-		@PathVariable Long pictureGenerateResponseId,
+		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId,
 		@RequestBody @Valid MemoUpdateRequestDto memoUpdateRequestDto) {
 		return success(pictureGenerateWorkService.updateMemo(pictureGenerateResponseId, memoUpdateRequestDto));
 	}

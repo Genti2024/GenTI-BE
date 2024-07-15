@@ -132,7 +132,9 @@ public class User extends BaseTimeEntity {
 		if (this.introduction == null) {
 			this.introduction = "";
 		}
-
+		if (this.username == null) {
+			this.username = "";
+		}
 		if (this.requestTaskCount == null) {
 			this.requestTaskCount = 0;
 		}

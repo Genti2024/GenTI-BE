@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
-import com.gt.genti.user.dto.request.SocialLoginRequest;
-import com.gt.genti.user.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.OauthPlatform;
 
 import jakarta.annotation.PostConstruct;

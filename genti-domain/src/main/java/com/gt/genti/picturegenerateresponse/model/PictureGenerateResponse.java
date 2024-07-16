@@ -101,6 +101,10 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 		this.request.submittedByAdmin();
 	}
 
+	public void userVerified(){
+		this.status = PictureGenerateResponseStatus.COMPLETED;
+	}
+
 	public PictureGenerateResponse(Creator creator, PictureGenerateRequest request) {
 		this.creator = creator;
 		this.request = request;

@@ -158,7 +158,6 @@ public class PictureGenerateWorkService {
 				String.format("사진생성요청 Id : %d", pictureGenerateRequestId)));
 	}
 
-	
 	public Boolean rejectPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
 		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser().getId(), userId)) {
@@ -283,7 +282,6 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
 	}
 
-	
 	public PGRESUpdateAdminInChargeResponseDto updateAdminInCharge(Long pgresId,
 		PGRESUpdateAdminInChargeRequestDto requestDto) {
 		PictureGenerateResponse foundPGRES = findPGRES(pgresId);
@@ -298,6 +296,24 @@ public class PictureGenerateWorkService {
 			.adminInCharge(foundPGRES.getAdminInCharge())
 			.status(foundPGRES.getStatus())
 			.build();
+	}
+
+	public Boolean verifyPGRES(Long userId, Long pgresId) {
+		User foundUser = findUserById(userId);
+		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(pgresId)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateResponseNotFound));
+		PictureGenerateRequest pgreq = foundPGRES.getRequest();
+		if (!Objects.equals(pgreq.getRequester().getId(), foundUser.getId())) {
+			throw ExpectedException.withLogging(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest);
+		}
+		if (!pgreq.getPictureGenerateRequestStatus().equals(PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION)) {
+			throw ExpectedException.withLogging(ResponseCode.UnexpectedPictureGenerateRequestStatus,
+				pgreq.getPictureGenerateRequestStatus().getResponse());
+		}
+		pgreq.userVerified();
+		foundPGRES.userVerified();
+
+		return true;
 	}
 }
 

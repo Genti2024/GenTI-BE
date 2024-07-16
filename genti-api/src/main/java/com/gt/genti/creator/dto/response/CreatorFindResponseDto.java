@@ -7,9 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "공급자 조회 응답 dto")
 @Getter
 @NoArgsConstructor
+@Schema(name = "[Creator][Creator] 공급자 조회 응답 dto")
 public class CreatorFindResponseDto {
 	@Schema(description = "공급자 DB Id", example = "1")
 	Long creatorId;

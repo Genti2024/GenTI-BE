@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민의 출금 요청 처리 결과 응답 dto")
+@Schema(name = "[Withdraw][Admin] 출금 요청 해결(송금) 완료시 응답 dto")
 @Getter
 @NoArgsConstructor
 public class WithdrawCompletionResponseDto {

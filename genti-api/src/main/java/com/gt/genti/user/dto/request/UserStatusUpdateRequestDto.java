@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "유저 상태(활성화/비활성화) 수정 요청 dto")
+@Schema(name = "[User][Admin] 유저 상태(활성화/비활성화) 수정 요청 dto", description = "유저 비활성화시 사용")
 public class UserStatusUpdateRequestDto {
 	@NotNull
 	@Schema(description = "유저의 상태")

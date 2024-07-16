@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
-import com.gt.genti.user.model.AuthUser;
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picturegenerateresponse.dto.request.PGRESUpdateAdminInChargeRequestDto;
@@ -26,6 +25,7 @@ import com.gt.genti.picturegenerateresponse.service.PictureGenerateWorkService;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.swagger.RequireImageUpload;
+import com.gt.genti.user.model.AuthUser;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,7 +48,7 @@ public class AdminPGRESController {
 	@PostMapping("/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESSubmitByAdminResponseDto>> submit(
 		@Parameter(description = "사진생성응답 Id", example = "1", required = true)
-		@PathVariable Long pictureGenerateResponseId) {
+		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId) {
 		return success(pictureGenerateWorkService.submitFinal(pictureGenerateResponseId));
 	}
 
@@ -63,7 +63,7 @@ public class AdminPGRESController {
 		@AuthUser Long userId,
 		@Parameter(description = "업로드한 사진 url 리스트", required = true)
 		@RequestBody @Valid List<@Valid CommonPictureKeyUpdateRequestDto> reuqestDtoList,
-		@PathVariable Long pictureGenerateResponseId) {
+		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId) {
 		return success(
 			pictureGenerateWorkService.updatePictureListCreatedByAdmin(userId, reuqestDtoList,
 				pictureGenerateResponseId));
@@ -76,7 +76,7 @@ public class AdminPGRESController {
 	@Logging(item = LogItem.PGRES_ASSIGNEE, action = LogAction.UPDATE, requester = LogRequester.ADMIN)
 	@PostMapping("/{pictureGenerateResponseId}/admin-in-charge")
 	public ResponseEntity<ApiResult<PGRESUpdateAdminInChargeResponseDto>> updateAdminInCharge(
-		@PathVariable Long pictureGenerateResponseId,
+		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId,
 		@RequestBody PGRESUpdateAdminInChargeRequestDto requestDto) {
 		return success(pictureGenerateWorkService.updateAdminInCharge(pictureGenerateResponseId, requestDto));
 	}

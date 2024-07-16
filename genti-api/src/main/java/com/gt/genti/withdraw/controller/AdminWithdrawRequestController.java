@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.withdraw.dto.response.WithdrawCompletionResponseDto;
-import com.gt.genti.withdraw.dto.response.WithdrawFindByAdminResponseDto;
-import com.gt.genti.withdraw.service.WithdrawService;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
@@ -26,6 +23,9 @@ import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.validator.ValidEnum;
+import com.gt.genti.withdraw.dto.response.WithdrawCompletionResponseDto;
+import com.gt.genti.withdraw.dto.response.WithdrawFindByAdminResponseDto;
+import com.gt.genti.withdraw.service.WithdrawService;
 import com.gt.genti.withdrawrequest.model.WithdrawRequestStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,7 +80,7 @@ public class AdminWithdrawRequestController {
 	@PostMapping("/{withdrawRequestId}")
 	public ResponseEntity<ApiResult<WithdrawCompletionResponseDto>> complete(
 		@Parameter(description = "출금요청 Id", example = "1")
-		@PathVariable(name = "withdrawRequestId") Long withdrawRequestId,
+		@PathVariable(value = "withdrawRequestId") Long withdrawRequestId,
 		@AuthUser Long userId
 	) {
 		return success(withDrawService.complete(withdrawRequestId, userId));

@@ -16,7 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민의 유저 조회 응답 dto")
+@Schema(name = "[User][Admin] 유저조회 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor
 public class UserFindByAdminResponseDto {

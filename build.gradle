@@ -36,6 +36,11 @@ subprojects {
         // redis 사용간 localdatetime json 직렬화 위해
         implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1'
 
+
+        // swagger( auth, external dto가 문서화되지 않아서 임시로 프로젝트 전체에 추가
+        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+
         // lombok
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'

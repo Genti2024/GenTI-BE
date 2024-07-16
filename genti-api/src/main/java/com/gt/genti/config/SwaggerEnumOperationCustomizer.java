@@ -1,5 +1,6 @@
-package com.gt.genti.swagger;
+package com.gt.genti.config;
 
+import static com.gt.genti.response.GentiResponse.*;
 import static org.springframework.util.MimeTypeUtils.*;
 
 import java.lang.reflect.ParameterizedType;
@@ -14,8 +15,9 @@ import org.springframework.web.method.HandlerMethod;
 
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
-import com.gt.genti.response.GentiResponse;
-import com.gt.genti.response.GentiResponse.ApiResult;
+import com.gt.genti.swagger.EnumResponseGroup;
+import com.gt.genti.swagger.EnumResponses;
+import com.gt.genti.swagger.RequireImageUpload;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.Operation;
@@ -33,7 +35,7 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 
 	@SuppressWarnings("rawtypes")
 	private final Schema errorEntitySchema = ModelConverters.getInstance()
-		.readAllAsResolvedSchema(GentiResponse.ApiResult.class).schema;
+		.readAllAsResolvedSchema(ApiResult.class).schema;
 
 	@Override
 	public Operation customize(Operation operation, HandlerMethod handlerMethod) {
@@ -88,7 +90,7 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 		return convertResponseInner(
 			errorEntitySchema.description(code.getErrorMessage()),
 			code,
-			GentiResponse.error(code)
+			error(code)
 		);
 	}
 
@@ -104,14 +106,12 @@ public class SwaggerEnumOperationCustomizer implements OperationCustomizer {
 		Schema schema = ModelConverters.getInstance().readAllAsResolvedSchema(dtoType).schema;
 		Map<String, Schema> properties = schema.getProperties();
 		Boolean success = responseCode.isSuccess();
-		Integer status = responseCode.getHttpStatusCode().value();
-		String code = responseCode.getErrorCode();
-		String message = responseCode.getErrorMessage();
+		String errorCode = responseCode.getErrorCode();
+		String errorMessage = responseCode.getErrorMessage();
 
 		properties.get("success").setDefault(success);
-		properties.get("status").setDefault(status);
-		properties.get("code").setDefault(code);
-		properties.get("message").setDefault(message);
+		properties.get("errorCode").setDefault(errorCode);
+		properties.get("errorMessage").setDefault(errorMessage);
 
 		return schema;
 	}

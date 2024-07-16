@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "완성된 예시 업로드")
-
+@Schema(name = "[ResponseExample][Admin] 완성된 예시 업로드 요청 by 어드민 dto")
 public class ExampleSaveRequestDto {
 	@NotNull
 	CommonPictureKeyUpdateRequestDto uploadPicture;

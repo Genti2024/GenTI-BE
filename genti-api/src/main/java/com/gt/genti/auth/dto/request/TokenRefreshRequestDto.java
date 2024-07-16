@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-@Schema(description = "인증 토큰 Refresh 요청 Dto")
+@Schema(name = "[Auth][Anonymous] Genti 인증토큰 Refresh 요청 Dto", description = "토큰 전달")
 public class TokenRefreshRequestDto {
 	@NotBlank
 	@Schema(description = "refreshToken")

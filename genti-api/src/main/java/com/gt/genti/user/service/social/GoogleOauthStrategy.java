@@ -19,8 +19,8 @@ import com.gt.genti.openfeign.google.client.GoogleApiClient;
 import com.gt.genti.openfeign.google.client.GoogleAuthApiClient;
 import com.gt.genti.openfeign.google.dto.response.GoogleInfoResponse;
 import com.gt.genti.openfeign.google.dto.response.GoogleTokenResponse;
-import com.gt.genti.user.dto.request.SocialLoginRequest;
-import com.gt.genti.user.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.user.service.UserSignUpEventPublisher;
@@ -102,7 +102,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 			.build();
 		TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), isNewUser, token);
+		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, token);
 	}
 
 	@Override

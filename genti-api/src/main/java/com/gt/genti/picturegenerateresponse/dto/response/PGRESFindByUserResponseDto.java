@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "사용자의 내 요청에 의해 완성된 사진 조회 응답 dto")
+@Schema(name = "[PGRES][User] 사진생성응답 조회 by 사용자 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGRESFindByUserResponseDto {

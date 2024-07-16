@@ -22,7 +22,8 @@ public class EnumUtil {
 			PictureGenerateRequestStatus.CREATED,
 			PictureGenerateRequestStatus.ASSIGNING,
 			PictureGenerateRequestStatus.IN_PROGRESS,
-			PictureGenerateRequestStatus.MATCH_TO_ADMIN
+			PictureGenerateRequestStatus.MATCH_TO_ADMIN,
+			PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION
 		);
 
 	public static List<PictureGenerateRequestStatus> PGREQ_IN_PROGRESS_LIST = List.of(

@@ -13,9 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "공급자의 사진생성요청 간단히 조회 응답 dto")
 @Getter
 @NoArgsConstructor
+@Schema(name = "[PGREQ][Creator] 사진생성요청 간단히 조회 by 공급자 응답 dto")
 public class PGREQBriefFindByCreatorResponseDto {
 	@Schema(description = "사진생성요청 DB Id", example = "1")
 	Long pictureGenerateRequestId;

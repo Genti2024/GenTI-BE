@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민의 사진생성응답 자세히 조회 응답 dto")
+@Schema(name = "[PGRES][Admin] 사진생성응답 조회 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor
 public class PGRESDetailFindByAdminResponseDto {

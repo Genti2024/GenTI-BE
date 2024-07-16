@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "사진 Key 업데이트 요청 dto")
+@Schema(name = "[Picture][Anonymous] 사진 업로드 결과 Key 업데이트 요청 dto", description = "사진을 업로드 한 이후 저장한 경로(s3)가 어디인지 서버에 알림")
 public class CommonPictureKeyUpdateRequestDto {
 
 	@NotNull

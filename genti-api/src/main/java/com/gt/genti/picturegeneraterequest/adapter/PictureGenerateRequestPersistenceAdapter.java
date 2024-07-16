@@ -45,7 +45,7 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	@Override
 	public Optional<PictureGenerateRequest> findByUserAndStatusInOrderByCreatedByDesc(User user,
 		List<PictureGenerateRequestStatus> statusList) {
-		return pictureGenerateRequestRepository.findByUserIdAndRequestStatusIn(user, statusList);
+		return pictureGenerateRequestRepository.findByUserAndRequestStatusIn(user, statusList);
 	}
 
 	@Override

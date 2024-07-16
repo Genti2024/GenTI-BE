@@ -18,7 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민 사진생성요청 응답 dto")
+@Schema(name = "[PGREQ][Admin] 사진생성요청 조회 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PGREQDetailFindByAdminResponseDto {

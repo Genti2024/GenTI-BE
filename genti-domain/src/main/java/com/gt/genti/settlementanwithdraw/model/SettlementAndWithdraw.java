@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "정산 및 출금내역")
+@Schema(name = "[Settlement&Withdraw][Creator] 정산&출금내역 응답 dto")
 @Getter
 @NoArgsConstructor
 public class SettlementAndWithdraw {

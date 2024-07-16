@@ -14,9 +14,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "유저의 사진생성요청 간단히 조회 응답 dto")
 @Getter
 @NoArgsConstructor
+@Schema(name = "[PGREQ][User] 사진생성요청 간단히 조회 by 사용자 응답 dto")
 public class PGREQBriefFindByUserResponseDto {
 	@Schema(description = "사진생성요청 DB Id", example = "1")
 	Long pictureGenerateRequestId;
@@ -34,7 +34,6 @@ public class PGREQBriefFindByUserResponseDto {
 	LocalDateTime createdAt;
 
 	public PGREQBriefFindByUserResponseDto(PictureGenerateRequest pgreq) {
-
 		this.pictureGenerateRequestId = pgreq.getId();
 		this.prompt = pgreq.getPrompt();
 		this.cameraAngle = pgreq.getCameraAngle();
@@ -52,8 +51,5 @@ public class PGREQBriefFindByUserResponseDto {
 					.toList());
 		}
 
-		// Duration duration = Duration.between(LocalDateTime.now(),
-		// 	createdAt.plusMinutes(DateTimeUtil.ACCEPTABLE_TIME_MINUTE));
-		// this.remainTime = DateTimeUtil.getTimeString(duration);
 	}
 }

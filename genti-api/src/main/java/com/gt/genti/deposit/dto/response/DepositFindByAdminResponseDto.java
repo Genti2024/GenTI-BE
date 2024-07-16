@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "잔액 조회 dto")
 @Getter
 @NoArgsConstructor
+@Schema(name = "[Deposit][Admin] 공급자 잔액 조회 by 어드민 dto")
 public class DepositFindByAdminResponseDto {
 	@Schema(description = "잔액 테이블 Id", example = "1")
 	Long id;

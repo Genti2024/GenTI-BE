@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
-import com.gt.genti.user.model.AuthUser;
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegenerateresponse.service.PictureGenerateWorkService;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
+import com.gt.genti.user.model.AuthUser;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -63,7 +63,7 @@ public class CreatorPGREQController {
 	public ResponseEntity<ApiResult<Boolean>> acceptPictureGenerateRequest(
 		@AuthUser Long userId,
 		@Parameter(description = "수락할 사진생성요청의 id", example = "1")
-		@PathVariable Long pictureGenerateRequestId) {
+		@PathVariable(value = "pictureGenerateRequestId") Long pictureGenerateRequestId) {
 		return GentiResponse.success(
 			pictureGenerateWorkService.acceptPictureGenerateRequest(userId, pictureGenerateRequestId));
 	}
@@ -80,7 +80,7 @@ public class CreatorPGREQController {
 	public ResponseEntity<ApiResult<Boolean>> rejectPictureGenerateRequest(
 		@AuthUser Long userId,
 		@Parameter(description = "거절할 사진생성요청의 id", example = "1")
-		@PathVariable Long pictureGenerateRequestId) {
+		@PathVariable(value = "pictureGenerateRequestId") Long pictureGenerateRequestId) {
 		return GentiResponse.success(
 			pictureGenerateWorkService.rejectPictureGenerateRequest(userId, pictureGenerateRequestId));
 	}
@@ -121,7 +121,7 @@ public class CreatorPGREQController {
 	public ResponseEntity<ApiResult<PGREQDetailFindByAdminResponseDto>> getPictureGenerateRequestDetail(
 		@AuthUser Long userId,
 		@Parameter(description = "조회할 사진생성요청의 id", example = "1")
-		@PathVariable Long pictureGenerateRequestId) {
+		@PathVariable(value = "pictureGenerateRequestId") Long pictureGenerateRequestId) {
 		return GentiResponse.success(pictureGenerateWorkService.getPictureGenerateRequestDetail(
 			userId, pictureGenerateRequestId));
 	}

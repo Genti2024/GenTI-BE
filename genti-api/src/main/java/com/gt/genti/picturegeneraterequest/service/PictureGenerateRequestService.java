@@ -1,6 +1,7 @@
 package com.gt.genti.picturegeneraterequest.service;
 
 import static com.gt.genti.common.EnumUtil.*;
+import static com.gt.genti.picturegeneraterequest.dto.response.PictureGenerateRequestStatusForUser.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,14 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
-import com.gt.genti.picture.pose.model.PicturePose;
-import com.gt.genti.picture.userface.model.PictureUserFace;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
-import com.gt.genti.user.model.User;
-import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.openai.dto.PromptAdvancementRequestCommand;
@@ -28,16 +21,25 @@ import com.gt.genti.openai.service.OpenAIService;
 import com.gt.genti.picture.command.CreatePicturePoseCommand;
 import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
+import com.gt.genti.picture.pose.model.PicturePose;
 import com.gt.genti.picture.service.PictureService;
+import com.gt.genti.picture.userface.model.PictureUserFace;
 import com.gt.genti.picturegeneraterequest.command.PGREQSaveCommand;
 import com.gt.genti.picturegeneraterequest.dto.request.PGREQSaveRequestDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
+import com.gt.genti.picturegeneraterequest.dto.response.PictureGenerateRequestStatusForUser;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESDetailFindByAdminResponseDto;
+import com.gt.genti.picturegenerateresponse.dto.response.PGRESFindByUserResponseDto;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 import com.gt.genti.usecase.PictureGenerateRequestUseCase;
+import com.gt.genti.user.model.User;
+import com.gt.genti.user.repository.UserRepository;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -66,16 +68,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.map(convertPGRESToResponseDto());
 	}
 
-	@Override
-	public PGREQBriefFindByUserResponseDto getByRequesterAndStatusIs(Long userId,
-		PictureGenerateRequestStatus status) {
-		User foundUser = findUserById(userId);
-		return pictureGenerateRequestPort.findByUserAndStatusInOrderByCreatedByDesc(foundUser, List.of(status))
-			.map(PGREQBriefFindByUserResponseDto::new)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-				"사진생성요청 상태 = " + status.getStringValue()));
-	}
-
 	private User findUserById(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
@@ -97,15 +89,35 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public PGREQStatusResponseDto getPGREQStatusIfPendingExists(Long userId) {
+	public PGREQStatusResponseDto getPendingPGREQStatusIfExists(Long userId) {
 		User foundUser = findUserById(userId);
 		Optional<PictureGenerateRequest> optionalPGREQ = pictureGenerateRequestPort.findByUserAndStatusInOrderByCreatedByDesc(
 			foundUser, PGREQ_PENDING_LIST);
 		if (optionalPGREQ.isPresent()) {
 			PictureGenerateRequest foundPGREQ = optionalPGREQ.get();
+			PictureGenerateRequestStatusForUser statusForUser;
+			switch (foundPGREQ.getPictureGenerateRequestStatus()) {
+				case AWAIT_USER_VERIFICATION -> statusForUser = AWAIT_USER_VERIFICATION;
+				case COMPLETED -> statusForUser = COMPLETED;
+				default -> statusForUser = IN_PROGRESS;
+			}
+			if (statusForUser == AWAIT_USER_VERIFICATION) {
+				PictureGenerateResponse needVerifyPGRES = foundPGREQ.getResponseList()
+					.stream()
+					.filter(pgres -> pgres.getStatus().equals(PictureGenerateResponseStatus.SUBMITTED_FINAL))
+					.findFirst()
+					.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UnHandledException,
+						String.format("유저가 최종 확인할 적절한 사진생성응답을 찾지 못했습니다. \n 사진생성요청 id [%d] 사진생성요청 상태 [%s]"
+							, foundPGREQ.getId(), foundPGREQ.getPictureGenerateRequestStatus())));
+				return PGREQStatusResponseDto.builder()
+					.pictureGenerateRequestId(foundPGREQ.getId())
+					.status(statusForUser)
+					.pgresFindByUserResponseDto(new PGRESFindByUserResponseDto(needVerifyPGRES))
+					.build();
+			}
 			return PGREQStatusResponseDto.builder()
 				.pictureGenerateRequestId(foundPGREQ.getId())
-				.status(foundPGREQ.getPictureGenerateRequestStatus())
+				.status(statusForUser)
 				.build();
 		}
 		throw ExpectedException.withoutLogging(ResponseCode.PictureGenerateRequestNotFound,
@@ -113,24 +125,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				PictureGenerateRequestStatus::getStringValue).collect(Collectors.joining(", ")));
 	}
 
-	@Override
-	public PGREQDetailFindByUserResponseDto findPGREQByRequestAndId(Long userId, Long pictureGenerateRequestId) {
-
-		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findById(
-				pictureGenerateRequestId)
-			.orElseThrow(() ->
-				ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-					"사진생성요청 Id : " + pictureGenerateRequestId));
-
-		User foundUser = findUserById(userId);
-
-		if (!Objects.equals(foundPictureGenerateRequest.getRequester().getId(), foundUser.getId())) {
-			throw ExpectedException.withLogging(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest);
-		}
-		return new PGREQDetailFindByUserResponseDto(foundPictureGenerateRequest);
-	}
-
-	@Transactional
 	@Override
 	public PictureGenerateRequest createPGREQ(Long userId,
 		PGREQSaveCommand pgreqSaveCommand) {
@@ -174,7 +168,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		return pictureGenerateRequestPort.save(createdPGREQ);
 	}
 
-	@Transactional
 	@Override
 	public void modifyPGREQ(Long userId,
 		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto) {
@@ -203,24 +196,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		findPictureGenerateRequest.modify(pgreqSaveRequestDto.getPrompt(), pgreqSaveRequestDto.getCameraAngle(),
 			pgreqSaveRequestDto.getShotCoverage(), pgreqSaveRequestDto.getPictureRatio(), picturePose,
 			pictureUserFaceList);
-	}
-
-	@Transactional
-	@Override
-	public Boolean verifyCompletedPGREQ(Long userId, Long pictureGenerateRequestId) {
-		User foundUser = findUserById(userId);
-		PictureGenerateRequest foundPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequester(
-				pictureGenerateRequestId, foundUser)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-				String.format("생성요청한 유저 id : %d 사진생성요청 Id : %d", foundUser.getId(), pictureGenerateRequestId)));
-
-		if (foundPictureGenerateRequest.getPictureGenerateRequestStatus()
-			!= PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-				foundPictureGenerateRequest.getPictureGenerateRequestStatus().getStringValue());
-		}
-		foundPictureGenerateRequest.userVerified();
-		return true;
 	}
 
 	@NotNull
@@ -262,5 +237,4 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.build();
 
 	}
-
 }

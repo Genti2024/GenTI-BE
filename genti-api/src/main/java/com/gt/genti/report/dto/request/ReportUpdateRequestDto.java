@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@Schema(description = "신고 상태(해결전/후) 수정 Dto")
-
+@Schema(name = "[Report][Admin] 신고 상태 변경 요청 by 어드민 dto", description = "신고 상태(해결전/후) 수정 Dto")
 public class ReportUpdateRequestDto {
 	@NotNull
 	@Min(1)

@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "어드민의 공급자 조회 응답 dto")
 @Getter
 @NoArgsConstructor
+@Schema(name = "[Creator][Admin] 어드민의 공급자 조회 응답 dto")
 public class CreatorFindByAdminResponseDto {
 	@Schema(description = "공급자 DB Id", example = "1")
 	Long creatorId;

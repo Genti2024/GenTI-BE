@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Schema(description = "신고 생성 요청 dto")
+@Schema(name = "[Report][User] 신고 생성 요청 by 사용자 dto")
 public class ReportCreateRequestDto {
 	@NotNull
 	@Schema(description = "신고할 사진생성응답 id", example = "1")

@@ -122,6 +122,7 @@ public enum ResponseCode {
 	UserNotLoggedIn(ErrorConstants.UserNotLoggedIn, HttpStatus.UNAUTHORIZED, false, "로그아웃되었습니다. 다시 로그인해주세요"),
 	WithDrawnUser(ErrorConstants.WithDrawnUser, HttpStatus.BAD_REQUEST, false, "탈퇴한 사용자입니다."),
 	UserNotFound(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 userId: [%s]"),
+	UserNotFoundByEmail(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 email: [%s]"),
 	UserDeactivated(ErrorConstants.UserDeactivated, HttpStatus.BAD_REQUEST, false, "비활성화된 계정입니다."),
 
 	/**

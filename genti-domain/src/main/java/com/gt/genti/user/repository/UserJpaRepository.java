@@ -21,6 +21,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         + "where u.userRole = com.gt.genti.user.model.UserRole.ADMIN ")
     List<User> findAdminUser(Pageable pageable);
 
+    Optional<User> findByEmail(String email);
 
 }
 

@@ -1,5 +1,7 @@
 package com.gt.genti.picturegeneraterequest.controller;
 
+import static com.gt.genti.response.GentiResponse.*;
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -12,24 +14,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
+import com.gt.genti.response.GentiResponse;
+import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.usecase.PictureGenerateRequestUseCase;
-import com.gt.genti.response.GentiResponse;
-import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.validator.ValidEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -61,15 +64,20 @@ public class AdminPGREQController {
 		@Parameter(description = "사진생성응답의 상태 ALL : 모든 상태 조회 SUBMITTED_FIRST : 공급자가 제출하여 어드민이 얼굴작업해야하는상태", example = "ADMIN_IN_PROGRESS", schema = @Schema(
 			allowableValues = {"SUBMITTED_FIRST", "ADMIN_IN_PROGRESS", "SUBMITTED_FINAL", "COMPLETED", "ALL"}))
 		@RequestParam(name = "status", defaultValue = "ALL") @ValidEnum(value = PictureGenerateResponseStatus.class, hasAllOption = true) String status,
+		@Parameter(description = "유저의 email")
+		@RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email,
 		@Parameter(description = "true : 공급자를 거치지 않고 어드민에게 매칭된 요청 조회, false : 공급자에게 매칭된 요청 조회")
 		@RequestParam(name = "matchToAdmin", defaultValue = "ALL") Boolean matchToAdmin
 	) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+		if(email != null){
+			return success(pictureGenerateRequestUseCase.getAllByRequestEmail(email, pageable));
+		}
 		if ("ALL".equalsIgnoreCase(status)) {
-			return GentiResponse.success(pictureGenerateRequestUseCase.getAllByMatchToAdminIs(matchToAdmin, pageable));
+			return success(pictureGenerateRequestUseCase.getAllByMatchToAdminIs(matchToAdmin, pageable));
 		} else {
-			return GentiResponse.success(pictureGenerateRequestUseCase.getAllByPGRESStatusInAndMatchToAdminIs(
+			return success(pictureGenerateRequestUseCase.getAllByPGRESStatusInAndMatchToAdminIs(
 				List.of(PictureGenerateResponseStatus.valueOf(status)), matchToAdmin, pageable));
 		}
 	}

@@ -7,13 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
+import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
+import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 import com.gt.genti.user.model.User;
-import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
 
 import lombok.RequiredArgsConstructor;
 
@@ -56,12 +57,19 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	@Override
 	public Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIs(
 		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable) {
-		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIs(statusList, matchToAdmin, pageable);
+		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIs(statusList,
+			matchToAdmin, pageable);
 	}
 
 	@Override
 	public Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable) {
 		return pictureGenerateRequestRepository.findByMatchToAdminIs(matchToAdmin, pageable);
 
+	}
+
+	@Override
+	public Page<PGREQDetailFindByAdminResponseDto> findAllByRequester(User foundUser, Pageable pageable) {
+		return pictureGenerateRequestRepository.findAllByRequester(foundUser, pageable)
+			.map(PGREQDetailFindByAdminResponseDto::new);
 	}
 }

@@ -23,6 +23,8 @@ public interface PictureGenerateRequestRepository
 
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
+	Page<PictureGenerateRequest> findAllByRequester(User requester, Pageable pageable);
+
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus."
 		+ "IN_PROGRESS "

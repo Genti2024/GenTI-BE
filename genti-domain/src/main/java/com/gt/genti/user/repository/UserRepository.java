@@ -19,4 +19,6 @@ public interface UserRepository extends UserJpaRepository, UserCustomRepository 
 	// edited at 2024-07-17
 	// author 서병렬
 	Optional<User> findByIdWithCache(Long id);
+
+	Optional<User> findByEmail(String email);
 }

@@ -71,6 +71,13 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.map(convertPGRESToResponseDto());
 	}
 
+	@Override
+	public Page<PGREQDetailFindByAdminResponseDto> getAllByRequestEmail(String email, Pageable pageable) {
+		User foundUser = userRepository.findByEmail(email)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		return pictureGenerateRequestPort.findAllByRequester(foundUser, pageable);
+	}
+
 	private User findUserById(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));

@@ -29,4 +29,6 @@ public interface PictureGenerateRequestUseCase {
 
 	Page<PGREQDetailFindByAdminResponseDto> getAllByPGRESStatusInAndMatchToAdminIs(
 		List<PictureGenerateResponseStatus> pictureGenerateResponseStatuses, boolean b, Pageable pageable);
+
+	Page<PGREQDetailFindByAdminResponseDto> getAllByRequestEmail(String email, Pageable pageable);
 }

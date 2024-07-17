@@ -1,5 +1,6 @@
 package com.gt.genti.picturegeneraterequest.dto.response;
 
+import com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESFindByUserResponseDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;

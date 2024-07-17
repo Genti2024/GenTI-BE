@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum PictureGenerateRequestStatusForUser implements ConvertableEnum {
 	IN_PROGRESS("IN_PROGRESS"),
 	AWAIT_USER_VERIFICATION("AWAIT_USER_VERIFICATION"),
+	CANCELED("CANCELED"),
 	COMPLETED("COMPLETED");
 
 	private final String stringValue;

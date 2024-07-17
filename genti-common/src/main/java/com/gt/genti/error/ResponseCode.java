@@ -151,7 +151,7 @@ public enum ResponseCode {
 	PictureGenerateResponseNotFound(ErrorConstants.PictureGenerateResponseNotFound, HttpStatus.NOT_FOUND, false,
 		"해당하는 사진생성응답을 찾을 수 없습니다."),
 	FinalPictureNotUploadedYet(ErrorConstants.FinalPictureNotUploadedYet, HttpStatus.BAD_REQUEST, false,
-		"최종 작업 사진이 제출되지 않았습니다."),
+		"최종 작업 사진이 제출되지 않았습니다. 사진생성응답 id : [%d]"),
 	CreatorsPictureNotUploadedYet(ErrorConstants.CreatorsPictureNotUploadedYet, HttpStatus.BAD_REQUEST, false,
 		"공급자 작업 사진이 제출되지 않았습니다."),
 	RequestBlockedDueToPictureGenerateResponseStatus(PGRESStateException, HttpStatus.NOT_ACCEPTABLE,
@@ -164,6 +164,7 @@ public enum ResponseCode {
 	AlreadyCompletedPictureGenerateResponse(ErrorConstants.AlreadyCompletedPictureGenerateResponse,
 		HttpStatus.BAD_REQUEST, false,
 		"이미 처리 완료된 응답입니다."),
+
 	/**
 	 * Report
 	 */

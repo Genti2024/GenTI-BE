@@ -215,7 +215,7 @@ public class PictureGenerateWorkService {
 		List<PictureCompleted> pictureCompletedList = pictureService.findAllPictureCompletedByPictureGenerateResponse(
 			foundPGRES);
 		if (pictureCompletedList.isEmpty()) {
-			throw ExpectedException.withLogging(ResponseCode.FinalPictureNotUploadedYet);
+			throw ExpectedException.withLogging(ResponseCode.FinalPictureNotUploadedYet, pictureGenerateResponseId);
 		}
 		foundPGRES.adminSubmit();
 		Duration elapsedDuration = foundPGRES.getAdminElapsedTime();

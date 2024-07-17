@@ -1,4 +1,4 @@
-package com.gt.genti.picturegeneraterequest.dto.response;
+package com.gt.genti.picturegeneraterequest.service.mapper;
 
 import com.gt.genti.common.ConvertableEnum;
 

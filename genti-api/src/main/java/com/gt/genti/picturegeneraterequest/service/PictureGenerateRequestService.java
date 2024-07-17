@@ -98,6 +98,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			PictureGenerateRequestStatusForUser statusForUser;
 			switch (foundPGREQ.getPictureGenerateRequestStatus()) {
 				case AWAIT_USER_VERIFICATION -> statusForUser = AWAIT_USER_VERIFICATION;
+				case CANCELED -> statusForUser = CANCELED;
 				case COMPLETED -> statusForUser = COMPLETED;
 				default -> statusForUser = IN_PROGRESS;
 			}

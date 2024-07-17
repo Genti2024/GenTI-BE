@@ -3,7 +3,6 @@ package com.gt.genti.picturegeneraterequest.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,14 +21,6 @@ import com.gt.genti.user.model.User;
 public interface PictureGenerateRequestRepository
 	extends JpaRepository<PictureGenerateRequest, Long> {
 
-	@Query("select pqr "
-		+ "from PictureGenerateRequest pqr "
-		+ "where pqr.requester = :requester and "
-		+ "pqr.pictureGenerateRequestStatus  = :requestStatus "
-		+ "order by pqr.createdAt desc")
-	List<PictureGenerateRequest> findByRequestStatusAndUser(PictureGenerateRequestStatus requestStatus,
-		User requester);
-
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
@@ -39,7 +30,7 @@ public interface PictureGenerateRequestRepository
 		+ "order by pgr.createdAt desc "
 		+ "limit 1 ")
 	Optional<PictureGenerateRequest> findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
-		Creator creator);
+		@Param(value = "creator") Creator creator);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus."
@@ -51,7 +42,7 @@ public interface PictureGenerateRequestRepository
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.id = :id "
 		+ "and pgr.requester = :requester ")
-	Optional<PictureGenerateRequest> findByIdAndRequesterId(Long id, User requester);
+	Optional<PictureGenerateRequest> findByIdAndRequesterId(@Param(value = "id") Long id, @Param(value = "requester") User requester);
 
 	List<PictureGenerateRequest> findAllByCreatorIsOrderByCreatedAtDesc(Creator creator);
 
@@ -60,8 +51,9 @@ public interface PictureGenerateRequestRepository
 		+ "and pgr.pictureGenerateRequestStatus = :status "
 		+ "order by pgr.createdAt desc "
 		+ "limit 1 ")
-	Optional<PictureGenerateRequest> findByStatusOrderByCreatedAtDesc(Creator creator,
-		PictureGenerateRequestStatus status);
+	Optional<PictureGenerateRequest> findByStatusOrderByCreatedAtDesc(
+		@Param(value = "creator") Creator creator,
+		@Param(value = "status") PictureGenerateRequestStatus status);
 
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.requester = :requester "
@@ -84,12 +76,13 @@ public interface PictureGenerateRequestRepository
 		+ "and pgreq.pictureGenerateRequestStatus in :activeRequestStatusList "
 		+ "order by pgreq.createdAt desc "
 		+ "limit 3 ")
-	List<PictureGenerateRequest> findByCreatorAndActiveStatus(Creator foundCreator,
+	List<PictureGenerateRequest> findByCreatorAndActiveStatus(
+		@Param(value = "foundCreator")
+		Creator foundCreator,
+		@Param(value = "activeRequestStatusList")
 		List<PictureGenerateRequestStatus> activeRequestStatusList,
+		@Param(value = "activeResponseStatusList")
 		List<PictureGenerateResponseStatus> activeResponseStatusList);
-
-
-	Page<PictureGenerateRequest> findAll(@NotNull Pageable pageable);
 
 	@Query("select pgres "
 		+ "from PictureGenerateResponse pgres "
@@ -97,7 +90,11 @@ public interface PictureGenerateRequestRepository
 		+ "and pgres.status in :statusList "
 		+ "order by pgres.request.createdAt desc")
 	Page<PictureGenerateResponse> findByPictureGenerateResponseStatusInAndMatchToAdminIs(
-		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable);
+		@Param(value = "statusList")
+		List<PictureGenerateResponseStatus> statusList,
+		@Param(value = "matchToAdmin")
+		boolean matchToAdmin,
+		Pageable pageable);
 
 
 	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);

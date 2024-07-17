@@ -45,6 +45,9 @@ public class ErrorConstants {
 	public static final String EncryptAlgorithmDeprecated = CODE(SERVER, 8);
 	public static final String DBToEnumFailed = CODE(SERVER, 9);
 	public static final String NotNullableEnum = CODE(SERVER, 10);
+	public static final String TimeOut = CODE(SERVER, 11);
+	public static final String EnumMappingFailed = CODE(SERVER, 12);
+
 
 	public static final String ActivePictureGenerateRequestNotExists = CODE(PGREQ, 1);
 	public static final String PictureGenerateRequestNotFound = CODE(PGREQ, 2);

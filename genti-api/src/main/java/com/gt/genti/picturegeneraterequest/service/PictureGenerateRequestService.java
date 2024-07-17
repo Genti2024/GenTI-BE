@@ -1,7 +1,7 @@
 package com.gt.genti.picturegeneraterequest.service;
 
 import static com.gt.genti.common.EnumUtil.*;
-import static com.gt.genti.picturegeneraterequest.dto.response.PictureGenerateRequestStatusForUser.*;
+import static com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,10 +29,11 @@ import com.gt.genti.picturegeneraterequest.dto.request.PGREQSaveRequestDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
-import com.gt.genti.picturegeneraterequest.dto.response.PictureGenerateRequestStatusForUser;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
+import com.gt.genti.picturegeneraterequest.service.mapper.PGREQStatusToPGREQStatusForUserMapper;
+import com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESDetailFindByAdminResponseDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESFindByUserResponseDto;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
@@ -55,6 +56,8 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final PictureService pictureService;
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
+
+	private final PGREQStatusToPGREQStatusForUserMapper pgreqStatusToPGREQStatusForUserMapper = new PGREQStatusToPGREQStatusForUserMapper();
 
 	@Override
 	public Page<PGREQDetailFindByAdminResponseDto> getAllByMatchToAdminIs(boolean matchToAdmin, Pageable pageable) {
@@ -95,12 +98,9 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			foundUser, PGREQ_PENDING_LIST);
 		if (optionalPGREQ.isPresent()) {
 			PictureGenerateRequest foundPGREQ = optionalPGREQ.get();
-			PictureGenerateRequestStatusForUser statusForUser;
-			switch (foundPGREQ.getPictureGenerateRequestStatus()) {
-				case AWAIT_USER_VERIFICATION -> statusForUser = AWAIT_USER_VERIFICATION;
-				case COMPLETED -> statusForUser = COMPLETED;
-				default -> statusForUser = IN_PROGRESS;
-			}
+			PictureGenerateRequestStatusForUser statusForUser = pgreqStatusToPGREQStatusForUserMapper.aToB(
+				foundPGREQ.getPictureGenerateRequestStatus());
+
 			if (statusForUser == AWAIT_USER_VERIFICATION) {
 				PictureGenerateResponse needVerifyPGRES = foundPGREQ.getResponseList()
 					.stream()

@@ -77,8 +77,9 @@ public enum ResponseCode {
 		"query param 에러 %s "),
 	UnHandledException(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"예기치 못한 문제가 발생했습니다. 오류내용 : %s"),
-	TimeOut(ErrorConstants.UnHandledException, HttpStatus.REQUEST_TIMEOUT, false, "요청 시간이 초과되었습니다."),
-
+	TimeOut(ErrorConstants.TimeOut, HttpStatus.REQUEST_TIMEOUT, false, "요청 시간이 초과되었습니다."),
+	EnumMappingFailed(ErrorConstants.EnumMappingFailed, HttpStatus.INTERNAL_SERVER_ERROR, false,
+		"%s -> %s enum 매핑 중 예외 발생, 매핑 실패한 enum 값 : %s"),
 	/**
 	 * Discord
 	 */

@@ -2,7 +2,10 @@ package com.gt.genti.picturegenerateresponse.controller;
 
 import static com.gt.genti.response.GentiResponse.*;
 
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.gt.genti.error.ResponseCode;
@@ -25,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/users/picture-generate-responses")
 @RequiredArgsConstructor
+@Validated
 public class UserPGRESController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
@@ -52,7 +56,7 @@ public class UserPGRESController {
 	public ResponseEntity<ApiResult<Boolean>> ratePicture(
 		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId,
 		@Parameter(example = "3", description = "생성 완료된 사진에 대한 별점 (값의 범위 : 1 ~ 5)")
-		@RequestParam(name = "star") Integer star) {
+		@RequestParam(name = "star") @NotNull @Range(min = 1, max = 5) Integer star) {
 		return GentiResponse.success(pictureGenerateWorkService.ratePicture(pictureGenerateResponseId, star));
 	}
 }

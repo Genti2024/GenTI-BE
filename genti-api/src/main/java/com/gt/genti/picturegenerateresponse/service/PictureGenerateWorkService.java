@@ -315,5 +315,13 @@ public class PictureGenerateWorkService {
 
 		return true;
 	}
+
+	public Boolean ratePicture(Long pgresId, Integer star) {
+		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(pgresId)
+				.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateResponseNotFound));
+		foundPGRES.updateStar(star);
+		pictureGenerateResponseRepository.save(foundPGRES);
+		return true;
+	}
 }
 

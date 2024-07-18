@@ -63,6 +63,9 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	@Column(name = "submitted_by_admin_at")
 	LocalDateTime submittedByAdminAt;
 
+	@Column(name = "star")
+	Integer star;
+
 	@PrePersist
 	public void prePersist() {
 		if (this.memo == null) {
@@ -113,5 +116,9 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 
 	public Duration getAdminElapsedTime() {
 		return Duration.between(this.getCreatedAt(), this.getSubmittedByAdminAt());
+	}
+
+	public void updateStar(Integer star) {
+		this.star = star;
 	}
 }

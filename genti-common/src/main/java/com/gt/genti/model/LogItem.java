@@ -25,6 +25,7 @@ public enum LogItem {
 	PGRES_SUBMIT("pgres : submit"),
 	PGRES_MEMO("pgres : memo"),
 	PGRES_VERIFY("pgres : verify"),
+	PGRES_STAR("pgres : star"),
 	POST("post"),
 	REPORT("report"),
 	RESPONSE_EXAMPLE("response_example"),

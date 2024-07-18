@@ -44,7 +44,7 @@ public class SettlementController {
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
 	@Logging(item = LogItem.SETTLEMENT, action = LogAction.VIEW, requester = LogRequester.CREATOR)
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<ApiResult<SettlementAndWithdrawPageResponseDto>> getMySettlements(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)

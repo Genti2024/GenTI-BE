@@ -41,7 +41,7 @@ public class CreatorController {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound)
 	})
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<ApiResult<CreatorFindResponseDto>> getCreatorInfo(
 		@AuthUser Long userId) {
 		return GentiResponse.success(creatorService.getCreatorInfo(userId));

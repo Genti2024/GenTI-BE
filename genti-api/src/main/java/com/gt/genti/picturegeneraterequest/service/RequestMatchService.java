@@ -30,7 +30,6 @@ public class RequestMatchService {
 
 	public static RequestMatchStrategy CURRENT_STRATEGY = RequestMatchStrategy.ADMIN_ONLY;
 
-
 	public static RequestMatchStrategy changeMatchingStrategy(RequestMatchStrategy strategy) {
 		CURRENT_STRATEGY = strategy;
 		return CURRENT_STRATEGY;
@@ -64,14 +63,13 @@ public class RequestMatchService {
 	}
 
 	private void matchRequestToAdmin(List<PictureGenerateRequest> pendingRequestList, StringBuilder resultSB) {
-		// Creator adminCreator = userServic.findAdminUser()
 		Creator adminCreator = adminService.getAdminCreator();
 		int requestCount = pendingRequestList.size();
 		List<String> matchResultList = new ArrayList<>();
 		List<PictureGenerateResponse> pgresList = new ArrayList<>();
 		pendingRequestList.forEach(pgr -> {
 			pgr.assignToAdmin(adminCreator);
-			pgresList.add(new PictureGenerateResponse(adminCreator, pgr));
+			pgresList.add(PictureGenerateResponse.createAdminMatchedPGRES(adminCreator, pgr));
 			String result = """
 				email : [%s] 가 요청한 id : [%d] 요청을 어드민에게 매칭
 				  """.formatted(pgr.getRequester().getEmail(), pgr.getId());

@@ -137,7 +137,8 @@ public class PictureGenerateWorkService {
 		}
 
 		foundPictureGenerateRequest.acceptByCreator();
-		PictureGenerateResponse newPGRES = new PictureGenerateResponse(foundCreator, foundPictureGenerateRequest);
+		PictureGenerateResponse newPGRES = PictureGenerateResponse.createCreatorMatchedPGRES(foundCreator,
+			foundPictureGenerateRequest);
 		pictureGenerateResponseRepository.save(newPGRES);
 
 		return true;
@@ -252,10 +253,8 @@ public class PictureGenerateWorkService {
 		}
 		pgreq.userVerified();
 		foundPGRES.userVerified();
-
 		return true;
 	}
-
 	public PGRESUpdateAdminInChargeResponseDto updateAdminInCharge(Long pgresId,
 		PGRESUpdateAdminInChargeRequestDto requestDto) {
 		PictureGenerateResponse foundPGRES = findPGRES(pgresId);
@@ -290,6 +289,14 @@ public class PictureGenerateWorkService {
 		foundPGRES.updateStar(star);
 
 		return true;
+	}
+
+	public void expire(PictureGenerateResponse pictureGenerateResponse) {
+		pictureGenerateResponse.expired();
+		//TODO 이 사진생성응답의 작업자(공급자) 를 3일 비활성화 하기
+		// edited at 2024-07-19
+		// author 서병렬
+
 	}
 
 	private User findUserById(Long userId) {

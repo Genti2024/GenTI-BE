@@ -1,5 +1,7 @@
 package com.gt.genti.picturegeneraterequest.model;
 
+import static com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -100,7 +102,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.prompt = prompt;
 		this.promptAdvanced = promptAdvanced;
 		this.picturePose = picturePose;
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.CREATED;
+		this.pictureGenerateRequestStatus = CREATED;
 		this.cameraAngle = cameraAngle;
 		this.shotCoverage = shotCoverage;
 		this.userFacePictureList = userFacePictureList;
@@ -118,11 +120,11 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	}
 
 	public void assignToCreator(Creator creator) {
-		if (this.pictureGenerateRequestStatus != PictureGenerateRequestStatus.CREATED) {
+		if (this.pictureGenerateRequestStatus != CREATED) {
 			log.error(" 이미 진행중인 작업에 대해 비 정상적인 매칭");
 			return;
 		}
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.ASSIGNING;
+		this.pictureGenerateRequestStatus = ASSIGNING;
 		this.creator = creator;
 		this.matchToAdmin = false;
 	}
@@ -132,26 +134,26 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 			throw ExpectedException.withLogging(ResponseCode.SubmitBlockedDueToPictureGenerateResponseIsExpired);
 		}
 		this.requester.addRequestCount();
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.IN_PROGRESS;
-	}
-
-	public void rejectByCreator() {
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.CREATED;
-
+		this.pictureGenerateRequestStatus = IN_PROGRESS;
 	}
 
 	public void assignToAdmin(Creator creator) {
 		this.requester.addRequestCount();
 		this.creator = creator;
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.MATCH_TO_ADMIN;
+		this.pictureGenerateRequestStatus = MATCH_TO_ADMIN;
 		this.matchToAdmin = false;
 	}
 
-	public void submittedByAdmin() {
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION;
+	public void rejectByCreator() {
+		this.pictureGenerateRequestStatus = CREATED;
 	}
-
+	public void submittedByAdmin() {
+		this.pictureGenerateRequestStatus = AWAIT_USER_VERIFICATION;
+	}
 	public void userVerified() {
-		this.pictureGenerateRequestStatus = PictureGenerateRequestStatus.COMPLETED;
+		this.pictureGenerateRequestStatus = COMPLETED;
+	}
+	public void canceled(){
+		this.pictureGenerateRequestStatus = CANCELED;
 	}
 }

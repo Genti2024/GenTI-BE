@@ -3,6 +3,7 @@ package com.gt.genti.creator.model;
 import java.util.List;
 
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.user.model.User;
 import com.gt.genti.common.basetimeentity.model.BaseTimeEntity;
 import com.gt.genti.common.converter.BankTypeConverter;
@@ -42,11 +43,11 @@ public class Creator extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	User user;
 
-	//TODO Creator 삭제시 고아 request re-match 로직 개발
-	// edited at 2024-05-27
-	// author 서병렬
 	@OneToMany(mappedBy = "creator")
-	List<PictureGenerateRequest> pictureGenerateRequest;
+	List<PictureGenerateRequest> pictureGenerateRequestList;
+
+	@OneToMany(mappedBy = "creator")
+	List<PictureGenerateResponse> pictureGenerateResponseList;
 
 	@Convert(converter = BankTypeConverter.class)
 	@Column(name = "bank_type", nullable = false)

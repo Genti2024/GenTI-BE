@@ -56,7 +56,7 @@ public class UserPGREQController {
 	@Operation(summary = "현재 진행중인 사진생성요청의 상태 조회", description = "작업이 진행중인 사진 생성요청이 있다면 해당 상태를 조회한다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
+		@EnumResponse(ResponseCode.UserNotFound)
 	})
 	@Logging(item = LogItem.PGREQ_INPROGESS, action = LogAction.SEARCH, requester = LogRequester.USER)
 	@GetMapping("/pending")

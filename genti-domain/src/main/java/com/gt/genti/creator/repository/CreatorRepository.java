@@ -15,7 +15,7 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 
 	@Query("select c, count(pgr) as requestCount "
 		+ "from Creator c "
-		+ "left join c.pictureGenerateRequest pgr "
+		+ "left join c.pictureGenerateRequestList pgr "
 		+ "on pgr.pictureGenerateRequestStatus in ( com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus."
 		+ "ASSIGNING, "
 		+ "com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus."

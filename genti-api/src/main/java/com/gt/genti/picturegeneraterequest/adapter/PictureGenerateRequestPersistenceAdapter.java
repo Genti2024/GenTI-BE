@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
@@ -44,12 +43,6 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByUserAndStatusInOrderByCreatedByDesc(User user,
-		List<PictureGenerateRequestStatus> statusList) {
-		return pictureGenerateRequestRepository.findByUserAndRequestStatusIn(user, statusList);
-	}
-
-	@Override
 	public Page<PictureGenerateRequest> findAll(Pageable pageable) {
 		return pictureGenerateRequestRepository.findAll(pageable);
 	}
@@ -71,5 +64,10 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	public Page<PGREQDetailFindByAdminResponseDto> findAllByRequester(User foundUser, Pageable pageable) {
 		return pictureGenerateRequestRepository.findAllByRequester(foundUser, pageable)
 			.map(PGREQDetailFindByAdminResponseDto::new);
+	}
+
+	@Override
+	public Optional<PictureGenerateRequest> findTopByRequesterOrderByCreatedAtDesc(User foundUser) {
+		return pictureGenerateRequestRepository.findTopByRequesterOrderByCreatedAtDesc(foundUser);
 	}
 }

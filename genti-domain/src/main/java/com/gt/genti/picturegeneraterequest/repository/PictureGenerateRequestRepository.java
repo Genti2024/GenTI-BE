@@ -100,4 +100,6 @@ public interface PictureGenerateRequestRepository
 
 
 	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
+
+	Optional<PictureGenerateRequest> findTopByRequesterOrderByCreatedAtDesc(User requester);
 }

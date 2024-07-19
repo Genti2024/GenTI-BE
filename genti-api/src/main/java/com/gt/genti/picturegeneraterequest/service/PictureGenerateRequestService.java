@@ -1,13 +1,11 @@
 package com.gt.genti.picturegeneraterequest.service;
 
-import static com.gt.genti.common.EnumUtil.*;
 import static com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser.*;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +28,6 @@ import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResp
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
-import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
 import com.gt.genti.picturegeneraterequest.service.mapper.PGREQStatusToPGREQStatusForUserMapper;
 import com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser;
@@ -101,35 +98,46 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	@Override
 	public PGREQStatusResponseDto getPendingPGREQStatusIfExists(Long userId) {
 		User foundUser = findUserById(userId);
-		Optional<PictureGenerateRequest> optionalPGREQ = pictureGenerateRequestPort.findByUserAndStatusInOrderByCreatedByDesc(
-			foundUser, PGREQ_PENDING_LIST);
-		if (optionalPGREQ.isPresent()) {
-			PictureGenerateRequest foundPGREQ = optionalPGREQ.get();
-			PictureGenerateRequestStatusForUser statusForUser = pgreqStatusToPGREQStatusForUserMapper.aToB(
-				foundPGREQ.getPictureGenerateRequestStatus());
+		Optional<PictureGenerateRequest> optionalPGREQ = pictureGenerateRequestPort.findTopByRequesterOrderByCreatedAtDesc(
+			foundUser);
 
-			if (statusForUser == AWAIT_USER_VERIFICATION) {
-				PictureGenerateResponse needVerifyPGRES = foundPGREQ.getResponseList()
-					.stream()
-					.filter(pgres -> pgres.getStatus().equals(PictureGenerateResponseStatus.SUBMITTED_FINAL))
-					.findFirst()
-					.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UnHandledException,
-						String.format("유저가 최종 확인할 적절한 사진생성응답을 찾지 못했습니다. \n 사진생성요청 id [%d] 사진생성요청 상태 [%s]"
-							, foundPGREQ.getId(), foundPGREQ.getPictureGenerateRequestStatus())));
-				return PGREQStatusResponseDto.builder()
-					.pictureGenerateRequestId(foundPGREQ.getId())
-					.status(statusForUser)
-					.pgresFindByUserResponseDto(new PGRESFindByUserResponseDto(needVerifyPGRES))
-					.build();
-			}
-			return PGREQStatusResponseDto.builder()
-				.pictureGenerateRequestId(foundPGREQ.getId())
-				.status(statusForUser)
-				.build();
+		if (optionalPGREQ.isEmpty()) {
+			return createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null);
 		}
-		throw ExpectedException.withoutLogging(ResponseCode.PictureGenerateRequestNotFound,
-			"사진생성요청 상태 in " + PGREQ_PENDING_LIST.stream().map(
-				PictureGenerateRequestStatus::getStringValue).collect(Collectors.joining(", ")));
+
+		PictureGenerateRequest foundPGREQ = optionalPGREQ.get();
+		PictureGenerateRequestStatusForUser pgreqStatusForUser = pgreqStatusToPGREQStatusForUserMapper.aToB(
+			foundPGREQ.getPictureGenerateRequestStatus()
+		);
+
+		return switch (pgreqStatusForUser) {
+			case CANCELED -> createPGREQStatusResponseDto(CANCELED, foundPGREQ.getId(), null);
+			case IN_PROGRESS -> createPGREQStatusResponseDto(IN_PROGRESS, foundPGREQ.getId(), null);
+			case NEW_REQUEST_AVAILABLE -> createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null);
+			case AWAIT_USER_VERIFICATION -> handleAwaitUserVerification(foundPGREQ);
+		};
+	}
+
+	private PGREQStatusResponseDto createPGREQStatusResponseDto(
+		PictureGenerateRequestStatusForUser status, Long pgreqId, PGRESFindByUserResponseDto pgresDto) {
+		return PGREQStatusResponseDto.builder()
+			.status(status)
+			.pictureGenerateRequestId(pgreqId)
+			.pgresFindByUserResponseDto(pgresDto)
+			.build();
+	}
+
+	private PGREQStatusResponseDto handleAwaitUserVerification(PictureGenerateRequest foundPGREQ) {
+		PictureGenerateResponse needVerifyPGRES = foundPGREQ.getResponseList().stream()
+			.filter(pgres -> pgres.getStatus().equals(PictureGenerateResponseStatus.SUBMITTED_FINAL))
+			.findFirst()
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UnHandledException,
+				String.format(
+					"No suitable picture generation response found for verification. Request ID: [%d], Status: [%s]",
+					foundPGREQ.getId(), foundPGREQ.getPictureGenerateRequestStatus())));
+
+		return createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, foundPGREQ.getId(),
+			new PGRESFindByUserResponseDto(needVerifyPGRES));
 	}
 
 	@Override

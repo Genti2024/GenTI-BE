@@ -1,5 +1,6 @@
 package com.gt.genti.picturegeneraterequest.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,19 +58,10 @@ public interface PictureGenerateRequestRepository
 		@Param(value = "creator") Creator creator,
 		@Param(value = "status") PictureGenerateRequestStatus status);
 
-	@Query("select pgr from PictureGenerateRequest pgr "
-		+ "where pgr.requester = :requester "
-		+ "and pgr.pictureGenerateRequestStatus in :statusList "
-		+ "order by pgr.createdAt desc "
-		+ "limit 1 ")
-	Optional<PictureGenerateRequest> findByUserAndRequestStatusIn(
-		@Param(value = "requester") User requester,
-		@Param(value = "statusList") List<PictureGenerateRequestStatus> statusList);
 
 	//TODO 성능 이슈 때문에 dto를 select하도록 변경해야함
 	// edited at 2024-05-23
 	// author 서병렬
-
 	@Query("select pgreq from PictureGenerateRequest pgreq "
 		+ "join PictureGenerateResponse pgres "
 		+ "where pgres.request = pgreq "
@@ -102,4 +94,6 @@ public interface PictureGenerateRequestRepository
 	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
 
 	Optional<PictureGenerateRequest> findTopByRequesterOrderByCreatedAtDesc(User requester);
+
+	List<PictureGenerateRequest> findAllByCreatedAtBeforeAndPictureGenerateRequestStatusIn(LocalDateTime createdAt, List<PictureGenerateRequestStatus> status);
 }

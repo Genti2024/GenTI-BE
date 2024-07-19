@@ -13,6 +13,7 @@ import com.gt.genti.picturegeneraterequest.dto.response.PGREQCreatorSubmittedDet
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegenerateresponse.service.mapper.PictureGenerateResponseStatusForAdmin;
+import com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestCancellationReason;
 
 public interface PictureGenerateRequestUseCase {
 	List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(Long userId);
@@ -40,4 +41,7 @@ public interface PictureGenerateRequestUseCase {
 
 	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByRequesterEmail(String email,
 		Pageable pageable);
+
+	void cancelRequest(PictureGenerateRequest request, PictureGenerateRequestCancellationReason reason);
+	void cancelAllRequests(List<PictureGenerateRequest> request, PictureGenerateRequestCancellationReason reason);
 }

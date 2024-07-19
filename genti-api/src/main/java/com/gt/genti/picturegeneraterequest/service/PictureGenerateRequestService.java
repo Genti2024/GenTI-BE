@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.firebase.FCMService;
 import com.gt.genti.openai.dto.PromptAdvancementRequestCommand;
 import com.gt.genti.openai.service.OpenAIService;
 import com.gt.genti.picture.command.CreatePicturePoseCommand;
@@ -58,6 +59,8 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
 	private final PGRESStatusToPGRESStatusForAdminMapper pgresStatusToPGRESStatusForAdminMapper = new PGRESStatusToPGRESStatusForAdminMapper();
+	private final FCMService notificationService;
+
 	private final PGREQStatusToPGREQStatusForUserMapper pgreqStatusToPGREQStatusForUserMapper = new PGREQStatusToPGREQStatusForUserMapper();
 
 	@Override
@@ -101,6 +104,23 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	public Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByRequesterEmail(String email,
 		Pageable pageable) {
 		return null;
+	}
+
+	@Override
+	public void cancelRequest(PictureGenerateRequest request, PictureGenerateRequestCancellationReason reason) {
+		// log.info("사진생성요청 id : {} 유저 email : {} 의 요청이 취소 처리 되었습니다.,request.getId());
+		request.canceled();
+		User requester = request.getRequester();
+		//TODO 삭제 이벤트를 요청자에게 FCM 푸시알림 보내기
+		// edited at 2024-07-19
+		// author 서병렬
+		// notificationService.sendPushNoti(pgreq.getRequester().getId());
+
+	}
+
+	@Override
+	public void cancelAllRequests(List<PictureGenerateRequest> requestList, PictureGenerateRequestCancellationReason reason) {
+		requestList.forEach(PictureGenerateRequest::canceled);
 	}
 
 	@Override

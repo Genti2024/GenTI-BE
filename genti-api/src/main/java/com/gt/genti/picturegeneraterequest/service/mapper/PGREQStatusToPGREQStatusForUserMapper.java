@@ -14,12 +14,12 @@ public class PGREQStatusToPGREQStatusForUserMapper
 
 	private final static List<SimpleEntry<PictureGenerateRequestStatus, PictureGenerateRequestStatusForUser>> mappings = Arrays.asList(
 		new SimpleEntry<>(AWAIT_USER_VERIFICATION, PictureGenerateRequestStatusForUser.AWAIT_USER_VERIFICATION),
-		new SimpleEntry<>(COMPLETED, PictureGenerateRequestStatusForUser.COMPLETED),
+		new SimpleEntry<>(COMPLETED, PictureGenerateRequestStatusForUser.NEW_REQUEST_AVAILABLE),
 		new SimpleEntry<>(IN_PROGRESS, PictureGenerateRequestStatusForUser.IN_PROGRESS),
 		new SimpleEntry<>(CREATED, PictureGenerateRequestStatusForUser.IN_PROGRESS),
 		new SimpleEntry<>(ASSIGNING, PictureGenerateRequestStatusForUser.IN_PROGRESS),
 		new SimpleEntry<>(MATCH_TO_ADMIN, PictureGenerateRequestStatusForUser.IN_PROGRESS),
-		new SimpleEntry<>(REPORTED, PictureGenerateRequestStatusForUser.IN_PROGRESS),
+		new SimpleEntry<>(REPORTED, PictureGenerateRequestStatusForUser.NEW_REQUEST_AVAILABLE),
 		new SimpleEntry<>(CANCELED, PictureGenerateRequestStatusForUser.CANCELED)
 	);
 

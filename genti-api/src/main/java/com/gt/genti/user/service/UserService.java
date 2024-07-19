@@ -1,6 +1,10 @@
 package com.gt.genti.user.service;
 
+import static com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestCancellationReason.*;
+import static com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.*;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -18,6 +22,9 @@ import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.profile.model.PictureProfile;
 import com.gt.genti.picture.service.PictureService;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
+import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
+import com.gt.genti.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
@@ -41,6 +48,8 @@ public class UserService {
 	private final DepositService depositService;
 	private final CreatorRepository creatorRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
+	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
+	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
@@ -89,6 +98,22 @@ public class UserService {
 	public Boolean deleteUserSoft(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		foundUser.softDelete();
+
+		if (foundUser.getCreator() != null) {
+			Creator foundCreator = foundUser.getCreator();
+			List<PictureGenerateResponse> pgresList = foundCreator.getPictureGenerateResponseList();
+			if (pgresList.isEmpty()) {
+				return true;
+			}
+			List<PictureGenerateResponse> deleteList = new ArrayList<>();
+			pgresList.stream()
+				.filter(pgres -> CREATOR_BEFORE_WORK.equals(pgres.getStatus()))
+				.forEach(pgres -> {
+					pictureGenerateRequestUseCase.cancelRequest(pgres.getRequest(), SUPPLIER_EXIT);
+					deleteList.add(pgres);
+				});
+			pictureGenerateResponseRepository.deleteAll(deleteList);
+		}
 		return true;
 	}
 

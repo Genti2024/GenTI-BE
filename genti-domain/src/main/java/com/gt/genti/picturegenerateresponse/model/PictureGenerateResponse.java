@@ -1,16 +1,19 @@
 package com.gt.genti.picturegenerateresponse.model;
 
+import static com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.*;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gt.genti.common.basetimeentity.model.BaseTimeEntity;
-import com.gt.genti.creator.model.Creator;
 import com.gt.genti.common.converter.PictureGenerateResponseStatusConverter;
+import com.gt.genti.creator.model.Creator;
 import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.createdbycreator.model.PictureCreatedByCreator;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -39,10 +42,10 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	@JoinColumn(name = "creator_id")
 	Creator creator;
 
-	@OneToMany(mappedBy = "pictureGenerateResponse")
+	@OneToMany(mappedBy = "pictureGenerateResponse", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureCompleted> completedPictureList;
 
-	@OneToMany(mappedBy = "pictureGenerateResponse")
+	@OneToMany(mappedBy = "pictureGenerateResponse", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureCreatedByCreator> createdByCreatorPictureList;
 
 	@ManyToOne
@@ -81,7 +84,7 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 		// edited at 2024-05-20
 		// author 서병렬
 		this.submittedByCreatorAt = LocalDateTime.now();
-		this.status = PictureGenerateResponseStatus.SUBMITTED_FIRST;
+		this.status = CREATOR_SUBMITTED_FIRST;
 		return getCreatorElapsedTime();
 	}
 
@@ -95,23 +98,31 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 
 	public void updateInChargeAdmin(String adminInCharge) {
 		this.adminInCharge = adminInCharge;
-		this.status = PictureGenerateResponseStatus.ADMIN_IN_PROGRESS;
+		this.status = ADMIN_IN_PROGRESS;
 	}
 
 	public void adminSubmit() {
 		this.submittedByAdminAt = LocalDateTime.now();
-		this.status = PictureGenerateResponseStatus.SUBMITTED_FINAL;
+		this.status = ADMIN_SUBMITTED_FINAL;
 		this.request.submittedByAdmin();
 	}
 
 	public void userVerified(){
-		this.status = PictureGenerateResponseStatus.COMPLETED;
+		this.status = COMPLETED;
 	}
 
-	public PictureGenerateResponse(Creator creator, PictureGenerateRequest request) {
+	private PictureGenerateResponse(Creator creator, PictureGenerateRequest request, PictureGenerateResponseStatus status) {
 		this.creator = creator;
 		this.request = request;
-		this.status = PictureGenerateResponseStatus.ADMIN_BEFORE_WORK;
+		this.status = status;
+	}
+
+	public static PictureGenerateResponse createAdminMatchedPGRES(Creator adminCreator, PictureGenerateRequest request){
+		return new PictureGenerateResponse(adminCreator, request, ADMIN_BEFORE_WORK);
+	}
+
+	public static PictureGenerateResponse createCreatorMatchedPGRES(Creator creator, PictureGenerateRequest request){
+		return new PictureGenerateResponse(creator, request, CREATOR_BEFORE_WORK);
 	}
 
 	public Duration getAdminElapsedTime() {
@@ -121,4 +132,9 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 	public void updateStar(Integer star) {
 		this.star = star;
 	}
+
+	public void expired(){
+		this.status = EXPIRED;
+	}
+
 }

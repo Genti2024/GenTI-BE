@@ -6,7 +6,7 @@ import java.util.List;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picturegeneraterequest.model.CameraAngle;
 import com.gt.genti.picturegeneraterequest.model.ShotCoverage;
-import com.gt.genti.picturegenerateresponse.dto.response.PGRESDetailFindByAdminResponseDto;
+import com.gt.genti.picturegenerateresponse.dto.response.PGRESAdminMatchedDetailFindByAdminResponseDto;
 import com.gt.genti.user.model.Sex;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Schema(name = "[PGREQ][Admin] 사진생성요청 조회 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PGREQDetailFindByAdminResponseDto {
+public class PGREQAdminMatchedDetailFindByAdminResponseDto {
 
 	@Schema(description = "주문 생성일시")
 	LocalDateTime createdAt;
@@ -42,15 +42,16 @@ public class PGREQDetailFindByAdminResponseDto {
 	@Schema(description = "프레임", example = "바스트샷(상반신)")
 	ShotCoverage shotCoverage;
 	@Schema(description = "응답 리스트(현재는 1개)")
-	List<PGRESDetailFindByAdminResponseDto> responseList;
+	List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList;
 
 	@Builder
-	public PGREQDetailFindByAdminResponseDto(Long pictureGenerateRequestId, String requesterEmail,
-		String prompt, String promptAdvanced, List<CommonPictureResponseDto> facePictureList,
+	public PGREQAdminMatchedDetailFindByAdminResponseDto(Long pictureGenerateRequestId, String requesterEmail,
+		Sex sex, String prompt, String promptAdvanced, List<CommonPictureResponseDto> facePictureList,
 		CommonPictureResponseDto posePicture, CameraAngle cameraAngle, ShotCoverage shotCoverage,
-		LocalDateTime createdAt, List<PGRESDetailFindByAdminResponseDto> responseList) {
+		LocalDateTime createdAt, List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList) {
 		this.pictureGenerateRequestId = pictureGenerateRequestId;
 		this.requesterEmail = requesterEmail;
+		this.sex = sex;
 		this.prompt = prompt;
 		this.promptAdvanced = promptAdvanced;
 		this.facePictureList = facePictureList;

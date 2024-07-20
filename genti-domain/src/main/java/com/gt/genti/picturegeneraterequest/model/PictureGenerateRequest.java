@@ -141,7 +141,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 		this.requester.addRequestCount();
 		this.creator = creator;
 		this.pictureGenerateRequestStatus = MATCH_TO_ADMIN;
-		this.matchToAdmin = false;
+		this.matchToAdmin = true;
 	}
 
 	public void rejectByCreator() {

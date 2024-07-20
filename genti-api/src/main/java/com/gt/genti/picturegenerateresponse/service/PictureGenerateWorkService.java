@@ -320,6 +320,7 @@ public class PictureGenerateWorkService {
 		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(pgresId)
 				.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateResponseNotFound));
 		foundPGRES.updateStar(star);
+		foundPGRES.userVerified();
 		pictureGenerateResponseRepository.save(foundPGRES);
 		return true;
 	}

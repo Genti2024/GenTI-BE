@@ -24,8 +24,8 @@ import com.gt.genti.picture.service.PictureService;
 import com.gt.genti.picture.userface.model.PictureUserFace;
 import com.gt.genti.picturegeneraterequest.command.PGREQSaveCommand;
 import com.gt.genti.picturegeneraterequest.dto.request.PGREQSaveRequestDto;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
+import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
@@ -35,6 +35,7 @@ import com.gt.genti.picturegenerateresponse.dto.response.PGRESDetailFindByAdminR
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESFindByUserResponseDto;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
+import com.gt.genti.picturegenerateresponse.service.mapper.PGRESStatusToPGRESStatusForAdminMapper;
 import com.gt.genti.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
@@ -53,6 +54,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final PictureService pictureService;
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
+	private final PGRESStatusToPGRESStatusForAdminMapper pgresStatusToPGRESStatusForAdminMapper;
 
 	private final PGREQStatusToPGREQStatusForUserMapper pgreqStatusToPGREQStatusForUserMapper = new PGREQStatusToPGREQStatusForUserMapper();
 
@@ -72,7 +74,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	public Page<PGREQDetailFindByAdminResponseDto> getAllByRequestEmail(String email, Pageable pageable) {
 		User foundUser = userRepository.findByEmail(email)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
-		return pictureGenerateRequestPort.findAllByRequester(foundUser, pageable);
+		return pictureGenerateRequestPort.findAllByRequester(foundUser, pageable).map(convertPGREQToResponseDto());
 	}
 
 	private User findUserById(Long userId) {
@@ -218,16 +220,37 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		return pgres -> {
 			PictureGenerateRequest pgreq = pgres.getRequest();
 			List<PGRESDetailFindByAdminResponseDto> responseList = List.of(
-				new PGRESDetailFindByAdminResponseDto(pgres));
+				PGRESDetailFindByAdminResponseDto.builder()
+					.pictureGenerateResponseId(pgres.getId())
+					.memo(pgres.getMemo())
+					.creatorEmail(pgres.getCreator().getUser().getEmail())
+					.pictureCompletedList(
+						pgres.getCompletedPictureList().stream().map(CommonPictureResponseDto::of).toList())
+					.pictureCreatedByCreatorList(
+						pgres.getCreatedByCreatorPictureList().stream().map(CommonPictureResponseDto::of).toList())
+					.status(pgresStatusToPGRESStatusForAdminMapper.aToB(pgres.getStatus()))
+					.createdAt(pgres.getCreatedAt())
+					.build());
 			return buildPGREQDetail(pgreq, responseList);
 		};
 	}
 
+	@NotNull
 	private Function<PictureGenerateRequest, PGREQDetailFindByAdminResponseDto> convertPGREQToResponseDto() {
 		return pgreq -> {
 			List<PGRESDetailFindByAdminResponseDto> responseList = pgreq.getResponseList()
 				.stream()
-				.map(PGRESDetailFindByAdminResponseDto::new)
+				.map(res -> PGRESDetailFindByAdminResponseDto.builder()
+					.pictureGenerateResponseId(res.getId())
+					.memo(res.getMemo())
+					.creatorEmail(res.getCreator().getUser().getEmail())
+					.pictureCompletedList(
+						res.getCompletedPictureList().stream().map(CommonPictureResponseDto::of).toList())
+					.pictureCreatedByCreatorList(
+						res.getCreatedByCreatorPictureList().stream().map(CommonPictureResponseDto::of).toList())
+					.status(pgresStatusToPGRESStatusForAdminMapper.aToB(res.getStatus()))
+					.createdAt(res.getCreatedAt())
+					.build())
 				.toList();
 			return buildPGREQDetail(pgreq, responseList);
 		};
@@ -237,8 +260,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		List<PGRESDetailFindByAdminResponseDto> responseList) {
 		return PGREQDetailFindByAdminResponseDto.builder()
 			.posePicture(CommonPictureResponseDto.of(pgreq.getPicturePose()))
-			.requesterId(pgreq.getRequester().getId())
-			.requestStatus(pgreq.getPictureGenerateRequestStatus())
 			.cameraAngle(pgreq.getCameraAngle())
 			.facePictureList(
 				pgreq.getUserFacePictureList().stream().map(CommonPictureResponseDto::of).toList())

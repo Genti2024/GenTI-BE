@@ -23,7 +23,6 @@ import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.service.PictureService;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByCreatorResponseDto;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
@@ -78,7 +77,7 @@ public class PictureGenerateWorkService {
 
 	}
 
-	public PGREQDetailFindByAdminResponseDto getPictureGenerateRequestDetail(Long userId,
+	public PGREQBriefFindByCreatorResponseDto getPictureGenerateRequestDetail(Long userId,
 		Long pictureGenerateRequestId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
@@ -88,17 +87,17 @@ public class PictureGenerateWorkService {
 			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotAssignedToCreator);
 		}
 
-		return new PGREQDetailFindByAdminResponseDto(foundPictureGenerateRequest);
+		return new PGREQBriefFindByCreatorResponseDto(foundPictureGenerateRequest);
 
 	}
 
-	public List<PGREQDetailFindByAdminResponseDto> getPictureGenerateRequestDetailAll(Long userId) {
+	public List<PGREQBriefFindByCreatorResponseDto> getPictureGenerateRequestDetailAll(Long userId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		List<PictureGenerateRequest> foundPGRList = pictureGenerateRequestRepository.findAllByCreatorIsOrderByCreatedAtDesc(
 			foundCreator);
 
 		return foundPGRList.stream().map(
-			PGREQDetailFindByAdminResponseDto::new).toList();
+			PGREQBriefFindByCreatorResponseDto::new).toList();
 
 	}
 
@@ -128,14 +127,12 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
 	}
 
-	
 	public Boolean updateMemo(Long pictureGenerateResponseId, MemoUpdateRequestDto memoUpdateRequestDto) {
 		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
 		foundPictureGenerateResponse.updateMemo(memoUpdateRequestDto.getMemo());
 		return true;
 	}
 
-	
 	public Boolean acceptPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
@@ -169,7 +166,6 @@ public class PictureGenerateWorkService {
 		return true;
 	}
 
-	
 	public PGRESSubmitByCreatorResponseDto submitToAdmin(Long userId, Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
 		Creator foundCreator = findCreatorByUserId(userId);
@@ -209,7 +205,6 @@ public class PictureGenerateWorkService {
 		foundCreator.completeTask();
 	}
 
-	
 	public PGRESSubmitByAdminResponseDto submitFinal(Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
 		List<PictureCompleted> pictureCompletedList = pictureService.findAllPictureCompletedByPictureGenerateResponse(
@@ -262,13 +257,13 @@ public class PictureGenerateWorkService {
 			.toList();
 	}
 
-	public List<PGREQDetailFindByAdminResponseDto> getPictureGenerateRequestDetail3(Long userId) {
+	public List<PGREQBriefFindByCreatorResponseDto> getPictureGenerateRequestDetail3(Long userId) {
 		Creator foundCreator = findCreatorByUserId(userId);
 
 		List<PictureGenerateRequest> foundPGREQList = pictureGenerateRequestRepository.findByCreatorAndActiveStatus(
 			foundCreator, PGREQ_IN_PROGRESS_LIST, IN_PROGRESS_PGRES_FOR_CREATOR);
 
-		return foundPGREQList.stream().map(PGREQDetailFindByAdminResponseDto::new).toList();
+		return foundPGREQList.stream().map(PGREQBriefFindByCreatorResponseDto::new).toList();
 	}
 
 	private PictureGenerateResponse findPGRES(Long pictureGenerateResponseId) {

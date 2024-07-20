@@ -54,9 +54,10 @@ public class UserPGRESController {
 	@Logging(item = LogItem.PGRES_STAR, action = LogAction.CREATE, requester = LogRequester.USER)
 	@PostMapping("/{pictureGenerateResponseId}/rate")
 	public ResponseEntity<ApiResult<Boolean>> ratePicture(
+		@AuthUser Long userId,
 		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId,
 		@Parameter(example = "3", description = "생성 완료된 사진에 대한 별점 (값의 범위 : 1 ~ 5)")
 		@RequestParam(name = "star") @NotNull @Range(min = 1, max = 5) Integer star) {
-		return GentiResponse.success(pictureGenerateWorkService.ratePicture(pictureGenerateResponseId, star));
+		return GentiResponse.success(pictureGenerateWorkService.ratePicture(userId, pictureGenerateResponseId, star));
 	}
 }

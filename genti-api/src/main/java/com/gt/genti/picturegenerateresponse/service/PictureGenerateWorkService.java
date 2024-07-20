@@ -316,12 +316,23 @@ public class PictureGenerateWorkService {
 		return true;
 	}
 
-	public Boolean ratePicture(Long pgresId, Integer star) {
+	public Boolean ratePicture(Long userId, Long pgresId, Integer star) {
+		User foundUser = findUserById(userId);
 		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(pgresId)
 				.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateResponseNotFound));
-		foundPGRES.updateStar(star);
+		PictureGenerateRequest pgreq = foundPGRES.getRequest();
+		if (!Objects.equals(pgreq.getRequester().getId(), foundUser.getId())) {
+			throw ExpectedException.withLogging(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest);
+		}
+		if (!pgreq.getPictureGenerateRequestStatus().equals(PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION)) {
+			throw ExpectedException.withLogging(ResponseCode.UnexpectedPictureGenerateRequestStatus,
+					pgreq.getPictureGenerateRequestStatus().getResponse());
+		}
+		pgreq.userVerified();
 		foundPGRES.userVerified();
-		pictureGenerateResponseRepository.save(foundPGRES);
+
+		foundPGRES.updateStar(star);
+
 		return true;
 	}
 }

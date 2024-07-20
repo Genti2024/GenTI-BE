@@ -2,8 +2,6 @@ package com.gt.genti.picturegeneraterequest.controller;
 
 import static com.gt.genti.response.GentiResponse.*;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +17,8 @@ import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
-import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
+import com.gt.genti.picturegeneraterequest.dto.response.PGREQAdminMatchedDetailFindByAdminResponseDto;
+import com.gt.genti.picturegeneraterequest.dto.response.PGREQCreatorSubmittedDetailFindByAdminResponseDto;
 import com.gt.genti.picturegenerateresponse.service.mapper.PictureGenerateResponseStatusForAdmin;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
@@ -43,13 +41,49 @@ import lombok.RequiredArgsConstructor;
 public class AdminPGREQController {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 
-	@Operation(summary = "사진생성요청 전체조회", description = "사진생성요청 전체를 매칭대상(어드민,공급자), 응답의 상태를 조건으로 조회하고  페이지네이션 조회합니다.")
+	@Operation(summary = "어드민에게 매칭된 사진생성요청 전체조회", description = "사진생성요청 전체를 매칭대상(어드민,공급자), 응답의 상태를 조건으로 조회하고  페이지네이션 조회합니다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = LogItem.PGREQ, action = LogAction.VIEW, requester = LogRequester.ADMIN)
-	@GetMapping("/all")
-	public ResponseEntity<ApiResult<Page<PGREQDetailFindByAdminResponseDto>>> getAllPictureGenerateRequest(
+	@GetMapping("/admin-matched")
+	public ResponseEntity<ApiResult<Page<PGREQAdminMatchedDetailFindByAdminResponseDto>>> getAllAdminMatchedPGREQ(
+		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
+		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
+		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
+		@RequestParam(name = "size", defaultValue = "10") @NotNull @Min(1) int size,
+		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"id",
+			"createdAt"}))
+		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+		@Parameter(description = "정렬 방향 - 기본값 내림차순", example = "desc", schema = @Schema(allowableValues = {"acs",
+			"desc"}))
+		@RequestParam(name = "direction", defaultValue = "desc") String direction,
+		@Parameter(description = "현재 작업(사진생성응답)의 상태로 조회한다. ALL 조회 가능, EXPIRED는 MVP상 도메인로직엔 없지만 어드민페이지의 성격 상 필요하다고 생각하여 추가했습니다.")
+		@RequestParam(name = "status", defaultValue = "ALL") @ValidEnum(value = PictureGenerateResponseStatusForAdmin.class, hasAllOption = true) String status,
+		@Parameter(description = "유저의 email")
+		@RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email
+	) {
+		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+		if (email != null) {
+			return success(
+				pictureGenerateRequestUseCase.getAllAdminMatchedByRequesterEmail(email, pageable));
+		}
+		if ("ALL".equalsIgnoreCase(status)) {
+			return success(pictureGenerateRequestUseCase.getAllAdminMatched(pageable));
+		} else {
+			return success(pictureGenerateRequestUseCase.getAllAdminMatchedByPGRESStatus(
+				PictureGenerateResponseStatusForAdmin.valueOf(status), pageable));
+		}
+	}
+
+	@Operation(summary = "공급자->어드민(얼굴붙여야하는 요청)", description = "사진생성요청 전체를 매칭대상(어드민,공급자), 응답의 상태를 조건으로 조회하고  페이지네이션 조회합니다.")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
+	@Logging(item = LogItem.PGREQ, action = LogAction.VIEW, requester = LogRequester.ADMIN)
+	@GetMapping("/creator-submitted")
+	public ResponseEntity<ApiResult<Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto>>> getAllCreatorSubmittedPGREQ(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
@@ -63,20 +97,19 @@ public class AdminPGREQController {
 		@Parameter
 		@RequestParam(name = "status", defaultValue = "ALL") @ValidEnum(value = PictureGenerateResponseStatusForAdmin.class, hasAllOption = true) String status,
 		@Parameter(description = "유저의 email")
-		@RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email,
-		@Parameter(description = "true : 공급자를 거치지 않고 어드민에게 매칭 요청 조회, false : 공급자에게 매칭된 요청 조회")
-		@RequestParam(name = "matchToAdmin", defaultValue = "ALL") Boolean matchToAdmin
+		@RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email
 	) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
-		if(email != null){
-			return success(pictureGenerateRequestUseCase.getAllByRequestEmail(email, pageable));
+		if (email != null) {
+			return success(
+				pictureGenerateRequestUseCase.getAllCreatorSubmittedByRequesterEmail(email, pageable));
 		}
 		if ("ALL".equalsIgnoreCase(status)) {
-			return success(pictureGenerateRequestUseCase.getAllByMatchToAdminIs(matchToAdmin, pageable));
+			return success(pictureGenerateRequestUseCase.getAllCreatorSubmitted(pageable));
 		} else {
-			return success(pictureGenerateRequestUseCase.getAllByPGRESStatusInAndMatchToAdminIs(
-				List.of(PictureGenerateResponseStatus.valueOf(status)), matchToAdmin, pageable));
+			return success(pictureGenerateRequestUseCase.getAllCreatorSubmittedByPGRESStatus(
+				PictureGenerateResponseStatusForAdmin.valueOf(status), pageable));
 		}
 	}
 }

@@ -122,11 +122,6 @@ public class PictureGenerateWorkService {
 		return true;
 	}
 
-	private User findUserById(Long userId) {
-		return userRepository.findById(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
-	}
-
 	public Boolean updateMemo(Long pictureGenerateResponseId, MemoUpdateRequestDto memoUpdateRequestDto) {
 		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
 		foundPictureGenerateResponse.updateMemo(memoUpdateRequestDto.getMemo());
@@ -146,13 +141,6 @@ public class PictureGenerateWorkService {
 		pictureGenerateResponseRepository.save(newPGRES);
 
 		return true;
-	}
-
-	private PictureGenerateRequest findPGREQ(Long pictureGenerateRequestId) {
-		return pictureGenerateRequestRepository.findById(
-				pictureGenerateRequestId)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-				String.format("사진생성요청 Id : %d", pictureGenerateRequestId)));
 	}
 
 	public Boolean rejectPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
@@ -187,22 +175,6 @@ public class PictureGenerateWorkService {
 			.elapsedTime(DateTimeUtil.getTimeString(elapsedDuration))
 			.reward(reward)
 			.build();
-	}
-
-	private void createSettlementAndDeposit(PictureGenerateResponse foundPGRES, Duration elapsedDuration, Long reward,
-		Creator foundCreator) {
-		Settlement settlement = Settlement.builder()
-			.pictureGenerateResponse(foundPGRES)
-			.elapsedMinutes(elapsedDuration.toMinutes())
-			.reward(reward)
-			.build();
-
-		settlementRepository.save(settlement);
-
-		Deposit foundDeposit = depositRepository.findByCreator(foundCreator)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.DepositNotFound));
-		foundDeposit.add(reward);
-		foundCreator.completeTask();
 	}
 
 	public PGRESSubmitByAdminResponseDto submitFinal(Long pictureGenerateResponseId) {
@@ -266,33 +238,6 @@ public class PictureGenerateWorkService {
 		return foundPGREQList.stream().map(PGREQBriefFindByCreatorResponseDto::new).toList();
 	}
 
-	private PictureGenerateResponse findPGRES(Long pictureGenerateResponseId) {
-		return pictureGenerateResponseRepository.findById(
-				pictureGenerateResponseId)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateResponseNotFound));
-	}
-
-	private Creator findCreatorByUserId(Long userId) {
-		return creatorRepository.findByUserId(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
-	}
-
-	public PGRESUpdateAdminInChargeResponseDto updateAdminInCharge(Long pgresId,
-		PGRESUpdateAdminInChargeRequestDto requestDto) {
-		PictureGenerateResponse foundPGRES = findPGRES(pgresId);
-
-		if (!PGRES_CAN_CHANGE_ADMIN_IN_CHARGE_LIST.contains(foundPGRES.getStatus())) {
-			throw ExpectedException.withLogging(ResponseCode.RequestBlockedDueToPictureGenerateResponseStatus,
-				foundPGRES.getStatus().getResponse());
-		}
-		foundPGRES.updateInChargeAdmin(requestDto.getAdminInCharge());
-		return PGRESUpdateAdminInChargeResponseDto.builder()
-			.pictureGenerateResponseId(foundPGRES.getId())
-			.adminInCharge(foundPGRES.getAdminInCharge())
-			.status(foundPGRES.getStatus())
-			.build();
-	}
-
 	public Boolean verifyPGRES(Long userId, Long pgresId) {
 		User foundUser = findUserById(userId);
 		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(pgresId)
@@ -309,6 +254,63 @@ public class PictureGenerateWorkService {
 		foundPGRES.userVerified();
 
 		return true;
+	}
+
+	public PGRESUpdateAdminInChargeResponseDto updateAdminInCharge(Long pgresId,
+		PGRESUpdateAdminInChargeRequestDto requestDto) {
+		PictureGenerateResponse foundPGRES = findPGRES(pgresId);
+
+		if (!PGRES_CAN_CHANGE_ADMIN_IN_CHARGE_LIST.contains(foundPGRES.getStatus())) {
+			throw ExpectedException.withLogging(ResponseCode.RequestBlockedDueToPictureGenerateResponseStatus,
+				foundPGRES.getStatus().getResponse());
+		}
+		foundPGRES.updateInChargeAdmin(requestDto.getAdminInCharge());
+		pictureGenerateResponseRepository.save(foundPGRES);
+
+		return PGRESUpdateAdminInChargeResponseDto.builder()
+			.pictureGenerateResponseId(foundPGRES.getId())
+			.adminInCharge(foundPGRES.getAdminInCharge())
+			.status(foundPGRES.getStatus())
+			.build();
+	}
+
+	private User findUserById(Long userId) {
+		return userRepository.findById(userId)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
+	}
+
+	private PictureGenerateRequest findPGREQ(Long pictureGenerateRequestId) {
+		return pictureGenerateRequestRepository.findById(
+				pictureGenerateRequestId)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
+				String.format("사진생성요청 Id : %d", pictureGenerateRequestId)));
+	}
+
+	private PictureGenerateResponse findPGRES(Long pictureGenerateResponseId) {
+		return pictureGenerateResponseRepository.findById(
+				pictureGenerateResponseId)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateResponseNotFound));
+	}
+
+	private Creator findCreatorByUserId(Long userId) {
+		return creatorRepository.findByUserId(userId)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
+	}
+
+	private void createSettlementAndDeposit(PictureGenerateResponse foundPGRES, Duration elapsedDuration, Long reward,
+		Creator foundCreator) {
+		Settlement settlement = Settlement.builder()
+			.pictureGenerateResponse(foundPGRES)
+			.elapsedMinutes(elapsedDuration.toMinutes())
+			.reward(reward)
+			.build();
+
+		settlementRepository.save(settlement);
+
+		Deposit foundDeposit = depositRepository.findByCreator(foundCreator)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.DepositNotFound));
+		foundDeposit.add(reward);
+		foundCreator.completeTask();
 	}
 }
 

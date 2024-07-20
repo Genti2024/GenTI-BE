@@ -21,7 +21,7 @@
 // import com.gt.genti.domain.enums.CameraAngle;
 // import com.gt.genti.domain.enums.RequestStatus;
 // import com.gt.genti.domain.enums.ShotCoverage;
-// import com.gt.genti.dto.admin.response.PGREQDetailFindByAdminResponseDto;
+// import com.gt.genti.dto.admin.response.PGREQAdminMatchedDetailFindByAdminResponseDto;
 // import com.gt.genti.dto.user.request.PGREQUpdateRequestDto;
 // import com.gt.genti.dto.user.request.PGREQSaveRequestDto;
 // import com.gt.genti.repository.PictureGenerateRequestRepository;
@@ -53,9 +53,9 @@
 // 			UserFacePicture::getUrl).toList();
 //
 // 		// when
-// 		List<PGREQDetailFindByAdminResponseDto> pictureGenerateRequestDetailResponseDtoList = pictureGenerateRequestService.getMyActivePictureGenerateRequest(
+// 		List<PGREQAdminMatchedDetailFindByAdminResponseDto> pictureGenerateRequestDetailResponseDtoList = pictureGenerateRequestService.getMyActivePictureGenerateRequest(
 // 			3L);
-// 		PGREQDetailFindByAdminResponseDto recentDto = pictureGenerateRequestDetailResponseDtoList.get(0);
+// 		PGREQAdminMatchedDetailFindByAdminResponseDto recentDto = pictureGenerateRequestDetailResponseDtoList.get(0);
 //
 // 		// then
 // 		assertThat(recentDto.getId()).isEqualTo(2L);

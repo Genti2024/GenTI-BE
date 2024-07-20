@@ -29,7 +29,7 @@ public class AdminMatchStrategyController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<ApiResult<String>> getMatchStrategy() {
 		return success(RequestMatchService.CURRENT_STRATEGY.getStringValue());
 	}
@@ -39,7 +39,7 @@ public class AdminMatchStrategyController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("")
+	@PostMapping
 	public ResponseEntity<ApiResult<String>> setMatchStrategy(
 		@RequestBody MatchingStrategyUpdateRequestDto requestDto) {
 		return success(

@@ -54,8 +54,12 @@ README_PRIVATE.md
 
 ### docker 환경설정
 
-.env
+/docker/.env
+
+# Include all other .env files
+!**/.env
 
 logs/
 
 docker/docker-compose.yml
+/docker/.env

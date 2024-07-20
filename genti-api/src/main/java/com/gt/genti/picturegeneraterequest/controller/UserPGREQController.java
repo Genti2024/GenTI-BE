@@ -72,7 +72,7 @@ public class UserPGREQController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = LogItem.PGREQ, action = LogAction.REQUEST, requester = LogRequester.USER)
-	@PostMapping("")
+	@PostMapping
 	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthUser Long userId,
 		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {

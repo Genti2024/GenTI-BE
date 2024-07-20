@@ -2,11 +2,11 @@ package com.gt.genti.picturegenerateresponse.controller;
 
 import static com.gt.genti.response.GentiResponse.*;
 
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/users/picture-generate-responses")
 @RequiredArgsConstructor
+@Validated
 public class UserPGRESController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
@@ -43,5 +44,20 @@ public class UserPGRESController {
 		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId) {
 		return GentiResponse.success(pictureGenerateWorkService.verifyPGRES(userId,
 			pictureGenerateResponseId));
+	}
+
+	@Operation(summary = "별점 주기", description = "생성 완료된 사진에 별점 주기")
+	@EnumResponses(value = {
+			@EnumResponse(ResponseCode.OK),
+			@EnumResponse(ResponseCode.PictureGenerateResponseNotFound)
+	})
+	@Logging(item = LogItem.PGRES_STAR, action = LogAction.CREATE, requester = LogRequester.USER)
+	@PostMapping("/{pictureGenerateResponseId}/rate")
+	public ResponseEntity<ApiResult<Boolean>> ratePicture(
+		@AuthUser Long userId,
+		@PathVariable(value = "pictureGenerateResponseId") Long pictureGenerateResponseId,
+		@Parameter(example = "3", description = "생성 완료된 사진에 대한 별점 (값의 범위 : 1 ~ 5)")
+		@RequestParam(name = "star") @NotNull @Range(min = 1, max = 5) Integer star) {
+		return GentiResponse.success(pictureGenerateWorkService.ratePicture(userId, pictureGenerateResponseId, star));
 	}
 }

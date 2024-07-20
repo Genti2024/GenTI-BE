@@ -48,7 +48,7 @@ public class AdminReportController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = LogItem.REPORT, action = LogAction.VIEW, requester = LogRequester.ADMIN)
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<ApiResult<Page<ReportFindByAdminResponseDto>>> getAllReports(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
@@ -78,7 +78,7 @@ public class AdminReportController {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@Logging(item = LogItem.REPORT, action = LogAction.UPDATE, requester = LogRequester.ADMIN)
-	@PostMapping("")
+	@PostMapping
 	public ResponseEntity<ApiResult<Boolean>> updateReport(
 		@RequestBody @Valid ReportUpdateRequestDto reportUpdateRequestDto) {
 		return success(reportService.updateReport(reportUpdateRequestDto));

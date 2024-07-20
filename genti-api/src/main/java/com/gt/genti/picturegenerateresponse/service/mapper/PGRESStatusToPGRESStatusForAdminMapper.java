@@ -13,11 +13,11 @@ public class PGRESStatusToPGRESStatusForAdminMapper
 	extends AbstractEnumMapper<PictureGenerateResponseStatus, PictureGenerateResponseStatusForAdmin> {
 
 	private final static List<SimpleEntry<PictureGenerateResponseStatus, PictureGenerateResponseStatusForAdmin>> mappings = Arrays.asList(
-		new SimpleEntry<>(BEFORE_WORK, PictureGenerateResponseStatusForAdmin.BEFORE_WORK),
-		new SimpleEntry<>(SUBMITTED_FIRST, PictureGenerateResponseStatusForAdmin.BEFORE_WORK),
+		new SimpleEntry<>(CREATOR_BEFORE_WORK, PictureGenerateResponseStatusForAdmin.BEFORE_WORK),
+		new SimpleEntry<>(CREATOR_SUBMITTED_FIRST, PictureGenerateResponseStatusForAdmin.BEFORE_WORK),
 		new SimpleEntry<>(ADMIN_BEFORE_WORK, PictureGenerateResponseStatusForAdmin.BEFORE_WORK),
 		new SimpleEntry<>(ADMIN_IN_PROGRESS, PictureGenerateResponseStatusForAdmin.IN_PROGRESS),
-		new SimpleEntry<>(SUBMITTED_FINAL, PictureGenerateResponseStatusForAdmin.COMPLETED),
+		new SimpleEntry<>(ADMIN_SUBMITTED_FINAL, PictureGenerateResponseStatusForAdmin.COMPLETED),
 		new SimpleEntry<>(REPORTED, PictureGenerateResponseStatusForAdmin.COMPLETED),
 		new SimpleEntry<>(COMPLETED, PictureGenerateResponseStatusForAdmin.COMPLETED),
 		new SimpleEntry<>(EXPIRED, PictureGenerateResponseStatusForAdmin.EXPIRED)

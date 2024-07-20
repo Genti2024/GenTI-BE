@@ -119,7 +119,8 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public void cancelAllRequests(List<PictureGenerateRequest> requestList, PictureGenerateRequestCancellationReason reason) {
+	public void cancelAllRequests(List<PictureGenerateRequest> requestList,
+		PictureGenerateRequestCancellationReason reason) {
 		requestList.forEach(PictureGenerateRequest::canceled);
 	}
 
@@ -250,7 +251,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	private PGREQStatusResponseDto handleAwaitUserVerification(PictureGenerateRequest foundPGREQ) {
 		PictureGenerateResponse needVerifyPGRES = foundPGREQ.getResponseList().stream()
-			.filter(pgres -> pgres.getStatus().equals(PictureGenerateResponseStatus.SUBMITTED_FINAL))
+			.filter(pgres -> pgres.getStatus().equals(PictureGenerateResponseStatus.ADMIN_SUBMITTED_FINAL))
 			.findFirst()
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UnHandledException,
 				String.format(

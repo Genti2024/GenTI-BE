@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   genti:
-    image: byeongryeol/genti-dev:latest
-    container_name: genti-dev
+    image: byeongryeol/genti-staging:latest
+    container_name: genti-staging
     volumes:
       - /home/ubuntu/workspace/logs:/logs # 로그 경로 마운트
     ports:

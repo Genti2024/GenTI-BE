@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 public enum PictureGenerateResponseStatusForAdmin implements ConvertableEnum {
 	BEFORE_WORK("BEFORE_WORK", "작업 대기"),
 	IN_PROGRESS("IN_PROGRESS", "작업 중"),
-	COMPLETED("COMPLETED", "작업 완료");
+	COMPLETED("COMPLETED", "작업 완료"),
+	EXPIRED("EXPIRED", "만료됨");
 
 	private final String stringValue;
 	private final String response;

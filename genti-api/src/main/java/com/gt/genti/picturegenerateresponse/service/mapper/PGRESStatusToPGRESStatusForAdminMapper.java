@@ -8,9 +8,10 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import com.gt.genti.mapper.AbstractEnumMapper;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 
-public class PictureGenerateResponseStatusMapper {
+public class PGRESStatusToPGRESStatusForAdminMapper extends AbstractEnumMapper<PictureGenerateResponseStatus, PictureGenerateResponseStatusForAdmin> {
 
 	private static final Map<PictureGenerateResponseStatus, PictureGenerateResponseStatusForAdmin> statusToAdminMatchedMapping = new EnumMap<>(
 		PictureGenerateResponseStatus.class);
@@ -25,7 +26,8 @@ public class PictureGenerateResponseStatusMapper {
 			new SimpleEntry<>(ADMIN_IN_PROGRESS, PictureGenerateResponseStatusForAdmin.IN_PROGRESS),
 			new SimpleEntry<>(SUBMITTED_FINAL, PictureGenerateResponseStatusForAdmin.COMPLETED),
 			new SimpleEntry<>(REPORTED, PictureGenerateResponseStatusForAdmin.COMPLETED),
-			new SimpleEntry<>(COMPLETED, PictureGenerateResponseStatusForAdmin.COMPLETED)
+			new SimpleEntry<>(COMPLETED, PictureGenerateResponseStatusForAdmin.COMPLETED),
+			new SimpleEntry<>(EXPIRED, PictureGenerateResponseStatusForAdmin.EXPIRED)
 		);
 
 		for (SimpleEntry<PictureGenerateResponseStatus, PictureGenerateResponseStatusForAdmin> mapping : mappings) {
@@ -34,11 +36,9 @@ public class PictureGenerateResponseStatusMapper {
 		}
 	}
 
-	public static PictureGenerateResponseStatusForAdmin toForAdminMatched(PictureGenerateResponseStatus status) {
-		return statusToAdminMatchedMapping.get(status);
-	}
-
-	public static PictureGenerateResponseStatus toStatus(PictureGenerateResponseStatusForAdmin userStatus) {
-		return AdminMatchedToStatusMapping.get(userStatus);
+	protected PGRESStatusToPGRESStatusForAdminMapper(Class<PictureGenerateResponseStatus> aEnumClass,
+		Class<PictureGenerateResponseStatusForAdmin> bEnumClass,
+		List<SimpleEntry<PictureGenerateResponseStatus, PictureGenerateResponseStatusForAdmin>> mappings) {
+		super(aEnumClass, bEnumClass, mappings);
 	}
 }

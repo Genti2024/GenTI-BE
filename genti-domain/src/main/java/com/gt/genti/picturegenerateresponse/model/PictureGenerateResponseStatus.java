@@ -16,6 +16,7 @@ public enum PictureGenerateResponseStatus implements ConvertableEnum {
 	ADMIN_IN_PROGRESS("ADMIN_IN_PROGRESS"),
 	SUBMITTED_FINAL("SUBMITTED_FINAL"),
 	REPORTED("REPORTED"),
+	EXPIRED("EXPIRED"),
 	COMPLETED("COMPLETED");
 
 	private final String stringValue;

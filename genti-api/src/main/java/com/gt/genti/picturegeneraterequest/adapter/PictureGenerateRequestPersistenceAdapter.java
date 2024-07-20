@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
@@ -61,9 +60,8 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Page<PGREQDetailFindByAdminResponseDto> findAllByRequester(User foundUser, Pageable pageable) {
-		return pictureGenerateRequestRepository.findAllByRequester(foundUser, pageable)
-			.map(PGREQDetailFindByAdminResponseDto::new);
+	public Page<PictureGenerateRequest> findAllByRequester(User foundUser, Pageable pageable) {
+		return pictureGenerateRequestRepository.findAllByRequester(foundUser, pageable);
 	}
 
 	@Override

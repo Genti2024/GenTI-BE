@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
@@ -29,7 +28,7 @@ public interface PictureGenerateRequestPort {
 
 	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
 
-	Page<PGREQDetailFindByAdminResponseDto> findAllByRequester(User foundUser, Pageable pageable);
+	Page<PictureGenerateRequest> findAllByRequester(User foundUser, Pageable pageable);
 
 	Optional<PictureGenerateRequest> findTopByRequesterOrderByCreatedAtDesc(User foundUser);
 }

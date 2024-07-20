@@ -1,5 +1,7 @@
 package com.gt.genti.picturegeneraterequest.controller;
 
+import static com.gt.genti.response.GentiResponse.*;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -15,11 +17,8 @@ import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByCreatorResponseDto;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegenerateresponse.service.PictureGenerateWorkService;
-import com.gt.genti.response.GentiResponse;
-import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
@@ -47,7 +46,7 @@ public class CreatorPGREQController {
 	public ResponseEntity<ApiResult<PGREQBriefFindByCreatorResponseDto>> getAssignedPictureGenerateRequestBrief(
 		@AuthUser Long userId
 	) {
-		return GentiResponse.success(pictureGenerateWorkService.getPictureGenerateRequestBrief(
+		return success(pictureGenerateWorkService.getPictureGenerateRequestBrief(
 			userId, PictureGenerateRequestStatus.ASSIGNING));
 	}
 
@@ -64,7 +63,7 @@ public class CreatorPGREQController {
 		@AuthUser Long userId,
 		@Parameter(description = "수락할 사진생성요청의 id", example = "1")
 		@PathVariable(value = "pictureGenerateRequestId") Long pictureGenerateRequestId) {
-		return GentiResponse.success(
+		return success(
 			pictureGenerateWorkService.acceptPictureGenerateRequest(userId, pictureGenerateRequestId));
 	}
 
@@ -81,7 +80,7 @@ public class CreatorPGREQController {
 		@AuthUser Long userId,
 		@Parameter(description = "거절할 사진생성요청의 id", example = "1")
 		@PathVariable(value = "pictureGenerateRequestId") Long pictureGenerateRequestId) {
-		return GentiResponse.success(
+		return success(
 			pictureGenerateWorkService.rejectPictureGenerateRequest(userId, pictureGenerateRequestId));
 	}
 
@@ -92,10 +91,10 @@ public class CreatorPGREQController {
 	})
 	@Logging(item = LogItem.PGREQ_INPROGESS, action = LogAction.SEARCH, requester = LogRequester.CREATOR)
 	@GetMapping("/in-progress")
-	public ResponseEntity<ApiResult<List<PGREQDetailFindByAdminResponseDto>>> getInProgressPictureGenerateRequestDetail(
+	public ResponseEntity<ApiResult<List<PGREQBriefFindByCreatorResponseDto>>> getInProgressPictureGenerateRequestDetail(
 		@AuthUser Long userId
 	) {
-		return GentiResponse.success(pictureGenerateWorkService.getPictureGenerateRequestDetail3(userId));
+		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail3(userId));
 	}
 
 	@Deprecated
@@ -105,9 +104,9 @@ public class CreatorPGREQController {
 	})
 	@Logging(item = LogItem.PGREQ, action = LogAction.VIEW, requester = LogRequester.CREATOR)
 	@GetMapping("/all")
-	public ResponseEntity<ApiResult<List<PGREQDetailFindByAdminResponseDto>>> getAssignedPictureGenerateRequestsAll(
+	public ResponseEntity<ApiResult<List<PGREQBriefFindByCreatorResponseDto>>> getAssignedPictureGenerateRequestsAll(
 		@AuthUser Long userId) {
-		return GentiResponse.success(pictureGenerateWorkService.getPictureGenerateRequestDetailAll(
+		return success(pictureGenerateWorkService.getPictureGenerateRequestDetailAll(
 			userId));
 	}
 
@@ -118,11 +117,11 @@ public class CreatorPGREQController {
 	})
 	@Logging(item = LogItem.PGREQ, action = LogAction.SEARCH, requester = LogRequester.CREATOR)
 	@GetMapping("/{pictureGenerateRequestId}")
-	public ResponseEntity<ApiResult<PGREQDetailFindByAdminResponseDto>> getPictureGenerateRequestDetail(
+	public ResponseEntity<ApiResult<PGREQBriefFindByCreatorResponseDto>> getPictureGenerateRequestDetail(
 		@AuthUser Long userId,
 		@Parameter(description = "조회할 사진생성요청의 id", example = "1")
 		@PathVariable(value = "pictureGenerateRequestId") Long pictureGenerateRequestId) {
-		return GentiResponse.success(pictureGenerateWorkService.getPictureGenerateRequestDetail(
+		return success(pictureGenerateWorkService.getPictureGenerateRequestDetail(
 			userId, pictureGenerateRequestId));
 	}
 

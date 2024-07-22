@@ -25,6 +25,6 @@ public class SchedulerService {
 
 	@Scheduled(fixedDelayString = "${schedule.delay.match-picture-generate-schedule}")
 	public void run() {
-		requestMatchService.matchPictureGenerateRequests();
+		requestMatchService.matchIfNotMatchedPGREQExists();
 	}
 }

@@ -139,6 +139,8 @@ public class PictureGenerateWorkService {
 		foundPictureGenerateRequest.acceptByCreator();
 		PictureGenerateResponse newPGRES = PictureGenerateResponse.createCreatorMatchedPGRES(foundCreator,
 			foundPictureGenerateRequest);
+		foundPictureGenerateRequest.addPGRES(newPGRES);
+		foundCreator.addPictureGenerateResponse(newPGRES);
 		pictureGenerateResponseRepository.save(newPGRES);
 
 		return true;
@@ -255,6 +257,7 @@ public class PictureGenerateWorkService {
 		foundPGRES.userVerified();
 		return true;
 	}
+
 	public PGRESUpdateAdminInChargeResponseDto updateAdminInCharge(Long pgresId,
 		PGRESUpdateAdminInChargeRequestDto requestDto) {
 		PictureGenerateResponse foundPGRES = findPGRES(pgresId);
@@ -272,6 +275,7 @@ public class PictureGenerateWorkService {
 			.status(foundPGRES.getStatus())
 			.build();
 	}
+
 	public Boolean ratePicture(Long userId, Long pgresId, Integer star) {
 		User foundUser = findUserById(userId);
 		PictureGenerateResponse foundPGRES = pictureGenerateResponseRepository.findById(pgresId)

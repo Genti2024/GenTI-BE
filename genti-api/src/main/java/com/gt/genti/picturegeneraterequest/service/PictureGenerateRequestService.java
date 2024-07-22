@@ -108,7 +108,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	@Override
 	public void cancelRequest(PictureGenerateRequest request, PictureGenerateRequestCancellationReason reason) {
-		// log.info("사진생성요청 id : {} 유저 email : {} 의 요청이 취소 처리 되었습니다.,request.getId());
+		log.info("사진생성요청 id : {} 유저 email : {} 의 요청이 취소 처리 되었습니다.", request.getId(), request.getRequester().getEmail());
 		request.canceled();
 		User requester = request.getRequester();
 		//TODO 삭제 이벤트를 요청자에게 FCM 푸시알림 보내기
@@ -201,8 +201,11 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.picturePose(foundPicturePose)
 			.userFacePictureList(uploadedFacePictureList)
 			.build();
-		requestMatchService.matchNewRequest(createdPGREQ);
-		return pictureGenerateRequestPort.save(createdPGREQ);
+
+		PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
+		requestMatchService.matchNewRequest(savedPGREQ);
+
+		return savedPGREQ;
 	}
 
 	private User findUserById(Long userId) {
@@ -258,7 +261,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 					"No suitable picture generation response found for verification. Request ID: [%d], Status: [%s]",
 					foundPGREQ.getId(), foundPGREQ.getPictureGenerateRequestStatus())));
 
-		return createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, foundPGREQ.getId(),
+		return createPGREQStatusResponseDto(AWAIT_USER_VERIFICATION, foundPGREQ.getId(),
 			new PGRESFindByUserResponseDto(needVerifyPGRES));
 	}
 

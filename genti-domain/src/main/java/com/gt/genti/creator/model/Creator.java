@@ -1,12 +1,13 @@
 package com.gt.genti.creator.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.gt.genti.common.basetimeentity.model.BaseTimeEntity;
+import com.gt.genti.common.converter.BankTypeConverter;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.user.model.User;
-import com.gt.genti.common.basetimeentity.model.BaseTimeEntity;
-import com.gt.genti.common.converter.BankTypeConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -44,10 +45,10 @@ public class Creator extends BaseTimeEntity {
 	User user;
 
 	@OneToMany(mappedBy = "creator")
-	List<PictureGenerateRequest> pictureGenerateRequestList;
+	List<PictureGenerateRequest> pictureGenerateRequestList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "creator")
-	List<PictureGenerateResponse> pictureGenerateResponseList;
+	List<PictureGenerateResponse> pictureGenerateResponseList = new ArrayList<>();
 
 	@Convert(converter = BankTypeConverter.class)
 	@Column(name = "bank_type", nullable = false)
@@ -93,5 +94,13 @@ public class Creator extends BaseTimeEntity {
 
 	public void completeTask() {
 		this.completedTaskCount += 1;
+	}
+
+	public void addPictureGenerateRequest(PictureGenerateRequest request) {
+		this.pictureGenerateRequestList.add(request);
+	}
+
+	public void addPictureGenerateResponse(PictureGenerateResponse response) {
+		this.pictureGenerateResponseList.add(response);
 	}
 }

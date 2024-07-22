@@ -107,21 +107,23 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 		this.request.submittedByAdmin();
 	}
 
-	public void userVerified(){
+	public void userVerified() {
 		this.status = COMPLETED;
 	}
 
-	private PictureGenerateResponse(Creator creator, PictureGenerateRequest request, PictureGenerateResponseStatus status) {
+	private PictureGenerateResponse(Creator creator, PictureGenerateRequest request,
+		PictureGenerateResponseStatus status) {
 		this.creator = creator;
 		this.request = request;
 		this.status = status;
 	}
 
-	public static PictureGenerateResponse createAdminMatchedPGRES(Creator adminCreator, PictureGenerateRequest request){
+	public static PictureGenerateResponse createAdminMatchedPGRES(Creator adminCreator,
+		PictureGenerateRequest request) {
 		return new PictureGenerateResponse(adminCreator, request, ADMIN_BEFORE_WORK);
 	}
 
-	public static PictureGenerateResponse createCreatorMatchedPGRES(Creator creator, PictureGenerateRequest request){
+	public static PictureGenerateResponse createCreatorMatchedPGRES(Creator creator, PictureGenerateRequest request) {
 		return new PictureGenerateResponse(creator, request, CREATOR_BEFORE_WORK);
 	}
 
@@ -133,8 +135,16 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 		this.star = star;
 	}
 
-	public void expired(){
+	public void expired() {
 		this.status = EXPIRED;
 	}
 
+	public void reported() {
+		this.status = REPORTED;
+	}
+
+	public void clearRelationshipsWithPGREQ() {
+		this.request.deletePGRES(this);
+		this.request = null;
+	}
 }

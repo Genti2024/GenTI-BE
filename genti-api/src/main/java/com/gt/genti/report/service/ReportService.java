@@ -39,9 +39,10 @@ public class ReportService {
 			ResponseCode.PictureGenerateResponseNotFound));
 
 		Report createReport = new Report(foundUser, findPictureGenerateResponse, reportCreateRequestDto.getContent());
-
 		reportRepository.save(createReport);
 
+		findPictureGenerateResponse.reported();
+		findPictureGenerateResponse.getRequest().reported();
 		return true;
 	}
 

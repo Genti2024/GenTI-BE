@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PGRESAdminMatchedDetailFindByAdminResponseDto {
-	@Schema(description = "사진생성응답 응답 Dto", example = "1")
+	@Schema(description = "사진생성응답의 DB Id", example = "1")
 	Long pictureGenerateResponseId;
 	@Schema(description = "어드민이 생성한 사진 리스트")
 	List<CommonPictureResponseDto> pictureCompletedList;

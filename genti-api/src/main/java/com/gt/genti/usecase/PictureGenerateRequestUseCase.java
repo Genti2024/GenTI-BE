@@ -44,4 +44,6 @@ public interface PictureGenerateRequestUseCase {
 
 	void cancelRequest(PictureGenerateRequest request, PictureGenerateRequestCancellationReason reason);
 	void cancelAllRequests(List<PictureGenerateRequest> request, PictureGenerateRequestCancellationReason reason);
+
+	Boolean confirmCanceledPGREQ(Long userId, Long pictureGenerateRequestId);
 }

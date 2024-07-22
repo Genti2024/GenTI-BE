@@ -20,7 +20,8 @@ public class PGREQStatusToPGREQStatusForUserMapper
 		new SimpleEntry<>(ASSIGNING, PictureGenerateRequestStatusForUser.IN_PROGRESS),
 		new SimpleEntry<>(MATCH_TO_ADMIN, PictureGenerateRequestStatusForUser.IN_PROGRESS),
 		new SimpleEntry<>(REPORTED, PictureGenerateRequestStatusForUser.NEW_REQUEST_AVAILABLE),
-		new SimpleEntry<>(CANCELED, PictureGenerateRequestStatusForUser.CANCELED)
+		new SimpleEntry<>(CANCELED, PictureGenerateRequestStatusForUser.CANCELED),
+		new SimpleEntry<>(CANCELED_CONFIRMED, PictureGenerateRequestStatusForUser.NEW_REQUEST_AVAILABLE)
 	);
 
 	public PGREQStatusToPGREQStatusForUserMapper() {

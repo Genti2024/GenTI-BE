@@ -180,4 +180,8 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	public void deletePGRES(PictureGenerateResponse pictureGenerateResponse) {
 		this.responseList.remove(pictureGenerateResponse);
 	}
+
+	public void userConfirmedCancellation() {
+		this.pictureGenerateRequestStatus = CANCELED_CONFIRMED;
+	}
 }

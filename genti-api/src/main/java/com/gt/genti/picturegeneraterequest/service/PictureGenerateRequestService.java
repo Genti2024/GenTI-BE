@@ -125,6 +125,20 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
+	public Boolean confirmCanceledPGREQ(Long userId, Long pictureGenerateRequestId) {
+		User foundUser = findUserById(userId);
+		PictureGenerateRequest pgreq = pictureGenerateRequestPort.findById(pictureGenerateRequestId)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
+				String.format("id = %d", pictureGenerateRequestId)));
+
+		if (!pgreq.getRequester().getId().equals(foundUser.getId())) {
+			throw ExpectedException.withLogging(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest);
+		}
+		pgreq.userConfirmedCancellation();
+		return true;
+	}
+
+	@Override
 	public List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(Long userId) {
 		User foundUser = findUserById(userId);
 

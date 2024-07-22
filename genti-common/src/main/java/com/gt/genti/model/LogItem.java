@@ -18,6 +18,7 @@ public enum LogItem {
 	PGREQ_ACCEPT("pgreq : accept"),
 	PGREQ_REJECT("pgreq : reject"),
 	PGREQ_INPROGESS("pgreq : inprogress"),
+	PGREQ_CANCEL_VERIFY("pgreq : cancel verify"),
 	PGRES("pgres"),
 	PGRES_PICTURE_COMPLETED("pgres : picture_completed"),
 	PGRES_PICTURE_CREATED_BY_CREATOR("pgres : picture_created_by_creator"),
@@ -31,6 +32,7 @@ public enum LogItem {
 	RESPONSE_EXAMPLE("response_example"),
 	CASHOUT("cashout"),
 	SETTLEMENT("settlement");
+
 
 	private final String value;
 

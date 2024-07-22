@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
 
@@ -22,7 +24,11 @@ public class AdminService {
 		return userRepository.findAdminUser(PageRequest.of(0,1)).get(0);
 	}
 	public Creator getAdminCreator(){
-		return creatorRepository.findAdminCreator(PageRequest.of(0,1)).get(0);
+		try{
+			return creatorRepository.findAdminCreator(PageRequest.of(0,1)).get(0);
+		} catch (Exception e){
+			throw ExpectedException.withLogging(ResponseCode.UnHandledException, "어드민 유저가 존재하지 않습니다.");
+		}
 	}
 
 

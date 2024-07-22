@@ -37,6 +37,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(name = "users") // h2 예약어 해결법 못찾음
 @Entity
@@ -94,6 +95,7 @@ public class User extends BaseTimeEntity {
 	String password;
 
 	// user hard delete 시에 같이 삭제
+	@Setter
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	Creator creator;
 

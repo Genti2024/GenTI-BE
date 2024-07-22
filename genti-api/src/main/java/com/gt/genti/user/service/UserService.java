@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -181,5 +182,23 @@ public class UserService {
 		if (!expiredUserList.isEmpty()) {
 			userRepository.deleteAllInBatch(expiredUserList);
 		}
+	}
+
+	public Page<UserFindByAdminResponseDto> getUserInfoByEmail(String email) {
+		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		UserFindByAdminResponseDto responseDto =UserFindByAdminResponseDto.builder()
+			.email(foundUser.getEmail())
+			.userRole(foundUser.getUserRole())
+			.birthDate(foundUser.getBirthDate())
+			.deposit(foundUser.getDeposit())
+			.lastLoginDate(foundUser.getLastLoginDate())
+			.userStatus(foundUser.getUserStatus())
+			.requestTaskCount(foundUser.getRequestTaskCount())
+			.creator(foundUser.getCreator())
+			.id(foundUser.getId())
+			.createdAt(foundUser.getCreatedAt())
+			.lastLoginDate(foundUser.getLastLoginDate())
+			.build();
+		return new PageImpl<>(List.of(responseDto));
 	}
 }

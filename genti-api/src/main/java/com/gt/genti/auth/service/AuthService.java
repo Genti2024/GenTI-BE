@@ -9,16 +9,22 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
+import com.gt.genti.jwt.TokenGenerateCommand;
+import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.request.KakaoJwtCreateRequestDTO;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
+import com.gt.genti.user.service.UserSignUpEventPublisher;
 import com.gt.genti.user.service.social.SocialOauthContext;
 import com.gt.genti.util.HttpRequestUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,6 +34,7 @@ public class AuthService {
 	private final SocialOauthContext socialOauthContext;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserRepository userRepository;
+	private final UserSignUpEventPublisher userSignUpEventPublisher;
 
 	public SocialLoginResponse login(final SocialLoginRequest request) {
 		return socialOauthContext.doLogin(request);
@@ -48,4 +55,29 @@ public class AuthService {
 		return userRepository.findById(userId).orElseThrow(()-> ExpectedException.withLogging(ResponseCode.UserNotFound));
 	}
 
+	public TokenResponse createJwt(KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
+		Optional<User> findUser = userRepository.findByEmail(kakaoJwtCreateRequestDTO.getEmail());
+		User user;
+		if (findUser.isEmpty()) {
+			user = User.builderWithSignIn()
+					.socialId(" ")
+					.oauthPlatform(OauthPlatform.KAKAO)
+					.username("유저" + kakaoJwtCreateRequestDTO.getNickname())
+					.nickname(kakaoJwtCreateRequestDTO.getNickname())
+					.email(kakaoJwtCreateRequestDTO.getEmail())
+					.build();
+			User newUser = userRepository.save(user);
+			userSignUpEventPublisher.publishSignUpEvent(newUser);
+		} else {
+			user = findUser.get();
+			user.resetDeleteAt();
+		}
+		user.login();
+		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
+				.userId(user.getId().toString())
+				.role(user.getUserRole().getRoles())
+				.build();
+        return TokenResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+				jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
+	}
 }

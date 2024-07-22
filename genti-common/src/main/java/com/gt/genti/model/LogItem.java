@@ -9,6 +9,7 @@ public enum LogItem {
 	OAUTH_APPLE("oauth : apple"),
 	OAUTH_KAKAO("oauth : kakao"),
 	OAUTH_GOOGLE("oauth : google"),
+	JWT("jwt"),
 	CREATOR_MY("creator : my"),
 	CREATOR_STATUS("creator : status"),
 	CREATOR_ACCOUNT("creator : account"),

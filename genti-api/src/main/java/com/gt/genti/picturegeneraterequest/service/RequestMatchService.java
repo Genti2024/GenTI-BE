@@ -47,8 +47,7 @@ public class RequestMatchService {
 		GentiMatchResult gentiMatchResult = new GentiMatchResult(currentStrategy);
 
 		if (pendingRequestList.isEmpty()) {
-			gentiMatchResult.addSummary("매칭 대기중인 작업이 없음");
-			logAndSendToDiscord(gentiMatchResult);
+			log.info("매칭 대기중인 작업이 없음");
 			return;
 		}
 

@@ -16,13 +16,13 @@ public class PGRESFindByUserResponseDto {
 	@Schema(description = "사진생성응답 Id", example = "1")
 	Long pictureGenerateResponseId;
 	@Schema(description = "완성된 사진")
-	CommonPictureResponseDto pictureCompletedList;
+	CommonPictureResponseDto pictureCompleted;
 
 	public PGRESFindByUserResponseDto(PictureGenerateResponse pgres) {
 		this.pictureGenerateResponseId = pgres.getId();
 		if (pgres.getCompletedPictureList() == null) {
 			throw ExpectedException.withLogging(ResponseCode.FinalPictureNotUploadedYet, pgres.getId());
 		}
-		this.pictureCompletedList = CommonPictureResponseDto.of(pgres.getCompletedPictureList().get(0));
+		this.pictureCompleted = CommonPictureResponseDto.of(pgres.getCompletedPictureList().get(0));
 	}
 }

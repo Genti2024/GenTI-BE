@@ -2,7 +2,6 @@ package com.gt.genti.user.dto.response;
 
 import java.time.LocalDateTime;
 
-import com.gt.genti.creator.dto.response.CreatorFindByAdminResponseDto;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.deposit.dto.response.DepositFindByAdminResponseDto;
 import com.gt.genti.deposit.model.Deposit;
@@ -41,16 +40,16 @@ public class UserFindByAdminResponseDto {
 	@Schema(description = "가입일자", example = "2024-05-08T10:31:20")
 	LocalDateTime createdAt;
 
-	@Schema(description = "누적 주문 횟수", example = "6")
-	int requestTaskCount;
+	@Schema(description = "누적 주문 횟수(공급자인 경우 null)", example = "6")
+	Integer requestTaskCount;
 
-	@Schema(description = "공급자 정보 권한이 사용자인 경우 null", nullable = true)
-	CreatorFindByAdminResponseDto creatorResponseDto;
+	@Schema(description = "누적 공급 횟수(사용자인 경우 null)", example = "2")
+	Integer completedTaskCount;
 
-	@Schema(description = "잔액 응답 dto 사용자인 경우 null 일수도 있음", nullable = true)
+	@Schema(description = "잔액관련응답 dto 사용자인 경우 null or 0값 존재", nullable = true)
 	DepositFindByAdminResponseDto depositResponseDto;
 
-	@Schema(description = "최근접속일자", example = "2024-06-23T10:15:30")
+	@Schema(description = "최근 접속일자", example = "2024-06-23T10:15:30")
 	LocalDateTime lastLoginDate;
 
 	@Builder
@@ -67,7 +66,7 @@ public class UserFindByAdminResponseDto {
 		this.createdAt = createdAt;
 		this.requestTaskCount = requestTaskCount;
 		if (creator != null) {
-			this.creatorResponseDto = new CreatorFindByAdminResponseDto(creator);
+			this.completedTaskCount = creator.getCompletedTaskCount();
 		}
 		if (deposit != null) {
 			this.depositResponseDto = new DepositFindByAdminResponseDto(deposit);

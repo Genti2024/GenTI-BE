@@ -23,7 +23,7 @@ public class PGREQStatusResponseDto {
 		"NEW_REQUEST_AVAILABLE : 이전 주문이 완료되었거나 주문한적이 없는 등 새로운 요청 생성이 가능한 상태이다.")
 	PictureGenerateRequestStatusForUser status;
 
-	@Schema(description = "사진생성응답 객체, status 값이 AWAIT_USER_VERIFICATION 가 아니면 null", example = "1", nullable = true)
+	@Schema(description = "사진생성응답 객체, status 값이 AWAIT_USER_VERIFICATION 가 아니면 null", nullable = true)
 	PGRESFindByUserResponseDto pictureGenerateResponse;
 
 	@Builder

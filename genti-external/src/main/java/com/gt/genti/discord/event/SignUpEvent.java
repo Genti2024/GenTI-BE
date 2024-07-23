@@ -1,4 +1,4 @@
-package com.gt.genti.discord;
+package com.gt.genti.discord.event;
 
 import java.time.LocalDateTime;
 

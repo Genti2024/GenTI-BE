@@ -78,6 +78,15 @@ public class ReportService {
 			ReportService::mapToResponseDto);
 	}
 
+	public Page<ReportFindByAdminResponseDto> getReportsByUserEmail(String email, String statusString, Pageable pageable) {
+		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		if ("ALL".equalsIgnoreCase(statusString)) {
+			return reportRepository.findAllByCreatedBy(foundUser, pageable).map(ReportService::mapToResponseDto);
+		} else {
+			return reportRepository.findAllByCreatedByAndReportStatus(foundUser, ReportStatus.valueOf(statusString), pageable).map(ReportService::mapToResponseDto);
+		}
+	}
+
 	public Boolean updateReport(ReportUpdateRequestDto reportUpdateRequestDto) {
 		Long id = reportUpdateRequestDto.getId();
 		ReportStatus status = reportUpdateRequestDto.getReportStatus();

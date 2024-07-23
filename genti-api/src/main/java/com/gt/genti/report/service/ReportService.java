@@ -78,12 +78,12 @@ public class ReportService {
 			ReportService::mapToResponseDto);
 	}
 
-	public Page<ReportFindByAdminResponseDto> getAllReportsByUserEmail(String email, Pageable pageable) {
+	public Page<ReportFindByAdminResponseDto> getReportsByUserEmail(String email, Pageable pageable) {
 		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
 		return reportRepository.findAllByCreatedBy(foundUser, pageable).map(ReportService::mapToResponseDto);
 	}
 
-	public Page<ReportFindByAdminResponseDto> getAllReportsByUserEmailAndReportStatus(String email, ReportStatus status, Pageable pageable) {
+	public Page<ReportFindByAdminResponseDto> getReportsByUserEmailAndReportStatus(String email, ReportStatus status, Pageable pageable) {
 		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
 		return reportRepository.findAllByCreatedByAndReportStatus(foundUser, status, pageable).map(ReportService::mapToResponseDto);
 	}

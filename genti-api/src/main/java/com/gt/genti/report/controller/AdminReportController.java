@@ -75,7 +75,7 @@ public class AdminReportController {
 	})
 	@Logging(item = LogItem.REPORT, action = LogAction.VIEW, requester = LogRequester.ADMIN)
 	@GetMapping("/{email}")
-	public ResponseEntity<ApiResult<Page<ReportFindByAdminResponseDto>>> getAllReportsByUserEmail(
+	public ResponseEntity<ApiResult<Page<ReportFindByAdminResponseDto>>> getReportsByUserEmail(
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
@@ -95,9 +95,9 @@ public class AdminReportController {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 		if ("ALL".equalsIgnoreCase(status)) {
-			return success(reportService.getAllReportsByUserEmail(email, pageable));
+			return success(reportService.getReportsByUserEmail(email, pageable));
 		} else {
-			return success(reportService.getAllReportsByUserEmailAndReportStatus(email, ReportStatus.valueOf(status), pageable));
+			return success(reportService.getReportsByUserEmailAndReportStatus(email, ReportStatus.valueOf(status), pageable));
 		}
 	}
 

@@ -68,16 +68,18 @@ public class AuthService {
 					.build();
 			User newUser = userRepository.save(user);
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
+			user.login();
+			return TokenResponse.of(null, null);
 		} else {
 			user = findUser.get();
 			user.resetDeleteAt();
+			user.login();
+			TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
+					.userId(user.getId().toString())
+					.role(user.getUserRole().getRoles())
+					.build();
+			return TokenResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+					jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
 		}
-		user.login();
-		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
-				.userId(user.getId().toString())
-				.role(user.getUserRole().getRoles())
-				.build();
-        return TokenResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-				jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
 	}
 }

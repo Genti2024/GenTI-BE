@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.common.AdminService;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
-import com.gt.genti.discord.DiscordAppender;
 import com.gt.genti.matchingstrategy.model.RequestMatchStrategy;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
@@ -30,7 +29,7 @@ public class RequestMatchService {
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final AdminService adminService;
-	private final DiscordAppender discordAppender;
+	private final MatchEventPublisher matchEventPublisher;
 
 	@Getter
 	private RequestMatchStrategy currentStrategy = RequestMatchStrategy.ADMIN_ONLY;
@@ -67,7 +66,7 @@ public class RequestMatchService {
 				}
 			}
 		}
-		logAndSendToDiscord(gentiMatchResult);
+		logAndPublishEvent(gentiMatchResult);
 	}
 
 	@Transactional
@@ -165,9 +164,9 @@ public class RequestMatchService {
 			.collect(Collectors.toList());
 	}
 
-	private void logAndSendToDiscord(GentiMatchResult gentiMatchResult) {
+	private void logAndPublishEvent(GentiMatchResult gentiMatchResult) {
 		log.info(gentiMatchResult.toString());
-		discordAppender.matchResultAppend(gentiMatchResult.getSummary(), gentiMatchResult.getMatchResult());
+		matchEventPublisher.publishSignUpEvent(gentiMatchResult);
 	}
 }
 

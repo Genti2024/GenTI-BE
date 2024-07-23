@@ -31,6 +31,10 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final GentiAuthenticationEntryPoint gentiAuthenticationEntryPoint;
+	//TODO cors allowed origin 목록을 properties로 받아서 corsConfig에 추가하는 로직
+	// edited at 2024-07-22
+	// author 서병렬
+
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -50,6 +54,7 @@ public class SecurityConfig {
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/api/**", config);
+		source.registerCorsConfiguration("/login/**", config);
 		return source;
 	}
 

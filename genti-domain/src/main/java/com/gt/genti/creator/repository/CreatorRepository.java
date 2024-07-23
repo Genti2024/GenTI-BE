@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.user.model.User;
@@ -14,7 +15,7 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 
 	@Query("select c, count(pgr) as requestCount "
 		+ "from Creator c "
-		+ "left join c.pictureGenerateRequest pgr "
+		+ "left join c.pictureGenerateRequestList pgr "
 		+ "on pgr.pictureGenerateRequestStatus in ( com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus."
 		+ "ASSIGNING, "
 		+ "com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus."
@@ -27,7 +28,7 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 
 	@Query("select c from Creator c "
 		+ "where c.user.id = :userId ")
-	Optional<Creator> findByUserId(Long userId);
+	Optional<Creator> findByUserId(@Param(value= "userId") Long userId);
 
 	Optional<Creator> findByUser(User user);
 

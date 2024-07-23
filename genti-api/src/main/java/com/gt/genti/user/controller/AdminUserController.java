@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -80,11 +81,17 @@ public class AdminUserController {
 			"desc"}))
 		@RequestParam(name = "direction", defaultValue = "desc") String direction,
 		@Parameter(description = "유저의 권한", example = "USER", schema = @Schema(
-			allowableValues = {"USER", "CREATOR", "ADMIN", "OAUTH_FIRST_JOIN", "ALL"}))
-		@RequestParam(name = "role", defaultValue = "ALL") @ValidEnum(value = UserRole.class, hasAllOption = true) String role
+			allowableValues = {"USER", "CREATOR", "ADMIN", "ALL"}))
+		@RequestParam(name = "role", defaultValue = "ALL") @ValidEnum(value = UserRole.class, hasAllOption = true) String role,
+		@Parameter(description = "유저의 email")
+		@RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email
 	) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+		if(email!= null){
+			return success(userService.getUserInfoByEmail(email));
+		}
 
 		if ("ALL".equals(role)) {
 			return success(userService.getAllUserInfo(pageable));

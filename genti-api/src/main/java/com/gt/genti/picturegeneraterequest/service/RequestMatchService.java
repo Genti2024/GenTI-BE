@@ -2,6 +2,7 @@ package com.gt.genti.picturegeneraterequest.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
@@ -10,12 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.common.AdminService;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
+import com.gt.genti.discord.DiscordAppender;
 import com.gt.genti.matchingstrategy.model.RequestMatchStrategy;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,172 +30,144 @@ public class RequestMatchService {
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final AdminService adminService;
+	private final DiscordAppender discordAppender;
 
-	public static RequestMatchStrategy CURRENT_STRATEGY = RequestMatchStrategy.ADMIN_ONLY;
+	@Getter
+	private RequestMatchStrategy currentStrategy = RequestMatchStrategy.ADMIN_ONLY;
 
-
-	public static RequestMatchStrategy changeMatchingStrategy(RequestMatchStrategy strategy) {
-		CURRENT_STRATEGY = strategy;
-		return CURRENT_STRATEGY;
+	public RequestMatchStrategy changeMatchingStrategy(RequestMatchStrategy strategy) {
+		this.currentStrategy = strategy;
+		return currentStrategy;
 	}
 
 	@Transactional
-	public void matchPictureGenerateRequests() {
-		StringBuilder resultSB = new StringBuilder();
-		resultSB.append("""
-			[%s] 전략으로 자동매칭 시작
-			""".formatted(CURRENT_STRATEGY.getStringValue())).append('\n');
-
+	public void matchIfNotMatchedPGREQExists() {
 		List<PictureGenerateRequest> pendingRequestList = pictureGenerateRequestRepository.findPendingRequests();
-		List<Creator> creatorList = getCreatorListExceptAdmin();
+		List<Creator> creatorList = getAvailableCreators();
+		GentiMatchResult gentiMatchResult = new GentiMatchResult(currentStrategy);
 
-		matchRequest(pendingRequestList, creatorList, resultSB);
+		if (pendingRequestList.isEmpty()) {
+			log.info("매칭 대기중인 작업이 없음");
+			return;
+		}
+
+		matchRequestsWithStrategy(pendingRequestList, creatorList, gentiMatchResult);
+	}
+
+	private void matchRequestsWithStrategy(List<PictureGenerateRequest> requestList, List<Creator> availableCreatorList,
+		GentiMatchResult gentiMatchResult) {
+		switch (currentStrategy) {
+			case ADMIN_ONLY -> matchAllToAdmin(requestList, gentiMatchResult);
+			case CREATOR_ADMIN -> matchToCreatorOrAdmin(requestList, availableCreatorList, gentiMatchResult);
+			case CREATOR_ONLY -> {
+				if (availableCreatorList.isEmpty()) {
+					gentiMatchResult.addSummary("%d개의 매칭 대기중인 작업 || 작업 가능한 작업자가 없음".formatted(requestList.size()));
+				} else {
+					matchToCreatorsOnly(requestList, availableCreatorList, gentiMatchResult);
+				}
+			}
+		}
+		logAndSendToDiscord(gentiMatchResult);
 	}
 
 	@Transactional
 	public void matchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
-		StringBuilder resultSB = new StringBuilder();
-		resultSB.append("신규 요청에 대하여 매칭 시도");
-		matchRequest(pictureGenerateRequest, resultSB);
+		matchSingleRequest(pictureGenerateRequest, "신규 요청에 대하여 매칭 시도");
 	}
 
 	@Transactional
 	public void matchRejectedRequest(PictureGenerateRequest pictureGenerateRequest) {
-		StringBuilder resultSB = new StringBuilder();
-		resultSB.append("거절된 요청에 대해서 재 매칭 시도");
-		matchRequest(pictureGenerateRequest, resultSB);
+		matchSingleRequest(pictureGenerateRequest, "거절된 요청에 대해서 재 매칭 시도");
 	}
 
-	private void matchRequestToAdmin(List<PictureGenerateRequest> pendingRequestList, StringBuilder resultSB) {
-		// Creator adminCreator = userServic.findAdminUser()
+	private void matchAllToAdmin(List<PictureGenerateRequest> pendingRequestList, GentiMatchResult gentiMatchResult) {
 		Creator adminCreator = adminService.getAdminCreator();
-		int requestCount = pendingRequestList.size();
-		List<String> matchResultList = new ArrayList<>();
 		List<PictureGenerateResponse> pgresList = new ArrayList<>();
-		pendingRequestList.forEach(pgr -> {
-			pgr.assignToAdmin(adminCreator);
-			pgresList.add(new PictureGenerateResponse(adminCreator, pgr));
-			String result = """
-				email : [%s] 가 요청한 id : [%d] 요청을 어드민에게 매칭
-				  """.formatted(pgr.getRequester().getEmail(), pgr.getId());
-			matchResultList.add(result);
-		});
+
+		pendingRequestList.forEach(pgr -> matchRequestToAdmin(pgr, adminCreator, pgresList, gentiMatchResult));
 
 		pictureGenerateResponseRepository.saveAll(pgresList);
-
-		String result = """
-			대기중이던 요청 [%d]개 전부를 어드민에게 매칭함
-			""".formatted(requestCount);
-		matchResultList.add(result);
-
-		// discordController.sendToAdminChannel(String.join("\n", matchResultList));
+		gentiMatchResult.addSummary("대기중이던 요청 %d개 전부를 어드민에게 매칭함".formatted(pendingRequestList.size()));
 	}
 
-	private void matchRequestCreatorAdmin(List<PictureGenerateRequest> pendingRequestList,
-		List<Creator> availableCreatorList, StringBuilder resultSB) {
-		int requestCount = pendingRequestList.size();
-		int creatorCount = availableCreatorList.size();
-		int matchableCount = Math.min(requestCount, creatorCount);
-
-		IntStream.range(0, matchableCount).forEach(i -> {
-				Creator creator = availableCreatorList.get(i);
-				PictureGenerateRequest pgr = pendingRequestList.get(i);
-				pgr.assignToCreator(creator);
-				String result = """
-					email : [%s]가 요청한 id : [%d] 요청을 작업자 email : [%s] id : [%d]에게 매칭
-					  """.formatted(pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(),
-					creator.getId());
-				resultSB.append(result).append('\n');
-			}
-		);
-
-		int remainRequestCount = requestCount - matchableCount;
-		int notMatchedIndex = matchableCount;
-		if (remainRequestCount > 0) {
-			Creator adminCreator = adminService.getAdminCreator();
-			while (notMatchedIndex < pendingRequestList.size()) {
-				PictureGenerateRequest currentRequest = pendingRequestList.get(notMatchedIndex);
-				currentRequest.assignToAdmin(adminCreator);
-				notMatchedIndex++;
-				String result = """
-					요청 id : [%d]에 대하여 작업 가능한 작업자가 없음 어드민에게 매칭
-					""".formatted(currentRequest.getId());
-				resultSB.append(result).append('\n');
-			}
-		}
-		String creatorMatchResult = """
-			대기중이던 요청 [%d]개, 작업자에게 매칭된 요청 [%d]개
-			""".formatted(requestCount, availableCreatorList.size());
-		resultSB.append(creatorMatchResult);
-		// discordController.sendToEventChannel(print(resultSB));
-
-		String adminMatchResult = """
-			 어드민에게 매칭된 요청 [%d]개 -> \n 모든 남은 요청이 매칭됨
-			""".formatted(requestCount - (notMatchedIndex + 1));
-		// discordController.sendToAdminChannel(adminMatchResult);
-	}
-
-	private void matchRequest(List<PictureGenerateRequest> pendingRequestList, List<Creator> creatorList,
-		StringBuilder resultSB) {
-
-		// 현재 작업중인 요청의 수가 작은 기준으로 조회되었음
-		switch (CURRENT_STRATEGY) {
-			case ADMIN_ONLY -> {
-				if (pendingRequestList.isEmpty()) {
-					resultSB.append("매칭 대기중인 작업이 없음");
-					// discordController.sendToEventChannel(print(resultSB));
-					return;
-				}
-
-				matchRequestToAdmin(pendingRequestList, resultSB);
-			}
-			case CREATOR_ADMIN -> {
-				if (creatorList.isEmpty()) {
-					resultSB.append("""
-						[%d]개의 매칭 대기중인 작업에 대해 작업 가능한 작업자가 없으므로 admin 매칭으로 전환"""
-						.formatted(pendingRequestList.size()));
-					matchRequestToAdmin(pendingRequestList, resultSB);
-				}
-				matchRequestCreatorAdmin(pendingRequestList, creatorList, resultSB);
-			}
-			case CREATOR_ONLY -> {
-				//TODO Creator가 많아지면 개발
-				// edited at 2024-05-25
-				// author 서병렬
-				if (creatorList.isEmpty()) {
-					resultSB.append("""
-						[%d]개의 매칭 대기중인 작업 || 작업 가능한 작업자가 없음""".formatted(pendingRequestList.size()));
-					// discordController.sendToEventChannel(print(resultSB));
-					return;
-				}
-				/* dosomething */
-			}
+	private void matchToCreatorOrAdmin(List<PictureGenerateRequest> pendingRequestList, List<Creator> creatorList,
+		GentiMatchResult gentiMatchResult) {
+		if (creatorList.isEmpty()) {
+			gentiMatchResult.addSummary("%d개의 매칭 대기중인 작업에 대해 작업 가능한 작업자가 없으므로 admin 매칭으로 전환"
+				.formatted(pendingRequestList.size()));
+			matchAllToAdmin(pendingRequestList, gentiMatchResult);
+			return;
 		}
 
+		int matchableCount = Math.min(pendingRequestList.size(), creatorList.size());
+
+		IntStream.range(0, matchableCount)
+			.forEach(i -> matchRequestToCreator(pendingRequestList.get(i), creatorList.get(i), gentiMatchResult));
+
+		if (pendingRequestList.size() > matchableCount) {
+			matchRemainingRequestsToAdmin(pendingRequestList.subList(matchableCount, pendingRequestList.size()),
+				gentiMatchResult);
+		}
+
+		gentiMatchResult.addSummary(
+			"대기중이던 요청 %d개, 작업자에게 매칭된 요청 %d개".formatted(pendingRequestList.size(), matchableCount));
 	}
 
-	private void matchRequest(PictureGenerateRequest pictureGenerateRequest, StringBuilder resultSB) {
-		List<Creator> availableCreatorList = getCreatorListExceptAdmin();
+	private void matchToCreatorsOnly(List<PictureGenerateRequest> pendingRequestList, List<Creator> creatorList,
+		GentiMatchResult resultSB) {
+		// TODO: CreatorOnly 전략 사용하기전 개발
+	}
+
+	private void matchRequestToAdmin(PictureGenerateRequest pgr, Creator adminCreator,
+		List<PictureGenerateResponse> pgresList, GentiMatchResult gentiMatchResult) {
+		pgr.assignToAdmin(adminCreator);
+		PictureGenerateResponse newPGRES = PictureGenerateResponse.createAdminMatchedPGRES(adminCreator, pgr);
+		pgr.addPGRES(newPGRES);
+		adminCreator.addPictureGenerateRequest(pgr);
+		adminCreator.addPictureGenerateResponse(newPGRES);
+		pgresList.add(newPGRES);
+		gentiMatchResult.addMatchResult(
+			"email : %s가 요청한 id : %d 요청을 어드민에게 매칭".formatted(pgr.getRequester().getEmail(), pgr.getId()));
+	}
+
+	private void matchRequestToCreator(PictureGenerateRequest pgr, Creator creator, GentiMatchResult gentiMatchResult) {
+		pgr.assignToCreator(creator);
+		creator.addPictureGenerateRequest(pgr);
+		gentiMatchResult.addMatchResult("email : %s가 요청한 id : %d 요청을 작업자 email : %s id : %d에게 매칭"
+			.formatted(pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(), creator.getId()));
+	}
+
+	private void matchRemainingRequestsToAdmin(List<PictureGenerateRequest> remainingRequests,
+		GentiMatchResult gentiMatchResult) {
+		List<PictureGenerateResponse> pgresList = new ArrayList<>();
+		Creator adminCreator = adminService.getAdminCreator();
+		remainingRequests.forEach(pgr -> matchRequestToAdmin(pgr, adminCreator, pgresList, gentiMatchResult));
+		pictureGenerateResponseRepository.saveAll(pgresList);
+		gentiMatchResult.addMatchResult("어드민에게 매칭된 요청 %d개 ->  모든 남은 요청이 매칭됨".formatted(remainingRequests.size()));
+	}
+
+	private void matchSingleRequest(PictureGenerateRequest pictureGenerateRequest, String summary) {
+		GentiMatchResult gentiMatchResult = new GentiMatchResult(currentStrategy);
+		gentiMatchResult.addSummary(summary);
+		List<Creator> availableCreatorList = getAvailableCreators();
 		List<PictureGenerateRequest> justOneRequest = List.of(pictureGenerateRequest);
-		matchRequest(justOneRequest, availableCreatorList, resultSB);
+		matchRequestsWithStrategy(justOneRequest, availableCreatorList, gentiMatchResult);
 	}
 
-	private void pushToCreator(Creator creator) {
-		//TODO 공급자 앱에 푸시알림
-		// edited at 2024-05-04
-		// author
-	}
-
-	private String print(StringBuilder sb) {
-		String result = sb.toString();
-		sb.setLength(0);
-		return result;
-	}
-
-	private List<Creator> getCreatorListExceptAdmin() {
+	private List<Creator> getAvailableCreators() {
 		List<Creator> allCreator = creatorRepository.findAllAvailableCreator();
 		Creator adminCreator = adminService.getAdminCreator();
-		allCreator.removeIf(creator -> creator.getId().equals(adminCreator.getId()));
-		return allCreator;
+		if (adminCreator == null) {
+			return allCreator;
+		}
+		return allCreator.stream()
+			.filter(creator -> !creator.getId().equals(adminCreator.getId()))
+			.collect(Collectors.toList());
+	}
+
+	private void logAndSendToDiscord(GentiMatchResult gentiMatchResult) {
+		log.info(gentiMatchResult.toString());
+		discordAppender.matchResultAppend(gentiMatchResult.getSummary(), gentiMatchResult.getMatchResult());
 	}
 }
+

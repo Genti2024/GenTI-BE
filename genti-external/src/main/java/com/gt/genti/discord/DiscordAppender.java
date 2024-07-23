@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
@@ -39,7 +40,6 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	private String errorChannelUrl;
 	private String username = "Error log";
 	private String avatarUrl = "https://cdn-icons-png.flaticon.com/512/1383/1383395.png";
-
 
 	@Override
 	protected void append(ILoggingEvent eventObject) {
@@ -177,6 +177,27 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		}
 	}
 
+	public void matchResultAppend(String summary, List<String> matchingResultList
+	) {
+		DiscordWebHook discordWebhook = new DiscordWebHook("admin", avatarUrl, false);
+		EmbedObject embedObject = EmbedObject.builder()
+			.title("매칭 결과 알림")
+			.color(Color.CYAN)
+			.description(summary)
+			.build();
+		matchingResultList.forEach(str -> embedObject.addField(Field.builder()
+			.name("[매칭결과]")
+			.value(str)
+			.inline(false).build()));
+		discordWebhook.addEmbed(embedObject);
+
+		try {
+			execute(discordWebhook, adminChannelUrl);
+		} catch (IOException e) {
+			throw ExpectedException.withLogging(ResponseCode.DiscordIOException, e.getMessage());
+		}
+	}
+
 	public void execute(DiscordWebHook discordWebHook, String urlString) throws IOException {
 		if (discordWebHook.getEmbeds().isEmpty()) {
 			throw ExpectedException.withLogging(ResponseCode.NoWebhookEmbeds);
@@ -194,4 +215,5 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 		return Color.blue;
 	}
+
 }

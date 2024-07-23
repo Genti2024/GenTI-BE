@@ -25,13 +25,14 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/admin/match-strategy")
 @RequiredArgsConstructor
 public class AdminMatchStrategyController {
+	private final RequestMatchService requestMatchService;
 	@Operation(summary = "매칭전략 조회", description = "현재 시스템의 매칭전략을 조회합니다.", hidden = true)
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
 	@GetMapping
 	public ResponseEntity<ApiResult<String>> getMatchStrategy() {
-		return success(RequestMatchService.CURRENT_STRATEGY.getStringValue());
+		return success(requestMatchService.getCurrentStrategy().getStringValue());
 	}
 
 	@Deprecated
@@ -43,7 +44,7 @@ public class AdminMatchStrategyController {
 	public ResponseEntity<ApiResult<String>> setMatchStrategy(
 		@RequestBody MatchingStrategyUpdateRequestDto requestDto) {
 		return success(
-			RequestMatchService.changeMatchingStrategy(requestDto.getRequestMatchStrategy()).getResponse());
+			requestMatchService.changeMatchingStrategy(requestDto.getRequestMatchStrategy()).getResponse());
 	}
 
 }

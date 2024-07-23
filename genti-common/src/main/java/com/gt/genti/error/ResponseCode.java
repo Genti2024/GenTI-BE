@@ -77,8 +77,9 @@ public enum ResponseCode {
 		"query param 에러 %s "),
 	UnHandledException(ErrorConstants.UnHandledException, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"예기치 못한 문제가 발생했습니다. 오류내용 : %s"),
-	TimeOut(ErrorConstants.UnHandledException, HttpStatus.REQUEST_TIMEOUT, false, "요청 시간이 초과되었습니다."),
-
+	TimeOut(ErrorConstants.TimeOut, HttpStatus.REQUEST_TIMEOUT, false, "요청 시간이 초과되었습니다."),
+	EnumMappingFailed(ErrorConstants.EnumMappingFailed, HttpStatus.INTERNAL_SERVER_ERROR, false,
+		"%s -> %s enum 매핑 중 예외 발생, 매핑 실패한 enum 값 : %s"),
 	/**
 	 * Discord
 	 */
@@ -121,6 +122,7 @@ public enum ResponseCode {
 	UserNotLoggedIn(ErrorConstants.UserNotLoggedIn, HttpStatus.UNAUTHORIZED, false, "로그아웃되었습니다. 다시 로그인해주세요"),
 	WithDrawnUser(ErrorConstants.WithDrawnUser, HttpStatus.BAD_REQUEST, false, "탈퇴한 사용자입니다."),
 	UserNotFound(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 userId: [%s]"),
+	UserNotFoundByEmail(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 email: [%s]"),
 	UserDeactivated(ErrorConstants.UserDeactivated, HttpStatus.BAD_REQUEST, false, "비활성화된 계정입니다."),
 
 	/**
@@ -150,7 +152,7 @@ public enum ResponseCode {
 	PictureGenerateResponseNotFound(ErrorConstants.PictureGenerateResponseNotFound, HttpStatus.NOT_FOUND, false,
 		"해당하는 사진생성응답을 찾을 수 없습니다."),
 	FinalPictureNotUploadedYet(ErrorConstants.FinalPictureNotUploadedYet, HttpStatus.BAD_REQUEST, false,
-		"최종 작업 사진이 제출되지 않았습니다."),
+		"최종 작업 사진이 제출되지 않았습니다. 사진생성응답 id : [%d]"),
 	CreatorsPictureNotUploadedYet(ErrorConstants.CreatorsPictureNotUploadedYet, HttpStatus.BAD_REQUEST, false,
 		"공급자 작업 사진이 제출되지 않았습니다."),
 	RequestBlockedDueToPictureGenerateResponseStatus(PGRESStateException, HttpStatus.NOT_ACCEPTABLE,
@@ -163,6 +165,7 @@ public enum ResponseCode {
 	AlreadyCompletedPictureGenerateResponse(ErrorConstants.AlreadyCompletedPictureGenerateResponse,
 		HttpStatus.BAD_REQUEST, false,
 		"이미 처리 완료된 응답입니다."),
+
 	/**
 	 * Report
 	 */

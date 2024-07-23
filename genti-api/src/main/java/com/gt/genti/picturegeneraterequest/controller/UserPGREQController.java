@@ -56,7 +56,7 @@ public class UserPGREQController {
 	@Operation(summary = "현재 진행중인 사진생성요청의 상태 조회", description = "작업이 진행중인 사진 생성요청이 있다면 해당 상태를 조회한다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound)
+		@EnumResponse(ResponseCode.UserNotFound)
 	})
 	@Logging(item = LogItem.PGREQ_INPROGESS, action = LogAction.SEARCH, requester = LogRequester.USER)
 	@GetMapping("/pending")
@@ -65,6 +65,23 @@ public class UserPGREQController {
 	) {
 		return GentiResponse.success(
 			pictureGenerateRequestUseCase.getPendingPGREQStatusIfExists(userId));
+	}
+
+	@Operation(summary = "취소된 사진생성요청 확인(폐기)처리", description = "사진생성요청이 오류로 인해 취소된 경우 실행하여 초기화한 후 새로운 요청을 할 수 있도록 변경")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.UserNotFound)
+	})
+	@Logging(item = LogItem.PGREQ_CANCEL_VERIFY, action = LogAction.UPDATE, requester = LogRequester.USER)
+	@GetMapping("/{pictureGenerateRequestId}/confirm-cancel-status")
+	public ResponseEntity<ApiResult<Boolean>> confirmCanceledPGREQ(
+		@AuthUser Long userId,
+		@PathVariable(value = "pictureGenerateRequestId")
+		@Schema(description = "사진생성요청id", example = "1")
+		Long pictureGenerateRequestId
+	) {
+		return GentiResponse.success(
+			pictureGenerateRequestUseCase.confirmCanceledPGREQ(userId, pictureGenerateRequestId));
 	}
 
 	@Operation(summary = "사진생성요청하기", description = "사진생성요청을 생성한다.")

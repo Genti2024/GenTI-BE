@@ -10,6 +10,5 @@ import com.gt.genti.picture.userface.model.PictureUserFace;
 
 public interface PictureUserFaceRepository extends JpaRepository<PictureUserFace, Long> {
 	Optional<PictureUserFace> findByKey(String key);
-
 	List<PictureUserFace> findAllByKeyIsIn(Collection<String> keyList);
 }

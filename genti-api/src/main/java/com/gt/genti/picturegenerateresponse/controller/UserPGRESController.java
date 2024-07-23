@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class UserPGRESController {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
-	@Operation(summary = "완성된 사진 확인", description = "완성된 사진을 최종 확인")
+	@Operation(summary = "완성된 사진 확인(사진에 문제없음)처리", description = "완성된 사진을 최종 확인처리한다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})

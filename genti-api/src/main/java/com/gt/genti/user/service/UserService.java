@@ -1,10 +1,15 @@
 package com.gt.genti.user.service;
 
+import static com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestCancellationReason.*;
+import static com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.*;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +23,10 @@ import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.profile.model.PictureProfile;
 import com.gt.genti.picture.service.PictureService;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
+import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
+import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
+import com.gt.genti.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
@@ -41,6 +50,8 @@ public class UserService {
 	private final DepositService depositService;
 	private final CreatorRepository creatorRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
+	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
+	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
@@ -78,9 +89,11 @@ public class UserService {
 		if (userRole == UserRole.CREATOR) {
 			Creator newCreator = new Creator(foundUser);
 			creatorRepository.save(newCreator);
+			foundUser.setCreator(newCreator);
 			depositService.createDeposit(foundUser);
 		} else if (userRole == UserRole.ADMIN) {
 			Creator newCreator = new Creator(foundUser);
+			foundUser.setCreator(newCreator);
 			creatorRepository.save(newCreator);
 		}
 		return true;
@@ -89,6 +102,29 @@ public class UserService {
 	public Boolean deleteUserSoft(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		foundUser.softDelete();
+		List<PictureGenerateResponse> deleteList = new ArrayList<>();
+		if (foundUser.getCreator() != null) {
+			Creator foundCreator = foundUser.getCreator();
+			List<PictureGenerateResponse> pgresList = foundCreator.getPictureGenerateResponseList();
+			foundCreator.getPictureGenerateRequestList()
+				.stream()
+				.filter(pgreq -> pgreq.getPictureGenerateRequestStatus().equals(
+					PictureGenerateRequestStatus.IN_PROGRESS) && (pgreq.getResponseList().isEmpty()))
+				.forEach(req -> pictureGenerateRequestUseCase.cancelRequest(req, SUPPLIER_EXIT));
+			if (pgresList.isEmpty()) {
+				return true;
+			}
+
+			pgresList.stream()
+				.filter(pgres -> CREATOR_BEFORE_WORK.equals(pgres.getStatus()))
+				.forEach(pgres -> {
+
+					pictureGenerateRequestUseCase.cancelRequest(pgres.getRequest(), SUPPLIER_EXIT);
+					pgres.clearRelationshipsWithPGREQ();
+					deleteList.add(pgres);
+				});
+			pictureGenerateResponseRepository.deleteAll(deleteList);
+		}
 		return true;
 	}
 
@@ -146,5 +182,23 @@ public class UserService {
 		if (!expiredUserList.isEmpty()) {
 			userRepository.deleteAllInBatch(expiredUserList);
 		}
+	}
+
+	public Page<UserFindByAdminResponseDto> getUserInfoByEmail(String email) {
+		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		UserFindByAdminResponseDto responseDto =UserFindByAdminResponseDto.builder()
+			.email(foundUser.getEmail())
+			.userRole(foundUser.getUserRole())
+			.birthDate(foundUser.getBirthDate())
+			.deposit(foundUser.getDeposit())
+			.lastLoginDate(foundUser.getLastLoginDate())
+			.userStatus(foundUser.getUserStatus())
+			.requestTaskCount(foundUser.getRequestTaskCount())
+			.creator(foundUser.getCreator())
+			.id(foundUser.getId())
+			.createdAt(foundUser.getCreatedAt())
+			.lastLoginDate(foundUser.getLastLoginDate())
+			.build();
+		return new PageImpl<>(List.of(responseDto));
 	}
 }

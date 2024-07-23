@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PGRESUpdateAdminInChargeResponseDto {
-	@Schema(description = "사진생성응답 DB Id", example = "1")
+	@Schema(description = "작업넘버(사진생성응답 DB Id)", example = "1")
 	Long pictureGenerateResponseId;
-	@Schema(description = "사진생성응답의 상태", example = "ADMIN_BEFORE_WORK")
+	@Schema(description = "작업(사진생성응답)의 상태", example = "ADMIN_BEFORE_WORK")
 	PictureGenerateResponseStatus status;
 	@Schema(description = "담당자 어드민 이름", example = "우기")
 	String adminInCharge;

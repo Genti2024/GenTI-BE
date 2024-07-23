@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EnumUtil {
 
 	public static List<PictureGenerateResponseStatus> PGRES_PICTURE_CREATED_LIST = List.of(
-		PictureGenerateResponseStatus.COMPLETED, PictureGenerateResponseStatus.SUBMITTED_FINAL);
+		PictureGenerateResponseStatus.COMPLETED, PictureGenerateResponseStatus.ADMIN_SUBMITTED_FINAL);
 
 	public static List<PictureGenerateRequestStatus> PGREQ_PENDING_LIST =
 		List.of(
@@ -30,10 +30,10 @@ public class EnumUtil {
 		PictureGenerateRequestStatus.IN_PROGRESS, PictureGenerateRequestStatus.MATCH_TO_ADMIN);
 
 	public static List<PictureGenerateResponseStatus> IN_PROGRESS_PGRES_FOR_CREATOR = List.of(
-		PictureGenerateResponseStatus.BEFORE_WORK);
+		PictureGenerateResponseStatus.CREATOR_BEFORE_WORK);
 
 	public static List<PictureGenerateResponseStatus> PGRES_CAN_CHANGE_ADMIN_IN_CHARGE_LIST = List.of(
-		PictureGenerateResponseStatus.SUBMITTED_FIRST,
+		PictureGenerateResponseStatus.CREATOR_SUBMITTED_FIRST,
 		PictureGenerateResponseStatus.ADMIN_BEFORE_WORK,
 		PictureGenerateResponseStatus.ADMIN_IN_PROGRESS);
 

@@ -1,4 +1,4 @@
-package com.gt.genti.picturegeneraterequest.dto.response;
+package com.gt.genti.picturegeneraterequest.service.mapper;
 
 import com.gt.genti.common.ConvertableEnum;
 
@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 public enum PictureGenerateRequestStatusForUser implements ConvertableEnum {
 	IN_PROGRESS("IN_PROGRESS"),
 	AWAIT_USER_VERIFICATION("AWAIT_USER_VERIFICATION"),
-	COMPLETED("COMPLETED");
+	CANCELED("CANCELED"),
+	NEW_REQUEST_AVAILABLE("NEW_REQUEST_AVAILABLE");
 
 	private final String stringValue;
 

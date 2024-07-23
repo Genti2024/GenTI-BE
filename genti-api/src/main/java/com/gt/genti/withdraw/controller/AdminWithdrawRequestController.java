@@ -70,6 +70,35 @@ public class AdminWithdrawRequestController {
 		return success(withDrawService.getAllWithdrawRequests(pageable, status));
 	}
 
+	@Logging(item = LogItem.CASHOUT, action = LogAction.VIEW, requester = LogRequester.ADMIN)
+	@Operation(summary = "특정 공급자의 출금요청 조회", description = "공급자의 email을 전달 받아 해당 공급자의 전체 출금요청을 페이지네이션 조회")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.UserNotFoundByEmail)
+	})
+	@GetMapping("/{email}")
+	public ResponseEntity<ApiResult<Page<WithdrawFindByAdminResponseDto>>> getWithdrawListByCreatorEmail(
+			@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
+			@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
+			@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
+			@RequestParam(name = "size", defaultValue = "10") @NotNull @Min(0) int size,
+			@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"createdAt"}))
+			@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+			@Parameter(description = "정렬 방향 - 기본값 내림차순", example = "desc", schema = @Schema(allowableValues = {"acs",
+					"desc"}))
+			@RequestParam(name = "direction", defaultValue = "desc") String direction,
+			@Parameter(description = "출금요청 상태, ALL : 모든 상태", example = "IN_PROGRESS", schema = @Schema(
+					allowableValues = {"IN_PROGRESS", "COMPLETED", "REJECTED", "ALL"}))
+			@RequestParam(name = "status", defaultValue = "ALL") @ValidEnum(value = WithdrawRequestStatus.class, hasAllOption = true) String status,
+			@Parameter(description = "사용자 이메일", example = "example@naver.com", required = true)
+			@PathVariable("email") @NotNull String email
+	) {
+		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+		return success(withDrawService.getWithdrawListByCreatorEmail(email, pageable, status));
+	}
+
 	@Logging(item = LogItem.CASHOUT, action = LogAction.COMPLETE, requester = LogRequester.ADMIN)
 	@Operation(summary = "출금요청 완료처리", description = "송금 완료 후 출금요청 완료처리")
 	@EnumResponses(value = {

@@ -80,8 +80,7 @@ public class AdminReportController {
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,
 		@Parameter(description = "페이지 당 요소 개수 >=1", example = "10", required = true)
 		@RequestParam(name = "size", defaultValue = "10") @NotNull @Min(1) int size,
-		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"id",
-				"createdAt"}))
+		@Parameter(description = "정렬 조건 - 기본값 생성일시", example = "createdAt", schema = @Schema(allowableValues = {"createdAt"}))
 		@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
 		@Parameter(description = "정렬 방향 - 기본값 내림차순", example = "desc", schema = @Schema(allowableValues = {"acs",
 				"desc"}))
@@ -94,11 +93,8 @@ public class AdminReportController {
 	) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
-		if ("ALL".equalsIgnoreCase(status)) {
-			return success(reportService.getReportsByUserEmail(email, pageable));
-		} else {
-			return success(reportService.getReportsByUserEmailAndReportStatus(email, ReportStatus.valueOf(status), pageable));
-		}
+
+		return success(reportService.getReportsByUserEmail(email, status, pageable));
 	}
 
 	@Operation(summary = "신고 상태 수정", description = "신고의 상태(어드민 처리 여부)를 변경합니다.")

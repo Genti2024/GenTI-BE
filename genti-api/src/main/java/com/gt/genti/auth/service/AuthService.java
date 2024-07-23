@@ -2,6 +2,8 @@ package com.gt.genti.auth.service;
 
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
+import com.gt.genti.auth.dto.response.KakaoJwtResponse;
+import com.gt.genti.user.model.UserRole;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +57,7 @@ public class AuthService {
 		return userRepository.findById(userId).orElseThrow(()-> ExpectedException.withLogging(ResponseCode.UserNotFound));
 	}
 
-	public TokenResponse createJwt(KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
+	public KakaoJwtResponse createJwt(KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
 		Optional<User> findUser = userRepository.findByEmail(kakaoJwtCreateRequestDTO.getEmail());
 		User user;
 		if (findUser.isEmpty()) {
@@ -69,7 +71,7 @@ public class AuthService {
 			User newUser = userRepository.save(user);
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
 			user.login();
-			return TokenResponse.of(null, null);
+			return KakaoJwtResponse.of(null, null, UserRole.OAUTH_FIRST_JOIN);
 		} else {
 			user = findUser.get();
 			user.resetDeleteAt();
@@ -78,8 +80,8 @@ public class AuthService {
 					.userId(user.getId().toString())
 					.role(user.getUserRole().getRoles())
 					.build();
-			return TokenResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-					jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
+			return KakaoJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+					jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), null);
 		}
 	}
 }

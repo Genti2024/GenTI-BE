@@ -4,6 +4,7 @@ import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.Map;
 
+import com.gt.genti.auth.dto.response.KakaoJwtResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -128,6 +129,12 @@ public class AuthController {
 			TokenResponse.of(accessToken, accessToken));
 	}
 
+	@Operation(summary = "로그아웃", description = "refreshToken 삭제")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.Forbidden),
+		@EnumResponse(ResponseCode.TOKEN_REFRESH_FAILED),
+	})
 	@GetMapping("/logout/v1")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
 		return success(authService.logout(userId));
@@ -137,9 +144,9 @@ public class AuthController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/login/v1/jwt/kakao")
+	@PostMapping("/auth/jwt/kakao/v1")
 	@Logging(item = LogItem.JWT, action = LogAction.CREATE, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<TokenResponse>> createJwt(
+	public ResponseEntity<ApiResult<KakaoJwtResponse>> createJwt(
 		@RequestBody @Valid KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
 		return success(authService.createJwt(kakaoJwtCreateRequestDTO));
 	}

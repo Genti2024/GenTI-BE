@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.discord.SignUpEvent;
+import com.gt.genti.discord.event.SignUpEvent;
 import com.gt.genti.user.model.User;
 
 import lombok.RequiredArgsConstructor;

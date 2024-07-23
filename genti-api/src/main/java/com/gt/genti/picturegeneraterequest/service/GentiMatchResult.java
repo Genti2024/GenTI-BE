@@ -10,14 +10,14 @@ import lombok.Data;
 @Data
 public class GentiMatchResult {
 	RequestMatchStrategy requestMatchStrategy;
-	List<String> matchResult = new ArrayList<>();
+	List<String> matchResultList = new ArrayList<>();
 	String summary = "";
 	public GentiMatchResult(RequestMatchStrategy requestMatchStrategy) {
 		this.requestMatchStrategy = requestMatchStrategy;
 	}
 
 	public void addMatchResult(String matchResult) {
-		this.matchResult.add(matchResult);
+		this.matchResultList.add(matchResult);
 	}
 
 	public void addSummary(String summary) {

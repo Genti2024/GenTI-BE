@@ -69,6 +69,7 @@ class PictureGeneratePendingApiTest {
 	@Autowired
 	RequestMatchService requestMatchService;
 
+	@Transactional
 	@Test
 	@DisplayName("방금 생성하고 어드민에게 매칭된 사진생성요청은 유저입장에서 IN_PROGRESS로 보이는지 테스트")
 	void newlyCreatedAndMatchedToAdminPictureGenerateRequestIsInProgresstest() {

@@ -87,6 +87,17 @@ public class WithdrawService {
 		}
 	}
 
+	public Page<WithdrawFindByAdminResponseDto> getWithdrawListByCreatorEmail(String email, Pageable pageable, String statusString) {
+		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		if (statusString.equals("ALL")) {
+			return withdrawRequestRepository.findAllByCreatedBy(foundUser, pageable).map(
+					WithdrawFindByAdminResponseDto::of);
+		} else {
+			return withdrawRequestRepository.findAllByCreatedByAndStatus(foundUser, pageable, WithdrawRequestStatus.valueOf(statusString))
+					.map(WithdrawFindByAdminResponseDto::of);
+		}
+	}
+
 	public WithdrawCompletionResponseDto complete(Long withdrawRequestId, Long userId) {
 		WithdrawRequest foundWR = findWithdrawRequest(withdrawRequestId);
 		User foundAdminUser = userRepository.findById(userId)

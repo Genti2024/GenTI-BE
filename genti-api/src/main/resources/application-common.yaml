@@ -38,3 +38,4 @@ springdoc:
   paths-to-match:
     - /api/**
     - /login/**
+    - /logout/**

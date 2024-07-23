@@ -8,6 +8,7 @@ public class WhiteListConstants {
 		"/oauth/authorize",
 		"/v1/login",
 		"/login/**",
+		"/auth/jwt/kakao/v1",
 		"/actuator/health",
 		//static
 		"/favicon.ico",
@@ -28,6 +29,7 @@ public class WhiteListConstants {
 		"/azcztzuzaztzozrz/**",
 		"/v1/login",
 		"/login/**",
+		"/auth/jwt/kakao/v1",
 		"/users/login",
 		"/error",
 		"/swagger-ui",

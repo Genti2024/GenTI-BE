@@ -4,6 +4,7 @@ import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.Map;
 
+import com.gt.genti.auth.dto.response.KakaoJwtResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import com.gt.genti.model.Logging;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.auth.dto.request.AppleLoginRequest;
+import com.gt.genti.auth.dto.request.KakaoJwtCreateRequestDTO;
 import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.AuthUser;
@@ -127,8 +129,25 @@ public class AuthController {
 			TokenResponse.of(accessToken, accessToken));
 	}
 
+	@Operation(summary = "로그아웃", description = "refreshToken 삭제")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.Forbidden),
+		@EnumResponse(ResponseCode.TOKEN_REFRESH_FAILED),
+	})
 	@GetMapping("/logout/v1")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
 		return success(authService.logout(userId));
+	}
+
+	@Operation(summary = "카카오 사용자 확인 후 jwt 토큰 발급", description = "카카오 사용자가 기존 회원이면 jwt 토큰 발급, 신규 회원이면 회원가입 후 jwt 토큰 발급")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
+	@PostMapping("/auth/jwt/kakao/v1")
+	@Logging(item = LogItem.JWT, action = LogAction.CREATE, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<KakaoJwtResponse>> createJwt(
+		@RequestBody @Valid KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
+		return success(authService.createJwt(kakaoJwtCreateRequestDTO));
 	}
 }

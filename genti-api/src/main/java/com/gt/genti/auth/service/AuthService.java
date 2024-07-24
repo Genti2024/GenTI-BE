@@ -79,14 +79,13 @@ public class AuthService {
 		user.login();
 
 		UserRole userRole = user.getUserRole();
-		String userRoleString = userRole.getRoles();
 
 		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
 				.userId(user.getId().toString())
-				.role(userRoleString)
+				.role(userRole.getRoles())
 				.build();
 
 		return KakaoJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-				jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), userRoleString);
+				jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), userRole.getStringValue());
 	}
 }

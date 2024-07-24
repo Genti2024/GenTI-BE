@@ -21,12 +21,16 @@ public class PGRESAdminMatchedDetailFindByAdminResponseDto {
 	@Schema(description = "사진생성응답의 상태(작업 대기, 작업 중, 작업 완료, 만료됨)", example = "IN_PROGRESS")
 	PictureGenerateResponseStatusForAdmin responseStatus;
 
+	@Schema(description = "담당자 이름", example = "우기")
+	String adminInCharge;
+
 	@Builder
-	public PGRESAdminMatchedDetailFindByAdminResponseDto(Long pictureGenerateResponseId, String memo,
+	public PGRESAdminMatchedDetailFindByAdminResponseDto(Long pictureGenerateResponseId,
 		List<CommonPictureResponseDto> pictureCompletedList,
-		PictureGenerateResponseStatusForAdmin status) {
+		PictureGenerateResponseStatusForAdmin status, String adminInCharge, String memo) {
 		this.pictureGenerateResponseId = pictureGenerateResponseId;
 		this.pictureCompletedList = pictureCompletedList;
 		this.responseStatus = status;
+		this.adminInCharge = adminInCharge;
 	}
 }

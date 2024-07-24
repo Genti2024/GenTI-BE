@@ -290,6 +290,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 					.pictureCompletedList(
 						pgres.getCompletedPictureList().stream().map(CommonPictureResponseDto::of).toList())
 					.status(pgresStatusToPGRESStatusForAdminMapper.dbToClient(pgres.getStatus()))
+					.adminInCharge(pgres.getAdminInCharge())
 					.build());
 			return buildAdminMatchedPGREQDetail(pgreq, responseList);
 		};
@@ -306,6 +307,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 					.pictureCompletedList(
 						res.getCompletedPictureList().stream().map(CommonPictureResponseDto::of).toList())
 					.status(pgresStatusToPGRESStatusForAdminMapper.dbToClient(res.getStatus()))
+					.adminInCharge(res.getAdminInCharge())
 					.build())
 				.toList();
 			return buildAdminMatchedPGREQDetail(pgreq, responseList);

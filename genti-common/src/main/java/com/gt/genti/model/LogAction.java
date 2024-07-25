@@ -9,6 +9,7 @@ public enum LogAction {
 	VIEW("view"),
 	REQUEST("request"),
 	GET("get"),
+	SIGNUP("signup"),
 	LOGIN("login"),
 	CREATE("create"),
 	UPDATE("update"),

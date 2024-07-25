@@ -120,7 +120,7 @@ public class User extends BaseTimeEntity {
 	@Column(name = "request_task_count", nullable = false)
 	Integer requestTaskCount;
 
-	@Column(name = "birth_date", length = 10)
+	@Column(name = "birth_date", length = 4)
 	String birthDate;
 
 	@PrePersist
@@ -254,5 +254,10 @@ public class User extends BaseTimeEntity {
 
 	public void setDeleteAt() {
 		this.deletedAt = LocalDateTime.now().plusDays(USER_RETENTION_PERIOD);
+	}
+
+	public void updateBirthAndSex(String birthDate, Sex sex) {
+		this.birthDate = birthDate;
+		this.sex = sex;
 	}
 }

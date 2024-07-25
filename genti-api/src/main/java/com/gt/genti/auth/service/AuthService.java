@@ -2,6 +2,7 @@ package com.gt.genti.auth.service;
 
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
+import com.gt.genti.auth.dto.request.SignUpRequestDTO;
 import com.gt.genti.auth.dto.response.KakaoJwtResponse;
 import com.gt.genti.user.model.UserRole;
 import org.springframework.http.HttpHeaders;
@@ -60,7 +61,11 @@ public class AuthService {
 	public KakaoJwtResponse createJwt(KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
 		Optional<User> findUser = userRepository.findByEmail(kakaoJwtCreateRequestDTO.getEmail());
 		User user;
-		if (findUser.isEmpty()) {
+
+		if (findUser.isPresent()) {
+			user = findUser.get();
+			user.resetDeleteAt();
+		} else {
 			user = User.builderWithSignIn()
 					.socialId(" ")
 					.oauthPlatform(OauthPlatform.KAKAO)
@@ -70,18 +75,25 @@ public class AuthService {
 					.build();
 			User newUser = userRepository.save(user);
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
-			user.login();
-			return KakaoJwtResponse.of(null, null, UserRole.OAUTH_FIRST_JOIN);
-		} else {
-			user = findUser.get();
-			user.resetDeleteAt();
-			user.login();
-			TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
-					.userId(user.getId().toString())
-					.role(user.getUserRole().getRoles())
-					.build();
-			return KakaoJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-					jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), null);
 		}
+
+		user.login();
+
+		UserRole userRole = user.getUserRole();
+
+		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
+				.userId(user.getId().toString())
+				.role(userRole.getRoles())
+				.build();
+
+		return KakaoJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+				jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), userRole.getStringValue());
+	}
+
+	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
+		User foundUser = getUserByUserId(userId);
+		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
+		foundUser.updateUserRole(UserRole.USER);
+		return true;
 	}
 }

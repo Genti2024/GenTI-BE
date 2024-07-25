@@ -4,6 +4,7 @@ import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.Map;
 
+import com.gt.genti.auth.dto.request.*;
 import com.gt.genti.auth.dto.response.KakaoJwtResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
 import com.gt.genti.auth.service.AuthService;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
@@ -26,9 +26,6 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
-import com.gt.genti.auth.dto.request.AppleLoginRequest;
-import com.gt.genti.auth.dto.request.KakaoJwtCreateRequestDTO;
-import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.model.OauthPlatform;
@@ -150,4 +147,17 @@ public class AuthController {
 		@RequestBody @Valid KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
 		return success(authService.createJwt(kakaoJwtCreateRequestDTO));
 	}
+
+	@Operation(summary = "회원가입", description = "사용자에게 생년, 성별을 받아 최종 가입을 처리")
+	@EnumResponses(value = {
+			@EnumResponse(ResponseCode.OK)
+	})
+	@PostMapping("/signup/v1")
+	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<Boolean>> signUp(
+			@AuthUser Long userId,
+			@RequestBody @Valid SignUpRequestDTO signUpRequestDTO) {
+		return success(authService.signUp(userId, signUpRequestDTO));
+	}
+
 }

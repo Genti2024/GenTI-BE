@@ -2,6 +2,7 @@ package com.gt.genti.auth.service;
 
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
+import com.gt.genti.auth.dto.request.SignUpRequestDTO;
 import com.gt.genti.auth.dto.response.KakaoJwtResponse;
 import com.gt.genti.user.model.UserRole;
 import org.springframework.http.HttpHeaders;
@@ -87,5 +88,12 @@ public class AuthService {
 
 		return KakaoJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 				jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), userRole.getStringValue());
+	}
+
+	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
+		User foundUser = getUserByUserId(userId);
+		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
+		foundUser.updateUserRole(UserRole.USER);
+		return true;
 	}
 }

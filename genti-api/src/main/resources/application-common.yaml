@@ -37,5 +37,4 @@ springdoc:
   show-login-endpoint: true
   paths-to-match:
     - /api/**
-    - /login/**
-    - /logout/**
+    - /auth/**

@@ -64,7 +64,7 @@ public class JwtTokenProvider {
 		claims.put(JWTConstants.ROLE, command.getRole());
 		claims.put(JWTConstants.TOKEN_TYPE, JWTConstants.ACCESS_TOKEN);
 
-		return Jwts.builder()
+		return JWTConstants.JWT_PREFIX + Jwts.builder()
 			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
 			.setClaims(claims)
 			.signWith(getSigningKey())
@@ -83,7 +83,7 @@ public class JwtTokenProvider {
 		claims.put(JWTConstants.ROLE, command.getRole());
 		claims.put(JWTConstants.TOKEN_TYPE, JWTConstants.REFRESH_TOKEN);
 
-		String refreshToken = Jwts.builder()
+		String refreshToken = JWTConstants.JWT_PREFIX + Jwts.builder()
 			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
 			.setClaims(claims)
 			.signWith(getSigningKey())

@@ -9,8 +9,7 @@ public class JWTConstants {
 	public static final String ROLE = "role";
 	public static final String JWT_HEADER = "Authorization";
 	public static final String JWT_PREFIX = "Bearer ";
-	// public static final Long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 1000L * 20 * 100000000;
-	public static final Long ACCESS_TOKEN_EXPIRATION_TIME = 0L;
-	public static final Long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 1000L * 60 * 24 * 7 * 2 * 100;
+	public static final Long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 20 * 1000L ;
+	public static final Long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 24 * 7 * 2 * 1000L;
 
 }

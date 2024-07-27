@@ -11,5 +11,9 @@ import lombok.RequiredArgsConstructor;
 public class TokenRefreshRequestDto {
 	@NotBlank
 	@Schema(description = "refreshToken")
+	String accessToken;
+
+	@NotBlank
+	@Schema(description = "refreshToken")
 	String refreshToken;
 }

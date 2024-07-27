@@ -18,6 +18,7 @@ import com.gt.genti.auth.dto.request.AppleLoginRequest;
 import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
 import com.gt.genti.auth.dto.request.OauthSignRequestDto;
 import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
+import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.auth.service.AuthService;
@@ -123,16 +124,16 @@ public class AuthController {
 			.role(role.getRoles())
 			.build();
 		String accessToken = jwtTokenProvider.generateAccessToken(command);
-
+		String refreshToken = jwtTokenProvider.generateRefreshToken(command);
 		return success(
-			TokenResponse.of(accessToken, accessToken));
+			TokenResponse.of(accessToken, refreshToken));
 	}
 
 	@Operation(summary = "로그아웃", description = "refreshToken 삭제")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.Forbidden),
-		@EnumResponse(ResponseCode.TOKEN_REFRESH_FAILED),
+		@EnumResponse(ResponseCode.REFRESH_TOKEN_NOT_EXISTS),
 	})
 	@GetMapping("/logout")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
@@ -155,5 +156,12 @@ public class AuthController {
 		@RequestBody @Valid OauthSignRequestDto oauthSignRequestDto) {
 		return success(authService.appLogin(SocialLoginRequestImpl.of(oauthSignRequestDto.getOauthPlatform(),
 			oauthSignRequestDto.getToken())));
+	}
+
+	@PostMapping("/reissue")
+	public ResponseEntity<ApiResult<TokenResponse>> reissue(
+		@RequestBody @Valid TokenRefreshRequestDto tokenRefreshRequestDto
+	){
+		return success(authService.reissue(tokenRefreshRequestDto));
 	}
 }

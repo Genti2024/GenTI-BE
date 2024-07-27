@@ -11,6 +11,7 @@ public class WhiteListConstants {
 		"/actuator/health",
 		"/favicon.ico",
 		"/error",
+		"/auth/**",
 		// swagger
 		"/swagger-ui",
 		"/swagger-ui/**",

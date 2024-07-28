@@ -9,19 +9,19 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.OauthJwtResponse;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
-import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.openfeign.apple.client.AppleApiClient;
 import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeys;
 import com.gt.genti.openfeign.apple.service.AppleClaimsValidator;
 import com.gt.genti.openfeign.apple.service.AppleJwtParser;
 import com.gt.genti.openfeign.apple.service.AppleUserResponse;
 import com.gt.genti.openfeign.apple.service.PublicKeyGenerator;
-import com.gt.genti.auth.dto.request.SocialLoginRequest;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
@@ -70,9 +70,9 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 			.userId(user.getId().toString())
 			.role(user.getUserRole().getRoles())
 			.build();
-		TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, token);
+		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole());
+		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
 	}
 
 	@Override

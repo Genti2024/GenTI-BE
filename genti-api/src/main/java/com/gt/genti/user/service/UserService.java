@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SignUpRequestDTO;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.deposit.service.DepositService;
@@ -200,5 +201,12 @@ public class UserService {
 			.lastLoginDate(foundUser.getLastLoginDate())
 			.build();
 		return new PageImpl<>(List.of(responseDto));
+	}
+
+	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
+		User foundUser = getUserByUserId(userId);
+		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
+		foundUser.updateUserRole(UserRole.USER);
+		return true;
 	}
 }

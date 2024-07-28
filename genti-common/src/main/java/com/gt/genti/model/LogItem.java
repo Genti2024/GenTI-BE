@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum LogItem {
 	USER("user"),
-	OAUTH("oauth"),
+	OAUTH_WEB("oauth"),
 	OAUTH_APPLE("oauth : apple"),
 	OAUTH_KAKAO("oauth : kakao"),
 	OAUTH_GOOGLE("oauth : google"),
-	JWT("jwt: kakao"),
+	OAUTH_APP("login : app"),
 	CREATOR_MY("creator : my"),
 	CREATOR_STATUS("creator : status"),
 	CREATOR_ACCOUNT("creator : account"),
@@ -33,7 +33,6 @@ public enum LogItem {
 	RESPONSE_EXAMPLE("response_example"),
 	CASHOUT("cashout"),
 	SETTLEMENT("settlement");
-
 
 	private final String value;
 

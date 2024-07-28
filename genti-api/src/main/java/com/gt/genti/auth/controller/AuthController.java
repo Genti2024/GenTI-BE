@@ -4,8 +4,6 @@ import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.Map;
 
-import com.gt.genti.auth.dto.request.*;
-import com.gt.genti.auth.dto.response.KakaoJwtResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +11,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.gt.genti.auth.dto.request.AppleLoginRequest;
+import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
+import com.gt.genti.auth.dto.request.OauthSignRequestDto;
+import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
+import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
+import com.gt.genti.auth.dto.response.OauthJwtResponse;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.auth.service.AuthService;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
@@ -26,7 +32,6 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
@@ -46,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/auth/v1")
 public class AuthController {
 
 	private final JwtTokenProvider jwtTokenProvider;
@@ -57,8 +63,8 @@ public class AuthController {
 			@Header(name = "Location", description = "리디렉션 URL", schema = @Schema(type = "string"))
 		}, content = @Content(schema = @Schema(hidden = true)))
 	})
-	@GetMapping("/login/v1/oauth2")
-	@Logging(item = LogItem.OAUTH, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
+	@GetMapping("/login/oauth2")
+	@Logging(item = LogItem.OAUTH_WEB, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<Object> login(
 		@Parameter(description = "호출할 Oauth platform 종류", example = "KAKAO", schema = @Schema(allowableValues = {
 			"KAKAO"}))
@@ -67,7 +73,6 @@ public class AuthController {
 		return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
 	}
 
-	@Operation(summary = "apple 로그인 후 토큰으로 로그인", description = "앱에서 apple 로그인을 수행한 후 받은 token을 전달받아 apple auth 서버와 통신 후 로그인 처리")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.AppleOauthClaimInvalid),
@@ -77,34 +82,32 @@ public class AuthController {
 		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
 		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
 	})
-	@PostMapping("/login/v1/oauth2/code/apple")
+	@PostMapping("/login/oauth2/code/apple")
 	@Logging(item = LogItem.OAUTH_APPLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SocialLoginResponse>> loginApple(
 		@RequestBody @Valid AppleLoginRequestDto request) {
-		return success(authService.login(AppleLoginRequest.of(OauthPlatform.APPLE, request.getToken())));
+		return success(authService.webLogin(AppleLoginRequest.of(OauthPlatform.APPLE, request.getToken())));
 	}
 
-	@Operation(summary = "kakao 로그인 후 redirect url", description = "FE에서 직접 호출할 일은 없습니다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 	})
-	@GetMapping("/login/v1/oauth2/code/kakao")
+	@GetMapping("/login/oauth2/code/kakao")
 	@Logging(item = LogItem.OAUTH_KAKAO, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SocialLoginResponse>> kakaoLogin(
 		@RequestParam(name = "code") final String code) {
-		return success(authService.login(SocialLoginRequestImpl.of(OauthPlatform.KAKAO, code)));
+		return success(authService.webLogin(SocialLoginRequestImpl.of(OauthPlatform.KAKAO, code)));
 	}
 
 	@Deprecated
-	@Operation(summary = "google 로그인 후 redirect url", description = "FE에서 직접 호출할 일은 없습니다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 	})
-	@GetMapping("/login/v1/oauth2/code/google")
+	@GetMapping("/login/oauth2/code/google")
 	@Logging(item = LogItem.OAUTH_GOOGLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SocialLoginResponse>> googleLogin(
 		@RequestParam(name = "code") final String code) {
-		return success(authService.login(SocialLoginRequestImpl.of(OauthPlatform.GOOGLE, code)));
+		return success(authService.webLogin(SocialLoginRequestImpl.of(OauthPlatform.GOOGLE, code)));
 	}
 
 	@Operation(summary = "테스트용 jwt 토큰 발급", description = "")
@@ -121,43 +124,44 @@ public class AuthController {
 			.role(role.getRoles())
 			.build();
 		String accessToken = jwtTokenProvider.generateAccessToken(command);
-
+		String refreshToken = jwtTokenProvider.generateRefreshToken(command);
 		return success(
-			TokenResponse.of(accessToken, accessToken));
+			TokenResponse.of(accessToken, refreshToken));
 	}
 
 	@Operation(summary = "로그아웃", description = "refreshToken 삭제")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.Forbidden),
-		@EnumResponse(ResponseCode.TOKEN_REFRESH_FAILED),
+		@EnumResponse(ResponseCode.REFRESH_TOKEN_NOT_EXISTS),
 	})
-	@GetMapping("/logout/v1")
+	@GetMapping("/logout")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
 		return success(authService.logout(userId));
 	}
 
-	@Operation(summary = "카카오 사용자 확인 후 jwt 토큰 발급", description = "카카오 사용자가 기존 회원이면 jwt 토큰 발급, 신규 회원이면 회원가입 후 jwt 토큰 발급")
+	@Operation(summary = "oauth platform에서 로그인 후 받은 토큰을 전달하여 가입/로그인", description = "현재 애플, 카카오 지원합니다")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.AppleOauthClaimInvalid),
+		@EnumResponse(ResponseCode.AppleOauthIdTokenExpired),
+		@EnumResponse(ResponseCode.AppleOauthIdTokenIncorrect),
+		@EnumResponse(ResponseCode.AppleOauthIdTokenInvalid),
+		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
+		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
 	})
-	@PostMapping("/auth/jwt/kakao/v1")
-	@Logging(item = LogItem.JWT, action = LogAction.CREATE, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<KakaoJwtResponse>> createJwt(
-		@RequestBody @Valid KakaoJwtCreateRequestDTO kakaoJwtCreateRequestDTO) {
-		return success(authService.createJwt(kakaoJwtCreateRequestDTO));
+	@GetMapping("/login/oauth2/token")
+	@Logging(item = LogItem.OAUTH_APP, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<OauthJwtResponse>> loginOrSignUpWithOAuthToken(
+		@RequestBody @Valid OauthSignRequestDto oauthSignRequestDto) {
+		return success(authService.appLogin(SocialLoginRequestImpl.of(oauthSignRequestDto.getOauthPlatform(),
+			oauthSignRequestDto.getToken())));
 	}
 
-	@Operation(summary = "회원가입", description = "사용자에게 생년, 성별을 받아 최종 가입을 처리")
-	@EnumResponses(value = {
-			@EnumResponse(ResponseCode.OK)
-	})
-	@PostMapping("/signup/v1")
-	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<Boolean>> signUp(
-			@AuthUser Long userId,
-			@RequestBody @Valid SignUpRequestDTO signUpRequestDTO) {
-		return success(authService.signUp(userId, signUpRequestDTO));
+	@PostMapping("/reissue")
+	public ResponseEntity<ApiResult<TokenResponse>> reissue(
+		@RequestBody @Valid TokenRefreshRequestDto tokenRefreshRequestDto
+	){
+		return success(authService.reissue(tokenRefreshRequestDto));
 	}
-
 }

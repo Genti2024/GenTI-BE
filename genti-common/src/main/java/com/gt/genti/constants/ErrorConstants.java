@@ -31,7 +31,7 @@ public class ErrorConstants {
 	public static final String REFRESH_TOKEN_INVALID = CODE(AUTH, 5);
 	public static final String TOKEN_REFRESH_FAILED = CODE(AUTH, 6);
 	public static final String TOKEN_NOT_PROVIDED = CODE(AUTH, 7);
-	public static final String INVALID_REFRESH_TOKEN = CODE(AUTH, 8);
+	public static final String REFRESH_TOKEN_NOT_EXISTS = CODE(AUTH, 8);
 	public static final String Forbidden = CODE(AUTH, 9);
 	public static final String UnAuthorized = CODE(AUTH, 10);
 
@@ -106,5 +106,6 @@ public class ErrorConstants {
 
 	public static final String NoWebhookEmbeds = CODE(DISCORD, 1);
 	public static final String DiscordIOException = CODE(DISCORD, 2);
+
 
 }

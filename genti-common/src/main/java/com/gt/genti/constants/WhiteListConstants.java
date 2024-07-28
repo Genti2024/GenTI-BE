@@ -8,12 +8,10 @@ public class WhiteListConstants {
 		"/oauth/authorize",
 		"/v1/login",
 		"/login/**",
-		"/auth/jwt/kakao/v1",
 		"/actuator/health",
-		//static
 		"/favicon.ico",
-		// error
 		"/error",
+		"/auth/**",
 		// swagger
 		"/swagger-ui",
 		"/swagger-ui/**",
@@ -27,10 +25,10 @@ public class WhiteListConstants {
 	public static final String[] SECURITY_WHITE_LIST = {
 		"/azcztzuzaztzozrz",
 		"/azcztzuzaztzozrz/**",
+		"/auth/**",
 		"/v1/login",
 		"/login/**",
 		"/auth/jwt/kakao/v1",
-		"/users/login",
 		"/error",
 		"/swagger-ui",
 		"/swagger-ui/**",

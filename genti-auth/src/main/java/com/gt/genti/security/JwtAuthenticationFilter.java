@@ -73,7 +73,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private void authenticate(HttpServletRequest request) {
 		final String token = getJwtFromRequest(request);
 		jwtTokenProvider.validateToken(token);
-
 		Long userId = jwtTokenProvider.getUserFromJwt(token);
 		Authentication authentication = jwtTokenProvider.getAuthentication(userId);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -84,10 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (!StringUtils.hasText(bearerToken)){
 			throw ExpectedException.withoutLogging(TOKEN_NOT_PROVIDED);
 		}
-		if(!bearerToken.startsWith("Bearer ")){
-			throw ExpectedException.withoutLogging(INVALID_TOKEN);
-		}
-		return bearerToken.substring("Bearer ".length());
+		return bearerToken;
 	}
 
 }

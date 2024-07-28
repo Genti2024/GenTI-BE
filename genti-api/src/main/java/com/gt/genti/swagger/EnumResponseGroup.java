@@ -9,7 +9,6 @@ public enum EnumResponseGroup {
 		@EnumResponse(INVALID_TOKEN),
 		@EnumResponse(INSUFFICIENT_PERMISSIONS),
 		@EnumResponse(REFRESH_TOKEN_EXPIRED),
-		@EnumResponse(TOKEN_REFRESH_FAILED),
 	})
 	AUTH,
 

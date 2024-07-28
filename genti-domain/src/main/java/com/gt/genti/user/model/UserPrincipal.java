@@ -13,7 +13,6 @@ public class UserPrincipal implements UserDetails {
 
     private final User user;
     private final Collection<GrantedAuthority> grantedAuthorities;
-
     public UserPrincipal(User user) {
         this.user = user;
         this.grantedAuthorities = user.getId() == null ?
@@ -32,6 +31,7 @@ public class UserPrincipal implements UserDetails {
         return authorities;
     }
 
+    public UserRole getUserRole(){return user.getUserRole();}
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return grantedAuthorities;

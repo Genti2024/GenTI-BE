@@ -1,5 +1,7 @@
 package com.gt.genti.user.controller;
 
+import static com.gt.genti.response.GentiResponse.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -7,13 +9,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gt.genti.auth.dto.request.SignUpRequestDTO;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.model.LogAction;
+import com.gt.genti.model.LogItem;
+import com.gt.genti.model.LogRequester;
+import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.response.GentiResponse.ApiResult;
@@ -63,6 +71,18 @@ public class UserController {
 		@AuthUser Long userId,
 		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		return GentiResponse.success(userService.updateUserInfo(userId, userInfoUpdateRequestDto));
+	}
+
+	@Operation(summary = "최초가입 정보등록", description = "사용자에게 생년, 성별을 받아 최종 가입을 처리")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
+	@PostMapping("/signup")
+	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<Boolean>> signUp(
+		@AuthUser Long userId,
+		@RequestBody @Valid SignUpRequestDTO signUpRequestDTO) {
+		return success(userService.signUp(userId, signUpRequestDTO));
 	}
 
 	@Operation(summary = "회원 탈퇴", description = "회원 탈퇴")

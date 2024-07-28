@@ -82,7 +82,7 @@ public class AuthController {
 		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
 		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
 	})
-	@PostMapping("/oauth2/login/code/apple")
+	@PostMapping("/login/oauth2/code/apple")
 	@Logging(item = LogItem.OAUTH_APPLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SocialLoginResponse>> loginApple(
 		@RequestBody @Valid AppleLoginRequestDto request) {

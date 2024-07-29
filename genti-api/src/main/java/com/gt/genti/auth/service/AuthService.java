@@ -21,7 +21,6 @@ import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.user.service.social.SocialOauthContext;
 import com.gt.genti.util.HttpRequestUtil;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +37,7 @@ public class AuthService {
 		return socialOauthContext.doLogin(request);
 	}
 
-	public OauthJwtResponse appLogin(final @Valid SocialAppLoginRequest request) {
+	public OauthJwtResponse appLogin(final SocialAppLoginRequest request) {
 		return socialOauthContext.doAppLogin(request).getToken();
 	}
 

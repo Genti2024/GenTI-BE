@@ -37,10 +37,6 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 	private String kakaoClientId;
 	@Value("${kakao.redirect-uri}")
 	private String kakaoRedirectUri;
-	@Value("${server.domain}")
-	private String serverBaseUri;
-	@Value("${server.port}")
-	private String serverPort;
 	@Value("${kakao.client-secret}")
 	private String kakaoClientSecret;
 
@@ -55,7 +51,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 	public String getAuthUri() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("client_id", kakaoClientId);
-		params.put("redirect_uri", serverBaseUri + ":" + serverPort + kakaoRedirectUri);
+		params.put("redirect_uri", kakaoRedirectUri);
 		params.put("response_type", "code");
 
 		String paramStr = params.entrySet().stream()
@@ -71,7 +67,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			"authorization_code",
 			kakaoClientId,
 			kakaoClientSecret,
-			serverBaseUri + ":" + serverPort + kakaoRedirectUri,
+			kakaoRedirectUri,
 			request.getCode()
 		);
 
@@ -112,7 +108,8 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			.userId(user.getId().toString())
 			.role(user.getUserRole().getRoles())
 			.build();
-		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(
+			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
 		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
 	}

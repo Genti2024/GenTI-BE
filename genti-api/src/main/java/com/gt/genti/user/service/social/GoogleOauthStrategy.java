@@ -101,7 +101,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 			.role(user.getUserRole().getRoles())
 			.build();
 		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole());
+			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
 		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
 	}
 

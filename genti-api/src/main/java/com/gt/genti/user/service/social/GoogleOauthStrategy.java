@@ -38,10 +38,6 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 	private String googleClientSecret;
 	@Value("${google.redirect-url}")
 	private String googleRedirectUrl;
-	@Value("${server.domain}")
-	private String serverBaseUri;
-	@Value("${server.port}")
-	private String serverPort;
 
 	@Value("${google.scope}")
 	private List<String> scope;
@@ -57,7 +53,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 	public String getAuthUri() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("client_id", googleClientId);
-		params.put("redirect_uri", serverBaseUri + ":" + serverPort + googleRedirectUrl);
+		params.put("redirect_uri", googleRedirectUrl);
 		params.put("response_type", "code");
 		params.put("scope", String.join("%20", scope));
 
@@ -74,7 +70,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 			request.getCode(),
 			googleClientId,
 			googleClientSecret,
-			serverBaseUri + ":" + serverPort + googleRedirectUrl,
+			googleRedirectUrl,
 			"authorization_code"
 		);
 		GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());

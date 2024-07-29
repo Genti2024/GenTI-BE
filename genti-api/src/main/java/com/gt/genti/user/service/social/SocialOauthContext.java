@@ -57,7 +57,7 @@ public class SocialOauthContext {
 		return authStrategyOf(oauthPlatform).getAuthUri();
 	}
 
-	public SocialLoginResponse doAppLogin(@Valid SocialAppLoginRequest request) {
+	public SocialLoginResponse doAppLogin(final SocialAppLoginRequest request) {
 		return loginStrategyOf(request.getOauthPlatform()).tokenLogin(request);
 	}
 }

@@ -150,7 +150,7 @@ public class AuthController {
 		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
 		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
 	})
-	@GetMapping("/login/oauth2/token")
+	@PostMapping("/login/oauth2/token")
 	@Logging(item = LogItem.OAUTH_APP, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<OauthJwtResponse>> loginOrSignUpWithOAuthToken(
 		@RequestBody @Valid OauthSignRequestDto oauthSignRequestDto) {

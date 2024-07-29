@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
@@ -65,7 +66,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 
 	@Override
 	@Transactional
-	public SocialLoginResponse login(SocialLoginRequest request) {
+	public SocialLoginResponse webLogin(SocialLoginRequest request) {
 		KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
 			"authorization_code",
 			kakaoClientId,
@@ -73,8 +74,20 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			serverBaseUri + ":" + serverPort + kakaoRedirectUri,
 			request.getCode()
 		);
+
+		OauthPlatform oauthPlatform = request.getOauthPlatform();
+		String accessToken = tokenResponse.accessToken();
+		return getUserInfo(oauthPlatform, accessToken);
+	}
+
+	@Override
+	public SocialLoginResponse tokenLogin(final SocialAppLoginRequest request) {
+		return getUserInfo(request.getOauthPlatform(), request.getToken());
+	}
+
+	private SocialLoginResponse getUserInfo(OauthPlatform oauthPlatform, String accessToken) {
 		KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
-			"Bearer " + tokenResponse.accessToken());
+			"Bearer " + accessToken);
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
 		User user;
 		boolean isNewUser = false;
@@ -82,7 +95,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.id())
 				.birthDate(getBirthDateStringFrom(userResponse))
-				.oauthPlatform(request.getOauthPlatform())
+				.oauthPlatform(oauthPlatform)
 				.username(userResponse.kakaoAccount().name())
 				.nickname(RandomUtil.generateRandomNickname())
 				.email(userResponse.kakaoAccount().email())

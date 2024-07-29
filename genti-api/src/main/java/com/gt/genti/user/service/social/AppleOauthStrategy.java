@@ -9,7 +9,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.error.ExpectedException;
@@ -45,7 +47,7 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 
 	@Override
 	@Transactional
-	public SocialLoginResponse login(SocialLoginRequest request) {
+	public SocialLoginResponse webLogin(SocialLoginRequest request) {
 		AppleUserResponse userResponse = getApplePlatformMember(request.getCode());
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.getPlatformId());
 		User user;
@@ -70,9 +72,15 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 			.userId(user.getId().toString())
 			.role(user.getUserRole().getRoles())
 			.build();
+
 		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
 		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
+	}
+
+	@Override
+	public SocialLoginResponse tokenLogin(SocialAppLoginRequest request) {
+		return webLogin(SocialLoginRequestImpl.of(request.getOauthPlatform(), request.getToken()));
 	}
 
 	@Override

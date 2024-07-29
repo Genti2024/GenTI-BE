@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gt.genti.auth.dto.request.AppleLoginRequest;
 import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
-import com.gt.genti.auth.dto.request.OauthSignRequestDto;
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
@@ -153,9 +153,8 @@ public class AuthController {
 	@PostMapping("/login/oauth2/token")
 	@Logging(item = LogItem.OAUTH_APP, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<OauthJwtResponse>> loginOrSignUpWithOAuthToken(
-		@RequestBody @Valid OauthSignRequestDto oauthSignRequestDto) {
-		return success(authService.appLogin(SocialLoginRequestImpl.of(oauthSignRequestDto.getOauthPlatform(),
-			oauthSignRequestDto.getToken())));
+		@RequestBody @Valid SocialAppLoginRequest socialAppLoginRequest) {
+		return success(authService.appLogin(socialAppLoginRequest));
 	}
 
 	@PostMapping("/reissue")

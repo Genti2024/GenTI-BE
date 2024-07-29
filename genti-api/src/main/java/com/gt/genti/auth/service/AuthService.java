@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
@@ -36,8 +37,8 @@ public class AuthService {
 		return socialOauthContext.doLogin(request);
 	}
 
-	public OauthJwtResponse appLogin(final SocialLoginRequest request) {
-		return socialOauthContext.doLogin(request).getToken();
+	public OauthJwtResponse appLogin(final SocialAppLoginRequest request) {
+		return socialOauthContext.doAppLogin(request).getToken();
 	}
 
 	public HttpHeaders getOauthRedirect(OauthPlatform oauthPlatform) {

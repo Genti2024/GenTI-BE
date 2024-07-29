@@ -112,9 +112,8 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			.userId(user.getId().toString())
 			.role(user.getUserRole().getRoles())
 			.build();
-		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(
-			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole());
+		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
 		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
 	}
 

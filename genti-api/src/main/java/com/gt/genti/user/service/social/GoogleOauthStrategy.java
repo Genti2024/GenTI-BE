@@ -37,7 +37,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 	private String googleClientId;
 	@Value("${google.client-secret}")
 	private String googleClientSecret;
-	@Value("${google.redirect-url}")
+	@Value("${google.redirect-uri}")
 	private String googleRedirectUrl;
 
 	@Value("${google.scope}")

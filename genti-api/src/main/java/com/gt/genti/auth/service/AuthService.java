@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
@@ -20,6 +21,7 @@ import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.user.service.social.SocialOauthContext;
 import com.gt.genti.util.HttpRequestUtil;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,8 +38,8 @@ public class AuthService {
 		return socialOauthContext.doLogin(request);
 	}
 
-	public OauthJwtResponse appLogin(final SocialLoginRequest request) {
-		return socialOauthContext.doLogin(request).getToken();
+	public OauthJwtResponse appLogin(final @Valid SocialAppLoginRequest request) {
+		return socialOauthContext.doAppLogin(request).getToken();
 	}
 
 	public HttpHeaders getOauthRedirect(OauthPlatform oauthPlatform) {

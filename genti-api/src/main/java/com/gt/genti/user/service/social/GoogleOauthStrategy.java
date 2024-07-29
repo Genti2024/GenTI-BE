@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
@@ -69,7 +70,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 
 	@Override
 	@Transactional
-	public SocialLoginResponse login(SocialLoginRequest request) {
+	public SocialLoginResponse webLogin(SocialLoginRequest request) {
 		GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
 			request.getCode(),
 			googleClientId,
@@ -103,6 +104,11 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 		OauthJwtResponse oauthJwtResponse = new OauthJwtResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole());
 		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
+	}
+
+	@Override
+	public SocialLoginResponse tokenLogin(SocialAppLoginRequest request) {
+		return null;
 	}
 
 	@Override

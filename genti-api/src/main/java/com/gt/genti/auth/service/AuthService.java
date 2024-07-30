@@ -45,18 +45,6 @@ public class AuthService {
 		return HttpRequestUtil.createRedirectHttpHeader(socialOauthContext.getAuthUri(oauthPlatform));
 	}
 
-	public Boolean logout(final Long userId) {
-		User foundUser = getUserByUserId(userId);
-		validateUserAuthorization(foundUser.getId(), userId);
-		jwtTokenProvider.deleteRefreshToken(userId);
-		return true;
-	}
-
-	private User getUserByUserId(final Long userId) {
-		return userRepository.findById(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound));
-	}
-
 	public TokenResponse reissue(TokenRefreshRequestDto tokenRefreshRequestDto) {
 		return jwtTokenProvider.reissueIfValid(tokenRefreshRequestDto.getAccessToken(),
 			tokenRefreshRequestDto.getRefreshToken());

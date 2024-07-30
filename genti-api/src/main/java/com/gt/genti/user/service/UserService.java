@@ -2,12 +2,14 @@ package com.gt.genti.user.service;
 
 import static com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestCancellationReason.*;
 import static com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.*;
+import static com.gt.genti.user.service.validator.UserValidator.validateUserAuthorization;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import com.gt.genti.jwt.JwtTokenProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +55,7 @@ public class UserService {
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
+	private final JwtTokenProvider jwtTokenProvider;
 
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
@@ -207,6 +210,13 @@ public class UserService {
 		User foundUser = getUserByUserId(userId);
 		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
 		foundUser.updateUserRole(UserRole.USER);
+		return true;
+	}
+
+	public Boolean logout(final Long userId) {
+		User foundUser = getUserByUserId(userId);
+		validateUserAuthorization(foundUser.getId(), userId);
+		jwtTokenProvider.deleteRefreshToken(userId);
 		return true;
 	}
 }

@@ -129,17 +129,6 @@ public class AuthController {
 			TokenResponse.of(accessToken, refreshToken));
 	}
 
-	@Operation(summary = "로그아웃", description = "refreshToken 삭제")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.Forbidden),
-		@EnumResponse(ResponseCode.REFRESH_TOKEN_NOT_EXISTS),
-	})
-	@GetMapping("/logout")
-	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
-		return success(authService.logout(userId));
-	}
-
 	@Operation(summary = "oauth platform에서 로그인 후 받은 토큰을 전달하여 가입/로그인", description = "현재 애플, 카카오 지원합니다")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),

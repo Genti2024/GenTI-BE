@@ -73,8 +73,9 @@ public class SecurityConfig {
 			.sessionManagement(sessionManagementConfigurer ->
 				sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER))
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-				authorizationManagerRequestMatcherRegistry.requestMatchers(WhiteListConstants.SECURITY_WHITE_LIST)
-					.permitAll())
+				authorizationManagerRequestMatcherRegistry
+						.requestMatchers("/auth/v1/logout").authenticated()
+						.requestMatchers(WhiteListConstants.SECURITY_WHITE_LIST).permitAll())
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry
 					// .anyRequest().permitAll()

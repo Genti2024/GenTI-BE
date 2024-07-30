@@ -85,6 +85,17 @@ public class UserController {
 		return success(userService.signUp(userId, signUpRequestDTO));
 	}
 
+	@Operation(summary = "로그아웃", description = "refreshToken 삭제")
+	@EnumResponses(value = {
+			@EnumResponse(ResponseCode.OK),
+			@EnumResponse(ResponseCode.Forbidden),
+			@EnumResponse(ResponseCode.REFRESH_TOKEN_NOT_EXISTS),
+	})
+	@PostMapping("/logout")
+	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
+		return success(userService.logout(userId));
+	}
+
 	@Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),

@@ -167,6 +167,12 @@ public class JwtTokenProvider {
 		Claims claims = getBody(token);
 		return Long.parseLong(claims.get(USER_ID).toString());
 	}
+	public String getUserRoleStringFromJwt(String token) {
+		token = removeJwtPrefix(token);
+		Claims claims = getBody(token);
+		return claims.get(ROLE).toString();
+	}
+
 
 	public Authentication getAuthentication(Long userId) {
 		UserPrincipal userDetails = (UserPrincipal)userPrincipalDetailsService.loadUserByUsername(

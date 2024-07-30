@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Schema(name = "[Auth][Anonymous] Genti 인증토큰 Refresh 요청 Dto", description = "토큰 전달")
 public class TokenRefreshRequestDto {
 	@NotBlank
-	@Schema(description = "refreshToken")
+	@Schema(description = "accessToken")
 	String accessToken;
 
 	@NotBlank

@@ -17,6 +17,7 @@ import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
+import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.user.service.social.SocialOauthContext;
 import com.gt.genti.util.HttpRequestUtil;
@@ -48,5 +49,15 @@ public class AuthService {
 	public TokenResponse reissue(TokenRefreshRequestDto tokenRefreshRequestDto) {
 		return jwtTokenProvider.reissueIfValid(tokenRefreshRequestDto.getAccessToken(),
 			tokenRefreshRequestDto.getRefreshToken());
+	}
+
+	public Boolean canAutoLogin(String accessToken) {
+		String userRoleString = "";
+		try{
+			userRoleString = jwtTokenProvider.getUserRoleStringFromJwt(accessToken);
+		} catch (Exception e){
+			return false;
+		}
+		return !UserRole.OAUTH_FIRST_JOIN.getRoles().equals(userRoleString);
 	}
 }

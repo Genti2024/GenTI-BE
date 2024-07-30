@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gt.genti.auth.dto.request.AppleLoginRequest;
 import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
+import com.gt.genti.auth.dto.request.CanAutoLoginRequestDto;
 import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
@@ -117,7 +118,7 @@ public class AuthController {
 	@GetMapping("/login/testjwt")
 	public ResponseEntity<ApiResult<TokenResponse>> getTestJwt(
 		@NotNull @RequestParam(name = "role", value = "role") UserRole role) {
-		Map<UserRole, String> userIdMapper = Map.of(UserRole.USER, "2", UserRole.ADMIN, "1", UserRole.CREATOR, "4");
+		Map<UserRole, String> userIdMapper = Map.of(UserRole.USER, "2", UserRole.ADMIN, "1", UserRole.CREATOR, "4", UserRole.OAUTH_FIRST_JOIN, String.valueOf(Long.MAX_VALUE));
 		String userId = userIdMapper.get(role);
 		TokenGenerateCommand command = TokenGenerateCommand.builder()
 			.userId(userId)
@@ -162,5 +163,16 @@ public class AuthController {
 		@RequestBody @Valid TokenRefreshRequestDto tokenRefreshRequestDto
 	){
 		return success(authService.reissue(tokenRefreshRequestDto));
+	}
+
+	@Operation(summary = "자동로그인이 가능한지(최초가입자가 아닌지) 여부를 응답", description = "자동로그인 가능(최초가입자 아님) -> true, 이외의 모든 경우 -> false")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
+	@PostMapping("/can-auto-login")
+	public ResponseEntity<ApiResult<Boolean>> canAutoLogin(
+		@RequestBody @Valid CanAutoLoginRequestDto canAutoLoginRequestDto
+	){
+		return success(authService.canAutoLogin(canAutoLoginRequestDto));
 	}
 }

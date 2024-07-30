@@ -11,12 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gt.genti.auth.dto.request.AppleLoginRequest;
 import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
-import com.gt.genti.auth.dto.request.AutoLoginCheckRequestDto;
 import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
@@ -39,6 +39,7 @@ import com.gt.genti.user.model.UserRole;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -169,10 +170,12 @@ public class AuthController {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	@PostMapping("/can-auto-login")
+	@Parameter
+	@GetMapping("/can-auto-login")
 	public ResponseEntity<ApiResult<Boolean>> canAutoLogin(
-		@RequestBody @Valid AutoLoginCheckRequestDto autoLoginCheckRequestDto
+		@Parameter(in = ParameterIn.HEADER, name = "Access-Token", description = "액세스 토큰", required = true)
+		@RequestHeader("Access-Token") String accessToken
 	){
-		return success(authService.canAutoLogin(autoLoginCheckRequestDto));
+		return success(authService.canAutoLogin(accessToken));
 	}
 }

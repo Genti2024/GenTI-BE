@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gt.genti.auth.dto.request.AppleLoginRequest;
 import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
-import com.gt.genti.auth.dto.request.CanAutoLoginRequestDto;
+import com.gt.genti.auth.dto.request.AutoLoginCheckRequestDto;
 import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
@@ -171,8 +171,8 @@ public class AuthController {
 	})
 	@PostMapping("/can-auto-login")
 	public ResponseEntity<ApiResult<Boolean>> canAutoLogin(
-		@RequestBody @Valid CanAutoLoginRequestDto canAutoLoginRequestDto
+		@RequestBody @Valid AutoLoginCheckRequestDto autoLoginCheckRequestDto
 	){
-		return success(authService.canAutoLogin(canAutoLoginRequestDto));
+		return success(authService.canAutoLogin(autoLoginCheckRequestDto));
 	}
 }

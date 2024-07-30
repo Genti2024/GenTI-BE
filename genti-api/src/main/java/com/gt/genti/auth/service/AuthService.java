@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.auth.dto.request.CanAutoLoginRequestDto;
+import com.gt.genti.auth.dto.request.AutoLoginCheckRequestDto;
 import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
@@ -64,8 +64,8 @@ public class AuthService {
 			tokenRefreshRequestDto.getRefreshToken());
 	}
 
-	public Boolean canAutoLogin(CanAutoLoginRequestDto canAutoLoginRequestDto) {
-		String userRoleString = jwtTokenProvider.getUserRoleStringFromJwt(canAutoLoginRequestDto.getAccessToken());
+	public Boolean canAutoLogin(AutoLoginCheckRequestDto autoLoginCheckRequestDto) {
+		String userRoleString = jwtTokenProvider.getUserRoleStringFromJwt(autoLoginCheckRequestDto.getAccessToken());
 		return !UserRole.OAUTH_FIRST_JOIN.getRoles().equals(userRoleString);
 	}
 }

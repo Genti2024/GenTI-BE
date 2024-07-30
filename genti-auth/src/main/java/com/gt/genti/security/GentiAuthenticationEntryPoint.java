@@ -30,8 +30,8 @@ public class GentiAuthenticationEntryPoint implements AuthenticationEntryPoint {
 				return;
 			case 401:
 				exception = (Exception)request.getAttribute("exception");
-				if(exception instanceof ExpectedException){
-					if(ResponseCode.TOKEN_NOT_PROVIDED == ((ExpectedException)exception).getResponseCode()){
+				if (exception instanceof ExpectedException) {
+					if (ResponseCode.TOKEN_NOT_PROVIDED == ((ExpectedException)exception).getResponseCode()) {
 						return;
 					}
 				}
@@ -45,9 +45,11 @@ public class GentiAuthenticationEntryPoint implements AuthenticationEntryPoint {
 			case 408:
 				exception = ExpectedException.withLogging(ResponseCode.TimeOut);
 				break;
-			default:
-				exception = ExpectedException.withLogging(ResponseCode.UnHandledException);
+			case 500:
+				exception = (Exception)request.getAttribute("exception");
 				break;
+			default:
+				exception = (Exception)request.getAttribute("exception");
 		}
 		resolver.resolveException(request, response, null, exception);
 	}

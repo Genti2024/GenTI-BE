@@ -5,6 +5,7 @@ import static com.gt.genti.error.ResponseCode.*;
 import java.io.IOException;
 import java.util.Objects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -53,21 +54,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			log.info(
 				HttpRequestUtil.getUserIP(Objects.requireNonNull(request)) + "의 " + request.getRequestURI() + " 으로의 접근 "
 					+ e.getClass().getSimpleName() + " 예외 발생");
-			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-			return;
+			handleUnExpectedException(request, response, e);
 		}
 		filterChain.doFilter(request, response);
 	}
 
+	private void handleUnExpectedException(HttpServletRequest request, HttpServletResponse response,Exception e){
+		request.setAttribute("exception", e);
+		response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
+
 	private void handleExpectedException(HttpServletRequest request, HttpServletResponse response,
 		ExpectedException expectedException) throws IOException {
-		if (TOKEN_NOT_PROVIDED.equals(expectedException.getResponseCode())) {
 			request.setAttribute("exception", expectedException);
 			response.setStatus(expectedException.getResponseCode().getHttpStatusCode().value());
-		} else {
-			request.setAttribute("exception", expectedException);
-			response.setStatus(expectedException.getResponseCode().getHttpStatusCode().value());
-		}
 	}
 
 	private void authenticate(HttpServletRequest request) {

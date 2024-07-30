@@ -6,6 +6,8 @@
 
 https://naver.github.io/hackday-conventions-java/
 
+1. record 타입 사용시 해당 recood 타입을 사용할 때 new 대신 static method(of, from ...) 를 사용
+2. record 타입 뿐만 아니라 모든 상황에서 new 키워드 사용 자제(자제 라는 단어가 convention과 어울리는지는 모르겠으나 추후 리팩터링할때 new 씨를 말릴겁니다.)
 
 ## commit convention
 예시

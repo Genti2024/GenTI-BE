@@ -63,13 +63,4 @@ public class AuthService {
 			tokenRefreshRequestDto.getRefreshToken());
 	}
 
-	public Boolean canAutoLogin(String accessToken) {
-		String userRoleString = "";
-		try{
-			userRoleString = jwtTokenProvider.getUserRoleStringFromJwt(accessToken);
-		} catch (Exception e){
-			return false;
-		}
-		return !UserRole.OAUTH_FIRST_JOIN.getRoles().equals(userRoleString);
-	}
 }

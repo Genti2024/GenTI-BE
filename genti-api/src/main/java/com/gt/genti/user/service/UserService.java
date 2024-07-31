@@ -205,6 +205,9 @@ public class UserService {
 
 	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
 		User foundUser = getUserByUserId(userId);
+		if(!foundUser.isFirstJoinUser()) {
+			throw ExpectedException.withLogging(ResponseCode.UserAlreadySignedUp);
+		}
 		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
 		foundUser.updateUserRole(UserRole.USER);
 		return true;

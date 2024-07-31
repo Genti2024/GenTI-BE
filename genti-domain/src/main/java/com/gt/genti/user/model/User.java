@@ -260,4 +260,8 @@ public class User extends BaseTimeEntity {
 		this.birthDate = birthDate;
 		this.sex = sex;
 	}
+
+	public boolean isFirstJoinUser(){
+		return this.userRole.equals(UserRole.OAUTH_FIRST_JOIN);
+	}
 }

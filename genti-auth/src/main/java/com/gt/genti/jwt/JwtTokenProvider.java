@@ -148,6 +148,7 @@ public class JwtTokenProvider {
 			String refreshToken = redisTemplate.opsForValue().get(String.valueOf(userId));
 			if (refreshToken != null) {
 				redisTemplate.delete(refreshToken);
+				return;
 			}
 			throw ExpectedException.withLogging(ResponseCode.REFRESH_TOKEN_NOT_EXISTS);
 		}

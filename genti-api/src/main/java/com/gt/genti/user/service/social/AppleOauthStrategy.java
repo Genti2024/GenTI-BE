@@ -6,6 +6,7 @@ import java.security.PublicKey;
 import java.util.Map;
 import java.util.Optional;
 
+import com.gt.genti.user.model.UserStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +66,9 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
-			user.resetDeleteAt();
+			if (user.getUserStatus() == UserStatus.DELETED) {
+				throw ExpectedException.withLogging(ResponseCode.LoginFromDeletedUser);
+			}
 		}
 		user.login();
 		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()

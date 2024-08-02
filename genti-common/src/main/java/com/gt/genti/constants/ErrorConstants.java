@@ -34,6 +34,7 @@ public class ErrorConstants {
 	public static final String REFRESH_TOKEN_NOT_EXISTS = CODE(AUTH, 8);
 	public static final String Forbidden = CODE(AUTH, 9);
 	public static final String UnAuthorized = CODE(AUTH, 10);
+	public static final String LoginFromDeletedUser = CODE(AUTH, 11);
 
 	public static final String UnHandledException = CODE(SERVER, 1);
 	public static final String HandlerNotFound = CODE(SERVER, 2);

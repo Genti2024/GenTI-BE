@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
+import com.gt.genti.user.model.UserStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,7 +104,9 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
-			user.resetDeleteAt();
+			if (user.getUserStatus() == UserStatus.DELETED) {
+				throw ExpectedException.withLogging(ResponseCode.LoginFromDeletedUser);
+			}
 		}
 		user.login();
 		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()

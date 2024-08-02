@@ -138,6 +138,7 @@ public class AuthController {
 		@EnumResponse(ResponseCode.AppleOauthIdTokenInvalid),
 		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
 		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
+		@EnumResponse(ResponseCode.LoginFromDeletedUser)
 	})
 	@PostMapping("/login/oauth2/token")
 	@Logging(item = LogItem.OAUTH_APP, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)

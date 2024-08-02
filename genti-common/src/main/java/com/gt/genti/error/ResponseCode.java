@@ -37,6 +37,8 @@ public enum ResponseCode {
 		"인증되지 않은 사용자."),
 	EncryptAlgorithmDeprecated(ErrorConstants.EncryptAlgorithmDeprecated, HttpStatus.INTERNAL_SERVER_ERROR, false,
 		"%s 암호화 과정 중 문제가 발생했습니다."),
+	LoginFromDeletedUser(ErrorConstants.LoginFromDeletedUser, HttpStatus.NOT_FOUND, false,
+			"회원탈퇴한 사용자의 로그인 시도"),
 
 	/**
 	 * Oauth

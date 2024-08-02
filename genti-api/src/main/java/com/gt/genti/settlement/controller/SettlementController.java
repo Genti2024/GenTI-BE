@@ -11,38 +11,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
+import com.gt.genti.settlement.api.SettlementApi;
 import com.gt.genti.settlement.service.SettlementService;
 import com.gt.genti.settlementandwithdraw.dto.response.SettlementAndWithdrawPageResponseDto;
-import com.gt.genti.swagger.EnumResponse;
-import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "[SettlementController] 공급자 정산내역 컨트롤러", description = "공급자의 정산&출금내역을 조회합니다.")
 @RestController
 @RequestMapping("/api/v1/creators/settlements")
 @RequiredArgsConstructor
-public class SettlementController {
+public class SettlementController implements SettlementApi {
 	private final SettlementService settlementService;
 
-	@Operation(summary = "정산&출금내역 조회", description = "공급자의 정산&출금내역을 페이지네이션 조회합니다.")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.CreatorNotFound),
-		@EnumResponse(ResponseCode.DepositNotFound)
-	})
 	@Logging(item = LogItem.SETTLEMENT, action = LogAction.VIEW, requester = LogRequester.CREATOR)
 	@GetMapping
 	public ResponseEntity<ApiResult<SettlementAndWithdrawPageResponseDto>> getMySettlements(

@@ -13,39 +13,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.withdraw.dto.response.WithdrawFindByCreatorResponseDto;
-import com.gt.genti.withdraw.service.WithdrawService;
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
-import com.gt.genti.swagger.EnumResponse;
-import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
+import com.gt.genti.withdraw.dto.response.WithdrawFindByCreatorResponseDto;
+import com.gt.genti.withdraw.service.WithdrawService;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "[CreatorWithdrawController] 공급자 출금요청 컨트롤러", description = "공급자가 출금요청을 수행합니다.")
 @RestController
 @RequestMapping("/api/v1/creators/withdraw")
 @RequiredArgsConstructor
-public class CreatorWithdrawController {
+public class CreatorWithdrawController implements com.gt.genti.withdraw.api.CreatorWithdrawApi {
 	private final WithdrawService withDrawService;
 
 	@Logging(item = LogItem.CASHOUT, action = LogAction.CREATE, requester = LogRequester.CREATOR)
-	@Operation(summary = "출금요청", description = "공급자가 작업한 정산결과를 바탕으로 출금요청을 생성합니다.")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.CreatorNotFound),
-		@EnumResponse(ResponseCode.CannotCreateWithdrawalDueToSettlementsNotAvailable)
-	})
 	@PostMapping
 	public ResponseEntity<ApiResult<WithdrawFindByCreatorResponseDto>> createWithdrawRequest(
 		@AuthUser Long userId
@@ -55,10 +43,6 @@ public class CreatorWithdrawController {
 	}
 
 	@Logging(item = LogItem.CASHOUT, action = LogAction.VIEW, requester = LogRequester.CREATOR)
-	@Operation(summary = "출금요청내역조회", description = "공급자의 모든 출금요청을 페이지네이션 조회")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
-	})
 	@GetMapping
 	public ResponseEntity<ApiResult<Page<WithdrawFindByCreatorResponseDto>>> getWithdrawRequest(
 		@AuthUser Long userId,

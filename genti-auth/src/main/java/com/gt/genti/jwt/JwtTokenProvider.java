@@ -150,7 +150,7 @@ public class JwtTokenProvider {
 				return redisTemplate.delete(String.valueOf(userId));
 			}
 		}
-		return true;
+		return false;
 	}
 
 	private Claims getBody(final String token) {

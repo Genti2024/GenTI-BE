@@ -75,7 +75,8 @@ public class UserController {
 
 	@Operation(summary = "최초가입 정보등록", description = "사용자에게 생년, 성별을 받아 최종 가입을 처리")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.UserAlreadySignedUp)
 	})
 	@PostMapping("/signup")
 	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -39,7 +38,6 @@ import com.gt.genti.user.model.UserRole;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -155,16 +153,4 @@ public class AuthController {
 		return success(authService.reissue(tokenRefreshRequestDto));
 	}
 
-	@Operation(summary = "자동로그인이 가능한지(최초가입자가 아닌지) 여부를 응답", description = "자동로그인 가능(최초가입자 아님) -> true, 이외의 모든 경우 -> false")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
-	})
-	@Parameter
-	@GetMapping("/can-auto-login")
-	public ResponseEntity<ApiResult<Boolean>> canAutoLogin(
-		@Parameter(in = ParameterIn.HEADER, name = "Access-Token", description = "액세스 토큰", required = true)
-		@RequestHeader("Access-Token") String accessToken
-	){
-		return success(authService.canAutoLogin(accessToken));
-	}
 }

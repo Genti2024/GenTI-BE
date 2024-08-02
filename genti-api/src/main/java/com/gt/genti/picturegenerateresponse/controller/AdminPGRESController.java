@@ -11,39 +11,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
+import com.gt.genti.picturegenerateresponse.api.AdminPGRESApi;
 import com.gt.genti.picturegenerateresponse.dto.request.PGRESUpdateAdminInChargeRequestDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESSubmitByAdminResponseDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESUpdateAdminInChargeResponseDto;
 import com.gt.genti.picturegenerateresponse.service.PictureGenerateWorkService;
-import com.gt.genti.swagger.EnumResponse;
-import com.gt.genti.swagger.EnumResponses;
-import com.gt.genti.swagger.RequireImageUpload;
 import com.gt.genti.user.model.AuthUser;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "[AdminPGRESController] 어드민 사진생성응답 컨트롤러", description = "사진생성응답을 조회, 수정")
 @RestController
 @RequestMapping("/api/v1/admin/picture-generate-responses")
 @RequiredArgsConstructor
-public class AdminPGRESController {
+public class AdminPGRESController implements AdminPGRESApi {
 	private final PictureGenerateWorkService pictureGenerateWorkService;
 
-	@Operation(summary = "사진생성응답 최종 제출", description = "사진생성응답을 최종 제출합니다.")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
-	})
 	@Logging(item = LogItem.PGRES, action = LogAction.COMPLETE, requester = LogRequester.ADMIN)
 	@PostMapping("/{pictureGenerateResponseId}/submit")
 	public ResponseEntity<ApiResult<PGRESSubmitByAdminResponseDto>> submit(
@@ -52,11 +42,6 @@ public class AdminPGRESController {
 		return success(pictureGenerateWorkService.submitFinal(pictureGenerateResponseId));
 	}
 
-	@Operation(summary = "응답에 최종 사진 리스트 추가", description = "사진생성응답에 최종 사진 리스트 추가")
-	@RequireImageUpload
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
-	})
 	@Logging(item = LogItem.PGRES_PICTURE_COMPLETED, action = LogAction.UPDATE, requester = LogRequester.ADMIN)
 	@PostMapping("/{pictureGenerateResponseId}/pictures")
 	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> updatePictureList(
@@ -69,10 +54,6 @@ public class AdminPGRESController {
 				pictureGenerateResponseId));
 	}
 
-	@Operation(summary = "담당자(어드민) 설정", description = "사진생성응답 담당 어드민 설정")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
-	})
 	@Logging(item = LogItem.PGRES_ASSIGNEE, action = LogAction.UPDATE, requester = LogRequester.ADMIN)
 	@PostMapping("/{pictureGenerateResponseId}/admin-in-charge")
 	public ResponseEntity<ApiResult<PGRESUpdateAdminInChargeResponseDto>> updateAdminInCharge(

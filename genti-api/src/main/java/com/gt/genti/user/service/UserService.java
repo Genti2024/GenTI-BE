@@ -2,14 +2,12 @@ package com.gt.genti.user.service;
 
 import static com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestCancellationReason.*;
 import static com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.*;
-import static com.gt.genti.user.service.validator.UserValidator.validateUserAuthorization;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import com.gt.genti.jwt.JwtTokenProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +20,7 @@ import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.deposit.service.DepositService;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.profile.model.PictureProfile;
@@ -217,9 +216,6 @@ public class UserService {
 	}
 
 	public Boolean logout(final Long userId) {
-		User foundUser = getUserByUserId(userId);
-		validateUserAuthorization(foundUser.getId(), userId);
-		jwtTokenProvider.deleteRefreshToken(userId);
-		return true;
+		return jwtTokenProvider.deleteRefreshToken(userId);
 	}
 }

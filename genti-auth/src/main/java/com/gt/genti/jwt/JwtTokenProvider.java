@@ -143,16 +143,14 @@ public class JwtTokenProvider {
 		}
 	}
 
-	public void deleteRefreshToken(Long userId) {
+	public Boolean deleteRefreshToken(Long userId) {
 		if (Boolean.TRUE.equals(redisTemplate.hasKey(String.valueOf(userId)))) {
 			String refreshToken = redisTemplate.opsForValue().get(String.valueOf(userId));
 			if (refreshToken != null) {
-				redisTemplate.delete(refreshToken);
-				return;
+				return redisTemplate.delete(String.valueOf(userId));
 			}
-			throw ExpectedException.withLogging(ResponseCode.REFRESH_TOKEN_NOT_EXISTS);
 		}
-		throw ExpectedException.withoutLogging(ResponseCode.REFRESH_TOKEN_NOT_EXISTS);
+		return false;
 	}
 
 	private Claims getBody(final String token) {

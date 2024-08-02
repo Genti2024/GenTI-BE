@@ -78,6 +78,7 @@ public interface AuthApi {
 		@EnumResponse(ResponseCode.AppleOauthIdTokenInvalid),
 		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
 		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
+		@EnumResponse(ResponseCode.LoginFromDeletedUser)
 	})
 	ResponseEntity<ApiResult<OauthJwtResponse>> loginOrSignUpWithOAuthToken(
 		@RequestBody @Valid SocialAppLoginRequest socialAppLoginRequest);

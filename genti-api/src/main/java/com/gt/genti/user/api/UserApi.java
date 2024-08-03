@@ -63,14 +63,6 @@ public interface UserApi {
 	})
 	ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId);
 
-	@Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.UserNotFound)
-	})
-	ResponseEntity<ApiResult<Boolean>> deleteUserSoft(
-		@AuthUser Long userId);
-
 	@Operation(summary = "회원 복구", description = "회원탈퇴 취소 처리")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
@@ -80,6 +72,14 @@ public interface UserApi {
 	})
 	ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthUser Long userId);
+
+	@Operation(summary = "회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
+	@EnumResponses(value = {
+			@EnumResponse(ResponseCode.OK),
+			@EnumResponse(ResponseCode.UserNotFound)
+	})
+	public ResponseEntity<ApiResult<Boolean>> deleteUserHard(
+			@AuthUser Long userId);
 
 	@Operation(summary = "내 사진 전체조회", description = "내가 사진생성요청으로 생성된 사진 전체 조회 Pagination")
 	@EnumResponses(value = {

@@ -67,7 +67,7 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 		} else {
 			user = findUser.get();
 			if (user.getUserStatus() == UserStatus.DELETED) {
-				throw ExpectedException.withLogging(ResponseCode.LoginFromDeletedUser);
+				throw ExpectedException.withLogging(ResponseCode.LoginFromDeletedUser, user.getEmail());
 			}
 		}
 		user.login();

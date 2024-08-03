@@ -105,7 +105,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 		} else {
 			user = findUser.get();
 			if (user.getUserStatus() == UserStatus.DELETED) {
-				throw ExpectedException.withLogging(ResponseCode.LoginFromDeletedUser);
+				throw ExpectedException.withLogging(ResponseCode.LoginFromDeletedUser, user.getEmail());
 			}
 		}
 		user.login();

@@ -19,6 +19,7 @@ public class ErrorConstants {
 	private static final String AUTH = "AUTH";
 	private static final String OAUTH = "OAUTH";
 	private static final String SERVER = "SERVER";
+	private static final String FCM = "FCM";
 
 	private static String CODE(String type, int seq) {
 		return type + String.format("-%05d", seq);
@@ -29,7 +30,6 @@ public class ErrorConstants {
 	public static final String INSUFFICIENT_PERMISSIONS = CODE(AUTH, 3);
 	public static final String REFRESH_TOKEN_EXPIRED = CODE(AUTH, 4);
 	public static final String REFRESH_TOKEN_INVALID = CODE(AUTH, 5);
-	public static final String TOKEN_REFRESH_FAILED = CODE(AUTH, 6);
 	public static final String TOKEN_NOT_PROVIDED = CODE(AUTH, 7);
 	public static final String REFRESH_TOKEN_NOT_EXISTS = CODE(AUTH, 8);
 	public static final String Forbidden = CODE(AUTH, 9);
@@ -47,7 +47,6 @@ public class ErrorConstants {
 	public static final String NotNullableEnum = CODE(SERVER, 10);
 	public static final String TimeOut = CODE(SERVER, 11);
 	public static final String EnumMappingFailed = CODE(SERVER, 12);
-
 
 	public static final String ActivePictureGenerateRequestNotExists = CODE(PGREQ, 1);
 	public static final String PictureGenerateRequestNotFound = CODE(PGREQ, 2);
@@ -68,7 +67,6 @@ public class ErrorConstants {
 	public static final String WithDrawnUser = CODE(USER, 5);
 	public static final String UserNotLoggedIn = CODE(USER, 6);
 	public static final String UserAlreadySignedUp = CODE(USER, 7);
-
 
 	public static final String CreatorNotFound = CODE(CREATOR, 1);
 
@@ -109,5 +107,9 @@ public class ErrorConstants {
 	public static final String NoWebhookEmbeds = CODE(DISCORD, 1);
 	public static final String DiscordIOException = CODE(DISCORD, 2);
 
+	public static final String FCM_TOKEN_NOT_FOUND = CODE(FCM, 1);
+	public static final String FCM_TOKEN_CONVERTING_JSON_ERROR = CODE(FCM, 2);
+	public static final String FCM_GOOGLE_REQUEST_TOKEN_ERROR = CODE(FCM, 3);
+	public static final String FCM_CONNECT_ERROR = CODE(FCM, 4);
 
 }

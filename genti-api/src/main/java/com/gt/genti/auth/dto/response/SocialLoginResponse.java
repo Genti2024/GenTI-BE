@@ -1,8 +1,7 @@
 package com.gt.genti.auth.dto.response;
 
-import com.gt.genti.jwt.TokenResponse;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 
 @Schema(name = "[Auth][Anonymous] 소셜 로그인 응답 Dto")
 public record SocialLoginResponse(
@@ -15,9 +14,10 @@ public record SocialLoginResponse(
 	@Schema(description = "신규가입시 true", example = "true")
 	boolean isNewUser,
 
-	TokenResponse token
+	@Getter
+	OauthJwtResponse token
 ) {
-	public static SocialLoginResponse of(Long userId, String userName, String email, boolean isNewUser, TokenResponse token) {
-		return new SocialLoginResponse(userId, userName, email, isNewUser, TokenResponse.of(token.accessToken(), token.refreshToken()));
+	public static SocialLoginResponse of(Long userId, String userName, String email, boolean isNewUser, OauthJwtResponse oauthJwtResponse) {
+		return new SocialLoginResponse(userId, userName, email, isNewUser, oauthJwtResponse);
 	}
 }

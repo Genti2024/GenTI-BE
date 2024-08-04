@@ -14,11 +14,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SignUpRequestDTO;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.deposit.service.DepositService;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.profile.model.PictureProfile;
@@ -52,6 +54,7 @@ public class UserService {
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
+	private final JwtTokenProvider jwtTokenProvider;
 
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
@@ -200,5 +203,19 @@ public class UserService {
 			.lastLoginDate(foundUser.getLastLoginDate())
 			.build();
 		return new PageImpl<>(List.of(responseDto));
+	}
+
+	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
+		User foundUser = getUserByUserId(userId);
+		if(!foundUser.isFirstJoinUser()) {
+			throw ExpectedException.withLogging(ResponseCode.UserAlreadySignedUp);
+		}
+		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
+		foundUser.updateUserRole(UserRole.USER);
+		return true;
+	}
+
+	public Boolean logout(final Long userId) {
+		return jwtTokenProvider.deleteRefreshToken(userId);
 	}
 }

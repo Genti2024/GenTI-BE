@@ -12,15 +12,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.OauthJwtResponse;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
-import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.openfeign.google.client.GoogleApiClient;
 import com.gt.genti.openfeign.google.client.GoogleAuthApiClient;
 import com.gt.genti.openfeign.google.dto.response.GoogleInfoResponse;
 import com.gt.genti.openfeign.google.dto.response.GoogleTokenResponse;
-import com.gt.genti.auth.dto.request.SocialLoginRequest;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.user.service.UserSignUpEventPublisher;
@@ -36,12 +37,8 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 	private String googleClientId;
 	@Value("${google.client-secret}")
 	private String googleClientSecret;
-	@Value("${google.redirect-url}")
+	@Value("${google.redirect-uri}")
 	private String googleRedirectUrl;
-	@Value("${server.domain}")
-	private String serverBaseUri;
-	@Value("${server.port}")
-	private String serverPort;
 
 	@Value("${google.scope}")
 	private List<String> scope;
@@ -57,7 +54,7 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 	public String getAuthUri() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("client_id", googleClientId);
-		params.put("redirect_uri", serverBaseUri + ":" + serverPort + googleRedirectUrl);
+		params.put("redirect_uri", googleRedirectUrl);
 		params.put("response_type", "code");
 		params.put("scope", String.join("%20", scope));
 
@@ -69,12 +66,12 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 
 	@Override
 	@Transactional
-	public SocialLoginResponse login(SocialLoginRequest request) {
+	public SocialLoginResponse webLogin(SocialLoginRequest request) {
 		GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
 			request.getCode(),
 			googleClientId,
 			googleClientSecret,
-			serverBaseUri + ":" + serverPort + googleRedirectUrl,
+			googleRedirectUrl,
 			"authorization_code"
 		);
 		GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
@@ -100,9 +97,14 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 			.userId(user.getId().toString())
 			.role(user.getUserRole().getRoles())
 			.build();
-		TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, token);
+		OauthJwtResponse oauthJwtResponse = OauthJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
+		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
+	}
+
+	@Override
+	public SocialLoginResponse tokenLogin(SocialAppLoginRequest request) {
+		return null;
 	}
 
 	@Override

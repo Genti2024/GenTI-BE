@@ -29,12 +29,10 @@ public enum ResponseCode {
 	INSUFFICIENT_PERMISSIONS(ErrorConstants.INSUFFICIENT_PERMISSIONS, HttpStatus.FORBIDDEN, false, "접근 권한이 부족합니다."),
 	REFRESH_TOKEN_EXPIRED(ErrorConstants.REFRESH_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, false, "리프레시 토큰이 만료되었습니다."),
 	REFRESH_TOKEN_INVALID(ErrorConstants.REFRESH_TOKEN_INVALID, HttpStatus.UNAUTHORIZED, false, "유효하지 않은 리프레시 토큰입니다."),
-	TOKEN_REFRESH_FAILED(ErrorConstants.TOKEN_REFRESH_FAILED, HttpStatus.UNAUTHORIZED, false,
-		"토큰 갱신에 실패했습니다."),
-	INVALID_REFRESH_TOKEN(ErrorConstants.INVALID_REFRESH_TOKEN, HttpStatus.UNAUTHORIZED, false,
-		"토큰 갱신에 실패했습니다."),
+	REFRESH_TOKEN_NOT_EXISTS(ErrorConstants.REFRESH_TOKEN_NOT_EXISTS, HttpStatus.NOT_FOUND, false,
+		"리프레시 토큰이 존재하지 않습니다."),
 	Forbidden(ErrorConstants.Forbidden, HttpStatus.FORBIDDEN, false,
-		"토큰 갱신에 실패했습니다."),
+		"로그인 정보가 일치하지 않습니다."),
 	UnAuthorized(ErrorConstants.UnAuthorized, HttpStatus.UNAUTHORIZED, false,
 		"인증되지 않은 사용자."),
 	EncryptAlgorithmDeprecated(ErrorConstants.EncryptAlgorithmDeprecated, HttpStatus.INTERNAL_SERVER_ERROR, false,
@@ -124,6 +122,7 @@ public enum ResponseCode {
 	UserNotFound(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 userId: [%s]"),
 	UserNotFoundByEmail(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 email: [%s]"),
 	UserDeactivated(ErrorConstants.UserDeactivated, HttpStatus.BAD_REQUEST, false, "비활성화된 계정입니다."),
+	UserAlreadySignedUp(ErrorConstants.UserAlreadySignedUp, HttpStatus.BAD_REQUEST, false, "이미 회원가입 처리가 완료된 유저입니다."),
 
 	/**
 	 * Creator

@@ -11,15 +11,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
+import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.response.OauthJwtResponse;
+import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
-import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.openfeign.kakao.client.KakaoApiClient;
 import com.gt.genti.openfeign.kakao.client.KakaoAuthApiClient;
 import com.gt.genti.openfeign.kakao.dto.response.KakaoTokenResponse;
 import com.gt.genti.openfeign.kakao.dto.response.KakaoUserResponse;
-import com.gt.genti.auth.dto.request.SocialLoginRequest;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
@@ -36,10 +37,6 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 	private String kakaoClientId;
 	@Value("${kakao.redirect-uri}")
 	private String kakaoRedirectUri;
-	@Value("${server.domain}")
-	private String serverBaseUri;
-	@Value("${server.port}")
-	private String serverPort;
 	@Value("${kakao.client-secret}")
 	private String kakaoClientSecret;
 
@@ -54,7 +51,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 	public String getAuthUri() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("client_id", kakaoClientId);
-		params.put("redirect_uri", serverBaseUri + ":" + serverPort + kakaoRedirectUri);
+		params.put("redirect_uri", kakaoRedirectUri);
 		params.put("response_type", "code");
 
 		String paramStr = params.entrySet().stream()
@@ -65,16 +62,28 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 
 	@Override
 	@Transactional
-	public SocialLoginResponse login(SocialLoginRequest request) {
+	public SocialLoginResponse webLogin(SocialLoginRequest request) {
 		KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
 			"authorization_code",
 			kakaoClientId,
 			kakaoClientSecret,
-			serverBaseUri + ":" + serverPort + kakaoRedirectUri,
+			kakaoRedirectUri,
 			request.getCode()
 		);
+
+		OauthPlatform oauthPlatform = request.getOauthPlatform();
+		String accessToken = tokenResponse.accessToken();
+		return getUserInfo(oauthPlatform, accessToken);
+	}
+
+	@Override
+	public SocialLoginResponse tokenLogin(final SocialAppLoginRequest request) {
+		return getUserInfo(request.getOauthPlatform(), request.getToken());
+	}
+
+	private SocialLoginResponse getUserInfo(OauthPlatform oauthPlatform, String accessToken) {
 		KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
-			"Bearer " + tokenResponse.accessToken());
+			"Bearer " + accessToken);
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
 		User user;
 		boolean isNewUser = false;
@@ -82,7 +91,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.id())
 				.birthDate(getBirthDateStringFrom(userResponse))
-				.oauthPlatform(request.getOauthPlatform())
+				.oauthPlatform(oauthPlatform)
 				.username(userResponse.kakaoAccount().name())
 				.nickname(RandomUtil.generateRandomNickname())
 				.email(userResponse.kakaoAccount().email())
@@ -99,9 +108,10 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			.userId(user.getId().toString())
 			.role(user.getUserRole().getRoles())
 			.build();
-		TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand));
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, token);
+		OauthJwtResponse oauthJwtResponse = OauthJwtResponse.of(
+			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
+		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
 	}
 
 	private static String getBirthDateStringFrom(KakaoUserResponse userResponse) {

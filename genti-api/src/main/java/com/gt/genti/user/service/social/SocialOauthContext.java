@@ -5,13 +5,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.gt.genti.error.ExpectedException;
-import com.gt.genti.error.ResponseCode;
+import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
 import com.gt.genti.auth.dto.response.SocialLoginResponse;
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.user.model.OauthPlatform;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -48,11 +50,14 @@ public class SocialOauthContext {
 	}
 
 	public SocialLoginResponse doLogin(final SocialLoginRequest request) {
-		return loginStrategyOf(request.getOauthPlatform()).login(request);
+		return loginStrategyOf(request.getOauthPlatform()).webLogin(request);
 	}
 
 	public String getAuthUri(OauthPlatform oauthPlatform) {
 		return authStrategyOf(oauthPlatform).getAuthUri();
 	}
 
+	public SocialLoginResponse doAppLogin(final SocialAppLoginRequest request) {
+		return loginStrategyOf(request.getOauthPlatform()).tokenLogin(request);
+	}
 }

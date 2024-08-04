@@ -55,6 +55,7 @@ public class PictureGenerateWorkService {
 	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
+ 	private final PGRESCompleteEventPublisher PGRESCompleteEventPublisher;
 
 	public PGREQBriefFindByCreatorResponseDto getPictureGenerateRequestBrief(Long userId,
 		PictureGenerateRequestStatus status) {
@@ -190,13 +191,7 @@ public class PictureGenerateWorkService {
 		foundPGRES.adminSubmit();
 		Duration elapsedDuration = foundPGRES.getAdminElapsedTime();
 
-		//TODO 어드민은 시간 체크 할 필요 없겠지?
-		// edited at 2024-05-20
-		// author 서병렬
-
-		//TODO 요청자에게 앱 푸시알림
-		// edited at 2024-05-21
-		// author 서병렬
+		PGRESCompleteEventPublisher.publishPictureGenerateCompleteEvent(foundPGRES.getRequest().getRequester().getId());
 
 		return PGRESSubmitByAdminResponseDto.builder()
 			.pictureGenerateResponseId(foundPGRES.getId())

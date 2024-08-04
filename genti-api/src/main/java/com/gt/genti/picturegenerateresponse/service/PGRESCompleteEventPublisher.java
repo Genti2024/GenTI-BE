@@ -1,4 +1,4 @@
-package com.gt.genti.test;
+package com.gt.genti.picturegenerateresponse.service;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
@@ -12,20 +12,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class FcmEventPublisher {
+public class PGRESCompleteEventPublisher {
 
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Async
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void publishTest1() {
-		eventPublisher.publishEvent(PictureGenerationCompletedNotificationEvent.of(2L));
-	}
-
-	@Async
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void publishPictureGenerateCompleteEvent() {
-		eventPublisher.publishEvent(PictureGenerationCompletedNotificationEvent.of(2L));
+	public void publishPictureGenerateCompleteEvent(Long receiverId) {
+		eventPublisher.publishEvent(PictureGenerationCompletedNotificationEvent.of(receiverId));
 	}
 
 }

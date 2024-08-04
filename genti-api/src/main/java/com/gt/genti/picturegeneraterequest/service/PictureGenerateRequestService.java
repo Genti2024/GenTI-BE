@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
-import com.gt.genti.firebase.FCMService;
 import com.gt.genti.openai.dto.PromptAdvancementRequestCommand;
 import com.gt.genti.openai.service.OpenAIService;
 import com.gt.genti.picture.command.CreatePicturePoseCommand;
@@ -59,7 +58,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
 	private final PGRESStatusToPGRESStatusForAdminMapper pgresStatusToPGRESStatusForAdminMapper = new PGRESStatusToPGRESStatusForAdminMapper();
-	private final FCMService notificationService;
 
 	private final PGREQStatusToPGREQStatusForUserMapper pgreqStatusToPGREQStatusForUserMapper = new PGREQStatusToPGREQStatusForUserMapper();
 

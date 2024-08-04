@@ -160,7 +160,7 @@ public class UserService {
 
 	private User getUserByUserId(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId.toString()));
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
 	}
 
 	@NotNull

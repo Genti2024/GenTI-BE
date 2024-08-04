@@ -30,7 +30,7 @@ import jakarta.validation.constraints.NotNull;
 
 ;
 
-@Tag(name = "[AuthController] 공통 사진 컨트롤러", description = "사진 업로드 url을 요청합니다.")
+@Tag(name = "[AuthController] 인증 컨트롤러", description = "로그인을 처리한 후 토큰을 전달합니다.")
 public interface AuthApi {
 	@Operation(summary = "oauth 로그인 페이지 호출", description = "구글, 카카오 oauth로그인페이지 로 Redirect 됩니다. url은 HttpHeader에 포함되어있습니다.")
 	@ApiResponses(value = {

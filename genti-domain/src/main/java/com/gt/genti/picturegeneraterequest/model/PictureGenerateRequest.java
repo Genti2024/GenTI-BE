@@ -60,7 +60,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@JoinColumn(name = "creator_id")
 	Creator creator;
 
-	@OneToMany(mappedBy = "request")
+	@OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureGenerateResponse> responseList = new ArrayList<>();
 
 	@ManyToMany(cascade = CascadeType.REMOVE)

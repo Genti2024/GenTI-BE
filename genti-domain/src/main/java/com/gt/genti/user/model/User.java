@@ -17,8 +17,11 @@ import com.gt.genti.creator.model.Creator;
 import com.gt.genti.deposit.model.Deposit;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.picture.completed.model.PictureCompleted;
+import com.gt.genti.picture.pose.model.PicturePose;
 import com.gt.genti.picture.profile.model.PictureProfile;
 import com.gt.genti.picture.userface.model.PictureUserFace;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.user.UserSerializer;
 
 import jakarta.persistence.CascadeType;
@@ -122,6 +125,15 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "birth_date", length = 4)
 	String birthDate;
+
+	@OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<PicturePose> picturePoseList;
+
+	@OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<PictureGenerateRequest> pictureGenerateRequestList;
+
+	@OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<PictureCompleted> pictureCompletedList;
 
 	@PrePersist
 	public void prePersist() {

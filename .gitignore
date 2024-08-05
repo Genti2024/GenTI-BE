@@ -65,3 +65,5 @@ logs/
 
 docker/docker-compose.yml
 /docker/.env
+
+firebase-genti.json

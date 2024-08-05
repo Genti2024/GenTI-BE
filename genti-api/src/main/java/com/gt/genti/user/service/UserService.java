@@ -137,6 +137,35 @@ public class UserService {
 		return true;
 	}
 
+	public Boolean deleteUserHard(Long userId) {
+		User foundUser = getUserByUserId(userId);
+		List<PictureGenerateResponse> deleteList = new ArrayList<>();
+		if (foundUser.getCreator() != null) {
+			Creator foundCreator = foundUser.getCreator();
+			List<PictureGenerateResponse> pgresList = foundCreator.getPictureGenerateResponseList();
+			foundCreator.getPictureGenerateRequestList()
+					.stream()
+					.filter(pgreq -> pgreq.getPictureGenerateRequestStatus().equals(
+							PictureGenerateRequestStatus.IN_PROGRESS) && (pgreq.getResponseList().isEmpty()))
+					.forEach(req -> pictureGenerateRequestUseCase.cancelRequest(req, SUPPLIER_EXIT));
+			if (pgresList.isEmpty()) {
+				return true;
+			}
+
+			pgresList.stream()
+					.filter(pgres -> CREATOR_BEFORE_WORK.equals(pgres.getStatus()))
+					.forEach(pgres -> {
+
+						pictureGenerateRequestUseCase.cancelRequest(pgres.getRequest(), SUPPLIER_EXIT);
+						pgres.clearRelationshipsWithPGREQ();
+						deleteList.add(pgres);
+					});
+			pictureGenerateResponseRepository.deleteAll(deleteList);
+		}
+		userRepository.delete(foundUser);
+		return true;
+	}
+
 	public Boolean updateUserStatus(Long userId, UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		User foundUser = getUserByUserId(userId);
 		foundUser.updateStatus(userStatusUpdateRequestDto.getUserStatus());
@@ -160,7 +189,7 @@ public class UserService {
 
 	private User getUserByUserId(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId.toString()));
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
 	}
 
 	@NotNull

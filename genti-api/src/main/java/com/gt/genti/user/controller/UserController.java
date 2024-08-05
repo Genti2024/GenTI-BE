@@ -70,11 +70,13 @@ public class UserController implements UserApi {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<ApiResult<Boolean>> deleteUserSoft(
+	@Logging(item = LogItem.USER, action = LogAction.DELETE, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<Boolean>> deleteUserHard(
 		@AuthUser Long userId) {
-		return GentiResponse.success(userService.deleteUserSoft(userId));
+		return GentiResponse.success(userService.deleteUserHard(userId));
 	}
 
+	@Deprecated
 	@PutMapping("/restore")
 	public ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthUser Long userId) {

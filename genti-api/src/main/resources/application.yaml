@@ -4,6 +4,7 @@ spring:
       local:
       deploy:
       test:
+      staging:
     include:
       - secret
       - common

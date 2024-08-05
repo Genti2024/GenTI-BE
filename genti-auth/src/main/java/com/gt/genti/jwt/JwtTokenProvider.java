@@ -31,7 +31,6 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -173,7 +172,7 @@ public class JwtTokenProvider {
 		return new UserAuthentication(userDetails);
 	}
 
-	public TokenResponse reissueIfValid(@NotBlank String accessToken, @NotBlank String refreshToken) {
+	public TokenResponse reissueIfValid(String accessToken, String refreshToken) {
 		Long userId = getUserIdFromRefreshToken(refreshToken);
 		try {
 			validateToken(accessToken);

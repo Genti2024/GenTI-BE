@@ -3,6 +3,7 @@ package com.gt.genti.config;
 import java.util.List;
 
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,12 +19,17 @@ public class SwaggerConfig {
 	private final String BEARER_TOKEN_PREFIX = "Bearer"; // Bearer직접 넣어서 주는걸로 결정
 	private final String securityJwtName = "JWT";
 
+	@Value("${server.domain}")
+	private String stagingServerDomain;
 	@Bean
 	public OpenAPI openAPI() {
 
 		Server localServer = new Server();
 		localServer.setDescription("FOR BE 로컬 서버");
 		localServer.setUrl("http://localhost:8080");
+		Server stagingServer = new Server();
+		stagingServer.setDescription("이관전 개발서버");
+		stagingServer.setUrl(stagingServerDomain);
 		Server productionServer = new Server();
 		productionServer.setDescription("FOR FE 개발 서버");
 		productionServer.setUrl("https://genti.kr");
@@ -37,7 +43,7 @@ public class SwaggerConfig {
 				.bearerFormat(securityJwtName));
 
 		return new OpenAPI()
-			.servers(List.of(localServer, productionServer))
+			.servers(List.of(localServer, stagingServer, productionServer))
 			.addSecurityItem(securityRequirement)
 			.components(components);
 

@@ -28,6 +28,7 @@ public class WhiteListConstants {
 	}
 
 	private List<String> filterWhiteList = new ArrayList<>(List.of(
+		"/health",
 		"/favicon.ico",
 		"/error",
 		"/auth/**",
@@ -43,6 +44,7 @@ public class WhiteListConstants {
 	));
 
 	private List<String> securityWhiteList = new ArrayList<>(List.of(
+		"/health",
 		"/favicon.ico",
 		"/error",
 		"/auth/**",

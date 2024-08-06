@@ -74,7 +74,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry
 					.requestMatchers("/auth/v1/logout").authenticated()
-					.requestMatchers(whiteListConstants.getSecurtiyWhiteArray()).permitAll())
+					.requestMatchers(whiteListConstants.getSecurityWhiteArray()).permitAll())
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry
 					.requestMatchers("/api/*/users/**").hasAuthority(UserRole.USER.getAuthority())

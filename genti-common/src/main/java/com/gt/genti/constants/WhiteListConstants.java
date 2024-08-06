@@ -1,5 +1,6 @@
 package com.gt.genti.constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -16,16 +17,17 @@ public class WhiteListConstants {
 	@Getter
 	private String[] filterWhiteArray;
 	@Getter
-	private String[] securtiyWhiteArray;
+	private String[] securityWhiteArray;
+
 	@PostConstruct
 	void postConstruct() {
 		this.filterWhiteList.add(monitoringPath + "/**");
 		this.securityWhiteList.add(monitoringPath + "/**");
 		filterWhiteArray = filterWhiteList.toArray(String[]::new);
-		securtiyWhiteArray = securityWhiteList.toArray(String[]::new);
+		securityWhiteArray = securityWhiteList.toArray(String[]::new);
 	}
 
-	private List<String> filterWhiteList = List.of(
+	private List<String> filterWhiteList = new ArrayList<>(List.of(
 		"/favicon.ico",
 		"/error",
 		"/auth/**",
@@ -38,9 +40,9 @@ public class WhiteListConstants {
 		"/v3/api-docs/**",
 		"/h2-console/**",
 		"/h2-console"
-	);
+	));
 
-	private List<String> securityWhiteList = List.of(
+	private List<String> securityWhiteList = new ArrayList<>(List.of(
 		"/favicon.ico",
 		"/error",
 		"/auth/**",
@@ -53,8 +55,5 @@ public class WhiteListConstants {
 		"/v3/api-docs/**",
 		"/h2-console/**",
 		"/h2-console"
-	);
-
-
-
+	));
 }

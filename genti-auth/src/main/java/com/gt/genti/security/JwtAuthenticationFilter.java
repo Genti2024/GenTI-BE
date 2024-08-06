@@ -32,10 +32,13 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
+	private final WhiteListConstants whiteListConstants;
+
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-		return PatternMatchUtils.simpleMatch(WhiteListConstants.FILTER_WHITE_LIST, request.getRequestURI());
+		return PatternMatchUtils.simpleMatch(whiteListConstants.getFilterWhiteArray(), request.getRequestURI());
+
 	}
 
 	@Override

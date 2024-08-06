@@ -31,10 +31,10 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final GentiAuthenticationEntryPoint gentiAuthenticationEntryPoint;
+	private final WhiteListConstants whiteListConstants;
 	//TODO cors allowed origin 목록을 properties로 받아서 corsConfig에 추가하는 로직
 	// edited at 2024-07-22
 	// author 서병렬
-
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -44,7 +44,6 @@ public class SecurityConfig {
 		config.addAllowedOrigin("https://kapi.kakao.com");
 		config.addAllowedOrigin("http://www.googleapis.com");
 		config.addAllowedOrigin("https://www.googleapis.com");
-
 
 		config.setAllowedOriginPatterns(List.of("*"));
 
@@ -74,11 +73,10 @@ public class SecurityConfig {
 				sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER))
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry
-						.requestMatchers("/auth/v1/logout").authenticated()
-						.requestMatchers(WhiteListConstants.SECURITY_WHITE_LIST).permitAll())
+					.requestMatchers("/auth/v1/logout").authenticated()
+					.requestMatchers(whiteListConstants.getSecurtiyWhiteArray()).permitAll())
 			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
 				authorizationManagerRequestMatcherRegistry
-					// .anyRequest().permitAll()
 					.requestMatchers("/api/*/users/**").hasAuthority(UserRole.USER.getAuthority())
 					.requestMatchers("/api/*/admin/**").hasAuthority(UserRole.ADMIN.getAuthority())
 					.requestMatchers("/api/*/creators/**").hasAuthority(UserRole.CREATOR.getAuthority())

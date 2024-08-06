@@ -168,7 +168,7 @@ jobs:
             cd /home/ubuntu/workspace/docker/staging
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/genti-staging
-            sudo docker compose up -d
+            sudo docker-compose up -d
             sudo docker image prune -f
 
       - name: delete github actions ip from aws security group

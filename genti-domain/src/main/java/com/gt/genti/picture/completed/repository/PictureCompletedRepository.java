@@ -23,4 +23,6 @@ public interface PictureCompletedRepository extends JpaRepository<PictureComplet
 		+ "where pgres.request.requester = :user "
 		+ "and p.pictureGenerateResponse.id = pgres.id ")
 	Page<PictureCompleted> findAllByUserPagination(@Param(value = "user") User user, Pageable pageable);
+
+	List<PictureCompleted> findAllByRequesterOrderByCreatedAtDesc(User requester);
 }

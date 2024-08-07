@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +22,7 @@ import com.gt.genti.deposit.service.DepositService;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
+import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.profile.model.PictureProfile;
@@ -176,6 +178,14 @@ public class UserService {
 		User foundUser = getUserByUserId(userId);
 		return pictureCompletedRepository.findAllByUserPagination(foundUser, pageable)
 			.map(CommonPictureResponseDto::of);
+	}
+
+	public List<CommonPictureResponseDto> getAllMyGeneratedPictureNoPage(Long userId) {
+		User foundUser = getUserByUserId(userId);
+		List<PictureCompleted> pictures = pictureCompletedRepository.findAllByRequesterOrderByCreatedAtDesc(foundUser);
+		return pictures.stream()
+				.map(CommonPictureResponseDto::of)
+				.collect(Collectors.toList());
 	}
 
 	public Page<UserFindByAdminResponseDto> getAllUserInfo(Pageable pageable) {

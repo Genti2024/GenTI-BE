@@ -68,7 +68,7 @@ jobs:
       - name: make staging docker-compose file
         if: contains(github.ref, 'staging')
         run: |
-          cd ./docker/staging
+          mkdir -p ./docker/staging && cd ./docker/staging
           touch ./docker-compose.yml
           echo "${{ secrets.DOCKER_COMPOSE_STAGING }}" > ./docker-compose.yml
           touch ./.env
@@ -78,7 +78,7 @@ jobs:
       - name: make deploy docker-compose file
         if: contains(github.ref, 'main')
         run: |
-          cd ./docker/deploy
+          mkdir -p ./docker/deploy && cd ./docker/deploy
           touch ./docker-compose.yml
           echo "${{ secrets.DOCKER_COMPOSE_DEPLOY }}" > ./docker-compose.yml
           touch ./.env

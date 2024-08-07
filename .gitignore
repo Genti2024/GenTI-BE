@@ -54,16 +54,9 @@ genti-keypair.pem
 
 README_PRIVATE.md
 
-### docker 환경설정
-
-/docker/.env
-
-# Include all other .env files
-!**/.env
+docker-compose.yml
+.env
 
 logs/
-
-docker/docker-compose.yml
-/docker/.env
 
 firebase-genti.json

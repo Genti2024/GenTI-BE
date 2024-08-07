@@ -71,8 +71,6 @@ jobs:
           mkdir -p ./docker/staging && cd ./docker/staging
           touch ./docker-compose.yml
           echo "${{ secrets.DOCKER_COMPOSE_STAGING }}" > ./docker-compose.yml
-          touch ./.env
-          echo "${{ secrets.DOCKER_COMPOSE_ENV_STAGING }}" > ./.env
         shell: bash
 
       - name: make deploy docker-compose file
@@ -81,8 +79,6 @@ jobs:
           mkdir -p ./docker/deploy && cd ./docker/deploy
           touch ./docker-compose.yml
           echo "${{ secrets.DOCKER_COMPOSE_DEPLOY }}" > ./docker-compose.yml
-          touch ./.env
-          echo "${{ secrets.DOCKER_COMPOSE_ENV_DEPLOY }}" > ./.env
         shell: bash
 
       # gradle build

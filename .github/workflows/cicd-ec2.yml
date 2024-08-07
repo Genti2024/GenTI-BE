@@ -65,6 +65,26 @@ jobs:
           echo "${{ secrets.APPLICATION_STAGING }}" > ./application-staging.yml
         shell: bash
 
+      - name: make staging docker-compose file
+        if: contains(github.ref, 'staging')
+        run: |
+          cd ./docker/staging
+          touch ./docker-compose.yml
+          echo "${{ secrets.DOCKER_COMPOSE_STAGING }}" > ./docker-compose.yml
+          touch ./.env
+          echo "${{ secrets.DOCKER_COMPOSE_ENV_STAGING }}" > ./.env
+        shell: bash
+
+      - name: make deploy docker-compose file
+        if: contains(github.ref, 'main')
+        run: |
+          cd ./docker/deploy
+          touch ./docker-compose.yml
+          echo "${{ secrets.DOCKER_COMPOSE_DEPLOY }}" > ./docker-compose.yml
+          touch ./.env
+          echo "${{ secrets.DOCKER_COMPOSE_ENV_DEPLOY }}" > ./.env
+        shell: bash
+
       # gradle build
       - name: Setup Gradle Wrapper
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0

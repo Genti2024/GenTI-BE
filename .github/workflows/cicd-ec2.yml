@@ -135,9 +135,22 @@ jobs:
       - name: Upload docker-compose, appspec, afterInstall file to S3
         if: contains(github.ref, 'main')
         run: |
-          zip -r ./$GITHUB_SHA.zip ./scripts appspec.yml docker-compose.yml .env
+          # Create a temporary directory for the zip contents
+          mkdir -p temp_dir/scripts
+          cp -r ./scripts/* temp_dir/scripts/
+          cp appspec.yml temp_dir/
+          cp ./docker/deploy/docker-compose.yml temp_dir/docker-compose.yml
+      
+          # Navigate to the temporary directory and create the zip file
+          cd temp_dir
+          zip -r ../$GITHUB_SHA.zip ./*
+      
+          # Move back to the initial directory and upload the zip file to S3
+          cd ..
           aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME
-
+      
+          # Clean up the temporary directory
+          rm -rf temp_dir
 
       - name: Upload docker compose file to staging server
         if: contains(github.ref, 'staging')

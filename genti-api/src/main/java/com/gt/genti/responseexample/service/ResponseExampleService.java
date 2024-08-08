@@ -2,6 +2,7 @@ package com.gt.genti.responseexample.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.picture.PictureRatio;
 import com.gt.genti.picture.responseexample.model.ResponseExample;
 import com.gt.genti.picture.responseexample.repository.ResponseExampleRepository;
 import com.gt.genti.responseexample.command.ExampleSaveCommand;
@@ -39,6 +41,15 @@ public class ResponseExampleService {
 				.collect(Collectors.toList());
 
 		Collections.shuffle(examples);
+
+		Optional<ExampleWithPictureFindResponseDto> firstMatchingRatio_3_2 = examples.stream()
+				.filter(example -> PictureRatio.RATIO_3_2.equals(example.getPicture().getPictureRatio()))
+				.findFirst();
+
+		firstMatchingRatio_3_2.ifPresent(matchingExample -> {
+			examples.remove(matchingExample);
+			examples.add(0, matchingExample);
+		});
 
 		return examples;
 	}

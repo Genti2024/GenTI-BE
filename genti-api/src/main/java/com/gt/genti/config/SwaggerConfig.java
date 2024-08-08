@@ -20,19 +20,16 @@ public class SwaggerConfig {
 	private final String securityJwtName = "JWT";
 
 	@Value("${server.domain}")
-	private String stagingServerDomain;
+	private String serverDomain;
 	@Bean
 	public OpenAPI openAPI() {
 
 		Server localServer = new Server();
 		localServer.setDescription("FOR BE 로컬 서버");
 		localServer.setUrl("http://localhost:8080");
-		Server stagingServer = new Server();
-		stagingServer.setDescription("이관전 개발서버");
-		stagingServer.setUrl(stagingServerDomain);
-		Server productionServer = new Server();
-		productionServer.setDescription("FOR FE 개발 서버");
-		productionServer.setUrl("https://genti.kr");
+		Server server = new Server();
+		server.setDescription("FOR FE 원격 서버");
+		server.setUrl(serverDomain);
 
 		final SecurityRequirement securityRequirement = new SecurityRequirement().addList(securityJwtName);
 		Components components = new Components()
@@ -43,7 +40,7 @@ public class SwaggerConfig {
 				.bearerFormat(securityJwtName));
 
 		return new OpenAPI()
-			.servers(List.of(localServer, stagingServer, productionServer))
+			.servers(List.of(localServer, server))
 			.addSecurityItem(securityRequirement)
 			.components(components);
 

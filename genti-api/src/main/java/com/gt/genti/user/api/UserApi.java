@@ -1,5 +1,7 @@
 package com.gt.genti.user.api;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,7 +83,7 @@ public interface UserApi {
 	public ResponseEntity<ApiResult<Boolean>> deleteUserHard(
 			@AuthUser Long userId);
 
-	@Operation(summary = "내 사진 전체조회", description = "내가 사진생성요청으로 생성된 사진 전체 조회 Pagination")
+	@Operation(summary = "내 사진 전체조회 - Pagination", description = "내가 사진생성요청으로 생성된 사진 전체 조회 Pagination")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.UserNotFound)
@@ -98,5 +100,14 @@ public interface UserApi {
 		@Parameter(description = "정렬 방향 - 기본값 내림차순", example = "desc", schema = @Schema(allowableValues = {"acs",
 			"desc"}))
 		@RequestParam(name = "direction", defaultValue = "desc") String direction
+	);
+
+	@Operation(summary = "내 사진 전체조회", description = "내가 사진생성요청으로 생성된 사진 전체 조회")
+	@EnumResponses(value = {
+			@EnumResponse(ResponseCode.OK),
+			@EnumResponse(ResponseCode.UserNotFound)
+	})
+	ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> getAllMyGeneratedPictureNoPage(
+			@AuthUser Long userId
 	);
 }

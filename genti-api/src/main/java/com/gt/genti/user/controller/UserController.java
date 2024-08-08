@@ -2,6 +2,8 @@ package com.gt.genti.user.controller;
 
 import static com.gt.genti.response.GentiResponse.*;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +37,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -101,5 +102,12 @@ public class UserController implements UserApi {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
 		return GentiResponse.success(userService.getAllMyGeneratedPicture(userId, pageable));
+	}
+
+	@GetMapping("/pictures")
+	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> getAllMyGeneratedPictureNoPage(
+			@AuthUser Long userId
+	) {
+		return GentiResponse.success(userService.getAllMyGeneratedPictureNoPage(userId));
 	}
 }

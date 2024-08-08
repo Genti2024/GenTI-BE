@@ -11,7 +11,7 @@ env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: genti-deploy
   CODE_DEPLOY_APPLICATION_NAME: genti
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: genti-deploy-group
+
 permissions:
   contents: read
 
@@ -92,6 +92,7 @@ jobs:
 
 
       - name: Get Github action IP
+        if: contains(github.ref, 'staging')
         id: ip
         uses: haythem/public-ip@v1.2
 
@@ -170,7 +171,7 @@ jobs:
           aws deploy create-deployment \
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
           --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
 
       # docker build & push to staging

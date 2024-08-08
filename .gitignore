@@ -60,3 +60,5 @@ docker-compose.yml
 logs/
 
 firebase-genti.json
+
+*.pem

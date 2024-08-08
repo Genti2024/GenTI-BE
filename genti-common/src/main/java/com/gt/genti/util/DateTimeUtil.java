@@ -59,19 +59,8 @@ public class DateTimeUtil {
 		if (birthDate == null) {
 			return -1;
 		}
-		LocalDate now = LocalDate.now();
-		String[] splittedBirthDate = birthDate.split("-");
-		int year = Integer.parseInt(splittedBirthDate[0]);
-		int month = Integer.parseInt(splittedBirthDate[1]);
-		int day = Integer.parseInt(splittedBirthDate[2]);
-		int age = now.getYear() - year;
-
-		// 현재 날짜가 생일 전이라면 만나이를 하나 줄입니다.
-		if (now.getMonthValue() < month ||
-			(now.getMonthValue() == month &&
-				now.getDayOfMonth() < day)) {
-			age--;
-		}
+		int year = Integer.parseInt(birthDate);
+		int age = LocalDate.now().getYear() - year;
 		return age;
 	}
 }

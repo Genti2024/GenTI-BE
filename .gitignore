@@ -43,9 +43,22 @@ application-deploy.yaml
 application-deploy.yml
 application-secret.yaml
 application-secret.yml
-application-oauth.yaml
-application-oauth.yml
+application-staging.yml
+application-staging.yaml
+
+docker/db/
+
+other/genti-sbl-iam_accessKeys.csv
 
 genti-keypair.pem
 
 README_PRIVATE.md
+
+docker-compose.yml
+.env
+
+logs/
+
+firebase-genti.json
+
+*.pem

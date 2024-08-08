@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    group:
+      local:
+      deploy:
+      test:
+      staging:
+    include:
+      - secret
+      - common
+    active: local

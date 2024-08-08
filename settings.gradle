@@ -1,1 +1,6 @@
-rootProject.name = 'genti'
+rootProject.name = 'server'
+include 'genti-api'
+include 'genti-auth'
+include 'genti-domain'
+include 'genti-common'
+include 'genti-external'

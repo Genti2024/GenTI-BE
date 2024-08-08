@@ -1,0 +1,15 @@
+bootJar { enabled = false }
+jar { enabled = true }
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    implementation project(path: ':genti-common')
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+}

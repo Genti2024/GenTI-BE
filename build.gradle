@@ -4,58 +4,60 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.gt'
-version = '0.0.1-SNAPSHOT'
-
 java {
     sourceCompatibility = '17'
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+allprojects {
+    group = 'com.gt'
+    version = '0.0.1-SNAPSHOT'
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
 
-repositories {
-    mavenCentral()
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    configurations.all {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+        // redis 사용간 localdatetime json 직렬화 위해
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1'
+
+        // swagger( auth, external dto가 문서화되지 않아서 임시로 프로젝트 전체에 추가
+        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+        // lombok
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        runtimeOnly 'com.h2database:h2'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    implementation 'com.google.code.gson:gson:2.10.1'
-
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
-    // JJWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-
-    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.2.0.Final'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+bootJar{
+    mainClass = 'com.gt.genti.GentiApplication'
 }
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-jar {
+tasks.named('jar') {
     enabled = false
 }

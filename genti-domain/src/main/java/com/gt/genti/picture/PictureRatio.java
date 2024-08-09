@@ -10,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum PictureRatio implements ConvertableEnum {
-	RATIO_3_2("RATIO_3_2", "세로3:가로2"),
+	RATIO_SERO("RATIO_SERO", "세로3:가로2"),
 	NONE("NONE", "NONE"),
-	RATIO_2_3("RATIO_2_3", "세로2:가로3");
+	RATIO_GARO("RATIO_GARO", "세로2:가로3");
 	private final String stringValue;
 	private final String response;
 

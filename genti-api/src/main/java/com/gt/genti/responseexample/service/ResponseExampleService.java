@@ -42,11 +42,11 @@ public class ResponseExampleService {
 
 		Collections.shuffle(examples);
 
-		Optional<ExampleWithPictureFindResponseDto> firstMatchingRatio_2_3 = examples.stream()
-				.filter(example -> PictureRatio.RATIO_2_3.equals(example.getPicture().getPictureRatio()))
+		Optional<ExampleWithPictureFindResponseDto> firstMatching_Ratio_GARO = examples.stream()
+				.filter(example -> PictureRatio.RATIO_GARO.equals(example.getPicture().getPictureRatio()))
 				.findFirst();
 
-		firstMatchingRatio_2_3.ifPresent(matchingExample -> {
+		firstMatching_Ratio_GARO.ifPresent(matchingExample -> {
 			examples.remove(matchingExample);
 			examples.add(0, matchingExample);
 		});

@@ -9,5 +9,6 @@ public interface SocialLoginStrategy {
     SocialLoginResponse webLogin(final SocialLoginRequest request);
     SocialLoginResponse tokenLogin(final SocialAppLoginRequest request);
     boolean support(String provider);
+    void unlink(final String userSocialId);
 
 }

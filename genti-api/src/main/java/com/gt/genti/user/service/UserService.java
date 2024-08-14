@@ -31,14 +31,19 @@ import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
 import com.gt.genti.usecase.PictureGenerateRequestUseCase;
+import com.gt.genti.user.dto.request.AppleAuthorizationCodeDto;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindByAdminResponseDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
+import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
+import com.gt.genti.user.service.social.AppleOauthStrategy;
+import com.gt.genti.user.service.social.KakaoOauthStrategy;
+import com.gt.genti.user.service.social.SocialOauthContext;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +62,9 @@ public class UserService {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final JwtTokenProvider jwtTokenProvider;
+
+	private final KakaoOauthStrategy kakaoOauthStrategy;
+	private final AppleOauthStrategy appleOauthStrategy;
 
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
@@ -139,34 +147,26 @@ public class UserService {
 		return true;
 	}
 
-	public Boolean deleteUserHard(Long userId) {
+	public Boolean deleteKakaoUserHard(Long userId) {
 		User foundUser = getUserByUserId(userId);
-		List<PictureGenerateResponse> deleteList = new ArrayList<>();
-		if (foundUser.getCreator() != null) {
-			Creator foundCreator = foundUser.getCreator();
-			List<PictureGenerateResponse> pgresList = foundCreator.getPictureGenerateResponseList();
-			foundCreator.getPictureGenerateRequestList()
-					.stream()
-					.filter(pgreq -> pgreq.getPictureGenerateRequestStatus().equals(
-							PictureGenerateRequestStatus.IN_PROGRESS) && (pgreq.getResponseList().isEmpty()))
-					.forEach(req -> pictureGenerateRequestUseCase.cancelRequest(req, SUPPLIER_EXIT));
-			if (pgresList.isEmpty()) {
-				return true;
-			}
-
-			pgresList.stream()
-					.filter(pgres -> CREATOR_BEFORE_WORK.equals(pgres.getStatus()))
-					.forEach(pgres -> {
-
-						pictureGenerateRequestUseCase.cancelRequest(pgres.getRequest(), SUPPLIER_EXIT);
-						pgres.clearRelationshipsWithPGREQ();
-						deleteList.add(pgres);
-					});
-			pictureGenerateResponseRepository.deleteAll(deleteList);
+		if (!foundUser.getLastLoginOauthPlatform().equals(OauthPlatform.KAKAO)) {
+			throw ExpectedException.withLogging(ResponseCode.OauthProviderNotAllowed, "해당 유저는 KAKAO 로그인 유저가 아닙니다.");
 		}
+		kakaoOauthStrategy.unlink(foundUser.getSocialId());
 		userRepository.delete(foundUser);
 		return true;
 	}
+
+	public Boolean deleteAppleUserHard(Long userId, AppleAuthorizationCodeDto appleAuthorizationCodeDto) {
+		User foundUser = getUserByUserId(userId);
+		if (!foundUser.getLastLoginOauthPlatform().equals(OauthPlatform.APPLE)) {
+			throw ExpectedException.withLogging(ResponseCode.OauthProviderNotAllowed, "해당 유저는 APPLE 로그인 유저가 아닙니다.");
+		}
+		appleOauthStrategy.unlink(appleAuthorizationCodeDto.getAuthorizationCode());
+		userRepository.delete(foundUser);
+		return true;
+	}
+
 
 	public Boolean updateUserStatus(Long userId, UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		User foundUser = getUserByUserId(userId);
@@ -184,8 +184,8 @@ public class UserService {
 		User foundUser = getUserByUserId(userId);
 		List<PictureCompleted> pictures = pictureCompletedRepository.findAllByRequesterOrderByCreatedAtDesc(foundUser);
 		return pictures.stream()
-				.map(CommonPictureResponseDto::of)
-				.collect(Collectors.toList());
+			.map(CommonPictureResponseDto::of)
+			.collect(Collectors.toList());
 	}
 
 	public Page<UserFindByAdminResponseDto> getAllUserInfo(Pageable pageable) {
@@ -227,8 +227,9 @@ public class UserService {
 	}
 
 	public Page<UserFindByAdminResponseDto> getUserInfoByEmail(String email) {
-		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
-		UserFindByAdminResponseDto responseDto =UserFindByAdminResponseDto.builder()
+		User foundUser = userRepository.findByEmail(email)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		UserFindByAdminResponseDto responseDto = UserFindByAdminResponseDto.builder()
 			.email(foundUser.getEmail())
 			.userRole(foundUser.getUserRole())
 			.birthDate(foundUser.getBirthDate())
@@ -246,7 +247,7 @@ public class UserService {
 
 	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
 		User foundUser = getUserByUserId(userId);
-		if(!foundUser.isFirstJoinUser()) {
+		if (!foundUser.isFirstJoinUser()) {
 			throw ExpectedException.withLogging(ResponseCode.UserAlreadySignedUp);
 		}
 		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
@@ -257,4 +258,6 @@ public class UserService {
 	public Boolean logout(final Long userId) {
 		return jwtTokenProvider.deleteRefreshToken(userId);
 	}
+
+
 }

@@ -11,6 +11,7 @@ import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.user.model.OauthPlatform;
+import com.gt.genti.user.model.User;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
@@ -59,5 +60,9 @@ public class SocialOauthContext {
 
 	public SocialLoginResponse doAppLogin(final SocialAppLoginRequest request) {
 		return loginStrategyOf(request.getOauthPlatform()).tokenLogin(request);
+	}
+
+	public void unlink(OauthPlatform oauthPlatform, String userSocialId){
+		loginStrategyOf(oauthPlatform).unlink(userSocialId);
 	}
 }

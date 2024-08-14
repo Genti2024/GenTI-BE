@@ -19,25 +19,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.auth.dto.request.SignUpRequestDTO;
+import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.response.GentiResponse;
+import com.gt.genti.swagger.EnumResponse;
+import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.api.UserApi;
+import com.gt.genti.user.dto.request.AppleAuthorizationCodeDto;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -57,6 +64,19 @@ public class UserController implements UserApi {
 		return GentiResponse.success(userService.updateUserInfo(userId, userInfoUpdateRequestDto));
 	}
 
+	@Operation(summary = "애플 토큰 전달 from Youth", description = "애플회원탈퇴 개발용")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK)
+	})
+	@PostMapping("/apple/sendtoken")
+	public ResponseEntity<ApiResult<Boolean>> sendAppleToken(
+		@RequestBody AppleAuthorizationCodeDto appleAuthorizationCodeDto,
+		@AuthUser Long userId
+	){
+		log.error(appleAuthorizationCodeDto.getAuthorizationCode());
+		return success(true);
+	}
+
 	@PostMapping("/signup")
 	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<Boolean>> signUp(
@@ -70,11 +90,19 @@ public class UserController implements UserApi {
 		return success(userService.logout(userId));
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/kakao")
 	@Logging(item = LogItem.USER, action = LogAction.DELETE, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<Boolean>> deleteUserHard(
+	public ResponseEntity<ApiResult<Boolean>> deleteKakaoUserHard(
 		@AuthUser Long userId) {
-		return GentiResponse.success(userService.deleteUserHard(userId));
+		return GentiResponse.success(userService.deleteKakaoUserHard(userId));
+	}
+
+	@DeleteMapping("/apple")
+	@Logging(item = LogItem.USER, action = LogAction.DELETE, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<Boolean>> deleteAppleUserHard(
+		@RequestBody AppleAuthorizationCodeDto appleAuthorizationCodeDto,
+		@AuthUser Long userId) {
+		return GentiResponse.success(userService.deleteAppleUserHard(userId, appleAuthorizationCodeDto));
 	}
 
 	@Deprecated

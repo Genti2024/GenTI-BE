@@ -14,6 +14,7 @@ import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.AuthorizedUser;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
+import com.gt.genti.user.dto.request.AppleAuthorizationCodeDto;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
@@ -75,13 +76,22 @@ public interface UserApi {
 	ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthUser Long userId);
 
-	@Operation(summary = "회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
+	@Operation(summary = "카카오 회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
 	@EnumResponses(value = {
-			@EnumResponse(ResponseCode.OK),
-			@EnumResponse(ResponseCode.UserNotFound)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.OauthProviderNotAllowed)
 	})
-	public ResponseEntity<ApiResult<Boolean>> deleteUserHard(
-			@AuthUser Long userId);
+	public ResponseEntity<ApiResult<Boolean>> deleteKakaoUserHard(
+		@AuthUser Long userId);
+
+	@Operation(summary = "애플 회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.OauthProviderNotAllowed)
+	})
+	public ResponseEntity<ApiResult<Boolean>> deleteAppleUserHard(
+		@RequestBody AppleAuthorizationCodeDto appleAuthorizationCodeDto,
+		@AuthUser Long userId);
 
 	@Operation(summary = "내 사진 전체조회 - Pagination", description = "내가 사진생성요청으로 생성된 사진 전체 조회 Pagination")
 	@EnumResponses(value = {
@@ -104,10 +114,10 @@ public interface UserApi {
 
 	@Operation(summary = "내 사진 전체조회", description = "내가 사진생성요청으로 생성된 사진 전체 조회")
 	@EnumResponses(value = {
-			@EnumResponse(ResponseCode.OK),
-			@EnumResponse(ResponseCode.UserNotFound)
+		@EnumResponse(ResponseCode.OK),
+		@EnumResponse(ResponseCode.UserNotFound)
 	})
 	ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> getAllMyGeneratedPictureNoPage(
-			@AuthUser Long userId
+		@AuthUser Long userId
 	);
 }

@@ -56,6 +56,9 @@ public enum ResponseCode {
 		"Apple OAuth 로그인 중 public key 생성에 문제가 발생했습니다."),
 	AppleOauthJwtValueInvalid(ErrorConstants.AppleOauthJwtValueInvalid, INTERNAL_SERVER_ERROR, false,
 		"Apple JWT 값의 alg, kid 정보가 올바르지 않습니다."),
+	KakaoSocialIdNotValid(ErrorConstants.KakaoSocialIdNotValid, INTERNAL_SERVER_ERROR, false,
+		"카카오 social id값은 숫자여야합니다. 유저 [%d] 에 대해 저장되어있는 social id 값 : %s "),
+
 	/**
 	 * 서버 오류 및 올바르지 않은 요청
 	 */

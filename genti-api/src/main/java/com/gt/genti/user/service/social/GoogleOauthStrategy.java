@@ -112,4 +112,9 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 		return false;
 	}
 
+	@Override
+	public void unlink(String userSocialId) {
+
+	}
+
 }

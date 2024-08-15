@@ -2,6 +2,7 @@ package com.gt.genti.user.api;
 
 import java.util.List;
 
+import com.gt.genti.user.dto.response.SignUpResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +55,7 @@ public interface UserApi {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.UserAlreadySignedUp)
 	})
-	ResponseEntity<ApiResult<Boolean>> signUp(
+	ResponseEntity<ApiResult<SignUpResponseDTO>> signUp(
 		@AuthUser Long userId,
 		@RequestBody @Valid SignUpRequestDTO signUpRequestDTO);
 

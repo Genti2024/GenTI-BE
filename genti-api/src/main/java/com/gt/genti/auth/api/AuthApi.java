@@ -3,6 +3,7 @@ package com.gt.genti.auth.api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
 import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -38,7 +40,7 @@ public interface AuthApi {
 			@Header(name = "Location", description = "리디렉션 URL", schema = @Schema(type = "string"))
 		}, content = @Content(schema = @Schema(hidden = true)))
 	})
-	ResponseEntity<Object> login(
+	RedirectView login(
 		@Parameter(description = "호출할 Oauth platform 종류", example = "KAKAO", schema = @Schema(allowableValues = {
 			"KAKAO"}))
 		@RequestParam(name = "oauthPlatform") OauthPlatform oauthPlatform);
@@ -55,7 +57,8 @@ public interface AuthApi {
 	ResponseEntity<ApiResult<SocialLoginResponse>> loginApple(
 		@RequestBody @Valid AppleLoginRequestDto request);
 
-	ResponseEntity<ApiResult<SocialLoginResponse>> kakaoLogin(
+	void kakaoLogin(
+		HttpServletResponse response,
 		@RequestParam(name = "code") String code);
 
 	@Deprecated

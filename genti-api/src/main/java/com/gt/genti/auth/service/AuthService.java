@@ -42,8 +42,8 @@ public class AuthService {
 		return socialOauthContext.doAppLogin(request).getToken();
 	}
 
-	public HttpHeaders getOauthRedirect(OauthPlatform oauthPlatform) {
-		return HttpRequestUtil.createRedirectHttpHeader(socialOauthContext.getAuthUri(oauthPlatform));
+	public String getOauthRedirect(OauthPlatform oauthPlatform) {
+		return (socialOauthContext.getAuthUri(oauthPlatform));
 	}
 
 	public TokenResponse reissue(TokenRefreshRequestDto tokenRefreshRequestDto) {

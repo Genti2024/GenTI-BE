@@ -4,6 +4,7 @@ import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.List;
 
+import com.gt.genti.user.dto.response.SignUpResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +60,7 @@ public class UserController implements UserApi {
 
 	@PostMapping("/signup")
 	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<Boolean>> signUp(
+	public ResponseEntity<ApiResult<SignUpResponseDTO>> signUp(
 		@AuthUser Long userId,
 		@RequestBody @Valid SignUpRequestDTO signUpRequestDTO) {
 		return success(userService.signUp(userId, signUpRequestDTO));

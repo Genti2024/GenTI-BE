@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.gt.genti.user.dto.response.SignUpResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -244,14 +245,21 @@ public class UserService {
 		return new PageImpl<>(List.of(responseDto));
 	}
 
-	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
+	public SignUpResponseDTO signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
 		User foundUser = getUserByUserId(userId);
 		if(!foundUser.isFirstJoinUser()) {
 			throw ExpectedException.withLogging(ResponseCode.UserAlreadySignedUp);
 		}
 		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
 		foundUser.updateUserRole(UserRole.USER);
-		return true;
+
+		return SignUpResponseDTO.builder()
+				.email(foundUser.getEmail())
+				.lastLoginOauthPlatform(foundUser.getLastLoginOauthPlatform())
+				.nickname(foundUser.getNickname())
+				.birthDate(foundUser.getBirthDate())
+				.sex(foundUser.getSex())
+				.build();
 	}
 
 	public Boolean logout(final Long userId) {

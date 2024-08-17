@@ -101,7 +101,7 @@ public class AppleOauthStrategy {
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
-			if (!user.getAppleRefreshToken().equals(appleTokenResponse.getRefresh_token())) {
+			if (!appleTokenResponse.getRefresh_token().equals(user.getAppleRefreshToken())) {
 				user.setAppleRefreshToken(appleTokenResponse.getRefresh_token());
 			}
 			user.resetDeleteAt();

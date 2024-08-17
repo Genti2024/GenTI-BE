@@ -160,7 +160,6 @@ public class User extends BaseTimeEntity {
 		String email) {
 		return base()
 			.socialId(socialId)
-			.birthYear(birthYear)
 			.lastLoginOauthPlatform(oauthPlatform)
 			.lastLoginDate(LocalDateTime.now())
 			.userRole(UserRole.OAUTH_FIRST_JOIN)
@@ -268,8 +267,8 @@ public class User extends BaseTimeEntity {
 		this.deletedAt = LocalDateTime.now().plusDays(USER_RETENTION_PERIOD);
 	}
 
-	public void updateBirthAndSex(String birthDate, Sex sex) {
-		this.birthYear = birthDate;
+	public void updateBirthAndSex(String birthYear, Sex sex) {
+		this.birthYear = birthYear;
 		this.sex = sex;
 	}
 

@@ -42,7 +42,7 @@ public class UserSerializer extends StdSerializer<User> {
 		}
 		gen.writeNumberField("requestTaskCount", user.getRequestTaskCount());
 		if (user.getBirthYear() != null) {
-			gen.writeStringField("birthDate", user.getBirthYear().toString());
+			gen.writeStringField("birthYear", user.getBirthYear().toString());
 		}
 		gen.writeEndObject();
 

@@ -198,7 +198,7 @@ public class UserService {
 			.id(user.getId())
 			.email(user.getEmail())
 			.userRole(user.getUserRole())
-			.birthDate(user.getBirthYear())
+			.birthYear(user.getBirthYear())
 			.sex(user.getSex())
 			.userStatus(user.getUserStatus())
 			.createdAt(user.getCreatedAt())
@@ -222,7 +222,7 @@ public class UserService {
 		UserFindByAdminResponseDto responseDto = UserFindByAdminResponseDto.builder()
 			.email(foundUser.getEmail())
 			.userRole(foundUser.getUserRole())
-			.birthDate(foundUser.getBirthYear())
+			.birthYear(foundUser.getBirthYear())
 			.deposit(foundUser.getDeposit())
 			.lastLoginDate(foundUser.getLastLoginDate())
 			.userStatus(foundUser.getUserStatus())
@@ -240,14 +240,14 @@ public class UserService {
 		if (!foundUser.isFirstJoinUser()) {
 			throw ExpectedException.withLogging(ResponseCode.UserAlreadySignedUp);
 		}
-		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
+		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthYear(), signUpRequestDTO.getSex());
 		foundUser.updateUserRole(UserRole.USER);
 
 		return SignUpResponseDTO.builder()
 			.email(foundUser.getEmail())
 			.lastLoginOauthPlatform(foundUser.getLastLoginOauthPlatform())
 			.nickname(foundUser.getNickname())
-			.birthDate(foundUser.getBirthYear())
+			.birthYear(foundUser.getBirthYear())
 			.sex(foundUser.getSex())
 			.build();
 	}

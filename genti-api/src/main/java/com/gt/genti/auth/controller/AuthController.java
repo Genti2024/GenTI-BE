@@ -3,10 +3,9 @@ package com.gt.genti.auth.controller;
 import static com.gt.genti.response.GentiResponse.*;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.gt.genti.auth.api.AuthApi;
+import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
+import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
 import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.auth.service.AuthService;
+import com.gt.genti.constants.JWTConstants;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.jwt.TokenResponse;
@@ -31,8 +33,6 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
-import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
-import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,6 +49,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/auth/v1")
 public class AuthController implements AuthApi {
 
+	@Value("${admin-page-baseurl}")
+	private String adminPageBaseUrl;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthService authService;
 
@@ -85,21 +87,21 @@ public class AuthController implements AuthApi {
 		String accessToken = socialWebLoginResponse.getToken().accessToken();
 		String refreshToken = socialWebLoginResponse.getToken().refreshToken();
 
-		String accessTokenEncode = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
-		String refreshTokenEncode = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+		accessToken = accessToken.substring(JWTConstants.JWT_PREFIX.length());
+		refreshToken = refreshToken.substring(JWTConstants.JWT_PREFIX.length());
 
-		Cookie accessTokenCookie = new Cookie("Access-Token", accessTokenEncode);
+		Cookie accessTokenCookie = new Cookie("Access-Token", accessToken);
 		accessTokenCookie.setHttpOnly(true);
 		accessTokenCookie.setPath("/");
 
-		Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshTokenEncode);
+		Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshToken);
 		refreshTokenCookie.setHttpOnly(true);
 		refreshTokenCookie.setPath("/");
 
 		response.addCookie(accessTokenCookie);
 		response.addCookie(refreshTokenCookie);
 		try {
-			response.sendRedirect("http://localhost:5173/login/kakao/success");
+			response.sendRedirect(adminPageBaseUrl + "/login/kakao/success");
 		} catch (IOException e) {
 			throw new RuntimeException("서버에서 redirect중 에러가 발생했습니다.");
 		}

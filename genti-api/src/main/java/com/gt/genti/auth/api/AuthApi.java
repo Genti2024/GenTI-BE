@@ -58,7 +58,7 @@ public interface AuthApi {
 		@RequestBody @Valid KakaoAccessTokenDto tokenDto
 	);
 
-	void kakaoRedirectLogin(
+	ResponseEntity<ApiResult<OauthJwtResponse>> kakaoRedirectLogin(
 		HttpServletResponse response,
 		@RequestParam(name = "code") String code);
 

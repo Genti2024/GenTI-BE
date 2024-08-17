@@ -29,6 +29,7 @@ import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
+import com.gt.genti.response.GentiResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
 import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
@@ -78,31 +79,33 @@ public class AuthController implements AuthApi {
 
 	@GetMapping("/login/oauth2/code/kakao")
 	@Logging(item = LogItem.OAUTH_KAKAO, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
-	public void kakaoRedirectLogin(
+	public ResponseEntity<ApiResult<OauthJwtResponse>> kakaoRedirectLogin(
 		HttpServletResponse response,
 		@RequestParam(name = "code") final String code) {
 		SocialWebLoginResponse socialWebLoginResponse = authService.kakaoWebLogin(KakaoAuthorizationCodeDto.of(code));
-		String accessToken = socialWebLoginResponse.getToken().accessToken();
-		String refreshToken = socialWebLoginResponse.getToken().refreshToken();
 
-		String accessTokenEncode = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
-		String refreshTokenEncode = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+		return success(socialWebLoginResponse.getToken());
+		// TODO: 2024-08-18 0818 운영테스트 하고 다시 돌려놓기
 
-		Cookie accessTokenCookie = new Cookie("Access-Token", accessTokenEncode);
-		accessTokenCookie.setHttpOnly(true);
-		accessTokenCookie.setPath("/");
-
-		Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshTokenEncode);
-		refreshTokenCookie.setHttpOnly(true);
-		refreshTokenCookie.setPath("/");
-
-		response.addCookie(accessTokenCookie);
-		response.addCookie(refreshTokenCookie);
-		try {
-			response.sendRedirect("http://localhost:5173/login/kakao/success");
-		} catch (IOException e) {
-			throw new RuntimeException("서버에서 redirect중 에러가 발생했습니다.");
-		}
+		// String accessToken = socialWebLoginResponse.getToken().accessToken();
+		// String refreshToken = socialWebLoginResponse.getToken().refreshToken();
+		// accessToken = accessToken.substring("Bearer ".length());
+		// refreshToken = refreshToken.substring("Bearer ".length());
+		// Cookie accessTokenCookie = new Cookie("Access-Token", accessToken);
+		// accessTokenCookie.setHttpOnly(true);
+		// accessTokenCookie.setPath("/");
+		//
+		// Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshToken);
+		// refreshTokenCookie.setHttpOnly(true);
+		// refreshTokenCookie.setPath("/");
+		//
+		// response.addCookie(accessTokenCookie);
+		// response.addCookie(refreshTokenCookie);
+		// try {
+		// 	response.sendRedirect("http://localhost:5173/login/kakao/success");
+		// } catch (IOException e) {
+		// 	throw new RuntimeException("서버에서 redirect중 에러가 발생했습니다.");
+		// }
 	}
 
 	@GetMapping("/login/testjwt")

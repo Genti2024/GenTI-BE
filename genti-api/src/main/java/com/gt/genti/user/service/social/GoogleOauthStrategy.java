@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
+import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.request.SocialLoginRequest;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.openfeign.google.client.GoogleApiClient;
@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @Deprecated
 @Service
 @RequiredArgsConstructor
-public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrategy {
+public class GoogleOauthStrategy  {
 
 	@Value("${google.client-id}")
 	private String googleClientId;
@@ -50,7 +50,6 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 	private final UserRepository userRepository;
 	private final UserSignUpEventPublisher userSignUpEventPublisher;
 
-	@Override
 	public String getAuthUri() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("client_id", googleClientId);
@@ -64,9 +63,8 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 		return "https://accounts.google.com/o/oauth2/auth?" + paramStr;
 	}
 
-	@Override
 	@Transactional
-	public SocialLoginResponse webLogin(SocialLoginRequest request) {
+	public SocialWebLoginResponse webLogin(SocialLoginRequest request) {
 		GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
 			request.getCode(),
 			googleClientId,
@@ -99,20 +97,17 @@ public class GoogleOauthStrategy implements SocialLoginStrategy, SocialAuthStrat
 			.build();
 		OauthJwtResponse oauthJwtResponse = OauthJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
+		return SocialWebLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
 	}
 
-	@Override
-	public SocialLoginResponse tokenLogin(SocialAppLoginRequest request) {
+	public SocialWebLoginResponse tokenLogin(KakaoAuthorizationCodeDto request) {
 		return null;
 	}
 
-	@Override
 	public boolean support(String provider) {
 		return false;
 	}
 
-	@Override
 	public void unlink(String userSocialId) {
 
 	}

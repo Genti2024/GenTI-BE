@@ -25,17 +25,18 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
-import com.gt.genti.auth.dto.request.SocialLoginRequest;
-import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.openfeign.apple.client.AppleApiClient;
-import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeys;
+import com.gt.genti.openfeign.apple.client.AppleTokenRefreshRequest;
+import com.gt.genti.openfeign.apple.dto.request.AppleTokenRequest;
+import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeyResponse;
+import com.gt.genti.openfeign.apple.dto.response.AppleTokenRefreshResponse;
+import com.gt.genti.openfeign.apple.dto.response.AppleTokenResponse;
 import com.gt.genti.openfeign.apple.service.AppleClaimsValidator;
 import com.gt.genti.openfeign.apple.service.AppleJwtParser;
 import com.gt.genti.openfeign.apple.service.AppleUserResponse;
@@ -55,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AppleOauthStrategy implements SocialLoginStrategy {
+public class AppleOauthStrategy {
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserRepository userRepository;
@@ -77,26 +78,34 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 	@Value("${apple.team-id}")
 	private String appleTeamId;
 
-	@Override
 	@Transactional
-	public SocialLoginResponse webLogin(SocialLoginRequest request) {
-		AppleUserResponse userResponse = getApplePlatformMember(request.getCode());
+	public SocialWebLoginResponse login(AppleAuthTokenDto request) {
+		AppleUserResponse userResponse = getApplePlatformMember(request.getIdentityToken());
+
+		AppleTokenRequest appleTokenRequest = AppleTokenRequest.of(request.getAuthorizationCode(), appleClientId,
+			appleClientSecret, "authorization_code");
+		AppleTokenResponse appleTokenResponse = appleApiClient.getToken(appleTokenRequest);
+
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.getPlatformId());
 		User user;
 		boolean isNewUser = false;
 		if (isNewUser(findUser)) {
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.getPlatformId())
-				.oauthPlatform(request.getOauthPlatform())
+				.oauthPlatform(OauthPlatform.APPLE)
 				.username(null)
 				.nickname(RandomUtil.generateRandomNickname())
 				.email(userResponse.getEmail())
 				.build());
+			newUser.setAppleRefreshToken(appleTokenResponse.getRefresh_token());
 			user = newUser;
 			isNewUser = true;
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
+			if (!user.getAppleRefreshToken().equals(appleTokenResponse.getRefresh_token())) {
+				user.setAppleRefreshToken(appleTokenResponse.getRefresh_token());
+			}
 			user.resetDeleteAt();
 		}
 		user.login();
@@ -105,27 +114,21 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 			.role(user.getUserRole().getRoles())
 			.build();
 
-		OauthJwtResponse oauthJwtResponse = OauthJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+		OauthJwtResponse oauthJwtResponse = OauthJwtResponse.of(
+			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
+		return SocialWebLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser,
+			oauthJwtResponse);
 	}
 
-	@Override
-	public SocialLoginResponse tokenLogin(SocialAppLoginRequest request) {
-		return webLogin(SocialLoginRequestImpl.of(request.getOauthPlatform(), request.getToken()));
-	}
-
-	@Override
 	public boolean support(String provider) {
 		return provider.equals(OauthPlatform.APPLE.getStringValue());
 	}
 
 	private AppleUserResponse getApplePlatformMember(String identityToken) {
 		Map<String, String> headers = appleJwtParser.parseHeaders(identityToken);
-		ApplePublicKeys applePublicKeys = appleApiClient.getApplePublicKeys();
-
-		PublicKey publicKey = publicKeyGenerator.generatePublicKey(headers, applePublicKeys);
-
+		ApplePublicKeyResponse applePublicKeyResponse = appleApiClient.getApplePublicKeys();
+		PublicKey publicKey = publicKeyGenerator.generatePublicKey(headers, applePublicKeyResponse);
 		Claims claims = appleJwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
 		validateClaims(claims);
 		return new AppleUserResponse(claims.getSubject(), claims.get("email", String.class));
@@ -137,35 +140,34 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 		}
 	}
 
-	@Override
-	public void unlink(String authorizationCode) {
-		AppleAuthTokenResponse appleAuthToken = null;
+	public void unlink(String refreshToken) {
+		AppleTokenRefreshRequest appleTokenRefreshRequest = AppleTokenRefreshRequest.of(refreshToken, appleClientId,
+			appleClientSecret, "refresh_token");
+		AppleTokenRefreshResponse response = appleApiClient.refresh(appleTokenRefreshRequest);
+
+		String accessToken = response.getAccess_token();
+		if (accessToken == null) {
+			log.error("asdf");
+			return;
+		}
+		RestTemplate restTemplate = new RestTemplateBuilder().build();
+		String revokeUrl = "https://appleid.apple.com/auth/revoke";
+
+		LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("client_id", appleClientId);
 		try {
-			appleAuthToken = GenerateAuthToken(authorizationCode);
+			params.add("client_secret", createClientSecret());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		params.add("token", accessToken);
 
-		if (appleAuthToken.getAccessToken() != null) {
-			RestTemplate restTemplate = new RestTemplateBuilder().build();
-			String revokeUrl = "https://appleid.apple.com/auth/revoke";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
 
-			LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-			params.add("client_id", appleClientId);
-			try {
-				params.add("client_secret", createClientSecret());
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			params.add("token", appleAuthToken.getAccessToken());
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-			headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-			HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
-
-			restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
-		}
+		restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
 	}
 
 	private String createClientSecret() throws IOException {
@@ -201,7 +203,8 @@ public class AppleOauthStrategy implements SocialLoginStrategy {
 		HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
 
 		try {
-			ResponseEntity<AppleAuthTokenResponse> response = restTemplate.postForEntity(authUrl, httpEntity, AppleAuthTokenResponse.class);
+			ResponseEntity<AppleAuthTokenResponse> response = restTemplate.postForEntity(authUrl, httpEntity,
+				AppleAuthTokenResponse.class);
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
 			log.error(e.getMessage(), e);

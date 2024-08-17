@@ -103,7 +103,7 @@ public class UserController implements UserApi {
 	public ResponseEntity<ApiResult<Boolean>> deleteAppleUserHard(
 		@RequestBody AppleAuthorizationCodeDto appleAuthorizationCodeDto,
 		@AuthUser Long userId) {
-		return GentiResponse.success(userService.deleteAppleUserHard(userId, appleAuthorizationCodeDto));
+		return GentiResponse.success(userService.deleteAppleUserHard(userId));
 	}
 
 	@Deprecated

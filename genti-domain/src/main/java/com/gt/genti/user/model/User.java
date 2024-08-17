@@ -59,12 +59,10 @@ public class User extends BaseTimeEntity {
 	@Column(length = 512)
 	String oauthImageUrl;
 
-	// PictureProfile는 완전히 user에 종속되어있다
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "profile_picture_id")
 	List<PictureProfile> pictureProfileList;
 
-	// PictureUserFace는 완전히 user에 종속
 	@OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureUserFace> pictureUserFaceList;
 
@@ -97,7 +95,6 @@ public class User extends BaseTimeEntity {
 	@Column(name = "password")
 	String password;
 
-	// user hard delete 시에 같이 삭제
 	@Setter
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	Creator creator;
@@ -116,15 +113,14 @@ public class User extends BaseTimeEntity {
 	@Column(name = "last_login_date", nullable = false)
 	LocalDateTime lastLoginDate;
 
-	// user hard delete시 deposit도 삭제
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private Deposit deposit;
 
 	@Column(name = "request_task_count", nullable = false)
 	Integer requestTaskCount;
 
-	@Column(name = "birth_date", length = 4)
-	String birthDate;
+	@Column(name = "birth_year", length = 4)
+	String birthYear;
 
 	@OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PicturePose> picturePoseList;
@@ -134,6 +130,10 @@ public class User extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureCompleted> pictureCompletedList;
+
+	@Setter
+	@Column(name = "apple_refresh_token", length =  1024)
+	String appleRefreshToken;
 
 	@PrePersist
 	public void prePersist() {
@@ -155,12 +155,12 @@ public class User extends BaseTimeEntity {
 	}
 
 	@Builder(builderMethodName = "builderWithSignIn", builderClassName = "SignInUser")
-	public static User of(String socialId, String birthDate, OauthPlatform oauthPlatform, String username,
+	public static User of(String socialId, String birthYear, OauthPlatform oauthPlatform, String username,
 		String nickname, String oauthImageUrl,
 		String email) {
 		return base()
 			.socialId(socialId)
-			.birthDate(birthDate)
+			.birthYear(birthYear)
 			.lastLoginOauthPlatform(oauthPlatform)
 			.lastLoginDate(LocalDateTime.now())
 			.userRole(UserRole.OAUTH_FIRST_JOIN)
@@ -231,7 +231,7 @@ public class User extends BaseTimeEntity {
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
 		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate,
-		Deposit deposit, Integer requestTaskCount, String birthDate) {
+		Deposit deposit, Integer requestTaskCount, String birthYear) {
 		this.id = id;
 		this.socialId = socialId;
 		this.oauthImageUrl = oauthImageUrl;
@@ -253,7 +253,7 @@ public class User extends BaseTimeEntity {
 		this.lastLoginDate = lastLoginDate;
 		this.deposit = deposit;
 		this.requestTaskCount = requestTaskCount;
-		this.birthDate = birthDate;
+		this.birthYear = birthYear;
 	}
 
 	public void addRequestCount() {
@@ -269,11 +269,12 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateBirthAndSex(String birthDate, Sex sex) {
-		this.birthDate = birthDate;
+		this.birthYear = birthDate;
 		this.sex = sex;
 	}
 
 	public boolean isFirstJoinUser(){
 		return this.userRole.equals(UserRole.OAUTH_FIRST_JOIN);
 	}
+
 }

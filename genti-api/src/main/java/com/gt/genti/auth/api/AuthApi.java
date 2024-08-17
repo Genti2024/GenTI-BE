@@ -5,11 +5,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
-import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.response.GentiResponse.ApiResult;
@@ -17,6 +14,8 @@ import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
+import com.gt.genti.user.service.social.AppleAuthTokenDto;
+import com.gt.genti.user.service.social.KakaoAccessTokenDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,8 +28,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
-;
 
 @Tag(name = "[AuthController] 인증 컨트롤러", description = "로그인을 처리한 후 토큰을 전달합니다.")
 public interface AuthApi {
@@ -45,6 +42,7 @@ public interface AuthApi {
 			"KAKAO"}))
 		@RequestParam(name = "oauthPlatform") OauthPlatform oauthPlatform);
 
+	@Operation(summary = "Apple 로그인", description = "Apple 로그인 api")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.AppleOauthClaimInvalid),
@@ -54,15 +52,20 @@ public interface AuthApi {
 		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
 		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
 	})
-	ResponseEntity<ApiResult<SocialLoginResponse>> loginApple(
-		@RequestBody @Valid AppleLoginRequestDto request);
+	ResponseEntity<ApiResult<OauthJwtResponse>> loginApple(
+		@RequestBody @Valid AppleAuthTokenDto request);
 
-	void kakaoLogin(
+	@Operation(summary = "Kakao 로그인", description = "Kakao 로그인 api")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+	})
+	ResponseEntity<ApiResult<OauthJwtResponse>> loginKakao(
+		@RequestBody @Valid KakaoAccessTokenDto tokenDto
+	);
+
+
+	void kakaoRedirectLogin(
 		HttpServletResponse response,
-		@RequestParam(name = "code") String code);
-
-	@Deprecated
-	ResponseEntity<ApiResult<SocialLoginResponse>> googleLogin(
 		@RequestParam(name = "code") String code);
 
 	@Operation(summary = "테스트용 jwt 토큰 발급", description = "")
@@ -82,8 +85,6 @@ public interface AuthApi {
 		@EnumResponse(ResponseCode.AppleOauthJwtValueInvalid),
 		@EnumResponse(ResponseCode.AppleOauthPublicKeyInvalid),
 	})
-	ResponseEntity<ApiResult<OauthJwtResponse>> loginOrSignUpWithOAuthToken(
-		@RequestBody @Valid SocialAppLoginRequest socialAppLoginRequest);
 
 	ResponseEntity<ApiResult<TokenResponse>> reissue(
 		@RequestBody @Valid TokenRefreshRequestDto tokenRefreshRequestDto

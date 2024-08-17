@@ -3,10 +3,10 @@ package com.gt.genti.auth.controller;
 import static com.gt.genti.response.GentiResponse.*;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.gt.genti.auth.api.AuthApi;
-import com.gt.genti.auth.dto.request.AppleLoginRequest;
-import com.gt.genti.auth.dto.request.AppleLoginRequestDto;
-import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
-import com.gt.genti.auth.dto.request.SocialLoginRequestImpl;
+import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.auth.service.AuthService;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
@@ -34,10 +31,12 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
+import com.gt.genti.user.service.social.AppleAuthTokenDto;
+import com.gt.genti.user.service.social.KakaoAccessTokenDto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -62,36 +61,48 @@ public class AuthController implements AuthApi {
 		return new RedirectView(authService.getOauthRedirect(oauthPlatform));
 	}
 
-	@PostMapping("/login/oauth2/code/apple")
+	@PostMapping("/login/oauth2/token/apple")
 	@Logging(item = LogItem.OAUTH_APPLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<SocialLoginResponse>> loginApple(
-		@RequestBody @Valid AppleLoginRequestDto request) {
-		return success(authService.webLogin(AppleLoginRequest.of(OauthPlatform.APPLE, request.getToken())));
+	public ResponseEntity<ApiResult<OauthJwtResponse>> loginApple(
+		@RequestBody @Valid AppleAuthTokenDto request) {
+		return success(authService.appleLogin(request).token());
+	}
+
+	@PostMapping("/login/oauth2/token/kakao")
+	@Logging(item = LogItem.OAUTH_KAKAO, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<OauthJwtResponse>> loginKakao(
+		@RequestBody @Valid KakaoAccessTokenDto tokenDto
+	) {
+		return success(authService.kakaoAppLogin(tokenDto));
 	}
 
 	@GetMapping("/login/oauth2/code/kakao")
 	@Logging(item = LogItem.OAUTH_KAKAO, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
-	public void kakaoLogin(
+	public void kakaoRedirectLogin(
 		HttpServletResponse response,
 		@RequestParam(name = "code") final String code) {
-		SocialLoginResponse socialLoginResponse = authService.webLogin(SocialLoginRequestImpl.of(OauthPlatform.KAKAO, code));
-		String accessToken = socialLoginResponse.getToken().accessToken();
-		String refreshToken = socialLoginResponse.getToken().refreshToken();
-		response.setHeader("Access-Token",accessToken);
-		response.setHeader("Refresh-Token",refreshToken);
+		SocialWebLoginResponse socialWebLoginResponse = authService.kakaoWebLogin(KakaoAuthorizationCodeDto.of(code));
+		String accessToken = socialWebLoginResponse.getToken().accessToken();
+		String refreshToken = socialWebLoginResponse.getToken().refreshToken();
+
+		String accessTokenEncode = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
+		String refreshTokenEncode = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+
+		Cookie accessTokenCookie = new Cookie("Access-Token", accessTokenEncode);
+		accessTokenCookie.setHttpOnly(true);
+		accessTokenCookie.setPath("/");
+
+		Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshTokenEncode);
+		refreshTokenCookie.setHttpOnly(true);
+		refreshTokenCookie.setPath("/");
+
+		response.addCookie(accessTokenCookie);
+		response.addCookie(refreshTokenCookie);
 		try {
 			response.sendRedirect("http://localhost:5173/login/kakao/success");
 		} catch (IOException e) {
 			throw new RuntimeException("서버에서 redirect중 에러가 발생했습니다.");
 		}
-	}
-
-	@Deprecated
-	@GetMapping("/login/oauth2/code/google")
-	@Logging(item = LogItem.OAUTH_GOOGLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<SocialLoginResponse>> googleLogin(
-		@RequestParam(name = "code") final String code) {
-		return success(authService.webLogin(SocialLoginRequestImpl.of(OauthPlatform.GOOGLE, code)));
 	}
 
 	@GetMapping("/login/testjwt")
@@ -108,13 +119,6 @@ public class AuthController implements AuthApi {
 		String refreshToken = jwtTokenProvider.generateRefreshToken(command);
 		return success(
 			TokenResponse.of(accessToken, refreshToken));
-	}
-
-	@PostMapping("/login/oauth2/token")
-	@Logging(item = LogItem.OAUTH_APP, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<OauthJwtResponse>> loginOrSignUpWithOAuthToken(
-		@RequestBody @Valid SocialAppLoginRequest socialAppLoginRequest) {
-		return success(authService.appLogin(socialAppLoginRequest));
 	}
 
 	@PostMapping("/reissue")

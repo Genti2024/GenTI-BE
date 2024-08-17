@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RequiredArgsConstructor
-public class AppleLoginRequest implements SocialLoginRequest {
+public class AppleLoginRequest{
     @Getter
     final OauthPlatform oauthPlatform;
 
@@ -16,7 +16,7 @@ public class AppleLoginRequest implements SocialLoginRequest {
     public String getCode(){
         return token;
     }
-    public static SocialLoginRequest of(OauthPlatform oauthPlatform, String token) {
+    public static AppleLoginRequest of(OauthPlatform oauthPlatform, String token) {
         return new AppleLoginRequest(oauthPlatform, token);
     }
 }

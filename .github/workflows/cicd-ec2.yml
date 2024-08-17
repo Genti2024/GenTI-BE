@@ -67,7 +67,7 @@ jobs:
 
       - name: make apple private key
         run: |
-          cd genti-external/src/main
+          cd ./genti-external/src/main
           mkdir -p /resources && cd ./resources
           touch ./AuthKey_ZRZMQQX883.p8
           echo "${{ secrets.APPLE_PRIVATE_KEY }}" > AuthKey_ZRZMQQX883.p8

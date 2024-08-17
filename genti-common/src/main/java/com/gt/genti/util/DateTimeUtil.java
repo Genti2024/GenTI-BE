@@ -39,27 +39,11 @@ public class DateTimeUtil {
 		return "00:00:00";
 	}
 
-	public static int getAge(LocalDate birthDate) {
-		if (birthDate == null) {
+	public static int getAge(String birthYear) {
+		if (birthYear == null) {
 			return -1;
 		}
-		LocalDate now = LocalDate.now();
-		int age = now.getYear() - birthDate.getYear();
-
-		// 현재 날짜가 생일 전이라면 만나이를 하나 줄입니다.
-		if (now.getMonthValue() < birthDate.getMonthValue() ||
-			(now.getMonthValue() == birthDate.getMonthValue() &&
-				now.getDayOfMonth() < birthDate.getDayOfMonth())) {
-			age--;
-		}
-		return age;
-	}
-
-	public static int getAge(String birthDate) {
-		if (birthDate == null) {
-			return -1;
-		}
-		int year = Integer.parseInt(birthDate);
+		int year = Integer.parseInt(birthYear);
 		int age = LocalDate.now().getYear() - year;
 		return age;
 	}

@@ -106,7 +106,6 @@ public class KakaoOauthStrategy {
 		if (isNewUser(findUser)) {
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.id())
-				.birthYear(getBirthDateStringFrom(userResponse))
 				.oauthPlatform(oauthPlatform)
 				.username(userResponse.kakaoAccount().name())
 				.nickname(RandomUtil.generateRandomNickname())
@@ -128,16 +127,6 @@ public class KakaoOauthStrategy {
 			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
 		return SocialWebLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
-	}
-
-	private static String getBirthDateStringFrom(KakaoUserResponse userResponse) {
-		String birthDate = null;
-		String birthYear = userResponse.kakaoAccount().birthyear();
-		String birthday = userResponse.kakaoAccount().birthday();
-		if (birthYear != null && birthday != null && birthday.length() == 4) {
-			birthDate = birthYear + "-" + birthday.substring(0, 2) + "-" + birthday.substring(2, 4);
-		}
-		return birthDate;
 	}
 
 	public void unlink(String userSocialId) {

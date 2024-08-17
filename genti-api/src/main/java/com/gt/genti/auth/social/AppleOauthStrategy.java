@@ -71,9 +71,6 @@ public class AppleOauthStrategy {
 	@Value("${apple.client-id}")
 	private String appleClientId;
 
-	@Value("${apple.private-key}")
-	private String appleClientSecret;
-
 	@Value("${apple.key-id}")
 	private String appleSignKeyId;
 

@@ -76,20 +76,11 @@ public interface UserApi {
 	ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthUser Long userId);
 
-	@Operation(summary = "카카오 회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
+	@Operation(summary = "회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
 	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.OauthProviderNotAllowed)
+		@EnumResponse(ResponseCode.OK)
 	})
-	public ResponseEntity<ApiResult<Boolean>> deleteKakaoUserHard(
-		@AuthUser Long userId);
-
-	@Operation(summary = "애플 회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.OauthProviderNotAllowed)
-	})
-	public ResponseEntity<ApiResult<Boolean>> deleteAppleUserHard(
+	public ResponseEntity<ApiResult<Boolean>> delete(
 		@AuthUser Long userId);
 
 	@Operation(summary = "내 사진 전체조회 - Pagination", description = "내가 사진생성요청으로 생성된 사진 전체 조회 Pagination")

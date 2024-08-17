@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.gt.genti.user.dto.response.SignUpResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.auth.dto.request.SignUpRequestDTO;
+import com.gt.genti.auth.social.AppleOauthStrategy;
+import com.gt.genti.auth.social.KakaoOauthStrategy;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.deposit.service.DepositService;
@@ -35,14 +36,13 @@ import com.gt.genti.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
+import com.gt.genti.user.dto.response.SignUpResponseDTO;
 import com.gt.genti.user.dto.response.UserFindByAdminResponseDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.auth.social.AppleOauthStrategy;
-import com.gt.genti.auth.social.KakaoOauthStrategy;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -146,26 +146,17 @@ public class UserService {
 		return true;
 	}
 
-	public Boolean deleteKakaoUserHard(Long userId) {
+	public Boolean delete(Long userId) {
 		User foundUser = getUserByUserId(userId);
-		if (!foundUser.getLastLoginOauthPlatform().equals(OauthPlatform.KAKAO)) {
-			throw ExpectedException.withLogging(ResponseCode.OauthProviderNotAllowed, "해당 유저는 KAKAO 로그인 유저가 아닙니다.");
+		OauthPlatform oauthPlatform = foundUser.getLastLoginOauthPlatform();
+
+		switch (oauthPlatform) {
+			case KAKAO -> kakaoOauthStrategy.unlink(foundUser.getSocialId());
+			case APPLE -> appleOauthStrategy.unlink(foundUser.getSocialId());
 		}
-		kakaoOauthStrategy.unlink(foundUser.getSocialId());
 		userRepository.delete(foundUser);
 		return true;
 	}
-
-	public Boolean deleteAppleUserHard(Long userId) {
-		User foundUser = getUserByUserId(userId);
-		if (!foundUser.getLastLoginOauthPlatform().equals(OauthPlatform.APPLE)) {
-			throw ExpectedException.withLogging(ResponseCode.OauthProviderNotAllowed, "해당 유저는 APPLE 로그인 유저가 아닙니다.");
-		}
-		appleOauthStrategy.unlink(foundUser.getAppleRefreshToken());
-		userRepository.delete(foundUser);
-		return true;
-	}
-
 
 	public Boolean updateUserStatus(Long userId, UserStatusUpdateRequestDto userStatusUpdateRequestDto) {
 		User foundUser = getUserByUserId(userId);
@@ -253,17 +244,16 @@ public class UserService {
 		foundUser.updateUserRole(UserRole.USER);
 
 		return SignUpResponseDTO.builder()
-				.email(foundUser.getEmail())
-				.lastLoginOauthPlatform(foundUser.getLastLoginOauthPlatform())
-				.nickname(foundUser.getNickname())
-				.birthDate(foundUser.getBirthYear())
-				.sex(foundUser.getSex())
-				.build();
+			.email(foundUser.getEmail())
+			.lastLoginOauthPlatform(foundUser.getLastLoginOauthPlatform())
+			.nickname(foundUser.getNickname())
+			.birthDate(foundUser.getBirthYear())
+			.sex(foundUser.getSex())
+			.build();
 	}
 
 	public Boolean logout(final Long userId) {
 		return jwtTokenProvider.deleteRefreshToken(userId);
 	}
-
 
 }

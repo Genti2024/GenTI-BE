@@ -91,18 +91,11 @@ public class UserController implements UserApi {
 		return success(userService.logout(userId));
 	}
 
-	@DeleteMapping("/kakao")
+	@DeleteMapping
 	@Logging(item = LogItem.USER, action = LogAction.DELETE, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<Boolean>> deleteKakaoUserHard(
+	public ResponseEntity<ApiResult<Boolean>> delete(
 		@AuthUser Long userId) {
-		return GentiResponse.success(userService.deleteKakaoUserHard(userId));
-	}
-
-	@DeleteMapping("/apple")
-	@Logging(item = LogItem.USER, action = LogAction.DELETE, requester = LogRequester.ANONYMOUS)
-	public ResponseEntity<ApiResult<Boolean>> deleteAppleUserHard(
-		@AuthUser Long userId) {
-		return GentiResponse.success(userService.deleteAppleUserHard(userId));
+		return GentiResponse.success(userService.delete(userId));
 	}
 
 	@Deprecated

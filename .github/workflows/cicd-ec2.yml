@@ -68,9 +68,10 @@ jobs:
       - name: make apple private key
         run: |
           cd ./genti-external/src/main
-          sudo mkdir -p /resources && cd ./resources
-          touch ./AuthKey_ZRZMQQX883.p8
-          echo "${{ secrets.APPLE_PRIVATE_KEY }}" > AuthKey_ZRZMQQX883.p8
+          sudo mkdir -p /resources
+          sudo cd ./resources
+          sudo touch ./AuthKey_ZRZMQQX883.p8
+          sudo echo "${{ secrets.APPLE_PRIVATE_KEY }}" > AuthKey_ZRZMQQX883.p8
           shell: bash
 
       - name: make staging docker-compose file

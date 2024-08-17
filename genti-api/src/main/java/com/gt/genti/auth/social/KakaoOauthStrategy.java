@@ -1,4 +1,4 @@
-package com.gt.genti.user.service.social;
+package com.gt.genti.auth.social;
 
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
@@ -19,10 +19,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
-import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
+import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
+import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
@@ -45,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrategy {
+public class KakaoOauthStrategy {
 
 	@Value("${kakao.client-id}")
 	private String kakaoClientId;
@@ -66,7 +66,6 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 	private final UserRepository userRepository;
 	private final UserSignUpEventPublisher userSignUpEventPublisher;
 
-	@Override
 	public String getAuthUri() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("client_id", kakaoClientId);
@@ -79,28 +78,26 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 		return "https://kauth.kakao.com/oauth/authorize?" + paramStr;
 	}
 
-	@Override
 	@Transactional
-	public SocialLoginResponse webLogin(SocialLoginRequest request) {
+	public SocialWebLoginResponse webLogin(KakaoAuthorizationCodeDto request) {
 		KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
 			"authorization_code",
 			kakaoClientId,
 			kakaoClientSecret,
 			kakaoRedirectUri,
-			request.getCode()
+			request.getAuthorizationCode()
 		);
 
-		OauthPlatform oauthPlatform = request.getOauthPlatform();
+		OauthPlatform oauthPlatform = OauthPlatform.KAKAO;
 		String accessToken = tokenResponse.accessToken();
 		return getUserInfo(oauthPlatform, accessToken);
 	}
 
-	@Override
-	public SocialLoginResponse tokenLogin(final SocialAppLoginRequest request) {
-		return getUserInfo(request.getOauthPlatform(), request.getToken());
+	public SocialWebLoginResponse tokenLogin(final KakaoAccessTokenDto request) {
+		return getUserInfo(OauthPlatform.KAKAO, request.getAccessToken());
 	}
 
-	private SocialLoginResponse getUserInfo(OauthPlatform oauthPlatform, String accessToken) {
+	private SocialWebLoginResponse getUserInfo(OauthPlatform oauthPlatform, String accessToken) {
 		KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
 			ACCESS_TOKEN_PREFIX + accessToken);
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
@@ -109,7 +106,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 		if (isNewUser(findUser)) {
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.id())
-				.birthDate(getBirthDateStringFrom(userResponse))
+				.birthYear(getBirthDateStringFrom(userResponse))
 				.oauthPlatform(oauthPlatform)
 				.username(userResponse.kakaoAccount().name())
 				.nickname(RandomUtil.generateRandomNickname())
@@ -130,7 +127,7 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 		OauthJwtResponse oauthJwtResponse = OauthJwtResponse.of(
 			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
-		return SocialLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
+		return SocialWebLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser, oauthJwtResponse);
 	}
 
 	private static String getBirthDateStringFrom(KakaoUserResponse userResponse) {
@@ -143,12 +140,6 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 		return birthDate;
 	}
 
-	@Override
-	public boolean support(String provider) {
-		return provider.equals(OauthPlatform.KAKAO.getStringValue());
-	}
-
-	@Override
 	public void unlink(String userSocialId) {
 		Long socialId;
 		try{
@@ -177,8 +168,5 @@ public class KakaoOauthStrategy implements SocialLoginStrategy, SocialAuthStrate
 			log.info(e.getMessage());
 			throw ExpectedException.withLogging(ResponseCode.UnHandledException, e.getMessage());
 		}
-
-
-
 	}
 }

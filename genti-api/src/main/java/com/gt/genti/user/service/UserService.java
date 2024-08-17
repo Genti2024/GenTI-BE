@@ -32,7 +32,6 @@ import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
 import com.gt.genti.usecase.PictureGenerateRequestUseCase;
-import com.gt.genti.user.dto.request.AppleAuthorizationCodeDto;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
@@ -42,9 +41,8 @@ import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.user.service.social.AppleOauthStrategy;
-import com.gt.genti.user.service.social.KakaoOauthStrategy;
-import com.gt.genti.user.service.social.SocialOauthContext;
+import com.gt.genti.auth.social.AppleOauthStrategy;
+import com.gt.genti.auth.social.KakaoOauthStrategy;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -158,12 +156,12 @@ public class UserService {
 		return true;
 	}
 
-	public Boolean deleteAppleUserHard(Long userId, AppleAuthorizationCodeDto appleAuthorizationCodeDto) {
+	public Boolean deleteAppleUserHard(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		if (!foundUser.getLastLoginOauthPlatform().equals(OauthPlatform.APPLE)) {
 			throw ExpectedException.withLogging(ResponseCode.OauthProviderNotAllowed, "해당 유저는 APPLE 로그인 유저가 아닙니다.");
 		}
-		appleOauthStrategy.unlink(appleAuthorizationCodeDto.getAuthorizationCode());
+		appleOauthStrategy.unlink(foundUser.getAppleRefreshToken());
 		userRepository.delete(foundUser);
 		return true;
 	}
@@ -209,7 +207,7 @@ public class UserService {
 			.id(user.getId())
 			.email(user.getEmail())
 			.userRole(user.getUserRole())
-			.birthDate(user.getBirthDate())
+			.birthDate(user.getBirthYear())
 			.sex(user.getSex())
 			.userStatus(user.getUserStatus())
 			.createdAt(user.getCreatedAt())
@@ -233,7 +231,7 @@ public class UserService {
 		UserFindByAdminResponseDto responseDto = UserFindByAdminResponseDto.builder()
 			.email(foundUser.getEmail())
 			.userRole(foundUser.getUserRole())
-			.birthDate(foundUser.getBirthDate())
+			.birthDate(foundUser.getBirthYear())
 			.deposit(foundUser.getDeposit())
 			.lastLoginDate(foundUser.getLastLoginDate())
 			.userStatus(foundUser.getUserStatus())
@@ -258,7 +256,7 @@ public class UserService {
 				.email(foundUser.getEmail())
 				.lastLoginOauthPlatform(foundUser.getLastLoginOauthPlatform())
 				.nickname(foundUser.getNickname())
-				.birthDate(foundUser.getBirthDate())
+				.birthDate(foundUser.getBirthYear())
 				.sex(foundUser.getSex())
 				.build();
 	}

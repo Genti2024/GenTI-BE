@@ -15,7 +15,6 @@ import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.AuthorizedUser;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
-import com.gt.genti.user.dto.request.AppleAuthorizationCodeDto;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
@@ -91,7 +90,6 @@ public interface UserApi {
 		@EnumResponse(ResponseCode.OauthProviderNotAllowed)
 	})
 	public ResponseEntity<ApiResult<Boolean>> deleteAppleUserHard(
-		@RequestBody AppleAuthorizationCodeDto appleAuthorizationCodeDto,
 		@AuthUser Long userId);
 
 	@Operation(summary = "내 사진 전체조회 - Pagination", description = "내가 사진생성요청으로 생성된 사진 전체 조회 Pagination")

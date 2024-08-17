@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class ApplePublicKeys {
+public class ApplePublicKeyResponse {
 
 	private List<ApplePublicKey> keys;
 

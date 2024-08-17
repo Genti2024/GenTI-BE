@@ -1,26 +1,19 @@
 package com.gt.genti.auth.service;
 
-import static com.gt.genti.user.service.validator.UserValidator.*;
-
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.auth.dto.request.SocialAppLoginRequest;
-import com.gt.genti.auth.dto.request.SocialLoginRequest;
+import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialLoginResponse;
-import com.gt.genti.error.ExpectedException;
-import com.gt.genti.error.ResponseCode;
+import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.user.model.OauthPlatform;
-import com.gt.genti.user.model.User;
-import com.gt.genti.user.model.UserRole;
-import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.user.service.social.SocialOauthContext;
-import com.gt.genti.util.HttpRequestUtil;
+import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
+import com.gt.genti.auth.social.AppleOauthStrategy;
+import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
+import com.gt.genti.auth.social.KakaoOauthStrategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,20 +23,28 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class AuthService {
-	private final SocialOauthContext socialOauthContext;
+	private final AppleOauthStrategy appleOauthStrategy;
+	private final KakaoOauthStrategy kakaoOauthStrategy;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final UserRepository userRepository;
 
-	public SocialLoginResponse webLogin(final SocialLoginRequest request) {
-		return socialOauthContext.doLogin(request);
+	public SocialWebLoginResponse kakaoWebLogin(final KakaoAuthorizationCodeDto request) {
+		return kakaoOauthStrategy.webLogin(request);
 	}
 
-	public OauthJwtResponse appLogin(final SocialAppLoginRequest request) {
-		return socialOauthContext.doAppLogin(request).getToken();
+	public SocialWebLoginResponse appleLogin(final AppleAuthTokenDto request) {
+		return appleOauthStrategy.login(request);
 	}
 
-	public HttpHeaders getOauthRedirect(OauthPlatform oauthPlatform) {
-		return HttpRequestUtil.createRedirectHttpHeader(socialOauthContext.getAuthUri(oauthPlatform));
+	public OauthJwtResponse kakaoAppLogin(final KakaoAccessTokenDto request) {
+		return kakaoOauthStrategy.tokenLogin(request).getToken();
+	}
+
+	public String getOauthRedirect(OauthPlatform oauthPlatform) {
+		return switch (oauthPlatform) {
+			case KAKAO -> kakaoOauthStrategy.getAuthUri();
+			// case APPLE -> appleOauthStrategy.getAuthUri();
+			default -> null;
+		};
 	}
 
 	public TokenResponse reissue(TokenRefreshRequestDto tokenRefreshRequestDto) {

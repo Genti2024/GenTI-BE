@@ -103,6 +103,7 @@ public class ErrorConstants {
 	public static final String AppleOauthClaimInvalid = CODE(OAUTH, 5);
 	public static final String AppleOauthPublicKeyInvalid = CODE(OAUTH, 6);
 	public static final String AppleOauthJwtValueInvalid = CODE(OAUTH, 7);
+	public static final String KakaoSocialIdNotValid = CODE(OAUTH, 8);
 
 	public static final String NoWebhookEmbeds = CODE(DISCORD, 1);
 	public static final String DiscordIOException = CODE(DISCORD, 2);

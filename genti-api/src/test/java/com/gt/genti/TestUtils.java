@@ -101,7 +101,7 @@ public class TestUtils {
 
 	public static PGREQSaveRequestDto getPGREQSaveRequestDto() {
 		return PGREQSaveRequestDto.builder()
-			.pictureRatio(PictureRatio.RATIO_2_3)
+			.pictureRatio(PictureRatio.RATIO_SERO)
 			.shotCoverage(ShotCoverage.KNEE_SHOT)
 			.posePicture(getCommonPictureKeyUpdateRequestDto(FileType.USER_UPLOADED_IMAGE))
 			.facePictureList(get3CommonPictureKeyUpdateRequestDtos(FileType.USER_UPLOADED_IMAGE))

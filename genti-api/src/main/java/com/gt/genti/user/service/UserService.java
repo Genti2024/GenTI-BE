@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.auth.dto.request.SignUpRequestDTO;
+import com.gt.genti.auth.social.AppleOauthStrategy;
+import com.gt.genti.auth.social.KakaoOauthStrategy;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.deposit.service.DepositService;
@@ -34,8 +36,10 @@ import com.gt.genti.usecase.PictureGenerateRequestUseCase;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
+import com.gt.genti.user.dto.response.SignUpResponseDTO;
 import com.gt.genti.user.dto.response.UserFindByAdminResponseDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
+import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
@@ -57,6 +61,9 @@ public class UserService {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final JwtTokenProvider jwtTokenProvider;
+
+	private final KakaoOauthStrategy kakaoOauthStrategy;
+	private final AppleOauthStrategy appleOauthStrategy;
 
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
@@ -139,30 +146,13 @@ public class UserService {
 		return true;
 	}
 
-	public Boolean deleteUserHard(Long userId) {
+	public Boolean delete(Long userId) {
 		User foundUser = getUserByUserId(userId);
-		List<PictureGenerateResponse> deleteList = new ArrayList<>();
-		if (foundUser.getCreator() != null) {
-			Creator foundCreator = foundUser.getCreator();
-			List<PictureGenerateResponse> pgresList = foundCreator.getPictureGenerateResponseList();
-			foundCreator.getPictureGenerateRequestList()
-					.stream()
-					.filter(pgreq -> pgreq.getPictureGenerateRequestStatus().equals(
-							PictureGenerateRequestStatus.IN_PROGRESS) && (pgreq.getResponseList().isEmpty()))
-					.forEach(req -> pictureGenerateRequestUseCase.cancelRequest(req, SUPPLIER_EXIT));
-			if (pgresList.isEmpty()) {
-				return true;
-			}
+		OauthPlatform oauthPlatform = foundUser.getLastLoginOauthPlatform();
 
-			pgresList.stream()
-					.filter(pgres -> CREATOR_BEFORE_WORK.equals(pgres.getStatus()))
-					.forEach(pgres -> {
-
-						pictureGenerateRequestUseCase.cancelRequest(pgres.getRequest(), SUPPLIER_EXIT);
-						pgres.clearRelationshipsWithPGREQ();
-						deleteList.add(pgres);
-					});
-			pictureGenerateResponseRepository.deleteAll(deleteList);
+		switch (oauthPlatform) {
+			case KAKAO -> kakaoOauthStrategy.unlink(foundUser.getSocialId());
+			case APPLE -> appleOauthStrategy.unlink(foundUser.getSocialId());
 		}
 		userRepository.delete(foundUser);
 		return true;
@@ -184,8 +174,8 @@ public class UserService {
 		User foundUser = getUserByUserId(userId);
 		List<PictureCompleted> pictures = pictureCompletedRepository.findAllByRequesterOrderByCreatedAtDesc(foundUser);
 		return pictures.stream()
-				.map(CommonPictureResponseDto::of)
-				.collect(Collectors.toList());
+			.map(CommonPictureResponseDto::of)
+			.collect(Collectors.toList());
 	}
 
 	public Page<UserFindByAdminResponseDto> getAllUserInfo(Pageable pageable) {
@@ -208,7 +198,7 @@ public class UserService {
 			.id(user.getId())
 			.email(user.getEmail())
 			.userRole(user.getUserRole())
-			.birthDate(user.getBirthDate())
+			.birthDate(user.getBirthYear())
 			.sex(user.getSex())
 			.userStatus(user.getUserStatus())
 			.createdAt(user.getCreatedAt())
@@ -227,11 +217,12 @@ public class UserService {
 	}
 
 	public Page<UserFindByAdminResponseDto> getUserInfoByEmail(String email) {
-		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
-		UserFindByAdminResponseDto responseDto =UserFindByAdminResponseDto.builder()
+		User foundUser = userRepository.findByEmail(email)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		UserFindByAdminResponseDto responseDto = UserFindByAdminResponseDto.builder()
 			.email(foundUser.getEmail())
 			.userRole(foundUser.getUserRole())
-			.birthDate(foundUser.getBirthDate())
+			.birthDate(foundUser.getBirthYear())
 			.deposit(foundUser.getDeposit())
 			.lastLoginDate(foundUser.getLastLoginDate())
 			.userStatus(foundUser.getUserStatus())
@@ -244,17 +235,25 @@ public class UserService {
 		return new PageImpl<>(List.of(responseDto));
 	}
 
-	public Boolean signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
+	public SignUpResponseDTO signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {
 		User foundUser = getUserByUserId(userId);
-		if(!foundUser.isFirstJoinUser()) {
+		if (!foundUser.isFirstJoinUser()) {
 			throw ExpectedException.withLogging(ResponseCode.UserAlreadySignedUp);
 		}
 		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthDate(), signUpRequestDTO.getSex());
 		foundUser.updateUserRole(UserRole.USER);
-		return true;
+
+		return SignUpResponseDTO.builder()
+			.email(foundUser.getEmail())
+			.lastLoginOauthPlatform(foundUser.getLastLoginOauthPlatform())
+			.nickname(foundUser.getNickname())
+			.birthDate(foundUser.getBirthYear())
+			.sex(foundUser.getSex())
+			.build();
 	}
 
 	public Boolean logout(final Long userId) {
 		return jwtTokenProvider.deleteRefreshToken(userId);
 	}
+
 }

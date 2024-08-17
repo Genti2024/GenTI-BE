@@ -48,12 +48,15 @@ public class SecurityConfig {
 		config.setAllowedOriginPatterns(List.of("*"));
 
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+		config.addExposedHeader("Access-Token");
+		config.addExposedHeader("Refresh-Token");
 		config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 		config.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/api/**", config);
 		source.registerCorsConfiguration("/auth/**", config);
+		source.registerCorsConfiguration("/login/**", config);
 		return source;
 	}
 

@@ -54,7 +54,13 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		log.info("{}", eventObject.getMessage());
 
 		if (throwable != null) {
-			exceptionBrief = throwable.getClassName() + ": " + throwable.getMessage();
+			if(throwable instanceof ExpectedException expectedException) {
+				exceptionBrief += expectedException.getClass().getSimpleName() + " : ";
+				exceptionBrief += expectedException.getResponseCode().name() + " : ";
+				exceptionBrief += expectedException.getResponseCode().getErrorCode();
+			} else{
+				exceptionBrief = throwable.getClass().getSimpleName() + " : " + throwable.getMessage();
+			}
 		}
 
 		if (exceptionBrief.isEmpty()) {
@@ -121,7 +127,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 		if (throwable != null) {
 			exceptionDetail = ThrowableProxyUtil.asString(throwable);
-			String exception = exceptionDetail.substring(0, 4000);
+			String exception = exceptionDetail.substring(0, 500);
 			discordWebhook.addEmbed(
 				EmbedObject.builder()
 					.title("[Exception 상세 내용]")

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.openfeign.apple.dto.response.ApplePublicKey;
-import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeyResponse;
+import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeys;
 
 @Component
 public class PublicKeyGenerator {
@@ -23,9 +23,9 @@ public class PublicKeyGenerator {
     private static final String KEY_ID_HEADER_KEY = "kid";
     private static final int POSITIVE_SIGN_NUMBER = 1;
 
-    public PublicKey generatePublicKey(Map<String, String> headers, ApplePublicKeyResponse applePublicKeyResponse) {
+    public PublicKey generatePublicKey(Map<String, String> headers, ApplePublicKeys applePublicKeys) {
         ApplePublicKey applePublicKey =
-                applePublicKeyResponse.getMatchesKey(headers.get(SIGN_ALGORITHM_HEADER_KEY), headers.get(KEY_ID_HEADER_KEY));
+                applePublicKeys.getMatchesKey(headers.get(SIGN_ALGORITHM_HEADER_KEY), headers.get(KEY_ID_HEADER_KEY));
 
         return generatePublicKeyWithApplePublicKey(applePublicKey);
     }

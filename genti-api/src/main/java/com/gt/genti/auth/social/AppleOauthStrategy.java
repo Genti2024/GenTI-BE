@@ -33,7 +33,7 @@ import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.openfeign.apple.client.AppleApiClient;
 import com.gt.genti.openfeign.apple.client.AppleTokenRefreshRequest;
 import com.gt.genti.openfeign.apple.dto.request.AppleTokenRequest;
-import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeyResponse;
+import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeys;
 import com.gt.genti.openfeign.apple.dto.response.AppleTokenRefreshResponse;
 import com.gt.genti.openfeign.apple.dto.response.AppleTokenResponse;
 import com.gt.genti.openfeign.apple.service.AppleClaimsValidator;
@@ -122,8 +122,8 @@ public class AppleOauthStrategy {
 
 	private AppleUserResponse getApplePlatformMember(String identityToken) {
 		Map<String, String> headers = appleJwtParser.parseHeaders(identityToken);
-		ApplePublicKeyResponse applePublicKeyResponse = appleApiClient.getApplePublicKeys();
-		PublicKey publicKey = publicKeyGenerator.generatePublicKey(headers, applePublicKeyResponse);
+		ApplePublicKeys applePublicKeys = appleApiClient.getApplePublicKeys();
+		PublicKey publicKey = publicKeyGenerator.generatePublicKey(headers, applePublicKeys);
 		Claims claims = appleJwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
 		validateClaims(claims);
 		return new AppleUserResponse(claims.getSubject(), claims.get("email", String.class));

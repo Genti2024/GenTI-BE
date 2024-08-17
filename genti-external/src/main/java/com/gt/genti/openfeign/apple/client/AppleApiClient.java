@@ -10,16 +10,19 @@ import com.gt.genti.openfeign.apple.dto.response.ApplePublicKeys;
 import com.gt.genti.openfeign.apple.dto.response.AppleTokenRefreshResponse;
 import com.gt.genti.openfeign.apple.dto.response.AppleTokenResponse;
 
+import feign.Headers;
+
 @FeignClient(name = "appleApiClient", url = "https://appleid.apple.com/auth")
 public interface AppleApiClient {
 
-    @Cacheable(value = "oauthPublicKeyCache", cacheManager = "oauthPublicKeyCacheManager")
-    @GetMapping("/keys")
-    ApplePublicKeys getApplePublicKeys();
+	@Cacheable(value = "oauthPublicKeyCache", cacheManager = "oauthPublicKeyCacheManager")
+	@GetMapping("/keys")
+	ApplePublicKeys getApplePublicKeys();
 
-    @PostMapping(value = "/token", consumes = "application/x-www-form-urlencoded")
-    AppleTokenResponse getToken(AppleTokenRequest request);
+	@Headers("Content-Type: application/x-www-form-urlencoded")
+	@PostMapping(value = "/token", consumes = "application/x-www-form-urlencoded")
+	AppleTokenResponse getToken(AppleTokenRequest request);
 
-    @PostMapping(value = "/token", consumes = "application/x-www-form-urlencoded")
-    AppleTokenRefreshResponse refresh(AppleTokenRefreshRequest request);
+	@PostMapping(value = "/token", consumes = "application/x-www-form-urlencoded")
+	AppleTokenRefreshResponse refresh(AppleTokenRefreshRequest request);
 }

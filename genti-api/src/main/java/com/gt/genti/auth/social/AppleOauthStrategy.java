@@ -81,8 +81,15 @@ public class AppleOauthStrategy {
 	public SocialWebLoginResponse login(AppleAuthTokenDto request) {
 		AppleUserResponse userResponse = getApplePlatformMember(request.getIdentityToken());
 
+		String clientSecret = "";
+		try{
+			clientSecret = createClientSecret();
+		} catch ( Exception e ) {
+			log.error(e.getMessage(), e);
+		}
+
 		AppleTokenRequest appleTokenRequest = AppleTokenRequest.of(request.getAuthorizationCode(), appleClientId,
-			appleClientSecret, "authorization_code");
+			clientSecret, "authorization_code");
 		AppleTokenResponse appleTokenResponse = appleApiClient.getToken(appleTokenRequest);
 
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.getPlatformId());

@@ -176,7 +176,7 @@ public class AppleOauthStrategy {
 		Date expirationDate = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
 		Map<String, Object> jwtHeader = new HashMap<>();
 		jwtHeader.put("kid", appleSignKeyId);
-		jwtHeader.put("alg", "HS256");
+		jwtHeader.put("alg", "ES256");
 
 		return Jwts.builder()
 			.setHeaderParams(jwtHeader)
@@ -185,7 +185,7 @@ public class AppleOauthStrategy {
 			.setExpiration(expirationDate) // 만료 시간
 			.setAudience("https://appleid.apple.com")
 			.setSubject(appleClientId)
-			.signWith(SignatureAlgorithm.HS256, appleClientSecret)
+			.signWith(SignatureAlgorithm.ES256, appleClientSecret)
 			.compact();
 	}
 

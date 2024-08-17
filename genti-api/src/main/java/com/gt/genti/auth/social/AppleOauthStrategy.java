@@ -3,6 +3,7 @@ package com.gt.genti.auth.social;
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
 import java.io.IOException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -39,6 +40,7 @@ import com.gt.genti.openfeign.apple.dto.response.AppleTokenResponse;
 import com.gt.genti.openfeign.apple.service.AppleClaimsValidator;
 import com.gt.genti.openfeign.apple.service.AppleJwtParser;
 import com.gt.genti.openfeign.apple.service.AppleUserResponse;
+import com.gt.genti.openfeign.apple.service.PrivateKeyGenerator;
 import com.gt.genti.openfeign.apple.service.PublicKeyGenerator;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
@@ -82,9 +84,9 @@ public class AppleOauthStrategy {
 		AppleUserResponse userResponse = getApplePlatformMember(request.getIdentityToken());
 
 		String clientSecret = "";
-		try{
+		try {
 			clientSecret = createClientSecret();
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 
@@ -178,6 +180,8 @@ public class AppleOauthStrategy {
 		jwtHeader.put("kid", appleSignKeyId);
 		jwtHeader.put("alg", "ES256");
 
+		PrivateKey privateKey = PrivateKeyGenerator.getPrivateKey(appleClientSecret);
+
 		return Jwts.builder()
 			.setHeaderParams(jwtHeader)
 			.setIssuer(appleTeamId)
@@ -185,7 +189,7 @@ public class AppleOauthStrategy {
 			.setExpiration(expirationDate) // 만료 시간
 			.setAudience("https://appleid.apple.com")
 			.setSubject(appleClientId)
-			.signWith(SignatureAlgorithm.ES256, appleClientSecret)
+			.signWith(SignatureAlgorithm.ES256, privateKey)
 			.compact();
 	}
 

@@ -152,7 +152,7 @@ public class UserService {
 
 		switch (oauthPlatform) {
 			case KAKAO -> kakaoOauthStrategy.unlink(foundUser.getSocialId());
-			case APPLE -> appleOauthStrategy.unlink(foundUser.getSocialId());
+			case APPLE -> appleOauthStrategy.unlink(foundUser.getAppleRefreshToken());
 		}
 		userRepository.delete(foundUser);
 		return true;

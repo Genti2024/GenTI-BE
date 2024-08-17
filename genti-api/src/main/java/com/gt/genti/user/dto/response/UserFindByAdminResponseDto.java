@@ -53,14 +53,14 @@ public class UserFindByAdminResponseDto {
 	LocalDateTime lastLoginDate;
 
 	@Builder
-	public UserFindByAdminResponseDto(Long id, String email, UserRole userRole, String birthDate, Sex sex,
+	public UserFindByAdminResponseDto(Long id, String email, UserRole userRole, String birthYear, Sex sex,
 		UserStatus userStatus,
 		LocalDateTime createdAt, int requestTaskCount, Creator creator,
 		Deposit deposit, LocalDateTime lastLoginDate) {
 		this.id = id;
 		this.email = email;
 		this.userRole = userRole;
-		this.age = DateTimeUtil.getAge(birthDate);
+		this.age = DateTimeUtil.getAge(birthYear);
 		this.sex = sex;
 		this.userStatus = userStatus;
 		this.createdAt = createdAt;

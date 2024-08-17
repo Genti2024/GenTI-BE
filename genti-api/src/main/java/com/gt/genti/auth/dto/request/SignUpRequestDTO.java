@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class SignUpRequestDTO {
     @NotBlank
     @Schema(example = "1999")
-    String birthDate;
+    String birthYear;
 
     @NotNull
     @Schema(example = "M")

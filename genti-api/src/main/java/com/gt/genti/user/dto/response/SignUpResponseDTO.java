@@ -19,16 +19,16 @@ public class SignUpResponseDTO {
     @Schema(description = "닉네임", example = "다정한 모래")
     String nickname;
     @Schema(description = "태어난 년도", example = "1999")
-    String birthDate;
+    String birthYear;
     @Schema(description = "성별", example = "남")
     Sex sex;
 
     @Builder
-    public SignUpResponseDTO(String email, OauthPlatform lastLoginOauthPlatform, String nickname, String birthDate, Sex sex) {
+    public SignUpResponseDTO(String email, OauthPlatform lastLoginOauthPlatform, String nickname, String birthYear, Sex sex) {
         this.email = email;
         this.lastLoginOauthPlatform = lastLoginOauthPlatform;
         this.nickname = nickname;
-        this.birthDate = birthDate;
+        this.birthYear = birthYear;
         this.sex = sex;
     }
 }

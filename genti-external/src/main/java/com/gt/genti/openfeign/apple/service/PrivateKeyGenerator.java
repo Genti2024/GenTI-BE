@@ -1,10 +1,8 @@
 package com.gt.genti.openfeign.apple.service;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.PrivateKey;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -19,14 +17,15 @@ public class PrivateKeyGenerator {
 
 	@Value("${apple.private-key-path}")
 	private String privateKeyPath;
+
 	public PrivateKey getPrivateKey() throws IOException {
 		ClassPathResource resource = new ClassPathResource(privateKeyPath);
-		String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
 
-		Reader pemReader = new StringReader(privateKey);
-		PEMParser pemParser = new PEMParser(pemReader);
-		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-		PrivateKeyInfo object = (PrivateKeyInfo) pemParser.readObject();
-		return converter.getPrivateKey(object);
+		try (Reader pemReader = new InputStreamReader(resource.getInputStream());
+			 PEMParser pemParser = new PEMParser(pemReader)) {
+			PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo)pemParser.readObject();
+			JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+			return converter.getPrivateKey(privateKeyInfo);
+		}
 	}
 }

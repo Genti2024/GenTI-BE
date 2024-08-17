@@ -65,6 +65,7 @@ public class AppleOauthStrategy {
 	private final AppleJwtParser appleJwtParser;
 	private final AppleApiClient appleApiClient;
 	private final PublicKeyGenerator publicKeyGenerator;
+	private final PrivateKeyGenerator privateKeyGenerator;
 	private final AppleClaimsValidator appleClaimsValidator;
 
 	@Value("${apple.client-id}")
@@ -82,16 +83,8 @@ public class AppleOauthStrategy {
 	@Transactional
 	public SocialWebLoginResponse login(AppleAuthTokenDto request) {
 		AppleUserResponse userResponse = getApplePlatformMember(request.getIdentityToken());
-
-		String clientSecret = "";
-		try {
-			clientSecret = createClientSecret();
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-
 		AppleTokenRequest appleTokenRequest = AppleTokenRequest.of(request.getAuthorizationCode(), appleClientId,
-			clientSecret, "authorization_code");
+			createClientSecret(), "authorization_code");
 		AppleTokenResponse appleTokenResponse = appleApiClient.getToken(appleTokenRequest);
 
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.getPlatformId());
@@ -146,7 +139,7 @@ public class AppleOauthStrategy {
 
 	public void unlink(String refreshToken) {
 		AppleTokenRefreshRequest appleTokenRefreshRequest = AppleTokenRefreshRequest.of(refreshToken, appleClientId,
-			appleClientSecret, "refresh_token");
+			createClientSecret(), "refresh_token");
 		AppleTokenRefreshResponse response = appleApiClient.refresh(appleTokenRefreshRequest);
 
 		String accessToken = response.getAccess_token();
@@ -159,11 +152,7 @@ public class AppleOauthStrategy {
 
 		LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("client_id", appleClientId);
-		try {
-			params.add("client_secret", createClientSecret());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		params.add("client_secret", createClientSecret());
 		params.add("token", accessToken);
 
 		HttpHeaders headers = new HttpHeaders();
@@ -174,13 +163,18 @@ public class AppleOauthStrategy {
 		restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
 	}
 
-	private String createClientSecret() throws IOException {
+	private String createClientSecret() {
 		Date expirationDate = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
 		Map<String, Object> jwtHeader = new HashMap<>();
 		jwtHeader.put("kid", appleSignKeyId);
 		jwtHeader.put("alg", "ES256");
 
-		PrivateKey privateKey = PrivateKeyGenerator.getPrivateKey(appleClientSecret);
+		PrivateKey privateKey;
+		try {
+			privateKey = privateKeyGenerator.getPrivateKey();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		return Jwts.builder()
 			.setHeaderParams(jwtHeader)

@@ -71,7 +71,7 @@ jobs:
           mkdir -p ./resources && cd ./resources
           touch ./AuthKey_ZRZMQQX883.p8
           echo "${{ secrets.APPLE_PRIVATE_KEY }}" > AuthKey_ZRZMQQX883.p8
-          shell: bash
+        shell: bash
 
       - name: make staging docker-compose file
         if: contains(github.ref, 'staging')

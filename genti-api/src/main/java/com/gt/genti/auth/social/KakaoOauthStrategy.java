@@ -1,4 +1,4 @@
-package com.gt.genti.user.service.social;
+package com.gt.genti.auth.social;
 
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
@@ -19,6 +19,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
 import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.auth.dto.response.SocialWebLoginResponse;

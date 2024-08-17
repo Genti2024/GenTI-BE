@@ -10,10 +10,10 @@ import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.user.model.OauthPlatform;
-import com.gt.genti.user.service.social.AppleAuthTokenDto;
-import com.gt.genti.user.service.social.AppleOauthStrategy;
-import com.gt.genti.user.service.social.KakaoAccessTokenDto;
-import com.gt.genti.user.service.social.KakaoOauthStrategy;
+import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
+import com.gt.genti.auth.social.AppleOauthStrategy;
+import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
+import com.gt.genti.auth.social.KakaoOauthStrategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

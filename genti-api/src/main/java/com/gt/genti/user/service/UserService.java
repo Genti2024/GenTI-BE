@@ -41,8 +41,8 @@ import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.user.service.social.AppleOauthStrategy;
-import com.gt.genti.user.service.social.KakaoOauthStrategy;
+import com.gt.genti.auth.social.AppleOauthStrategy;
+import com.gt.genti.auth.social.KakaoOauthStrategy;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;

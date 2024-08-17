@@ -31,8 +31,8 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
-import com.gt.genti.user.service.social.AppleAuthTokenDto;
-import com.gt.genti.user.service.social.KakaoAccessTokenDto;
+import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
+import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;

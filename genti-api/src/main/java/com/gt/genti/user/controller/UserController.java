@@ -101,7 +101,6 @@ public class UserController implements UserApi {
 	@DeleteMapping("/apple")
 	@Logging(item = LogItem.USER, action = LogAction.DELETE, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<Boolean>> deleteAppleUserHard(
-		@RequestBody AppleAuthorizationCodeDto appleAuthorizationCodeDto,
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.deleteAppleUserHard(userId));
 	}

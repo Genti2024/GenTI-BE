@@ -1,4 +1,4 @@
-package com.gt.genti.user.service.social;
+package com.gt.genti.auth.social;
 
 import static com.gt.genti.user.service.validator.UserValidator.*;
 
@@ -17,14 +17,13 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.error.ExpectedException;
@@ -121,10 +120,6 @@ public class AppleOauthStrategy {
 			oauthJwtResponse);
 	}
 
-	public boolean support(String provider) {
-		return provider.equals(OauthPlatform.APPLE.getStringValue());
-	}
-
 	private AppleUserResponse getApplePlatformMember(String identityToken) {
 		Map<String, String> headers = appleJwtParser.parseHeaders(identityToken);
 		ApplePublicKeyResponse applePublicKeyResponse = appleApiClient.getApplePublicKeys();
@@ -187,28 +182,4 @@ public class AppleOauthStrategy {
 			.compact();
 	}
 
-	public AppleAuthTokenResponse GenerateAuthToken(String authorizationCode) throws IOException {
-		RestTemplate restTemplate = new RestTemplateBuilder().build();
-		String authUrl = "https://appleid.apple.com/auth/token";
-
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("code", authorizationCode);
-		params.add("client_id", appleClientId);
-		params.add("client_secret", createClientSecret());
-		params.add("grant_type", "authorization_code");
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
-
-		try {
-			ResponseEntity<AppleAuthTokenResponse> response = restTemplate.postForEntity(authUrl, httpEntity,
-				AppleAuthTokenResponse.class);
-			return response.getBody();
-		} catch (HttpClientErrorException e) {
-			log.error(e.getMessage(), e);
-			throw new IllegalArgumentException("Apple Auth Token Error");
-		}
-	}
 }

@@ -65,6 +65,13 @@ jobs:
           echo "${{ secrets.APPLICATION_STAGING }}" > ./application-staging.yml
         shell: bash
 
+      - name: make apple private key
+        run: |
+          cd genti-external/src/main/resources
+          touch ./AuthKey_ZRZMQQX883.p8
+          echo "${{ secrets.APPLE_PRIVATE_KEY }}" > AuthKey_ZRZMQQX883.p8
+          shell: bash
+
       - name: make staging docker-compose file
         if: contains(github.ref, 'staging')
         run: |

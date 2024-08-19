@@ -91,10 +91,16 @@ public class AuthController implements AuthApi {
 		refreshToken = refreshToken.substring(JWTConstants.JWT_PREFIX.length());
 
 		Cookie accessTokenCookie = new Cookie("Access-Token", accessToken);
-		accessTokenCookie.setPath("/login/kakao/success");
+		accessTokenCookie.setHttpOnly(false);
+		accessTokenCookie.setSecure(false);
+		accessTokenCookie.setPath("/");
+		accessTokenCookie.setMaxAge(60);
 
 		Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshToken);
-		refreshTokenCookie.setPath("/login/kakao/success");
+		refreshTokenCookie.setHttpOnly(false);
+		refreshTokenCookie.setSecure(false);
+		refreshTokenCookie.setPath("/");
+		refreshTokenCookie.setMaxAge(60);
 
 		response.addCookie(accessTokenCookie);
 		response.addCookie(refreshTokenCookie);

@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenResponse;
 import com.gt.genti.user.model.OauthPlatform;
@@ -27,19 +26,19 @@ public class AuthService {
 	private final KakaoOauthStrategy kakaoOauthStrategy;
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public SocialWebLoginResponse kakaoWebLogin(final KakaoAuthorizationCodeDto request) {
+	public OauthJwtResponse kakaoWebLogin(final KakaoAuthorizationCodeDto request) {
 		return kakaoOauthStrategy.webLogin(request);
 	}
 
-	public SocialWebLoginResponse appleLogin(final AppleAuthTokenDto request) {
+	public OauthJwtResponse appleLogin(final AppleAuthTokenDto request) {
 		return appleOauthStrategy.login(request);
 	}
 
 	public OauthJwtResponse kakaoAppLogin(final KakaoAccessTokenDto request) {
-		return kakaoOauthStrategy.tokenLogin(request).getToken();
+		return kakaoOauthStrategy.tokenLogin(request);
 	}
 
-	public String getOauthRedirect(OauthPlatform oauthPlatform) {
+	public String getOauthUri(OauthPlatform oauthPlatform) {
 		return switch (oauthPlatform) {
 			case KAKAO -> kakaoOauthStrategy.getAuthUri();
 			// case APPLE -> appleOauthStrategy.getAuthUri();

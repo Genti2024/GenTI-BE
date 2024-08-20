@@ -3,9 +3,9 @@ package com.gt.genti.auth.api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
+import com.gt.genti.auth.dto.response.AuthUriResponseDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.TokenResponse;
@@ -19,11 +19,7 @@ import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.headers.Header;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -31,8 +27,12 @@ import jakarta.validation.constraints.NotNull;
 
 @Tag(name = "[AuthController] 인증 컨트롤러", description = "로그인을 처리한 후 토큰을 전달합니다.")
 public interface AuthApi {
-	@Operation(summary = "oauth 로그인 페이지 호출", description = "카카오 oauth 로그인 페이지 로 Redirect, 이후 로그인 성공시 다시 admin page로 redirect됩니다.(Genti token은 cookie에)")
-	RedirectView login(
+
+	@Operation(summary = "Oauth 로그인 페이지 주소 얻기", description = "Oauth 로그인 페이지 주소 얻기")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+	})
+	ResponseEntity<ApiResult<AuthUriResponseDto>> getAuthUri(
 		@Parameter(description = "호출할 Oauth platform 종류", example = "KAKAO", schema = @Schema(allowableValues = {
 			"KAKAO"}))
 		@RequestParam(name = "oauthPlatform") OauthPlatform oauthPlatform);
@@ -58,8 +58,13 @@ public interface AuthApi {
 		@RequestBody @Valid KakaoAccessTokenDto tokenDto
 	);
 
-	void kakaoRedirectLogin(
+	@Operation(summary = "Kakao 웹 로그인", description = "Kakao 로그인 api")
+	@EnumResponses(value = {
+		@EnumResponse(ResponseCode.OK),
+	})
+	ResponseEntity<ApiResult<OauthJwtResponse>> loginKakaoWeb(
 		HttpServletResponse response,
+		@Parameter(name = "code", description = "kakao 로그인페이지 로그인 성공 후 url에서 추출한 code값") 
 		@RequestParam(name = "code") String code);
 
 	@Operation(summary = "테스트용 jwt 토큰 발급", description = "")

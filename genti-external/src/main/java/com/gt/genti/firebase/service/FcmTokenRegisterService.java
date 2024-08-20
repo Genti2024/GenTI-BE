@@ -21,8 +21,8 @@ public class FcmTokenRegisterService {
 	private final UserRepository userRepository;
 
 	public void registerFcmToken(final FcmTokenSaveOrUpdateRequestDto fcmTokenSaveOrUpdateRequestDto) {
-		final Long memberId = fcmTokenSaveOrUpdateRequestDto.getUserId();
-		final String token = fcmTokenSaveOrUpdateRequestDto.getToken();
+		final Long memberId = fcmTokenSaveOrUpdateRequestDto.userId();
+		final String token = fcmTokenSaveOrUpdateRequestDto.token();
 
 		checkUserExists(memberId);
 		fcmTokenRepository.findByUserId(memberId)

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
+import com.gt.genti.picturegenerateresponse.service.PGRESCompleteEventPublisher;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
 
@@ -46,6 +48,7 @@ public class AuthController implements AuthApi {
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthService authService;
+	private final PGRESCompleteEventPublisher pGRESCompleteEventPublisher;
 
 	@GetMapping("/login/oauth2")
 	@Logging(item = LogItem.OAUTH_WEB, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
@@ -102,4 +105,10 @@ public class AuthController implements AuthApi {
 		return success(authService.reissue(tokenRefreshRequestDto));
 	}
 
+	@PostMapping("/fcmtest/userId/{userId}")
+	public ResponseEntity<ApiResult<Boolean>> fcmtest(
+		@PathVariable Long userId) {
+		pGRESCompleteEventPublisher.publishPictureGenerateCompleteEvent(userId);
+		return success(true);
+	}
 }

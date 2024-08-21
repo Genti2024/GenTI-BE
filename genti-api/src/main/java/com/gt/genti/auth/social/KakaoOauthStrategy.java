@@ -35,11 +35,11 @@ import com.gt.genti.openfeign.kakao.dto.response.KakaoTokenResponse;
 import com.gt.genti.openfeign.kakao.dto.response.KakaoUserResponse;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.User;
+import com.gt.genti.user.model.UserRole;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.user.service.UserSignUpEventPublisher;
 import com.gt.genti.util.RandomUtil;
 
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,56 +75,31 @@ public class KakaoOauthStrategy {
 		params.put("redirect_uri", kakaoRedirectUri);
 		params.put("response_type", "code");
 
-		String paramStr = params.entrySet().stream()
+		String paramStr = params.entrySet()
+			.stream()
 			.map(param -> param.getKey() + "=" + param.getValue())
 			.collect(Collectors.joining("&"));
 		return "https://kauth.kakao.com/oauth/authorize?" + paramStr;
 	}
 
 	public OauthJwtResponse webLogin(KakaoAuthorizationCodeDto request) {
-		KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
-			"authorization_code",
-			kakaoClientId,
-			kakaoClientSecret,
-			kakaoRedirectUri,
-			request.getAuthorizationCode()
-		);
-		return getUserInfo(tokenResponse);
+		KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken("authorization_code", kakaoClientId,
+			kakaoClientSecret, kakaoRedirectUri, request.getAuthorizationCode());
+		User user = getUserInfo(tokenResponse.accessToken());
+		return getOauthJwtResponse(user.getId(), user.getUserRole());
 	}
 
 	public OauthJwtResponse tokenLogin(final KakaoAccessTokenDto request) {
-		return getUserInfo(request);
-	}
-
-	private OauthJwtResponse getUserInfo(KakaoTokenResponse tokenResponse) {
-		KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
-			ACCESS_TOKEN_PREFIX + tokenResponse.accessToken());
-		User user = getOrCreateUser(userResponse);
-		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
-			.userId(user.getId().toString())
-			.role(user.getUserRole().getRoles())
-			.build();
-
-		return OauthJwtResponse.of(
-			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
-	}
-
-	private OauthJwtResponse getUserInfo(KakaoAccessTokenDto tokenResponse) {
-		KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
-			ACCESS_TOKEN_PREFIX + tokenResponse.getAccessToken());
-		User user = getOrCreateUser(userResponse);
-		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
-			.userId(user.getId().toString())
-			.role(user.getUserRole().getRoles())
-			.build();
-
+		User user = getUserInfo(request.getAccessToken());
 		fcmTokenRegisterService.registerFcmToken(
-			FcmTokenSaveOrUpdateRequestDto.of(tokenResponse.getFcmToken(), user.getId()));
+			FcmTokenSaveOrUpdateRequestDto.of(request.getFcmToken(), user.getId()));
+		return getOauthJwtResponse(user.getId(), user.getUserRole());
+	}
 
-		return OauthJwtResponse.of(
-			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
-			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
+	private User getUserInfo(String accessToken) {
+		KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(ACCESS_TOKEN_PREFIX + accessToken);
+		return getOrCreateUser(userResponse);
+
 	}
 
 	private User getOrCreateUser(KakaoUserResponse userResponse) {
@@ -148,11 +123,18 @@ public class KakaoOauthStrategy {
 		return user;
 	}
 
+	private OauthJwtResponse getOauthJwtResponse(Long userId, UserRole userRole) {
+		TokenGenerateCommand tokenGenerateCommand = TokenGenerateCommand.builder()
+			.userId(String.valueOf(userId))
+			.role(userRole.getRoles())
+			.build();
+
+		return OauthJwtResponse.of(jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
+			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), userRole.getStringValue());
+	}
+
 	public void unlink(String userSocialId) {
-		Long socialId;
-		try {
-			socialId = Long.parseLong(userSocialId);
-		} catch (NumberFormatException e) {
+		if (!isKakaoSocialId(userSocialId)) {
 			throw ExpectedException.withLogging(ResponseCode.KakaoSocialIdNotValid, userSocialId);
 		}
 		try {
@@ -170,11 +152,19 @@ public class KakaoOauthStrategy {
 			HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
 			ResponseEntity<KakaoUserUnlinkResponseDto> response = restTemplate.postForEntity(url, httpEntity,
 				KakaoUserUnlinkResponseDto.class);
-			socialId = response.getBody().getTarget_id();
-		} catch (FeignException.FeignClientException e) {
+		} catch (Exception e) {
 			log.info(e.getMessage(), e);
 			log.info(e.getMessage());
 			throw ExpectedException.withLogging(ResponseCode.UnHandledException, e.getMessage());
 		}
+	}
+
+	private static boolean isKakaoSocialId(String userSocialId) {
+		try {
+			Long.parseLong(userSocialId);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
 	}
 }

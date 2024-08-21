@@ -47,6 +47,7 @@ application-staging.yml
 application-staging.yaml
 
 docker/db/
+docker/redis/
 
 other/genti-sbl-iam_accessKeys.csv
 

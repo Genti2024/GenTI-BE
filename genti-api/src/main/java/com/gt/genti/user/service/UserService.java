@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -232,7 +233,7 @@ public class UserService {
 			.createdAt(foundUser.getCreatedAt())
 			.lastLoginDate(foundUser.getLastLoginDate())
 			.build();
-		return new PageImpl<>(List.of(responseDto));
+		return new PageImpl<>(List.of(responseDto), PageRequest.of(0, 1), 1);
 	}
 
 	public SignUpResponseDTO signUp(Long userId, SignUpRequestDTO signUpRequestDTO) {

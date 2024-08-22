@@ -2,28 +2,25 @@ package com.gt.genti.auth.controller;
 
 import static com.gt.genti.response.GentiResponse.*;
 
-import java.io.IOException;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.gt.genti.auth.api.AuthApi;
 import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
 import com.gt.genti.auth.dto.request.KakaoAccessTokenDto;
 import com.gt.genti.auth.dto.request.KakaoAuthorizationCodeDto;
 import com.gt.genti.auth.dto.request.TokenRefreshRequestDto;
+import com.gt.genti.auth.dto.response.AuthUriResponseDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.auth.service.AuthService;
-import com.gt.genti.constants.JWTConstants;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.jwt.TokenResponse;
@@ -31,12 +28,12 @@ import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
+import com.gt.genti.picturegenerateresponse.service.PGRESCompleteEventPublisher;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -49,25 +46,24 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/auth/v1")
 public class AuthController implements AuthApi {
 
-	@Value("${admin-page-baseurl}")
-	private String adminPageBaseUrl;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthService authService;
+	private final PGRESCompleteEventPublisher pGRESCompleteEventPublisher;
 
 	@GetMapping("/login/oauth2")
 	@Logging(item = LogItem.OAUTH_WEB, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
-	public RedirectView login(
+	public ResponseEntity<ApiResult<AuthUriResponseDto>> getAuthUri(
 		@Parameter(description = "호출할 Oauth platform 종류", example = "KAKAO", schema = @Schema(allowableValues = {
 			"KAKAO"}))
 		@RequestParam(name = "oauthPlatform") OauthPlatform oauthPlatform) {
-		return new RedirectView(authService.getOauthRedirect(oauthPlatform));
+		return success(AuthUriResponseDto.of(oauthPlatform.getStringValue(), authService.getOauthUri(oauthPlatform)));
 	}
 
 	@PostMapping("/login/oauth2/token/apple")
 	@Logging(item = LogItem.OAUTH_APPLE, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<OauthJwtResponse>> loginApple(
 		@RequestBody @Valid AppleAuthTokenDto request) {
-		return success(authService.appleLogin(request).token());
+		return success(authService.appleLogin(request));
 	}
 
 	@PostMapping("/login/oauth2/token/kakao")
@@ -78,37 +74,12 @@ public class AuthController implements AuthApi {
 		return success(authService.kakaoAppLogin(tokenDto));
 	}
 
-	@GetMapping("/login/oauth2/code/kakao")
+	@GetMapping("/login/oauth2/web/kakao")
 	@Logging(item = LogItem.OAUTH_KAKAO, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
-	public void kakaoRedirectLogin(
+	public ResponseEntity<ApiResult<OauthJwtResponse>> loginKakaoWeb(
 		HttpServletResponse response,
 		@RequestParam(name = "code") final String code) {
-		SocialWebLoginResponse socialWebLoginResponse = authService.kakaoWebLogin(KakaoAuthorizationCodeDto.of(code));
-		String accessToken = socialWebLoginResponse.getToken().accessToken();
-		String refreshToken = socialWebLoginResponse.getToken().refreshToken();
-
-		accessToken = accessToken.substring(JWTConstants.JWT_PREFIX.length());
-		refreshToken = refreshToken.substring(JWTConstants.JWT_PREFIX.length());
-
-		Cookie accessTokenCookie = new Cookie("Access-Token", accessToken);
-		accessTokenCookie.setHttpOnly(false);
-		accessTokenCookie.setSecure(false);
-		accessTokenCookie.setPath("/");
-		accessTokenCookie.setMaxAge(60);
-
-		Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshToken);
-		refreshTokenCookie.setHttpOnly(false);
-		refreshTokenCookie.setSecure(false);
-		refreshTokenCookie.setPath("/");
-		refreshTokenCookie.setMaxAge(60);
-
-		response.addCookie(accessTokenCookie);
-		response.addCookie(refreshTokenCookie);
-		try {
-			response.sendRedirect(adminPageBaseUrl + "/login/kakao/success");
-		} catch (IOException e) {
-			throw new RuntimeException("서버에서 redirect중 에러가 발생했습니다.");
-		}
+		return success(authService.kakaoWebLogin(KakaoAuthorizationCodeDto.of(code)));
 	}
 
 	@GetMapping("/login/testjwt")
@@ -134,4 +105,10 @@ public class AuthController implements AuthApi {
 		return success(authService.reissue(tokenRefreshRequestDto));
 	}
 
+	@PostMapping("/fcmtest/userId/{userId}")
+	public ResponseEntity<ApiResult<Boolean>> fcmtest(
+		@PathVariable Long userId) {
+		pGRESCompleteEventPublisher.publishPictureGenerateCompleteEvent(userId);
+		return success(true);
+	}
 }

@@ -12,4 +12,8 @@ public class KakaoAccessTokenDto {
 	@NotBlank
 	@Schema(description = "accessToken", example = "accessToken")
 	private String accessToken;
+
+	@NotBlank
+	@Schema(description = "fcm token", example = "FCM 서버로부터 받은 기기의 fcm token")
+	String fcmToken;
 }

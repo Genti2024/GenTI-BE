@@ -1,12 +1,7 @@
 package com.gt.genti.firebase.dto.request;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
-@Getter
-public class FcmTokenSaveOrUpdateRequestDto {
-
-  private final String token;
-  private final Long userId;
+public record FcmTokenSaveOrUpdateRequestDto(String token, Long userId) {
+	public static FcmTokenSaveOrUpdateRequestDto of(String token, Long userId) {
+		return new FcmTokenSaveOrUpdateRequestDto(token, userId);
+	}
 }

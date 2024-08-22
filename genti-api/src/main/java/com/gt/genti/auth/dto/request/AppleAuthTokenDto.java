@@ -18,4 +18,8 @@ public class AppleAuthTokenDto {
 	@NotBlank
 	@Schema(description = "id_token", example = "id_token")
 	String identityToken;
+
+	@NotBlank
+	@Schema(description = "fcm token", example = "FCM 서버로부터 받은 기기의 fcm token")
+	String fcmToken;
 }

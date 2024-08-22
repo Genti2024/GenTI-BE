@@ -65,19 +65,6 @@ public class UserController implements UserApi {
 		return GentiResponse.success(userService.updateUserInfo(userId, userInfoUpdateRequestDto));
 	}
 
-	@Operation(summary = "애플 토큰 전달 from Youth", description = "애플회원탈퇴 개발용")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
-	})
-	@PostMapping("/apple/sendtoken")
-	public ResponseEntity<ApiResult<Boolean>> sendAppleToken(
-		@RequestBody AppleAuthorizationCodeDto appleAuthorizationCodeDto,
-		@AuthUser Long userId
-	){
-		log.error(appleAuthorizationCodeDto.getAuthorizationCode());
-		return success(true);
-	}
-
 	@PostMapping("/signup")
 	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SignUpResponseDTO>> signUp(

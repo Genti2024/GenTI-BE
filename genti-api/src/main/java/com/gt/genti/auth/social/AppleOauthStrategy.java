@@ -26,9 +26,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.gt.genti.auth.dto.request.AppleAuthTokenDto;
 import com.gt.genti.auth.dto.response.OauthJwtResponse;
-import com.gt.genti.auth.dto.response.SocialWebLoginResponse;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.firebase.dto.request.FcmTokenSaveOrUpdateRequestDto;
+import com.gt.genti.firebase.service.FcmTokenRegisterService;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.jwt.TokenGenerateCommand;
 import com.gt.genti.openfeign.apple.client.AppleApiClient;
@@ -67,6 +68,7 @@ public class AppleOauthStrategy {
 	private final PublicKeyGenerator publicKeyGenerator;
 	private final PrivateKeyGenerator privateKeyGenerator;
 	private final AppleClaimsValidator appleClaimsValidator;
+	private final FcmTokenRegisterService fcmTokenRegisterService;
 
 	@Value("${apple.client-id}")
 	private String appleClientId;
@@ -78,7 +80,7 @@ public class AppleOauthStrategy {
 	private String appleTeamId;
 
 	@Transactional
-	public SocialWebLoginResponse login(AppleAuthTokenDto request) {
+	public OauthJwtResponse login(AppleAuthTokenDto request) {
 		AppleUserResponse userResponse = getApplePlatformMember(request.getIdentityToken());
 		AppleTokenRequest appleTokenRequest = AppleTokenRequest.of(request.getAuthorizationCode(), appleClientId,
 			createClientSecret(), "authorization_code");
@@ -86,7 +88,6 @@ public class AppleOauthStrategy {
 
 		Optional<User> findUser = userRepository.findUserBySocialId(userResponse.getPlatformId());
 		User user;
-		boolean isNewUser = false;
 		if (isNewUser(findUser)) {
 			User newUser = userRepository.save(User.builderWithSignIn()
 				.socialId(userResponse.getPlatformId())
@@ -97,7 +98,6 @@ public class AppleOauthStrategy {
 				.build());
 			newUser.setAppleRefreshToken(appleTokenResponse.getRefresh_token());
 			user = newUser;
-			isNewUser = true;
 			userSignUpEventPublisher.publishSignUpEvent(newUser);
 		} else {
 			user = findUser.get();
@@ -112,11 +112,12 @@ public class AppleOauthStrategy {
 			.role(user.getUserRole().getRoles())
 			.build();
 
-		OauthJwtResponse oauthJwtResponse = OauthJwtResponse.of(
+		fcmTokenRegisterService.registerFcmToken(
+			FcmTokenSaveOrUpdateRequestDto.of(request.getFcmToken(), user.getId()));
+
+		return OauthJwtResponse.of(
 			jwtTokenProvider.generateAccessToken(tokenGenerateCommand),
 			jwtTokenProvider.generateRefreshToken(tokenGenerateCommand), user.getUserRole().getStringValue());
-		return SocialWebLoginResponse.of(user.getId(), user.getUsername(), user.getEmail(), isNewUser,
-			oauthJwtResponse);
 	}
 
 	private AppleUserResponse getApplePlatformMember(String identityToken) {

@@ -92,7 +92,8 @@ public class FirebaseCloudMessageClient {
 
 			return googleCredentials.getAccessToken().getTokenValue();
 		} catch (IOException e) {
-			throw ExpectedException.withLogging(ResponseCode.FCM_GOOGLE_REQUEST_TOKEN_ERROR);
+			log.error(e.getLocalizedMessage(), e);
+			throw new RuntimeException(e);
 		}
 	}
 }

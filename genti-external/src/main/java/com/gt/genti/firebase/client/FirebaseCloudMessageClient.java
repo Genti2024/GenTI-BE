@@ -63,7 +63,7 @@ public class FirebaseCloudMessageClient {
 	) {
 		final FcmToken fcmToken = fcmTokenRepository.findByUserId(receiverId)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.FCM_TOKEN_NOT_FOUND, receiverId));
-
+		log.info("receiverId : {} 에게 전달할 수 있는 FCMToken 식별 완료", receiverId);
 		final Notification testNotification = new Notification("title", "body");
 		final String message = messageGenerator.makeMessage(
 			fcmToken.getToken(), testNotification
@@ -77,6 +77,7 @@ public class FirebaseCloudMessageClient {
 			.header("Authorization", PREFIX_ACCESS_TOKEN + getAccessToken())
 			.body(message)
 			.retrieve();
+		log.info("푸시알림 전송 완료");
 		// .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
 		// 	throw new RuntimeException(res);
 		// }).onStatus()
@@ -92,6 +93,7 @@ public class FirebaseCloudMessageClient {
 
 			return googleCredentials.getAccessToken().getTokenValue();
 		} catch (IOException e) {
+			log.info("Firebase key로 AccessToken 요청 오류");
 			log.error(e.getLocalizedMessage(), e);
 			throw new RuntimeException(e);
 		}

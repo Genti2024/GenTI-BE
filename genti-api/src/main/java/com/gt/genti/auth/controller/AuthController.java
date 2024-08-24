@@ -28,6 +28,7 @@ import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
+import com.gt.genti.picturegeneraterequest.service.PictureGenerateFailedEventPublisher;
 import com.gt.genti.picturegenerateresponse.service.PGRESCompleteEventPublisher;
 import com.gt.genti.user.model.OauthPlatform;
 import com.gt.genti.user.model.UserRole;
@@ -49,6 +50,7 @@ public class AuthController implements AuthApi {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthService authService;
 	private final PGRESCompleteEventPublisher pGRESCompleteEventPublisher;
+	private final PictureGenerateFailedEventPublisher pictureGenerateFailedEventPublisher;
 
 	@GetMapping("/login/oauth2")
 	@Logging(item = LogItem.OAUTH_WEB, action = LogAction.LOGIN, requester = LogRequester.ANONYMOUS)
@@ -107,8 +109,14 @@ public class AuthController implements AuthApi {
 
 	@PostMapping("/fcmtest/userId/{userId}")
 	public ResponseEntity<ApiResult<Boolean>> fcmtest(
+		@RequestParam(name = "success") String success,
 		@PathVariable Long userId) {
-		pGRESCompleteEventPublisher.publishPictureGenerateCompleteEvent(userId);
+
+		if ("success".equals(success)) {
+			pGRESCompleteEventPublisher.publishPictureGenerateCompleteEvent(userId);
+		} else {
+			pictureGenerateFailedEventPublisher.publishPictureGenerateFailedEvent(userId);
+		}
 		return success(true);
 	}
 }

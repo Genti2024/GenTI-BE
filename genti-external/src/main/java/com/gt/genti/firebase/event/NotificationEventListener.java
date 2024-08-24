@@ -20,7 +20,7 @@ public class NotificationEventListener {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@TransactionalEventListener
 	public void createNotification(final NotificationEvent notificationEvent) {
-		firebaseCloudMessageClient.sendMessageTo(
+		firebaseCloudMessageClient.sendMessage(
 			notificationEvent
 		);
 	}

@@ -21,7 +21,6 @@ import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.fcm.model.FcmToken;
 import com.gt.genti.fcm.repository.FcmTokenRepository;
-import com.gt.genti.firebase.common.Notification;
 import com.gt.genti.firebase.common.NotificationType;
 import com.gt.genti.firebase.event.NotificationEvent;
 import com.gt.genti.firebase.generator.NotificationMessageGenerator;
@@ -71,18 +70,19 @@ public class FirebaseCloudMessageClient {
 	@Value("${firebase.universe_domain}")
 	private String universeDomain;
 
-	public void sendMessageTo(final NotificationEvent notificationEvent) {
-		sendMessageTo(notificationEvent.getReceiverId(),
+	public void sendMessage(final NotificationEvent notificationEvent) {
+		sendMessage(notificationEvent,
 			GENERATOR_MAP.get(notificationEvent.getNotificationType()).apply(notificationEvent));
 	}
 
-	private void sendMessageTo(final Long receiverId, final NotificationMessageGenerator messageGenerator) {
+	private void sendMessage(final NotificationEvent notificationEvent,
+		final NotificationMessageGenerator messageGenerator) {
+		Long receiverId = notificationEvent.getReceiverId();
 		final FcmToken fcmToken = fcmTokenRepository.findByUserId(receiverId)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.FCM_TOKEN_NOT_FOUND, receiverId));
 		log.info("receiverId : {} 에게 전달할 수 있는 FCMToken 식별 완료", receiverId);
-		final Notification testNotification = new Notification("title", "body");
-		final String message = messageGenerator.makeMessage(fcmToken.getToken(), testNotification);
 
+		final String message = messageGenerator.makeMessage(fcmToken.getToken());
 		final String fcmRequestUrl = PREFIX_FCM_REQUEST_URL + projectId + POSTFIX_FCM_REQUEST_URL;
 
 		restClient.post()

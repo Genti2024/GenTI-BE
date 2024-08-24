@@ -6,7 +6,6 @@ import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.firebase.event.NotificationEvent;
 import com.gt.genti.firebase.message.PictureGenerateCompleteMessage;
-import com.gt.genti.firebase.common.Notification;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,15 +15,10 @@ public class PictureGenerationCompletedMessageGenerator implements NotificationM
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public String makeMessage(
-		final String targetDeviceIdToken,
-		final Notification notification
-	) {
+	public String makeMessage(final String targetDeviceIdToken) {
 
 		final PictureGenerateCompleteMessage pictureGenerateCompleteMessage = new PictureGenerateCompleteMessage(
-			new PictureGenerateCompleteMessage.Message(notification, targetDeviceIdToken,
-				PictureGenerateCompleteMessage.Data.from(event))
-		);
+			PictureGenerateCompleteMessage.Message.from(event, targetDeviceIdToken));
 
 		try {
 			return objectMapper.writeValueAsString(pictureGenerateCompleteMessage);

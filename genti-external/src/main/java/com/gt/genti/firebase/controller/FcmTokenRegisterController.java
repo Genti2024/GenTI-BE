@@ -13,10 +13,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FcmTokenRegisterController {
 
-	private final FcmTokenRegisterService fcmTokenRegisterService;
 
 	@PostMapping("/notifications/token")
 	public void createFcmToken(@RequestBody final FcmTokenSaveOrUpdateRequestDto fcmTokenSaveOrUpdateRequestDto) {
-		fcmTokenRegisterService.registerFcmToken(fcmTokenSaveOrUpdateRequestDto);
+
 	}
 }

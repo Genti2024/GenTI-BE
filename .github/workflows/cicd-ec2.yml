@@ -70,8 +70,16 @@ jobs:
           cd ./genti-external/src/main
           mkdir -p ./resources && cd ./resources
           touch ./AuthKey_ZRZMQQX883.p8
-          echo "${{ secrets.APPLE_PRIVATE_KEY }}" > AuthKey_ZRZMQQX883.p8
+          echo "${{ secrets.APPLE_PRIVATE_KEY }}" > ./AuthKey_ZRZMQQX883.p8
         shell: bash
+
+      #      - name: make fcm private key
+      #        run: |
+      #          cd ./genti-external/src/main
+      #          mkdir -p ./resources && cd ./resources
+      #          touch ./firebase-genti.json
+      #          echo "${{ secrets.FIREBASE_PRIVATE_KEY }}" > ./firebase-genti.json
+      #        shell: bash
 
       - name: make staging docker-compose file
         if: contains(github.ref, 'staging')
@@ -139,7 +147,7 @@ jobs:
         run: |
           docker build -f ./Dockerfile_deploy -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          
+
 
       - name: Upload docker-compose, appspec, afterInstall file to S3
         if: contains(github.ref, 'main')
@@ -149,15 +157,15 @@ jobs:
           cp -r ./scripts/* temp_dir/scripts/
           cp appspec.yml temp_dir/
           cp ./docker/deploy/docker-compose.yml temp_dir/docker-compose.yml
-      
+          
           # Navigate to the temporary directory and create the zip file
           cd temp_dir
           zip -r ../$GITHUB_SHA.zip ./*
-      
+          
           # Move back to the initial directory and upload the zip file to S3
           cd ..
           aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME
-      
+          
           # Clean up the temporary directory
           rm -rf temp_dir
 

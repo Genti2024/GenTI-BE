@@ -49,13 +49,14 @@ public class PGREQAdminMatchedDetailFindByAdminResponseDto {
 
 	@Builder
 	public PGREQAdminMatchedDetailFindByAdminResponseDto(Long pictureGenerateRequestId, String requesterEmail,
-		Sex sex, String prompt, String promptAdvanced, List<CommonPictureResponseDto> facePictureList,
+		Sex sex, String prompt, PictureRatio pictureRatio, String promptAdvanced, List<CommonPictureResponseDto> facePictureList,
 		CommonPictureResponseDto posePicture, CameraAngle cameraAngle, ShotCoverage shotCoverage,
 		LocalDateTime createdAt, List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList) {
 		this.pictureGenerateRequestId = pictureGenerateRequestId;
 		this.requesterEmail = requesterEmail;
 		this.sex = sex;
 		this.prompt = prompt;
+		this.pictureRatio = pictureRatio;
 		this.promptAdvanced = promptAdvanced;
 		this.facePictureList = facePictureList;
 		this.posePicture = posePicture;

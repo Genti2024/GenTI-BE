@@ -319,6 +319,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.facePictureList(pgreq.getUserFacePictureList().stream().map(CommonPictureResponseDto::of).toList())
 			.requesterEmail(pgreq.getRequester().getEmail())
 			.prompt(pgreq.getPrompt())
+			.pictureRatio(pgreq.getPictureRatio())
 			.promptAdvanced(pgreq.getPromptAdvanced())
 			.createdAt(pgreq.getCreatedAt())
 			.responseList(responseList)

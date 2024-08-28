@@ -3,6 +3,7 @@ package com.gt.genti.picturegeneraterequest.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.gt.genti.picture.PictureRatio;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picturegeneraterequest.model.CameraAngle;
 import com.gt.genti.picturegeneraterequest.model.ShotCoverage;
@@ -30,6 +31,8 @@ public class PGREQCreatorSubmittedDetailFindByAdminResponseDto {
 	Sex sex;
 	@Schema(description = "주문 내용", example = "대통령처럼 많은 군중들 앞에서 양 팔을 들고 연설하고 있는 모습")
 	String prompt;
+	@Schema(description = "요청 사진 비율")
+	PictureRatio pictureRatio;
 	@Schema(description = "추천 프롬프트", example = "Standing before a large crowd like a president, addressing them with both arms raised in a speech, (presidential demeanor:1.3), (addressing crowd:1.4), (arms raised:1.3), (public speaking:1.3), (commanding presence:1.3), (crowd engagement:1.2), (authoritative stance:1.3), (political speech:1.2), (captivating audience:1.3), (leader-like charisma:1.2)")
 	String promptAdvanced;
 	@Schema(description = "구도 참고 사진", nullable = true)

@@ -1,16 +1,16 @@
-package com.gt.genti.withdraw.dto.response;
+package com.gt.genti.cashout.dto.response;
 
-import com.gt.genti.withdrawrequest.model.WithdrawRequestStatus;
+import com.gt.genti.withdrawrequest.model.CashoutStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(name = "[Withdraw][Creator] 출금요청 조회 by 공급자 응답 dto")
+@Schema(name = "[Cashout][Creator] 출금요청 조회 by 공급자 응답 dto")
 @Getter
 @NoArgsConstructor
-public class WithdrawFindByCreatorResponseDto {
+public class CashoutFindByCreatorResponseDto {
 	@Schema(description = "출금요청 DB Id", example = "1")
 	Long withdrawRequestId;
 	@Schema(description = "출금 신청액", example = "15000")
@@ -18,14 +18,14 @@ public class WithdrawFindByCreatorResponseDto {
 	@Schema(description = "출금된 작업 개수", example = "3")
 	int taskCount;
 	@Schema(description = "출금요청 상태")
-	WithdrawRequestStatus withdrawRequestStatus;
+	CashoutStatus cashoutStatus;
 
 	@Builder
-	public WithdrawFindByCreatorResponseDto(Long withdrawRequestId, Long amount, int taskCount,
-		WithdrawRequestStatus withdrawRequestStatus) {
+	public CashoutFindByCreatorResponseDto(Long withdrawRequestId, Long amount, int taskCount,
+		CashoutStatus cashoutStatus) {
 		this.withdrawRequestId = withdrawRequestId;
 		this.amount = amount;
 		this.taskCount = taskCount;
-		this.withdrawRequestStatus = withdrawRequestStatus;
+		this.cashoutStatus = cashoutStatus;
 	}
 }

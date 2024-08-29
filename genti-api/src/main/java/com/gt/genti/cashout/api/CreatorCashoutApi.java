@@ -1,16 +1,16 @@
-package com.gt.genti.withdraw.api;
+package com.gt.genti.cashout.api;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.gt.genti.cashout.dto.response.CashoutFindByCreatorResponseDto;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.AuthorizedCreator;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
-import com.gt.genti.withdraw.dto.response.WithdrawFindByCreatorResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,8 +20,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 @AuthorizedCreator
-@Tag(name = "[CreatorWithdrawController] 공급자 출금요청 컨트롤러", description = "공급자가 출금요청을 수행합니다.")
-public interface CreatorWithdrawApi {
+@Tag(name = "[CreatorCashoutController] 공급자 출금요청 컨트롤러", description = "공급자가 출금요청을 수행합니다.")
+public interface CreatorCashoutApi {
 
 	@Operation(summary = "출금요청", description = "공급자가 작업한 정산결과를 바탕으로 출금요청을 생성합니다.")
 	@EnumResponses(value = {
@@ -29,7 +29,7 @@ public interface CreatorWithdrawApi {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.CannotCreateWithdrawalDueToSettlementsNotAvailable)
 	})
-	ResponseEntity<ApiResult<WithdrawFindByCreatorResponseDto>> createWithdrawRequest(
+	ResponseEntity<ApiResult<CashoutFindByCreatorResponseDto>> createCashout(
 		@AuthUser Long userId
 	);
 
@@ -37,7 +37,7 @@ public interface CreatorWithdrawApi {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)
 	})
-	ResponseEntity<ApiResult<Page<WithdrawFindByCreatorResponseDto>>> getWithdrawRequest(
+	ResponseEntity<ApiResult<Page<CashoutFindByCreatorResponseDto>>> getCashout(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,

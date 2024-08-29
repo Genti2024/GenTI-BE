@@ -1,4 +1,4 @@
-package com.gt.genti.withdraw.service;
+package com.gt.genti.cashout.service;
 
 import java.util.List;
 
@@ -7,6 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gt.genti.cashout.dto.response.CashoutCompletionResponseDto;
+import com.gt.genti.cashout.dto.response.CashoutFindByAdminResponseDto;
+import com.gt.genti.cashout.dto.response.CashoutFindByCreatorResponseDto;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.deposit.model.Deposit;
@@ -17,11 +20,8 @@ import com.gt.genti.settlement.model.Settlement;
 import com.gt.genti.settlement.repository.SettlementRepository;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
-import com.gt.genti.withdraw.dto.response.WithdrawCompletionResponseDto;
-import com.gt.genti.withdraw.dto.response.WithdrawFindByAdminResponseDto;
-import com.gt.genti.withdraw.dto.response.WithdrawFindByCreatorResponseDto;
+import com.gt.genti.withdrawrequest.model.CashoutStatus;
 import com.gt.genti.withdrawrequest.model.WithdrawRequest;
-import com.gt.genti.withdrawrequest.model.WithdrawRequestStatus;
 import com.gt.genti.withdrawrequest.repository.WithdrawRequestRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,14 +29,14 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class WithdrawService {
+public class CashoutService {
 	private final SettlementRepository settlementRepository;
 	private final WithdrawRequestRepository withdrawRequestRepository;
 	private final CreatorRepository creatorRepository;
 	private final UserRepository userRepository;
 	private final DepositRepository depositRepository;
 
-	public WithdrawFindByCreatorResponseDto create(Long user) {
+	public CashoutFindByCreatorResponseDto create(Long user) {
 		Creator foundCreator = findCreatorByUserId(user);
 		List<Settlement> foundSettlementList = settlementRepository.findAllWithdrawableByCreatorOrderByCreatedAtDesc(
 			foundCreator);
@@ -55,9 +55,9 @@ public class WithdrawService {
 		return mapToFindByCreatorResponseDto(savedWithdrawRequest);
 	}
 
-	private static WithdrawFindByCreatorResponseDto mapToFindByCreatorResponseDto(
+	private static CashoutFindByCreatorResponseDto mapToFindByCreatorResponseDto(
 		WithdrawRequest savedWithdrawRequest) {
-		return WithdrawFindByCreatorResponseDto.builder()
+		return CashoutFindByCreatorResponseDto.builder()
 			.withdrawRequestId(savedWithdrawRequest.getId())
 			.amount(savedWithdrawRequest.getAmount())
 			.taskCount(savedWithdrawRequest.getTaskCount())
@@ -70,35 +70,38 @@ public class WithdrawService {
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
 	}
 
-	public Page<WithdrawFindByCreatorResponseDto> findWithdrawList(Long userId, Pageable pageable) {
+	public Page<CashoutFindByCreatorResponseDto> findWithdrawList(Long userId, Pageable pageable) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		return withdrawRequestRepository.findAllByCreator(foundCreator, pageable)
-			.map(WithdrawService::mapToFindByCreatorResponseDto);
+			.map(CashoutService::mapToFindByCreatorResponseDto);
 	}
 
-	public Page<WithdrawFindByAdminResponseDto> getAllWithdrawRequests(Pageable pageable,
+	public Page<CashoutFindByAdminResponseDto> getAllWithdrawRequests(Pageable pageable,
 		String statusString) {
 		if (statusString.equals("ALL")) {
 			return withdrawRequestRepository.findAll(pageable).map(
-				WithdrawFindByAdminResponseDto::of);
+				CashoutFindByAdminResponseDto::of);
 		} else {
-			return withdrawRequestRepository.findAllByStatus(pageable, WithdrawRequestStatus.valueOf(statusString))
-				.map(WithdrawFindByAdminResponseDto::of);
+			return withdrawRequestRepository.findAllByStatus(pageable, CashoutStatus.valueOf(statusString))
+				.map(CashoutFindByAdminResponseDto::of);
 		}
 	}
 
-	public Page<WithdrawFindByAdminResponseDto> getWithdrawListByCreatorEmail(String email, Pageable pageable, String statusString) {
-		User foundUser = userRepository.findByEmail(email).orElseThrow(()->ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+	public Page<CashoutFindByAdminResponseDto> getCashoutByCreatorEmail(String email, Pageable pageable,
+		String statusString) {
+		User foundUser = userRepository.findByEmail(email)
+			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
 		if (statusString.equals("ALL")) {
 			return withdrawRequestRepository.findAllByCreatedBy(foundUser, pageable).map(
-					WithdrawFindByAdminResponseDto::of);
+				CashoutFindByAdminResponseDto::of);
 		} else {
-			return withdrawRequestRepository.findAllByCreatedByAndStatus(foundUser, pageable, WithdrawRequestStatus.valueOf(statusString))
-					.map(WithdrawFindByAdminResponseDto::of);
+			return withdrawRequestRepository.findAllByCreatedByAndStatus(foundUser, pageable,
+					CashoutStatus.valueOf(statusString))
+				.map(CashoutFindByAdminResponseDto::of);
 		}
 	}
 
-	public WithdrawCompletionResponseDto complete(Long withdrawRequestId, Long userId) {
+	public CashoutCompletionResponseDto complete(Long withdrawRequestId, Long userId) {
 		WithdrawRequest foundWR = findWithdrawRequest(withdrawRequestId);
 		User foundAdminUser = userRepository.findById(userId)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFound, userId));
@@ -107,7 +110,7 @@ public class WithdrawService {
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.DepositNotFound));
 
 		foundDeposit.completeWithdraw(foundWR.getAmount());
-		return WithdrawCompletionResponseDto.builder()
+		return CashoutCompletionResponseDto.builder()
 			.withdrawRequestId(foundWR.getId())
 			.modifiedBy(foundWR.getModifiedBy().getUsername())
 			.status(foundWR.getStatus())

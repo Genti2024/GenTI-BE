@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum WithdrawRequestStatus implements ConvertableEnum {
+public enum CashoutStatus implements ConvertableEnum {
 	AVAILABLE("AVAILABLE", "출금 가능"),
 	IN_PROGRESS("IN_PROGRESS", "출금 진행중"),
 	COMPLETED("COMPLETED", "출금 완료"),
@@ -19,8 +19,8 @@ public enum WithdrawRequestStatus implements ConvertableEnum {
 	private final String response;
 
 	@JsonCreator
-	public static WithdrawRequestStatus fromString(String value) {
-		return EnumUtil.stringToEnum(WithdrawRequestStatus.class, value);
+	public static CashoutStatus fromString(String value) {
+		return EnumUtil.stringToEnum(CashoutStatus.class, value);
 	}
 
 	@Override

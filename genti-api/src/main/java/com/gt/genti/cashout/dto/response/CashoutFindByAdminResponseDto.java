@@ -1,6 +1,6 @@
-package com.gt.genti.withdraw.dto.response;
+package com.gt.genti.cashout.dto.response;
 
-import com.gt.genti.withdrawrequest.model.WithdrawRequestStatus;
+import com.gt.genti.withdrawrequest.model.CashoutStatus;
 import com.gt.genti.withdrawrequest.model.WithdrawRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,10 +8,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(name = "[Withdraw][Admin] 출금요청 조회 by 어드민 응답 dto")
+@Schema(name = "[Cashout][Admin] 출금요청 조회 by 어드민 응답 dto")
 @Getter
 @NoArgsConstructor
-public class WithdrawFindByAdminResponseDto {
+public class CashoutFindByAdminResponseDto {
 	@Schema(description = "출금요청 DB Id", example = "1")
 	Long withdrawRequestId;
 	@Schema(description = "출금요청한 유저의 이메일", example = "example@gmail.com")
@@ -21,10 +21,10 @@ public class WithdrawFindByAdminResponseDto {
 	@Schema(description = "출금 요청에 포함된 작업 수", example = "3")
 	int taskCount;
 	@Schema(description = "출금 요청 상태", example = "출금 완료")
-	WithdrawRequestStatus status;
+	CashoutStatus status;
 
-	public static WithdrawFindByAdminResponseDto of(WithdrawRequest withdrawRequest) {
-		return WithdrawFindByAdminResponseDto.builder()
+	public static CashoutFindByAdminResponseDto of(WithdrawRequest withdrawRequest) {
+		return CashoutFindByAdminResponseDto.builder()
 			.withdrawRequestId(withdrawRequest.getId())
 			.requesterEmail(withdrawRequest.getCreator().getUser().getEmail())
 			.amount(withdrawRequest.getAmount())
@@ -34,8 +34,8 @@ public class WithdrawFindByAdminResponseDto {
 	}
 
 	@Builder
-	public WithdrawFindByAdminResponseDto(Long withdrawRequestId, String requesterEmail, long amount, int taskCount,
-		WithdrawRequestStatus status) {
+	public CashoutFindByAdminResponseDto(Long withdrawRequestId, String requesterEmail, long amount, int taskCount,
+		CashoutStatus status) {
 		this.withdrawRequestId = withdrawRequestId;
 		this.requesterEmail = requesterEmail;
 		this.amount = amount;

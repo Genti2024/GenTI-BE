@@ -64,7 +64,7 @@ public interface AuthApi {
 	})
 	ResponseEntity<ApiResult<OauthJwtResponse>> loginKakaoWeb(
 		HttpServletResponse response,
-		@Parameter(name = "code", description = "kakao 로그인페이지 로그인 성공 후 url에서 추출한 code값") 
+		@Parameter(name = "code", description = "kakao 로그인페이지 로그인 성공 후 url에서 추출한 code값")
 		@RequestParam(name = "code") String code);
 
 	@Operation(summary = "테스트용 jwt 토큰 발급", description = "")

@@ -1,14 +1,14 @@
 package com.gt.genti.common.converter;
 
-import com.gt.genti.withdrawrequest.model.WithdrawRequestStatus;
+import com.gt.genti.withdrawrequest.model.CashoutStatus;
 
 import jakarta.persistence.Converter;
 
 @Converter
-public class WithdrawRequestStatusConverter extends DefaultEnumDBConverter<WithdrawRequestStatus> {
+public class WithdrawRequestStatusConverter extends DefaultEnumDBConverter<CashoutStatus> {
 
 	public WithdrawRequestStatusConverter() {
-		super(WithdrawRequestStatus.class);
+		super(CashoutStatus.class);
 	}
 
 }

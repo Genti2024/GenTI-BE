@@ -61,7 +61,7 @@ public class CashoutService {
 			.withdrawRequestId(savedWithdrawRequest.getId())
 			.amount(savedWithdrawRequest.getAmount())
 			.taskCount(savedWithdrawRequest.getTaskCount())
-			.withdrawRequestStatus(savedWithdrawRequest.getStatus())
+			.cashoutStatus(savedWithdrawRequest.getStatus())
 			.build();
 	}
 

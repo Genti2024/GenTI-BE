@@ -29,6 +29,7 @@ import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByUserResp
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQCreatorSubmittedDetailFindByAdminResponseDto;
 import com.gt.genti.picturegeneraterequest.dto.response.PGREQStatusResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
+import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegeneraterequest.port.PictureGenerateRequestPort;
 import com.gt.genti.picturegeneraterequest.service.mapper.PGREQStatusToPGREQStatusForUserMapper;
 import com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser;
@@ -179,6 +180,12 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	@Override
 	public PictureGenerateRequest createPGREQ(Long userId, PGREQSaveCommand pgreqSaveCommand) {
 		User foundUser = findUserById(userId);
+		Optional<PictureGenerateRequest> optionalPGREQ = pictureGenerateRequestPort.findTopByRequesterOrderByCreatedAtDesc(foundUser);
+
+		if (optionalPGREQ.isPresent() && optionalPGREQ.get().getPictureGenerateRequestStatus() == PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION){
+			throw ExpectedException.withLogging(ResponseCode.OnlyRequesterCanViewPictureGenerateRequest);
+		}
+
 		String posePictureKey = "";
 		PicturePose foundPicturePose = null;
 		if (!Objects.isNull(pgreqSaveCommand.getPosePictureKey())) {

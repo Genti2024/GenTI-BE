@@ -38,6 +38,12 @@ server:
   domain: localhost
   port: 8080
 
+management:
+  endpoints:
+    web:
+      base-path: /foflakfm
+
+
 google:
   client-id: "client-id"
   redirect-url: "redirect-url"
@@ -52,3 +58,8 @@ kakao:
 apple:
   client-id: "client-id"
   nonce: "nonce"
+
+
+discord:
+  webhook-url:
+    error: /1275042855135608833/YDMWPdcQbtN7DHx2rkDGOKuhb6jO-a5scUajn5NT3ND0QdsfhNnj6F3NBycpdWMbF6KG

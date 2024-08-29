@@ -13,7 +13,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@Profile({"staging", "local"})
+@Profile({"staging", "local", "test"})
 @Configuration
 @EnableRedisRepositories
 public class RedisConfigStagingAndLocalProfile {

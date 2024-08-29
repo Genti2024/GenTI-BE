@@ -118,7 +118,7 @@ public enum ResponseCode {
 	PictureGenerateRequestAlreadyProcessed(ErrorConstants.PictureGenerateRequestAlreadyProcessed,
 			BAD_REQUEST,
 			false,
-			"이미 처리된 사진 생성 요청입니다."),
+			"사진생성요청이 이미 처리중입니다."),
 	/**
 	 * User
 	 */

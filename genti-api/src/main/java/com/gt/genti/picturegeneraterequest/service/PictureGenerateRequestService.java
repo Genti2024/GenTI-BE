@@ -358,6 +358,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 						res.getCompletedPictureList().stream().map(CommonPictureResponseDto::of).toList())
 					.responseStatus(pgresStatusToPGRESStatusForAdminMapper.dbToClient(res.getStatus()))
 					.submittedByCreatorAt(res.getSubmittedByCreatorAt())
+					.adminInCharge(res.getAdminInCharge())
 					.build())
 				.toList();
 			return buildCreatorSubmittedPGREQDetail(pgreq, responseList);
@@ -377,6 +378,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 						res.getCompletedPictureList().stream().map(CommonPictureResponseDto::of).toList())
 					.responseStatus(pgresStatusToPGRESStatusForAdminMapper.dbToClient(res.getStatus()))
 					.submittedByCreatorAt(res.getSubmittedByCreatorAt())
+					.adminInCharge(res.getAdminInCharge())
 					.build());
 			return buildCreatorSubmittedPGREQDetail(pgreq, responseList);
 		};

@@ -27,17 +27,21 @@ public class PGRESCreatorSubmittedDetailFindByAdminResponseDto {
 	PictureGenerateResponseStatusForAdmin responseStatus;
 	@Schema(description = "공급자->어드민 제출일시")
 	LocalDateTime submittedByCreatorAt;
+	@Schema(description = "담당자 이름", example = "우기")
+	String adminInCharge;
 
 	@Builder
 	public PGRESCreatorSubmittedDetailFindByAdminResponseDto(Long pictureGenerateResponseId, String memo,
 		String creatorEmail, List<CommonPictureResponseDto> pictureCreatedByCreator,
 		List<CommonPictureResponseDto> pictureCompletedList,
-		PictureGenerateResponseStatusForAdmin responseStatus, LocalDateTime submittedByCreatorAt) {
+		PictureGenerateResponseStatusForAdmin responseStatus, LocalDateTime submittedByCreatorAt,
+		String adminInCharge) {
 		this.pictureGenerateResponseId = pictureGenerateResponseId;
 		this.creatorEmail = creatorEmail;
 		this.pictureCreatedByCreator = pictureCreatedByCreator;
 		this.pictureCompletedList = pictureCompletedList;
 		this.responseStatus = responseStatus;
 		this.submittedByCreatorAt = submittedByCreatorAt;
+		this.adminInCharge = adminInCharge;
 	}
 }

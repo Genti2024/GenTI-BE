@@ -1,4 +1,4 @@
-package com.gt.genti.withdrawrequest.model;
+package com.gt.genti.cashout.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gt.genti.common.ConvertableEnum;

@@ -1,7 +1,7 @@
-package com.gt.genti.withdrawrequest.model;
+package com.gt.genti.cashout.model;
 
 import com.gt.genti.common.baseentity.model.BaseEntity;
-import com.gt.genti.common.converter.WithdrawRequestStatusConverter;
+import com.gt.genti.common.converter.CashoutStatusConverter;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.user.model.User;
 
@@ -19,11 +19,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "withdraw_request")
+@Table(name = "cashout")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WithdrawRequest extends BaseEntity {
+public class Cashout extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
@@ -38,7 +38,7 @@ public class WithdrawRequest extends BaseEntity {
 	@Column(name = "task_count", nullable = false)
 	Integer taskCount;
 
-	@Convert(converter = WithdrawRequestStatusConverter.class)
+	@Convert(converter = CashoutStatusConverter.class)
 	@Column(name = "status", nullable = false)
 	CashoutStatus status;
 
@@ -55,7 +55,7 @@ public class WithdrawRequest extends BaseEntity {
 		}
 	}
 
-	public WithdrawRequest(Creator creator) {
+	public Cashout(Creator creator) {
 		this.creator = creator;
 		this.status = CashoutStatus.IN_PROGRESS;
 	}

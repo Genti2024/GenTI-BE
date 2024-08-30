@@ -17,7 +17,7 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.settlement.api.SettlementApi;
 import com.gt.genti.settlement.service.SettlementService;
-import com.gt.genti.settlementandwithdraw.dto.response.SettlementAndWithdrawPageResponseDto;
+import com.gt.genti.settlementandcashout.dto.response.SettlementAndCashoutPageResponseDto;
 import com.gt.genti.user.model.AuthUser;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +34,7 @@ public class SettlementController implements SettlementApi {
 
 	@Logging(item = LogItem.SETTLEMENT, action = LogAction.VIEW, requester = LogRequester.CREATOR)
 	@GetMapping
-	public ResponseEntity<ApiResult<SettlementAndWithdrawPageResponseDto>> getMySettlements(
+	public ResponseEntity<ApiResult<SettlementAndCashoutPageResponseDto>> getMySettlements(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,

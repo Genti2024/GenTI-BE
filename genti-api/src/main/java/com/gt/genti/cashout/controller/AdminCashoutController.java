@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gt.genti.cashout.api.AdminCashoutApi;
 import com.gt.genti.cashout.dto.response.CashoutCompletionResponseDto;
 import com.gt.genti.cashout.dto.response.CashoutFindByAdminResponseDto;
+import com.gt.genti.cashout.model.CashoutStatus;
 import com.gt.genti.cashout.service.CashoutService;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
@@ -24,7 +25,6 @@ import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.validator.ValidEnum;
-import com.gt.genti.withdrawrequest.model.CashoutStatus;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -53,7 +53,7 @@ public class AdminCashoutController implements AdminCashoutApi {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
-		return success(cashoutService.getAllWithdrawRequests(pageable, status));
+		return success(cashoutService.getAllCashout(pageable, status));
 	}
 
 	@Logging(item = LogItem.CASHOUT, action = LogAction.VIEW, requester = LogRequester.ADMIN)

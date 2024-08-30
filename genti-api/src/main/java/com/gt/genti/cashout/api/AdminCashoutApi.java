@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gt.genti.cashout.dto.response.CashoutCompletionResponseDto;
 import com.gt.genti.cashout.dto.response.CashoutFindByAdminResponseDto;
+import com.gt.genti.cashout.model.CashoutStatus;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.AuthorizedAdmin;
@@ -14,7 +15,6 @@ import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.validator.ValidEnum;
-import com.gt.genti.withdrawrequest.model.CashoutStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -77,7 +77,7 @@ public interface AdminCashoutApi {
 	})
 	ResponseEntity<ApiResult<CashoutCompletionResponseDto>> complete(
 		@Parameter(description = "출금요청 Id", example = "1")
-		@PathVariable(value = "withdrawRequestId") Long withdrawRequestId,
+		@PathVariable(value = "cashoutId") Long cashoutId,
 		@AuthUser Long userId
 	);
 }

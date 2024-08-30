@@ -1,6 +1,6 @@
 package com.gt.genti.cashout.dto.response;
 
-import com.gt.genti.withdrawrequest.model.CashoutStatus;
+import com.gt.genti.cashout.model.CashoutStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CashoutFindByCreatorResponseDto {
 	@Schema(description = "출금요청 DB Id", example = "1")
-	Long withdrawRequestId;
+	Long cashoutId;
 	@Schema(description = "출금 신청액", example = "15000")
 	Long amount;
 	@Schema(description = "출금된 작업 개수", example = "3")
@@ -21,9 +21,9 @@ public class CashoutFindByCreatorResponseDto {
 	CashoutStatus cashoutStatus;
 
 	@Builder
-	public CashoutFindByCreatorResponseDto(Long withdrawRequestId, Long amount, int taskCount,
+	public CashoutFindByCreatorResponseDto(Long cashoutId, Long amount, int taskCount,
 		CashoutStatus cashoutStatus) {
-		this.withdrawRequestId = withdrawRequestId;
+		this.cashoutId = cashoutId;
 		this.amount = amount;
 		this.taskCount = taskCount;
 		this.cashoutStatus = cashoutStatus;

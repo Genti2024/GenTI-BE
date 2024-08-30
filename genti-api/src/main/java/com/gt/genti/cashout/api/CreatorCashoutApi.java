@@ -27,7 +27,7 @@ public interface CreatorCashoutApi {
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
 		@EnumResponse(ResponseCode.CreatorNotFound),
-		@EnumResponse(ResponseCode.CannotCreateWithdrawalDueToSettlementsNotAvailable)
+		@EnumResponse(ResponseCode.CannotRequestCashoutDueToSettlementsNotAvailable)
 	})
 	ResponseEntity<ApiResult<CashoutFindByCreatorResponseDto>> createCashout(
 		@AuthUser Long userId

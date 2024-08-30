@@ -1,6 +1,6 @@
 package com.gt.genti.settlement.model;
 
-import com.gt.genti.withdrawrequest.model.WithdrawRequest;
+import com.gt.genti.cashout.model.Cashout;
 import com.gt.genti.common.basetimeentity.model.BaseTimeEntity;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 
@@ -40,8 +40,8 @@ public class Settlement extends BaseTimeEntity {
 
 	@Setter
 	@ManyToOne
-	@JoinColumn(name = "withdraw_request_id")
-	WithdrawRequest withdrawRequest;
+	@JoinColumn(name = "cashout_id")
+	Cashout cashout;
 
 	@Builder
 	public Settlement(PictureGenerateResponse pictureGenerateResponse, Long elapsedMinutes, Long reward) {

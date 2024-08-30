@@ -10,7 +10,7 @@ public class ErrorConstants {
 	private static final String PICTURE = "PICTURE";
 
 	private static final String DEPOSIT = "DEPOSIT";
-	private static final String WITHDRAW = "WITHDRAW";
+	private static final String CASHOUT = "CASHOUT";
 
 	private static final String UPLOAD = "UPLOAD";
 	private static final String DISCORD = "DISCORD";
@@ -92,9 +92,9 @@ public class ErrorConstants {
 	public static final String HandlerMethodValidation = CODE(VALIDATION, 1);
 	public static final String HttpMessageNotReadable = CODE(VALIDATION, 2);
 
-	public static final String CannotCreateWithdrawalDueToSettlementsNotAvailable = CODE(WITHDRAW, 1);
-	public static final String WithdrawRequestNotFound = CODE(WITHDRAW, 2);
-	public static final String NotEnoughBalance = CODE(WITHDRAW, 3);
+	public static final String CannotRequestCashoutDueToSettlementsNotAvailable = CODE(CASHOUT, 1);
+	public static final String CashoutNotFound = CODE(CASHOUT, 2);
+	public static final String NotEnoughBalance = CODE(CASHOUT, 3);
 
 	public static final String OauthProviderNotAllowed = CODE(OAUTH, 1);
 	public static final String AppleOauthIdTokenIncorrect = CODE(OAUTH, 2);

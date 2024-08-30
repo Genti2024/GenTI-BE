@@ -1,9 +1,9 @@
 package com.gt.genti.deposit.model;
 
 import com.gt.genti.common.basetimeentity.model.BaseTimeEntity;
-import com.gt.genti.user.model.User;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
+import com.gt.genti.user.model.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,7 +59,7 @@ public class Deposit extends BaseTimeEntity {
 		this.totalAmount += amount;
 	}
 
-	public void completeWithdraw(Long amount) {
+	public void completeCashout(Long amount) {
 		if (this.nowAmount < amount) {
 			throw ExpectedException.withLogging(ResponseCode.NotEnoughBalance);
 		}

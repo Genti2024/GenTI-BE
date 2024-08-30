@@ -1,6 +1,7 @@
 package com.gt.genti;
 
 import static com.gt.genti.TestUtils.*;
+import static com.gt.genti.TestUtils.Dto.*;
 import static com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -75,16 +76,16 @@ class PictureGeneratePendingApiTest {
 	void newlyCreatedAndMatchedToAdminPictureGenerateRequestIsInProgresstest() {
 		// given
 		// 어드민유저, 어드민 공급자 생성
-		User adminUser = getTestAdminUser();
+		User adminUser = Domain.createUser(UserRole.ADMIN);
 		User savedAdminUser = userRepository.save(adminUser);
 		userService.updateUserRole(savedAdminUser.getId(), getUserRoleUpdateRequestDto(UserRole.ADMIN));
 
 		// 요청을 수행할 유저 생성
-		User newUser = getTestUser();
+		User newUser = Domain.createUser(UserRole.USER);
 		User savedUser = userRepository.save(newUser);
 
 		// 사진생성요청 생성 dto
-		PGREQSaveRequestDto pgreqSaveRequestDto = getPGREQSaveRequestDto();
+		PGREQSaveRequestDto pgreqSaveRequestDto = Dto.getPGREQSaveRequestDto();
 
 		// when
 		// 사진생성요청 생성
@@ -108,16 +109,16 @@ class PictureGeneratePendingApiTest {
 	void IfUserReportsRecentPictureGenerateRequestThenNew_REQUEST_AVAILABLE_Test() {
 		// given
 		// 어드민유저, 어드민 공급자 생성
-		User adminUser = getTestAdminUser();
+		User adminUser = Domain.createUser(UserRole.ADMIN);
 		User savedAdminUser = userRepository.save(adminUser);
-		userService.updateUserRole(savedAdminUser.getId(), getUserRoleUpdateRequestDto(UserRole.ADMIN));
+		userService.updateUserRole(savedAdminUser.getId(), Dto.getUserRoleUpdateRequestDto(UserRole.ADMIN));
 
 		// 요청을 수행할 유저 생성
-		User newUser = getTestUser();
+		User newUser = Domain.createUser(UserRole.USER);
 		User savedUser = userRepository.save(newUser);
 
 		// 사진생성요청 생성 dto
-		PGREQSaveRequestDto pgreqSaveRequestDto = getPGREQSaveRequestDto();
+		PGREQSaveRequestDto pgreqSaveRequestDto = Dto.getPGREQSaveRequestDto();
 
 		// when
 		// 사진생성요청 생성
@@ -165,14 +166,14 @@ class PictureGeneratePendingApiTest {
 	void pictureGenerateRequestCancelledByCreatorExitTest() {
 		// given
 		// 공급자 유저 생성
-		User creatorUser = getTestCreatorUser();
+		User creatorUser = Domain.createUser(UserRole.CREATOR);
 		User savedCreatorUser = userRepository.save(creatorUser);
 		userService.updateUserRole(savedCreatorUser.getId(), getUserRoleUpdateRequestDto(UserRole.CREATOR));
 
 		User roleUpdatedUser = userRepository.findById(savedCreatorUser.getId()).orElseThrow();
 
 		// 요청을 수행할 유저 생성
-		User newUser = getTestUser();
+		User newUser = Domain.createUser(UserRole.USER);
 		User savedUser = userRepository.save(newUser);
 
 		// 사진생성요청 생성 dto

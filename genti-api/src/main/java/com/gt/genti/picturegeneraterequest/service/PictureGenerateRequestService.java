@@ -1,5 +1,6 @@
 package com.gt.genti.picturegeneraterequest.service;
 
+import static com.gt.genti.constants.RedisConstants.LOCK_TTL_SECONDS;
 import static com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser.*;
 
 import java.util.List;
@@ -185,7 +186,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		throwIfNewPictureGenerateRequestNotAvailable(foundUser);
 
 		String lockKey = "LOCK:" + userId + ":" + "createPGREQ";
-		Boolean lockGranted = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", 60, TimeUnit.SECONDS);
+		Boolean lockGranted = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", LOCK_TTL_SECONDS, TimeUnit.SECONDS);
 		if (Boolean.FALSE.equals(lockGranted)) {
 			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestAlreadyProcessed);
 		}

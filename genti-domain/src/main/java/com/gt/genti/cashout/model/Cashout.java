@@ -1,8 +1,8 @@
-package com.gt.genti.withdrawrequest.model;
+package com.gt.genti.cashout.model;
 
 import com.gt.genti.common.baseentity.model.BaseEntity;
+import com.gt.genti.common.converter.CashoutStatusConverter;
 import com.gt.genti.creator.model.Creator;
-import com.gt.genti.common.converter.WithdrawRequestStatusConverter;
 import com.gt.genti.user.model.User;
 
 import jakarta.persistence.Column;
@@ -19,11 +19,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "withdraw_request")
+@Table(name = "cashout")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WithdrawRequest extends BaseEntity {
+public class Cashout extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
@@ -38,27 +38,26 @@ public class WithdrawRequest extends BaseEntity {
 	@Column(name = "task_count", nullable = false)
 	Integer taskCount;
 
-	@Convert(converter = WithdrawRequestStatusConverter.class)
+	@Convert(converter = CashoutStatusConverter.class)
 	@Column(name = "status", nullable = false)
-	WithdrawRequestStatus status;
-
+	CashoutStatus status;
 
 	@PrePersist
-	public void prePersist(){
-		if(this.amount == null){
+	public void prePersist() {
+		if (this.amount == null) {
 			this.amount = 0L;
 		}
-		if(this.taskCount == null){
+		if (this.taskCount == null) {
 			this.taskCount = 0;
 		}
-		if(this.status == null){
-			this.status = WithdrawRequestStatus.IN_PROGRESS;
+		if (this.status == null) {
+			this.status = CashoutStatus.IN_PROGRESS;
 		}
 	}
 
-	public WithdrawRequest(Creator creator) {
+	public Cashout(Creator creator) {
 		this.creator = creator;
-		this.status = WithdrawRequestStatus.IN_PROGRESS;
+		this.status = CashoutStatus.IN_PROGRESS;
 	}
 
 	public void addSettlement(long amount) {
@@ -68,6 +67,6 @@ public class WithdrawRequest extends BaseEntity {
 
 	public void complete(User modifiedBy) {
 		this.setModifiedBy(modifiedBy);
-		this.status = WithdrawRequestStatus.COMPLETED;
+		this.status = CashoutStatus.COMPLETED;
 	}
 }

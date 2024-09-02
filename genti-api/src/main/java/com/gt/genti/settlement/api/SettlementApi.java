@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.response.GentiResponse.ApiResult;
-import com.gt.genti.settlementandwithdraw.dto.response.SettlementAndWithdrawPageResponseDto;
+import com.gt.genti.settlementandcashout.dto.response.SettlementAndCashoutPageResponseDto;
 import com.gt.genti.swagger.AuthorizedCreator;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
@@ -28,7 +28,7 @@ public interface SettlementApi {
 		@EnumResponse(ResponseCode.CreatorNotFound),
 		@EnumResponse(ResponseCode.DepositNotFound)
 	})
-	ResponseEntity<ApiResult<SettlementAndWithdrawPageResponseDto>> getMySettlements(
+	ResponseEntity<ApiResult<SettlementAndCashoutPageResponseDto>> getMySettlements(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
 		@RequestParam(name = "page", defaultValue = "0") @NotNull @Min(0) int page,

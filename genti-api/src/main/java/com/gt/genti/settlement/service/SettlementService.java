@@ -10,9 +10,9 @@ import com.gt.genti.deposit.model.Deposit;
 import com.gt.genti.deposit.repository.DepositRepository;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
-import com.gt.genti.settlementandwithdraw.dto.response.SettlementAndWithdrawPageResponseDto;
-import com.gt.genti.settlementanwithdraw.model.SettlementAndWithdraw;
-import com.gt.genti.settlementanwithdraw.repository.SettlementAndWithdrawalRepositoryCustom;
+import com.gt.genti.settlementandcashout.dto.response.SettlementAndCashoutPageResponseDto;
+import com.gt.genti.settlementandcashout.model.SettlementAndCashout;
+import com.gt.genti.settlementandcashout.repository.SettlementAndCashoutRepositoryCustom;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,16 +22,16 @@ import lombok.RequiredArgsConstructor;
 public class SettlementService {
 	private final CreatorRepository creatorRepository;
 	private final DepositRepository depositRepository;
-	private final SettlementAndWithdrawalRepositoryCustom settlementAndWithdrawalRepositoryCustom;
+	private final SettlementAndCashoutRepositoryCustom settlementAndCashoutRepositoryCustom;
 
-	public SettlementAndWithdrawPageResponseDto getAllSettlements(Long userId, Pageable pageable) {
+	public SettlementAndCashoutPageResponseDto getAllSettlements(Long userId, Pageable pageable) {
 		Creator foundCreator = findCreatorByUserId(userId);
 		Deposit foundDeposit = findDepositByCreator(foundCreator);
 
-		return new SettlementAndWithdrawPageResponseDto(foundDeposit,
-			settlementAndWithdrawalRepositoryCustom.findSettlementAndWithdrawByCreatorPagination(foundCreator.getId(),
+		return new SettlementAndCashoutPageResponseDto(foundDeposit,
+			settlementAndCashoutRepositoryCustom.findSettlementAndCashoutByCreatorPagination(foundCreator.getId(),
 					pageable)
-				.map(SettlementAndWithdraw::new));
+				.map(SettlementAndCashout::new));
 	}
 
 	private Deposit findDepositByCreator(Creator foundCreator) {

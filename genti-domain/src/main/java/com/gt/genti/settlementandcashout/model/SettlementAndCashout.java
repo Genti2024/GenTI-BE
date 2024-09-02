@@ -1,19 +1,19 @@
-package com.gt.genti.settlementanwithdraw.model;
+package com.gt.genti.settlementandcashout.model;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import com.gt.genti.withdrawrequest.model.WithdrawRequestStatus;
+import com.gt.genti.cashout.model.CashoutStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(name = "[Settlement&Withdraw][Creator] 정산&출금내역 응답 dto")
+@Schema(name = "[SettlementAndCashout][Creator] 정산&출금내역 응답 dto")
 @Getter
 @NoArgsConstructor
-public class SettlementAndWithdraw {
+public class SettlementAndCashout {
 	@Schema(description = "정산 혹은 출금내역 DB Id", example = "1")
 	Long id;
 	@Schema(description = "정산 or 출금내역 구분, true : 정산내역, false : 출금내역")
@@ -29,17 +29,17 @@ public class SettlementAndWithdraw {
 		"[정산내역&출금내역]출금 완료된 경우 : COMPLETED " + "<br/>" +
 		"[출금내역] 출금 거절된 경우(현재 사용X) : REJECTED "
 	)
-	WithdrawRequestStatus status;
+	CashoutStatus status;
 
-	public SettlementAndWithdraw(Map<String, Object> attributes) {
+	public SettlementAndCashout(Map<String, Object> attributes) {
 		this.id = (Long)attributes.get("id");
 		this.isSettlement = (Boolean)attributes.get("isSettlement");
 		this.amount = (Long)attributes.get("amount");
 		this.createdAt = (LocalDateTime)attributes.get("createdAt");
-		this.status = WithdrawRequestStatus.valueOf((String)attributes.get("status"));
+		this.status = CashoutStatus.valueOf((String)attributes.get("status"));
 	}
 
-	public SettlementAndWithdraw(Object[] o) {
+	public SettlementAndCashout(Object[] o) {
 		this.id = (Long)o[0];
 		if ((Long)o[1] == 1L) {
 			this.isSettlement = true;
@@ -48,6 +48,6 @@ public class SettlementAndWithdraw {
 		}
 		this.amount = (Long)o[2];
 		this.createdAt = ((Timestamp)o[3]).toLocalDateTime();
-		this.status = WithdrawRequestStatus.valueOf((String)o[4]);
+		this.status = CashoutStatus.valueOf((String)o[4]);
 	}
 }

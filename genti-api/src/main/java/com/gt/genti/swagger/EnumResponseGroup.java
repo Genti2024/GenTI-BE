@@ -25,7 +25,7 @@ public enum EnumResponseGroup {
 		@EnumResponse(PictureCompletedNotFound),
 		@EnumResponse(PictureCreatedByCreatorNotFound),
 		@EnumResponse(PictureProfileNotFound),
-		@EnumResponse(WithdrawRequestNotFound)
+		@EnumResponse(CashoutNotFound)
 
 	})
 	NOT_FOUND,

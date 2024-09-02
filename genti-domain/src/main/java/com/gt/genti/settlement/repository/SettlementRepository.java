@@ -16,10 +16,10 @@ public interface SettlementRepository extends JpaRepository<Settlement, Long> {
 	@Query("select s "
 		+ "from Settlement s "
 		+ "where s.pictureGenerateResponse.creator = :creator "
-		+ "and s.withdrawRequest is null "
+		+ "and s.cashout is null "
 		+ "and s.pictureGenerateResponse.status = com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.COMPLETED "
 		+ "order by s.createdAt desc ")
-	List<Settlement> findAllWithdrawableByCreatorOrderByCreatedAtDesc(
+	List<Settlement> findAllValidSettlementByCreatorOrderByCreatedAtDesc(
 		@Param(value = "creator")
 		Creator creator);
 

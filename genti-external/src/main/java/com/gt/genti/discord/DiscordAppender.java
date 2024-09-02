@@ -38,6 +38,8 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	private String eventChannelUrl;
 	@Value("${discord.webhook-url.base}${discord.webhook-url.error}")
 	private String errorChannelUrl;
+	@Value("${app.environment}")
+	private String profile;
 	private String username = "Error log";
 	private String avatarUrl = "https://cdn-icons-png.flaticon.com/512/1383/1383395.png";
 
@@ -130,6 +132,9 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 	public void signInAppend(Long totalUserCount, String name, String email, String socialPlatform,
 		LocalDateTime createdAt) {
+		if ("local".equals(profile)) {
+			return;
+		}
 		DiscordWebHook discordWebhook = new DiscordWebHook("event", avatarUrl, false);
 
 		discordWebhook.addEmbed(EmbedObject.builder()
@@ -150,6 +155,9 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	}
 
 	public void matchResultAppend(String summary, List<String> matchingResultList) {
+		if ("local".equals(profile)) {
+			return;
+		}
 		DiscordWebHook discordWebhook = new DiscordWebHook("admin", avatarUrl, false);
 		EmbedObject embedObject = EmbedObject.builder()
 			.title("매칭 결과 알림")
@@ -168,6 +176,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	}
 
 	public void execute(DiscordWebHook discordWebHook, String urlString) throws IOException {
+
 		if (discordWebHook.getEmbeds().isEmpty()) {
 			throw ExpectedException.withLogging(ResponseCode.NoWebhookEmbeds);
 		}

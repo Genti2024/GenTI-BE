@@ -56,6 +56,7 @@ public class ErrorConstants {
 	public static final String OnlyRequesterCanViewPictureGenerateRequest = CODE(PGREQ, 6);
 	public static final String NoPictureGenerateRequest = CODE(PGREQ, 7);
 	public static final String UnexpectedPictureGenerateRequestStatus = CODE(PGREQ, 8);
+	public static final String PictureGenerateRequestAlreadyProcessed = CODE(PGREQ, 9);
 
 	public static final String FileTypeNotProvided = CODE(UPLOAD, 1);
 	public static final String UploadFileTypeNotAvailable = CODE(UPLOAD, 2);

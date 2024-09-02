@@ -115,6 +115,10 @@ public enum ResponseCode {
 		FORBIDDEN,
 		false,
 		"사진생성요청을 요청한 유저만 볼 수 있습니다."),
+	PictureGenerateRequestAlreadyProcessed(ErrorConstants.PictureGenerateRequestAlreadyProcessed,
+			BAD_REQUEST,
+			false,
+			"사진생성요청이 이미 처리중입니다."),
 	/**
 	 * User
 	 */

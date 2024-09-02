@@ -58,10 +58,10 @@ public class MatchTest {
 	@Test
 	public void oneRequestWithAdminStrategy() {
 		// given
-		User requester = getTestUser();
+		User requester = Domain.createUser(UserRole.USER);
 		User savedUser = userRepository.save(requester);
 
-		User adminUser = getTestAdminUser();
+		User adminUser = Domain.createUser(UserRole.ADMIN);
 		User savedAdmin = userRepository.save(adminUser);
 		// admin으로 uploaderrole 변경시 admin creator 생성됨
 		userService.updateUserRole(savedAdmin.getId(),

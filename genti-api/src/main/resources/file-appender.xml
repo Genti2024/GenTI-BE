@@ -1,7 +1,6 @@
-<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>./logs/app.log</file>
+<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>./logs/genti-%d{yyyy-MM-dd}.log</fileNamePattern>
+        <fileNamePattern>/logs/genti-%d{yyyy-MM-dd}.log</fileNamePattern>
         <maxHistory>90</maxHistory>
     </rollingPolicy>
     <encoder>

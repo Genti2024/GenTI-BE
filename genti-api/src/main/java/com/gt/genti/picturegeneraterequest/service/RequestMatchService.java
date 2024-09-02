@@ -71,7 +71,7 @@ public class RequestMatchService {
 
 	@Transactional
 	public void matchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
-		matchSingleRequest(pictureGenerateRequest, "신규 요청에 대하여 매칭 시도");
+		matchSingleRequest(pictureGenerateRequest, "신규 요청 매칭");
 	}
 
 	@Transactional
@@ -86,14 +86,14 @@ public class RequestMatchService {
 		pendingRequestList.forEach(pgr -> matchRequestToAdmin(pgr, adminCreator, pgresList, gentiMatchResult));
 
 		pictureGenerateResponseRepository.saveAll(pgresList);
-		gentiMatchResult.addSummary("대기중이던 요청 %d개 전부를 어드민에게 매칭함".formatted(pendingRequestList.size()));
+		gentiMatchResult.addSummary(" 요청 %d개".formatted(pendingRequestList.size()));
 	}
 
 	private void matchToCreatorOrAdmin(List<PictureGenerateRequest> pendingRequestList, List<Creator> creatorList,
 		GentiMatchResult gentiMatchResult) {
 		if (creatorList.isEmpty()) {
-			gentiMatchResult.addSummary("%d개의 매칭 대기중인 작업에 대해 작업 가능한 작업자가 없으므로 admin 매칭으로 전환"
-				.formatted(pendingRequestList.size()));
+			gentiMatchResult.addSummary(
+				"%d개의 매칭 대기중인 작업에 대해 작업 가능한 작업자가 없으므로 admin 매칭으로 전환".formatted(pendingRequestList.size()));
 			matchAllToAdmin(pendingRequestList, gentiMatchResult);
 			return;
 		}
@@ -132,8 +132,10 @@ public class RequestMatchService {
 	private void matchRequestToCreator(PictureGenerateRequest pgr, Creator creator, GentiMatchResult gentiMatchResult) {
 		pgr.assignToCreator(creator);
 		creator.addPictureGenerateRequest(pgr);
-		gentiMatchResult.addMatchResult("email : %s가 요청한 id : %d 요청을 작업자 email : %s id : %d에게 매칭"
-			.formatted(pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(), creator.getId()));
+		gentiMatchResult.addMatchResult(
+			"[요청자 email] : %s [요청자 id] : %d [작업자 email] : %s [작업자 id] : %d [프롬프트] : %s [비율] : %s [앵글] : %s ".formatted(
+				pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(), creator.getId(),
+				pgr.getPrompt(), pgr.getPictureRatio().getResponse(), pgr.getCameraAngle().getResponse()));
 	}
 
 	private void matchRemainingRequestsToAdmin(List<PictureGenerateRequest> remainingRequests,

@@ -41,11 +41,13 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	@Value("${app.environment}")
 	private String profile;
 	private String username = "Error log";
-	private String avatarUrl = "https://cdn-icons-png.flaticon.com/512/1383/1383395.png";
+	private String adminAvatarUrl = "https://img.icons8.com/ios-filled/50/FA5252/business.png";
+	private String errorAvatarUrl = "https://img.icons8.com/ios-filled/50/22C3E6/error--v1.png";
+	private String eventAvatarUrl = "https://img.icons8.com/ios-filled/50/40C057/confetti.png";
 
 	@Override
 	protected void append(ILoggingEvent eventObject) {
-		DiscordWebHook discordWebhook = new DiscordWebHook(username, avatarUrl, false);
+		DiscordWebHook discordWebhook = new DiscordWebHook(username, errorAvatarUrl, false);
 		Map<String, String> mdcPropertyMap = eventObject.getMDCPropertyMap();
 		Color messageColor = getLevelColor(eventObject);
 
@@ -135,7 +137,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		if ("local".equals(profile)) {
 			return;
 		}
-		DiscordWebHook discordWebhook = new DiscordWebHook("event", avatarUrl, false);
+		DiscordWebHook discordWebhook = new DiscordWebHook("event", eventAvatarUrl, false);
 
 		discordWebhook.addEmbed(EmbedObject.builder()
 			.title("[회원 가입] " + totalUserCount + "번째 유저가 가입하였습니다.")
@@ -158,7 +160,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		if ("local".equals(profile)) {
 			return;
 		}
-		DiscordWebHook discordWebhook = new DiscordWebHook("admin", avatarUrl, false);
+		DiscordWebHook discordWebhook = new DiscordWebHook("admin", adminAvatarUrl, false);
 		EmbedObject embedObject = EmbedObject.builder()
 			.title("매칭 결과 알림")
 			.color(Color.CYAN)

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class PictureGenerationCompletedNotificationEvent extends NotificationEvent {
 
-	private static final Notification notification = new Notification("사진 생성이 완료되었습니다.", "사진 생성이 완료되었습니다.");
+	private static final Notification notification = new Notification("나만의 사진이 도착했어요!", "지금 당장 확인해보러 가실까요?");
 
 	private PictureGenerationCompletedNotificationEvent( Long receiverId
 	) {

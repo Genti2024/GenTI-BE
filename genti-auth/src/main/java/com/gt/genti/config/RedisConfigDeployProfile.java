@@ -22,15 +22,12 @@ public class RedisConfigDeployProfile {
 	String host;
 	@Value("${redis.port}")
 	int port;
-	@Value("${redis.password}")
-	String password;
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
 		RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
 		redisConfiguration.setHostName(host);
 		redisConfiguration.setPort(port);
-		redisConfiguration.setPassword(password);
 		return new LettuceConnectionFactory(redisConfiguration);
 	}
 

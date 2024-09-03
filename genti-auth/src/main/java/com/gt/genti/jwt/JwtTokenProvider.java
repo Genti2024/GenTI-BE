@@ -110,7 +110,7 @@ public class JwtTokenProvider {
 		Long userId = getUserFromJwt(refreshToken);
 		String foundRefreshToken = redisTemplate.opsForValue().get(userId.toString());
 		if (foundRefreshToken == null) {
-			throw ExpectedException.withLogging(ResponseCode.REFRESH_TOKEN_NOT_EXISTS);
+			throw ExpectedException.withoutLogging(ResponseCode.REFRESH_TOKEN_NOT_EXISTS);
 		}
 		if (!refreshToken.substring(JWT_PREFIX.length()).equals(foundRefreshToken)) {
 			throw ExpectedException.withLogging(ResponseCode.REFRESH_TOKEN_INVALID);
@@ -138,7 +138,7 @@ public class JwtTokenProvider {
 		} catch (MalformedJwtException | IllegalArgumentException | UnsupportedJwtException | SignatureException e) {
 			throw ExpectedException.withLogging(ResponseCode.INVALID_TOKEN);
 		} catch (ExpiredJwtException e) {
-			throw ExpectedException.withLogging(TOKEN_EXPIRED);
+			throw ExpectedException.withoutLogging(TOKEN_EXPIRED);
 		}
 	}
 

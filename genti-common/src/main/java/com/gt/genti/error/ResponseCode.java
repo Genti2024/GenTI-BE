@@ -25,7 +25,7 @@ public enum ResponseCode {
 	 * 인증/인가
 	 */
 	TOKEN_NOT_PROVIDED(ErrorConstants.TOKEN_NOT_PROVIDED, HttpStatus.UNAUTHORIZED, false, "토큰이 전달되지 않았습니다."),
-	TOKEN_EXPIRED(ErrorConstants.TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, false, "토큰이 만료되었습니다."),
+	TOKEN_EXPIRED(ErrorConstants.TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, false, "액세스 토큰이 만료되었습니다."),
 	INVALID_TOKEN(ErrorConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED, false, "유효하지 않은 토큰입니다."),
 	INSUFFICIENT_PERMISSIONS(ErrorConstants.INSUFFICIENT_PERMISSIONS, HttpStatus.FORBIDDEN, false, "접근 권한이 부족합니다."),
 	REFRESH_TOKEN_EXPIRED(ErrorConstants.REFRESH_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, false, "리프레시 토큰이 만료되었습니다."),
@@ -116,9 +116,9 @@ public enum ResponseCode {
 		false,
 		"사진생성요청을 요청한 유저만 볼 수 있습니다."),
 	PictureGenerateRequestAlreadyProcessed(ErrorConstants.PictureGenerateRequestAlreadyProcessed,
-			BAD_REQUEST,
-			false,
-			"사진생성요청이 이미 처리중입니다."),
+		BAD_REQUEST,
+		false,
+		"사진생성요청이 이미 처리중입니다."),
 	/**
 	 * User
 	 */

@@ -138,7 +138,7 @@ public class JwtTokenProvider {
 		} catch (MalformedJwtException | IllegalArgumentException | UnsupportedJwtException | SignatureException e) {
 			throw ExpectedException.withLogging(ResponseCode.INVALID_TOKEN);
 		} catch (ExpiredJwtException e) {
-			throw ExpectedException.withLogging(TOKEN_EXPIRED);
+			throw ExpectedException.withoutLogging(TOKEN_EXPIRED);
 		}
 	}
 

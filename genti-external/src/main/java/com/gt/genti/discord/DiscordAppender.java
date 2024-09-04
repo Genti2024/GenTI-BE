@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,11 +44,13 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	private String username = "Error log";
 	private String adminAvatarUrl = "https://img.icons8.com/ios-filled/50/FA5252/business.png";
 	private String errorAvatarUrl = "https://img.icons8.com/ios-filled/50/22C3E6/error--v1.png";
+	private String devErrorAvatarUrl = "https://img.icons8.com/ios-filled/50/FFFFFF/error--v1.png";
 	private String eventAvatarUrl = "https://img.icons8.com/ios-filled/50/40C057/confetti.png";
 
 	@Override
 	protected void append(ILoggingEvent eventObject) {
-		DiscordWebHook discordWebhook = new DiscordWebHook(username, errorAvatarUrl, false);
+		String avatarUrl = Objects.equals(profile, "staging") ? devErrorAvatarUrl : errorAvatarUrl;
+		DiscordWebHook discordWebhook = new DiscordWebHook(username, avatarUrl, false);
 		Map<String, String> mdcPropertyMap = eventObject.getMDCPropertyMap();
 		Color messageColor = getLevelColor(eventObject);
 

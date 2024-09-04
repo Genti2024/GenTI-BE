@@ -7,6 +7,8 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 import com.gt.genti.discord.model.DiscordMessageJson;
+import com.gt.genti.error.ExpectedException;
+import com.gt.genti.error.ResponseCode;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -32,8 +34,8 @@ public class DiscordMessageSender {
 			connection.getInputStream().close();
 			connection.disconnect();
 
-		} catch (IOException ioException) {
-			throw ioException;
+		} catch (Exception e) {
+			throw ExpectedException.withLogging(ResponseCode.DiscordIOException, "");
 		}
 	}
 

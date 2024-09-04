@@ -126,7 +126,9 @@ public class RequestMatchService {
 		adminCreator.addPictureGenerateResponse(newPGRES);
 		pgresList.add(newPGRES);
 		gentiMatchResult.addMatchResult(
-			"email : %s가 요청한 id : %d 요청을 어드민에게 매칭".formatted(pgr.getRequester().getEmail(), pgr.getId()));
+			"[요청자 email] : %s [요청자 id] : %d [작업자 email] : %s [작업자 id] : %d [프롬프트] : %s [비율] : %s [앵글] : %s ".formatted(
+				pgr.getRequester().getEmail(), pgr.getId(), adminCreator.getUser().getEmail(), adminCreator.getId(),
+				pgr.getPrompt(), pgr.getPictureRatio().getResponse(), pgr.getCameraAngle().getResponse()));
 	}
 
 	private void matchRequestToCreator(PictureGenerateRequest pgr, Creator creator, GentiMatchResult gentiMatchResult) {

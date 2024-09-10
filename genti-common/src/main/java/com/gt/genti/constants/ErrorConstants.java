@@ -68,6 +68,7 @@ public class ErrorConstants {
 	public static final String WithDrawnUser = CODE(USER, 5);
 	public static final String UserNotLoggedIn = CODE(USER, 6);
 	public static final String UserAlreadySignedUp = CODE(USER, 7);
+	public static final String InvalidBirthYearFormat = CODE(USER, 8);
 
 	public static final String CreatorNotFound = CODE(CREATOR, 1);
 

@@ -131,6 +131,7 @@ public enum ResponseCode {
 	UserNotFoundByEmail(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 email: [%s]"),
 	UserDeactivated(ErrorConstants.UserDeactivated, HttpStatus.BAD_REQUEST, false, "비활성화된 계정입니다."),
 	UserAlreadySignedUp(ErrorConstants.UserAlreadySignedUp, HttpStatus.BAD_REQUEST, false, "이미 회원가입 처리가 완료된 유저입니다."),
+	InvalidBirthYearFormat(ErrorConstants.InvalidBirthYearFormat, BAD_REQUEST, false, "올바르지 않은 생년 형식입니다."),
 
 	/**
 	 * Creator

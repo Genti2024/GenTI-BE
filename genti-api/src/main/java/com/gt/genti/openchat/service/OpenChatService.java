@@ -10,10 +10,12 @@ import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.gt.genti.openchat.model.OpenChatType.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OpenChatService {
     private final OpenChatRepository openChatRepository;
@@ -37,6 +39,26 @@ public class OpenChatService {
                 .url(null)
                 .count(null)
                 .build();
+        }
+    }
+
+    public OpenChat modifyOpenChatInfo(OpenChatType type, Long count, String url){
+        OpenChat openChat = openChatRepository.findByType(type);
+
+        boolean updated = false;
+        if (count != null) {
+            openChat.updateCount(count);
+            updated = true;
+        }
+        if (url != null) {
+            openChat.updateUrl(url);
+            updated = true;
+        }
+
+        if (updated) {
+            return openChatRepository.save(openChat);
+        } else{
+            return openChat;
         }
     }
 

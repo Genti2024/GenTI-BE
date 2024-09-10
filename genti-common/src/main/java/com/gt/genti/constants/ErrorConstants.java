@@ -20,6 +20,7 @@ public class ErrorConstants {
 	private static final String OAUTH = "OAUTH";
 	private static final String SERVER = "SERVER";
 	private static final String FCM = "FCM";
+	private static final String OPENCHAT = "OPENCHAT";
 
 	private static String CODE(String type, int seq) {
 		return type + String.format("-%05d", seq);
@@ -114,5 +115,7 @@ public class ErrorConstants {
 	public static final String FCM_TOKEN_CONVERTING_JSON_ERROR = CODE(FCM, 2);
 	public static final String FCM_GOOGLE_REQUEST_TOKEN_ERROR = CODE(FCM, 3);
 	public static final String FCM_CONNECT_ERROR = CODE(FCM, 4);
+
+	public static final String InvalidOpenChatSecretKey = CODE(OPENCHAT, 1);
 
 }

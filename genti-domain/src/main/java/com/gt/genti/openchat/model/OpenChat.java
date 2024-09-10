@@ -1,11 +1,9 @@
 package com.gt.genti.openchat.model;
 
 import com.gt.genti.common.converter.OpenChatTypeConverter;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,5 +20,17 @@ public class OpenChat {
     private Long count;
 
     private String url;
+
+    @Builder
+    public OpenChat(OpenChatType type, Long count, String url) {
+        this.type = type;
+        this.count = count;
+        this.url = url;
+    }
+
+    public void updateCount(Long count) {
+        this.count = count;
+    }
+    public void updateUrl(String url) { this.url = url; }
 
 }

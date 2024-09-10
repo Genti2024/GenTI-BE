@@ -208,7 +208,13 @@ public enum ResponseCode {
 	FCM_GOOGLE_REQUEST_TOKEN_ERROR(ErrorConstants.FCM_GOOGLE_REQUEST_TOKEN_ERROR, INTERNAL_SERVER_ERROR, false,
 		"파이어베이스 서버 접속 전 구글 통신 오류"),
 	FCM_CONNECT_ERROR(ErrorConstants.FCM_CONNECT_ERROR, INTERNAL_SERVER_ERROR, false,
-		"파이어베이스 서버 통신 오류 : %s");
+		"파이어베이스 서버 통신 오류 : %s"),
+
+	/**
+	 * OpenChat
+	 */
+
+	InvalidOpenChatSecretKey(ErrorConstants.InvalidOpenChatSecretKey, BAD_REQUEST, false, "유효하지 않은 시크릿 키입니다.");
 
 	private final String errorCode;
 	private final HttpStatusCode httpStatusCode;

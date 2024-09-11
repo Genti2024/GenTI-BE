@@ -214,7 +214,9 @@ public enum ResponseCode {
 	 * OpenChat
 	 */
 
-	InvalidOpenChatSecretKey(ErrorConstants.InvalidOpenChatSecretKey, BAD_REQUEST, false, "유효하지 않은 시크릿 키입니다.");
+	InvalidOpenChatSecretKey(ErrorConstants.InvalidOpenChatSecretKey, BAD_REQUEST, false, "유효하지 않은 시크릿 키입니다."),
+	OpenChatNotFound(ErrorConstants.OpenChatNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 오픈채팅방입니다. 찾은 오픈채팅방 type : [%s]");
+
 
 	private final String errorCode;
 	private final HttpStatusCode httpStatusCode;

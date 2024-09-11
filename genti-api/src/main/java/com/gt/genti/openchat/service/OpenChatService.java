@@ -42,24 +42,18 @@ public class OpenChatService {
         }
     }
 
-    public OpenChat modifyOpenChatInfo(OpenChatType type, Long count, String url){
+    public OpenChat modifyOpenChatInfo(OpenChatType type, Long count){
+        OpenChat openChat = getOpenChatInfoByType(type);
+        openChat.updateCount(count);
+        return openChatRepository.save(openChat);
+    }
+
+    private OpenChat getOpenChatInfoByType(OpenChatType type){
         OpenChat openChat = openChatRepository.findByType(type);
-
-        boolean updated = false;
-        if (count != null) {
-            openChat.updateCount(count);
-            updated = true;
+        if (openChat == null) {
+            throw ExpectedException.withLogging(ResponseCode.OpenChatNotFound, type);
         }
-        if (url != null) {
-            openChat.updateUrl(url);
-            updated = true;
-        }
-
-        if (updated) {
-            return openChatRepository.save(openChat);
-        } else{
-            return openChat;
-        }
+        return openChat;
     }
 
     private User getUserById(Long userId) {
@@ -70,8 +64,8 @@ public class OpenChatService {
     private int parseBirthYear(String birthYear) {
         try {
             return Integer.parseInt(birthYear);
-        } catch (NumberFormatException e) {
-            throw ExpectedException.withLogging(ResponseCode.InvalidBirthYearFormat, birthYear);
+        } catch (NumberFormatException | NullPointerException e) {
+            return 2000;
         }
     }
 

@@ -117,5 +117,6 @@ public class ErrorConstants {
 	public static final String FCM_CONNECT_ERROR = CODE(FCM, 4);
 
 	public static final String InvalidOpenChatSecretKey = CODE(OPENCHAT, 1);
+	public static final String OpenChatNotFound = CODE(OPENCHAT, 2);
 
 }

@@ -50,7 +50,7 @@ public class SecurityConfig {
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
 		config.addExposedHeader("Access-Token");
 		config.addExposedHeader("Refresh-Token");
-		config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+		config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Open-Chat-Secret-Key"));
 		config.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

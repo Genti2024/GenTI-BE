@@ -22,15 +22,14 @@ public class AdminOpenChatController implements AdminOpenChatApi {
 
     @PatchMapping("/{type}")
     public ResponseEntity<ApiResult<OpenChat>> modifyOpenChatInfo(
-        @RequestHeader(value = "Open-Chat-Secret-Key") String secretKey,
+        @RequestHeader(value = "Admin-Secret-Key") String secretKey,
         @PathVariable(value = "type") OpenChatType type,
-        @RequestParam(required = false) Long count,
-        @RequestParam(required = false) String url
+        @RequestParam(value = "count") Long count
     ){
         if (!API_KEY.equals(secretKey)) {
             throw ExpectedException.withLogging(ResponseCode.InvalidOpenChatSecretKey);
         } else{
-            return GentiResponse.success(openChatService.modifyOpenChatInfo(type, count, url));
+            return GentiResponse.success(openChatService.modifyOpenChatInfo(type, count));
         }
     }
 }

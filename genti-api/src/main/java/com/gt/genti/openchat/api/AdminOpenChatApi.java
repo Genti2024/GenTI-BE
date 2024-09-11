@@ -15,12 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "[AdminOpenChatController] 어드민의 오픈채팅방 정보 수정", description = "카카오톡 오픈채팅방 정보 수정")
 public interface AdminOpenChatApi {
 
-    @Operation(summary = "오픈채팅방 정보 수정", description = "오픈채팅방 url 및 인원 수를 수정합니다.")
+    @Operation(summary = "오픈채팅방 정보 수정", description = "오픈채팅방의 인원 수를 수정합니다.")
     ResponseEntity<ApiResult<OpenChat>> modifyOpenChatInfo(
-        @RequestHeader(value = "Open-Chat-Secret-Key") String secretKey,
+        @RequestHeader(value = "Admin-Secret-Key") String secretKey,
         @PathVariable(value = "type") OpenChatType type,
-        @RequestParam(required = false) Long count,
-        @RequestParam(required = false) String url
+        @RequestParam(value = "count") Long count
     );
 
 }

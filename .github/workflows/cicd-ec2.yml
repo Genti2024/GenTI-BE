@@ -136,7 +136,7 @@ jobs:
 
 
       - name: Login to aws ECR
-        if: contains(github.ref, 'main')
+        if: contains(github.ref, 'staging') || contains(github.ref, 'main')
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 

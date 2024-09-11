@@ -157,7 +157,7 @@ jobs:
           ECR_REPOSITORY: genti-staging
           IMAGE_TAG: latest
         run: |
-          docker build -f ./Dockerfile_deploy -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -f ./Dockerfile_staging -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:
 
       - name: Upload docker-compose, appspec, afterInstall file to S3
@@ -195,7 +195,7 @@ jobs:
           
           # Move back to the initial directory and upload the zip file to S3
           cd ..
-          aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://S3_BUCKET_NAME_STAGING
+          aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME_STAGING
           
           # Clean up the temporary directory
           rm -rf temp_dir

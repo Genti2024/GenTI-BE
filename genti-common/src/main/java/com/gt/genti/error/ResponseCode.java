@@ -131,6 +131,7 @@ public enum ResponseCode {
 	UserNotFoundByEmail(ErrorConstants.UserNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 사용자입니다. 찾은 email: [%s]"),
 	UserDeactivated(ErrorConstants.UserDeactivated, HttpStatus.BAD_REQUEST, false, "비활성화된 계정입니다."),
 	UserAlreadySignedUp(ErrorConstants.UserAlreadySignedUp, HttpStatus.BAD_REQUEST, false, "이미 회원가입 처리가 완료된 유저입니다."),
+	InvalidBirthYearFormat(ErrorConstants.InvalidBirthYearFormat, BAD_REQUEST, false, "올바르지 않은 생년 형식입니다."),
 
 	/**
 	 * Creator
@@ -207,7 +208,15 @@ public enum ResponseCode {
 	FCM_GOOGLE_REQUEST_TOKEN_ERROR(ErrorConstants.FCM_GOOGLE_REQUEST_TOKEN_ERROR, INTERNAL_SERVER_ERROR, false,
 		"파이어베이스 서버 접속 전 구글 통신 오류"),
 	FCM_CONNECT_ERROR(ErrorConstants.FCM_CONNECT_ERROR, INTERNAL_SERVER_ERROR, false,
-		"파이어베이스 서버 통신 오류 : %s");
+		"파이어베이스 서버 통신 오류 : %s"),
+
+	/**
+	 * OpenChat
+	 */
+
+	InvalidOpenChatSecretKey(ErrorConstants.InvalidOpenChatSecretKey, BAD_REQUEST, false, "유효하지 않은 시크릿 키입니다."),
+	OpenChatNotFound(ErrorConstants.OpenChatNotFound, HttpStatus.NOT_FOUND, false, "존재하지 않는 오픈채팅방입니다. 찾은 오픈채팅방 type : [%s]");
+
 
 	private final String errorCode;
 	private final HttpStatusCode httpStatusCode;

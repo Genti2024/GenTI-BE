@@ -9,6 +9,3 @@ spring:
       - secret
       - common
     active: local
-
-openchat:
-  admin-secret-key: "4b8a15e3-8c4a-42e0-9c5b-9a4d72f1c934"

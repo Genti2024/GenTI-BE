@@ -70,11 +70,11 @@ public class OpenChatService {
             } else if (userBirthYear <= 1974) {
                 return OB;
             } else {
-                return NONE;
+                return null;
             }
         } catch (NumberFormatException | NullPointerException e) {
-            log.info("사용자 생년의 숫자 변환 시 문제가 발생했습니다.", e);
-            return NONE;
+            log.info("사용자 생년의 숫자 변환 시 문제가 발생 : {}", e.getMessage(), e);
+            return null;
         }
     }
 }

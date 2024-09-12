@@ -14,11 +14,14 @@ import lombok.NoArgsConstructor;
 public class OpenChat {
 
     @Id
-    @Convert(converter = OpenChatTypeConverter.class)
+    @Column(name = "type", length = 2)
+    @Enumerated(EnumType.STRING)
     private OpenChatType type;
 
+    @Column(name = "count")
     private Long count;
 
+    @Column(name = "url")
     private String url;
 
     @Builder
@@ -31,6 +34,5 @@ public class OpenChat {
     public void updateCount(Long count) {
         this.count = count;
     }
-    public void updateUrl(String url) { this.url = url; }
 
 }

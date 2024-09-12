@@ -18,7 +18,7 @@ public interface AdminOpenChatApi {
     @Operation(summary = "오픈채팅방 정보 수정", description = "오픈채팅방의 인원 수를 수정합니다.")
     ResponseEntity<ApiResult<OpenChat>> modifyOpenChatInfo(
         @RequestHeader(value = "Admin-Secret-Key") String secretKey,
-        @PathVariable(value = "type") OpenChatType type,
+        @PathVariable(value = "type") String type,
         @RequestParam(value = "count") Long count
     );
 

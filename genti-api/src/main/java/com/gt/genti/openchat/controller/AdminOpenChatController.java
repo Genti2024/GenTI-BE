@@ -9,6 +9,7 @@ import com.gt.genti.openchat.service.OpenChatService;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.response.GentiResponse.ApiResult;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,18 +19,21 @@ import org.springframework.web.bind.annotation.*;
 public class AdminOpenChatController implements AdminOpenChatApi {
 
     private final OpenChatService openChatService;
-    private final String API_KEY = "임시-프로퍼티파일로옮길예정입니다";
+
+    @Value("${openchat.admin-secret-key}")
+    private String ADMIN_SECRET_KEY;
 
     @PatchMapping("/{type}")
     public ResponseEntity<ApiResult<OpenChat>> modifyOpenChatInfo(
-        @RequestHeader(value = "Admin-Secret-Key") String secretKey,
-        @PathVariable(value = "type") OpenChatType type,
+        @RequestHeader(value = "Admin-Secret-Key") String adminSecretKey,
+        @PathVariable(value = "type") String type,
         @RequestParam(value = "count") Long count
     ){
-        if (!API_KEY.equals(secretKey)) {
+        OpenChatType openChatType = OpenChatType.fromString(type);
+        if (!ADMIN_SECRET_KEY.equals(adminSecretKey)) {
             throw ExpectedException.withLogging(ResponseCode.InvalidOpenChatSecretKey);
         } else{
-            return GentiResponse.success(openChatService.modifyOpenChatInfo(type, count));
+            return GentiResponse.success(openChatService.modifyOpenChatInfo(openChatType, count));
         }
     }
 }

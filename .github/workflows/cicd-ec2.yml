@@ -10,7 +10,6 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: genti-deploy
-  S3_BUCKET_NAME_STAGING: genti-staging
   CODE_DEPLOY_APPLICATION_NAME: genti
   CODE_DEPLOY_APPLICATION_NAME_STAGING: genti-dev
 
@@ -195,7 +194,7 @@ jobs:
           
           # Move back to the initial directory and upload the zip file to S3
           cd ..
-          aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME_STAGING
+          aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME
           
           # Clean up the temporary directory
           rm -rf temp_dir

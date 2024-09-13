@@ -47,10 +47,10 @@ public class SecurityConfig {
 
 		config.setAllowedOriginPatterns(List.of("*"));
 
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"));
 		config.addExposedHeader("Access-Token");
 		config.addExposedHeader("Refresh-Token");
-		config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+		config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Admin-Secret-Key"));
 		config.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -10,7 +10,7 @@ import com.gt.genti.firebase.message.PictureGenerateCompleteMessage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PictureGenerationCompletedMessageGenerator implements NotificationMessageGenerator {
+public class PictureGenerationSuccessMessageGenerator implements NotificationMessageGenerator {
 	private final NotificationEvent event;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 

@@ -23,9 +23,10 @@ import com.gt.genti.fcm.model.FcmToken;
 import com.gt.genti.fcm.repository.FcmTokenRepository;
 import com.gt.genti.firebase.common.NotificationType;
 import com.gt.genti.firebase.event.NotificationEvent;
+import com.gt.genti.firebase.generator.CustomMessageGenerator;
 import com.gt.genti.firebase.generator.NotificationMessageGenerator;
-import com.gt.genti.firebase.generator.PictureGenerationCompletedMessageGenerator;
-import com.gt.genti.firebase.generator.PictureGenerationFailedMessageGenerator;
+import com.gt.genti.firebase.generator.PictureGenerationCanceledMessageGenerator;
+import com.gt.genti.firebase.generator.PictureGenerationSuccessMessageGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +42,8 @@ public class FirebaseCloudMessageClient {
 	private static final String FIREBASE_KEY_PATH = "/firebase-genti.json";
 	private static final String GOOGLE_AUTH_URL = "https://www.googleapis.com/auth/cloud-platform";
 	private static final Map<NotificationType, Function<NotificationEvent, NotificationMessageGenerator>> GENERATOR_MAP = Map.of(
-		PICTURE_GENERATION_COMPLETED, PictureGenerationCompletedMessageGenerator::new, PICTURE_GENERATION_FAILED,
-		PictureGenerationFailedMessageGenerator::new);
+		SUCCESS, PictureGenerationSuccessMessageGenerator::new, CANCELED,
+		PictureGenerationCanceledMessageGenerator::new, HOME, CustomMessageGenerator::new);
 
 	private final RestClient restClient = RestClient.create();
 	private final FcmTokenRepository fcmTokenRepository;

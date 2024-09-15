@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gt.genti.firebase.event.PictureGenerationCompletedNotificationEvent;
+import com.gt.genti.firebase.event.PictureGenerationSuccessNotificationEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ public class PGRESCompleteEventPublisher {
 	@Async
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void publishPictureGenerateCompleteEvent(Long receiverId) {
-		eventPublisher.publishEvent(PictureGenerationCompletedNotificationEvent.of(receiverId));
+		eventPublisher.publishEvent(PictureGenerationSuccessNotificationEvent.of(receiverId));
 	}
 
 }

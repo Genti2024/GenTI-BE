@@ -11,7 +11,7 @@ public record PictureGenerateCompleteMessage(Message message) {
 		}
 	}
 
-	public record Data(String title, String body, String notificationType) {
+	public record Data(String title, String body, String type) {
 		public static Data from(final NotificationEvent notificationEvent) {
 			return new Data(notificationEvent.getNotification().getTitle(),
 				notificationEvent.getNotification().getBody(),

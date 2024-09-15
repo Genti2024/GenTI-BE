@@ -7,8 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum NotificationType {
 
-  PICTURE_GENERATION_FAILED("PICTURE_GENERATION_FAILED"),
-  PICTURE_GENERATION_COMPLETED("PICTURE_GENERATION_COMPLETED");
+	CANCELED("CANCELED"), SUCCESS("SUCCESS"), OPENCHAT("OPENCHAT"), HOME("HOME");
 
-  private final String type;
+	private final String type;
 }

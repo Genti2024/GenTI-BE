@@ -22,8 +22,8 @@ public class PushNotificationService {
 				sendPushRequestDto.getBody()));
 	}
 
-	public void test(SendPushRequestDto sendPushRequestDto) {
-		userRepository.findByEmail("sbl1998@naver.com").ifPresent(
+	public void test(SendPushRequestDto sendPushRequestDto, String email) {
+		userRepository.findByEmail(email).ifPresent(
 			u -> customEventPublisher.publishCustomEvent(u.getId(), sendPushRequestDto.getTitle(),
 				sendPushRequestDto.getBody())
 		);

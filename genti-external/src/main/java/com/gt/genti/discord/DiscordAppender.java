@@ -149,7 +149,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 			.build()
 			.addField(Field.builder().name("[이름]").value(name).inline(false).build())
 			.addField(Field.builder().name("[이메일]").value(email).inline(false).build())
-			.addField(Field.builder().name("[성별]").value(email).inline(false).build())
+			.addField(Field.builder().name("[성별]").value(sex).inline(false).build())
 			.addField(Field.builder().name("[소셜 플랫폼]").value(socialPlatform).inline(false).build())
 			.addField(Field.builder().name("[가입 일시]").value(String.valueOf(createdAt)).inline(false).build()));
 

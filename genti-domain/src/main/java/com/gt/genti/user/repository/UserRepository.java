@@ -21,4 +21,6 @@ public interface UserRepository extends UserJpaRepository, UserCustomRepository 
 	Optional<User> findByIdWithCache(Long id);
 
 	Optional<User> findByEmail(String email);
+
+	List<User> findUpdatePushTargetUsers();
 }

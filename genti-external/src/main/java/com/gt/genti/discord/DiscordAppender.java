@@ -169,8 +169,11 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 			.color(Color.CYAN)
 			.description(summary)
 			.build();
-		matchingResultList.forEach(
-			str -> embedObject.addField(Field.builder().name("[매칭결과]").value(str).inline(false).build()));
+		matchingResultList.forEach(str -> embedObject.addField(Field.builder()
+			.name("[매칭결과]")
+			.value(StringEscapeUtils.escapeJson(str.replaceAll("[\\{\\{\\}]", "").replaceAll("\n", "\\n")))
+			.inline(false)
+			.build()));
 		discordWebhook.addEmbed(embedObject);
 
 		try {

@@ -126,18 +126,16 @@ public class RequestMatchService {
 		adminCreator.addPictureGenerateResponse(newPGRES);
 		pgresList.add(newPGRES);
 		gentiMatchResult.addMatchResult(
-			"[요청자 email] : %s [요청자 id] : %d [작업자 email] : %s [작업자 id] : %d [프롬프트] : %s [비율] : %s [앵글] : %s ".formatted(
-				pgr.getRequester().getEmail(), pgr.getId(), adminCreator.getUser().getEmail(), adminCreator.getId(),
-				pgr.getPrompt(), pgr.getPictureRatio().getResponse(), pgr.getCameraAngle().getResponse()));
+			"|요청자 email : %s | 요청자 id : %d | 작업자 email : %s | 프롬프트 : %s  ".formatted(pgr.getRequester().getEmail(),
+				pgr.getId(), adminCreator.getUser().getEmail(), pgr.getPrompt()));
 	}
 
 	private void matchRequestToCreator(PictureGenerateRequest pgr, Creator creator, GentiMatchResult gentiMatchResult) {
 		pgr.assignToCreator(creator);
 		creator.addPictureGenerateRequest(pgr);
 		gentiMatchResult.addMatchResult(
-			"[요청자 email] : %s [요청자 id] : %d [작업자 email] : %s [작업자 id] : %d [프롬프트] : %s [비율] : %s [앵글] : %s ".formatted(
-				pgr.getRequester().getEmail(), pgr.getId(), creator.getUser().getEmail(), creator.getId(),
-				pgr.getPrompt(), pgr.getPictureRatio().getResponse(), pgr.getCameraAngle().getResponse()));
+			"|요청자 email : %s | 요청자 id : %d | 작업자 email : %s | 프롬프트  : %s ".formatted(pgr.getRequester().getEmail(),
+				pgr.getId(), creator.getUser().getEmail(), pgr.getPrompt()));
 	}
 
 	private void matchRemainingRequestsToAdmin(List<PictureGenerateRequest> remainingRequests,

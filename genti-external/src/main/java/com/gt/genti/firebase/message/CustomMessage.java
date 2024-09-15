@@ -3,7 +3,7 @@ package com.gt.genti.firebase.message;
 import com.gt.genti.firebase.common.Notification;
 import com.gt.genti.firebase.event.NotificationEvent;
 
-public record PictureGenerationFailedMessage(Message message) {
+public record CustomMessage(Message message) {
 
 	public record Message(Data data, String token, Notification notification) {
 

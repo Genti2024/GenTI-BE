@@ -41,7 +41,9 @@ public class WhiteListConstants {
 		"/v3/api-docs/**",
 		"/h2-console/**",
 		"/h2-console",
-		"/api/v1/open-chat/*"
+		"/api/v1/open-chat/*",
+		"/api/v1/push",
+		"/api/v1/push/**"
 	));
 
 	private List<String> securityWhiteList = new ArrayList<>(List.of(
@@ -58,6 +60,8 @@ public class WhiteListConstants {
 		"/v3/api-docs/**",
 		"/h2-console/**",
 		"/h2-console",
-		"/api/v1/open-chat/*"
+		"/api/v1/open-chat/*",
+		"/api/v1/push",
+		"/api/v1/push/**"
 	));
 }

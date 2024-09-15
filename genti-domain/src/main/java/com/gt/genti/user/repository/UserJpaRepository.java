@@ -12,16 +12,21 @@ import com.gt.genti.user.model.User;
 
 public interface UserJpaRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findUserBySocialId(String socialId);
-    @Query("SELECT u FROM User u WHERE u.deletedAt < :currentDate")
-    List<User> findIdByDeletedAtBefore(LocalDateTime currentDate);
+	Optional<User> findUserBySocialId(String socialId);
 
-    @Query(value = "select u "
-        + "from User u "
-        + "where u.userRole = com.gt.genti.user.model.UserRole.ADMIN ")
-    List<User> findAdminUser(Pageable pageable);
+	@Query("SELECT u FROM User u WHERE u.deletedAt < :currentDate")
+	List<User> findIdByDeletedAtBefore(LocalDateTime currentDate);
 
-    Optional<User> findByEmail(String email);
+	@Query(value = "select u "
+		+ "from User u "
+		+ "where u.userRole = com.gt.genti.user.model.UserRole.ADMIN ")
+	List<User> findAdminUser(Pageable pageable);
 
+	Optional<User> findByEmail(String email);
+
+	@Query("SELECT u "
+		+ "from User u "
+		+ "where u.birthYear <= '1973' or u.birthYear >= '2001' ")
+	List<User> findUpdatePushTargetUsers();
 }
 

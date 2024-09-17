@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum OpenChatType implements ConvertableEnum {
-    OB("OB", "중년층"),
-    YB("YB", "어린층");
+    OB("OB", "OB"),
+    YB("YB", "YB");
 
     private final String stringValue;
     private final String response;

@@ -42,6 +42,7 @@ public class WhiteListConstants {
 		"/h2-console/**",
 		"/h2-console",
 		"/api/v1/open-chat/*",
+		"/api/v1/maintenance/setting",
 		"/api/v1/push",
 		"/api/v1/push/**"
 	));
@@ -61,6 +62,7 @@ public class WhiteListConstants {
 		"/h2-console/**",
 		"/h2-console",
 		"/api/v1/open-chat/*",
+		"/api/v1/maintenance/setting",
 		"/api/v1/push",
 		"/api/v1/push/**"
 	));

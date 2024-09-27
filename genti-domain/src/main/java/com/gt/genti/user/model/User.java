@@ -135,6 +135,9 @@ public class User extends BaseTimeEntity {
 	@Column(name = "apple_refresh_token", length =  1024)
 	String appleRefreshToken;
 
+	@Column(name = "user_verified")
+	Boolean userVerified;
+
 	@PrePersist
 	public void prePersist() {
 		if (this.userStatus == null) {
@@ -275,5 +278,7 @@ public class User extends BaseTimeEntity {
 	public boolean isFirstJoinUser(){
 		return this.userRole.equals(UserRole.OAUTH_FIRST_JOIN);
 	}
+
+	public void verifyUser(){ this.userVerified = true; }
 
 }

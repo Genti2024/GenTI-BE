@@ -21,6 +21,7 @@ import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.pose.model.PicturePose;
 import com.gt.genti.picture.profile.model.PictureProfile;
 import com.gt.genti.picture.userface.model.PictureUserFace;
+import com.gt.genti.picture.userverification.model.PictureUserVerification;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.user.UserSerializer;
 
@@ -137,6 +138,9 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "user_verified")
 	Boolean userVerified;
+
+	@OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<PictureUserVerification> pictureUserVerificationList;
 
 	@PrePersist
 	public void prePersist() {

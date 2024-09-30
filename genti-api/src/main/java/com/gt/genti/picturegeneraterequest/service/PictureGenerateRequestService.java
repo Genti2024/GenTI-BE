@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import com.gt.genti.picture.userverification.model.PictureUserVerification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -343,8 +344,22 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	private PGREQAdminMatchedDetailFindByAdminResponseDto buildAdminMatchedPGREQDetail(PictureGenerateRequest pgreq,
 		List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList) {
+//		Optional<User> foundUser = userRepository.findById(pgreq.getRequester().getId());
+//		User user = foundUser.orElse(null);
+//		PictureUserVerification puv;
+//		if(user == null) {
+//			puv = null;
+//		} else{
+//			Optional<PictureUserVerification> pe = user.getPictureUserVerificationList().stream().findFirst();
+//            puv = pe.orElse(null);
+//        }
+		User user = userRepository.findById(pgreq.getRequester().getId()).orElse(null);
+		PictureUserVerification puv = (user != null)
+				? user.getPictureUserVerificationList().stream().findFirst().orElse(null)
+				: null;
 		return PGREQAdminMatchedDetailFindByAdminResponseDto.builder()
 			.posePicture(CommonPictureResponseDto.of(pgreq.getPicturePose()))
+			.pictureUserVerification(CommonPictureResponseDto.of(puv))
 			.cameraAngle(pgreq.getCameraAngle())
 			.facePictureList(pgreq.getUserFacePictureList().stream().map(CommonPictureResponseDto::of).toList())
 			.requesterEmail(pgreq.getRequester().getEmail())

@@ -37,6 +37,8 @@ public class PGREQAdminMatchedDetailFindByAdminResponseDto {
 	String promptAdvanced;
 	@Schema(description = "구도 참고 사진", nullable = true)
 	CommonPictureResponseDto posePicture;
+	@Schema(description = "본인 인증 사진", nullable = true)
+	CommonPictureResponseDto pictureUserVerification;
 	@Schema(description = "사용자의 얼굴 사진")
 	List<CommonPictureResponseDto> facePictureList;
 
@@ -50,7 +52,7 @@ public class PGREQAdminMatchedDetailFindByAdminResponseDto {
 	@Builder
 	public PGREQAdminMatchedDetailFindByAdminResponseDto(Long pictureGenerateRequestId, String requesterEmail,
 		Sex sex, String prompt, PictureRatio pictureRatio, String promptAdvanced, List<CommonPictureResponseDto> facePictureList,
-		CommonPictureResponseDto posePicture, CameraAngle cameraAngle, ShotCoverage shotCoverage,
+		CommonPictureResponseDto posePicture, CommonPictureResponseDto pictureUserVerification,CameraAngle cameraAngle, ShotCoverage shotCoverage,
 		LocalDateTime createdAt, List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList) {
 		this.pictureGenerateRequestId = pictureGenerateRequestId;
 		this.requesterEmail = requesterEmail;
@@ -60,6 +62,7 @@ public class PGREQAdminMatchedDetailFindByAdminResponseDto {
 		this.promptAdvanced = promptAdvanced;
 		this.facePictureList = facePictureList;
 		this.posePicture = posePicture;
+		this.pictureUserVerification = pictureUserVerification;
 		this.cameraAngle = cameraAngle;
 		this.shotCoverage = shotCoverage;
 		this.createdAt = createdAt;

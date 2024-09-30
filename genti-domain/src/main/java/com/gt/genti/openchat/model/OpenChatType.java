@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum OpenChatType implements ConvertableEnum {
+
 	OB("OB", "OB"),
 	YB("YB", "YB");
 

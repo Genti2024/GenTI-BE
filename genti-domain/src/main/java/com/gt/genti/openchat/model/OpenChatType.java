@@ -3,25 +3,27 @@ package com.gt.genti.openchat.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gt.genti.common.ConvertableEnum;
 import com.gt.genti.common.EnumUtil;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
 public enum OpenChatType implements ConvertableEnum {
-    OB("OB", "OB"),
-    YB("YB", "YB");
 
-    private final String stringValue;
-    private final String response;
+	OB("OB", "OB"),
+	YB("YB", "YB");
 
-    @JsonCreator
-    public static OpenChatType fromString(String value) {
-        return EnumUtil.stringToEnum(OpenChatType.class, value);
-    }
+	private final String stringValue;
+	private final String response;
 
-    @Override
-    public <E extends Enum<E> & ConvertableEnum> E getNullValue() {
-        return null;
-    }
+	@JsonCreator
+	public static OpenChatType fromString(String value) {
+		return EnumUtil.stringToEnum(OpenChatType.class, value);
+	}
+
+	@Override
+	public <E extends Enum<E> & ConvertableEnum> E getNullValue() {
+		return null;
+	}
 }

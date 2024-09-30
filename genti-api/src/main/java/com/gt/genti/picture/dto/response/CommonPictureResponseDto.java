@@ -30,6 +30,7 @@ public class CommonPictureResponseDto {
 		"PictureCompleted",
 		"PictureCreatedByCreator",
 		"PicturePose",
+		"PictureUserVerification",
 		"PicturePost",
 		"PictureProfile",
 		"PictureUserFace",

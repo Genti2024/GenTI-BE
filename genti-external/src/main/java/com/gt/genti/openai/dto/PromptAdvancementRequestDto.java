@@ -35,7 +35,7 @@ public class PromptAdvancementRequestDto {
 	public static PromptAdvancementRequestDto of(String prompt) {
 
 		return PromptAdvancementRequestDto.builder()
-			.model("gpt-3.5-turbo")
+			.model("gpt-4o-mini")
 			.messages(getMessageList(prompt))
 			.temperature(1)
 			.maxTokens(300)

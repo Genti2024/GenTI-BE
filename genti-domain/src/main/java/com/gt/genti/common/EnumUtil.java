@@ -53,7 +53,8 @@ public class EnumUtil {
 		if (value == null) {
 			E enumNullValue = enumType.getEnumConstants()[0].getNullValue();
 			if (enumNullValue == null) {
-				throw ExpectedException.withLogging(ResponseCode.NotNullableEnum, enumType);
+//				throw ExpectedException.withLogging(ResponseCode.NotNullableEnum, enumType);
+				return null;
 			} else {
 				return enumNullValue;
 			}

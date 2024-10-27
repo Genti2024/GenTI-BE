@@ -23,7 +23,8 @@ public class DefaultEnumDBConverter<T extends Enum<T> & ConvertableEnum>
 		} catch (NullPointerException e) {
 			T enumNullValue = enumClassType.getEnumConstants()[0].getNullValue();
 			if (enumNullValue == null) {
-				throw ExpectedException.withLogging(ResponseCode.NotNullableEnum, enumClassType.getName());
+//				throw ExpectedException.withLogging(ResponseCode.NotNullableEnum, enumClassType.getName());
+				return null;
 			} else {
 				return enumNullValue.getStringValue();
 			}

@@ -187,31 +187,13 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		throwIfNewPictureGenerateRequestNotAvailable(foundUser);
 
 		String lockKey = "LOCK:" + userId + ":" + "createPGREQ";
-		Boolean lockGranted = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", LOCK_TTL_SECONDS, TimeUnit.SECONDS);
-		if (Boolean.FALSE.equals(lockGranted)) {
+		if (!acquireLock(lockKey)) {
 			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestAlreadyProcessed);
 		}
 		try {
-			String posePictureKey = "";
-			PicturePose foundPicturePose = null;
-			if (!Objects.isNull(pgreqSaveCommand.getPosePictureKey())) {
-				posePictureKey = pgreqSaveCommand.getPosePictureKey();
-				String finalPosePictureKey = posePictureKey;
-				foundPicturePose = pictureService.findByKeyPicturePose(posePictureKey).orElseGet(() -> {
-					log.info("""
-						%s 유저가 요청에 포함한 포즈참고사진 key [%s] 기존 사진을 찾을 수 없어 신규 저장""".formatted(foundUser.getEmail(),
-						finalPosePictureKey));
-					return pictureService.updatePicture(
-						CreatePicturePoseCommand.builder().key(finalPosePictureKey).uploader(foundUser).build());
-				});
-			}
-
-			List<String> facePictureUrl = pgreqSaveCommand.getFacePictureKeyList();
-			List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(
-				facePictureUrl, foundUser);
-
-			String promptAdvanced = openAIService.getAdvancedPrompt(
-				new PromptAdvancementRequestCommand(pgreqSaveCommand.getPrompt()));
+			PicturePose picturePose = processPicturePose(pgreqSaveCommand, foundUser);
+			List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(pgreqSaveCommand.getFacePictureKeyList(), foundUser);
+			String promptAdvanced = openAIService.getAdvancedPrompt(new PromptAdvancementRequestCommand(pgreqSaveCommand.getPrompt()));
 			log.info(promptAdvanced);
 
 			PictureGenerateRequest createdPGREQ = PictureGenerateRequest.builder()
@@ -221,7 +203,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				.shotCoverage(pgreqSaveCommand.getShotCoverage())
 				.cameraAngle(pgreqSaveCommand.getCameraAngle())
 				.pictureRatio(pgreqSaveCommand.getPictureRatio())
-				.picturePose(foundPicturePose)
+				.picturePose(picturePose)
 				.userFacePictureList(uploadedFacePictureList)
 				.build();
 
@@ -230,10 +212,32 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 			return savedPGREQ;
 		} finally {
-			Boolean keyDeleted = redisTemplate.delete(lockKey);
-			if (Boolean.FALSE.equals(keyDeleted)) {
-				log.error("Redis에 key {} 값이 존재하지 않습니다.", lockKey);
-			}
+			releaseLock(lockKey);
+		}
+	}
+
+	private PicturePose processPicturePose(PGREQSaveCommand pgreqSaveCommand, User foundUser) {
+		String posePictureKey = pgreqSaveCommand.getPosePictureKey();
+		if (Objects.isNull(posePictureKey)) {
+			return null;
+		}
+		return pictureService.findByKeyPicturePose(posePictureKey).orElseGet(() -> {
+			log.info("""
+					%s 유저가 요청에 포함한 포즈참고사진 key [%s] 기존 사진을 찾을 수 없어 신규 저장""".formatted(foundUser.getEmail(),
+					posePictureKey));
+			return pictureService.updatePicture(
+					CreatePicturePoseCommand.builder().key(posePictureKey).uploader(foundUser).build());
+		});
+	}
+
+	private Boolean acquireLock(String lockKey) {
+		return redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", LOCK_TTL_SECONDS, TimeUnit.SECONDS);
+	}
+
+	private void releaseLock(String lockKey) {
+		Boolean keyDeleted = redisTemplate.delete(lockKey);
+		if (Boolean.FALSE.equals(keyDeleted)) {
+			log.error("Redis에 key {} 값이 존재하지 않습니다.", lockKey);
 		}
 	}
 

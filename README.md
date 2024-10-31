@@ -45,7 +45,7 @@ JPA의 더티 체킹 등 강력한 기능을 활용하기 위해
 
 #### 클린 아키텍쳐 제약사항들
 
-1. [**UseCase**] CQRS 적용을 위해 CUD는 UseCase, R은 Query로 네이밍
+1. [**UseCase**] CQRS 적용을 위해 CUD는 UseCase, R은 Query로 네이밍.
 2. [**Port**] CQRS 적용을 위해 CUD는 {Something}StatePort, R은 Load{Something}Port로 네이밍
 3. UseCase(Query) 끼리 참조해야할때는 Service에서 UseCase를 참조한다.
 4. Command와 Dto 분리 - Dto로 Command를 생성하는 것이 보통이다.

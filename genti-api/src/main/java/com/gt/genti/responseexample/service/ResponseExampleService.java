@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.gt.genti.responseexample.dto.response.ExampleWithSquarePicture;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -67,10 +68,10 @@ public class ResponseExampleService {
 				.build()).toList());
 	}
 
-	public List<ExampleWithPictureFindResponseDto> getAllResponseExamplesInGenerateView() {
-		List<ExampleWithPictureFindResponseDto> examples = responseExampleRepository.findAllByPromptOnlyIsTrue()
+	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateView() {
+		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByPromptOnlyIsTrue()
 				.stream()
-				.map(ExampleWithPictureFindResponseDto::new)
+				.map(ExampleWithSquarePicture::new)
 				.collect(Collectors.toList());
 		Collections.shuffle(examples);
 

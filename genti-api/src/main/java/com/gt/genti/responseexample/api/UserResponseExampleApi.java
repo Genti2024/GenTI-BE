@@ -2,6 +2,7 @@ package com.gt.genti.responseexample.api;
 
 import java.util.List;
 
+import com.gt.genti.responseexample.dto.response.ExampleWithSquarePicture;
 import org.springframework.http.ResponseEntity;
 
 import com.gt.genti.error.ResponseCode;
@@ -30,5 +31,5 @@ public interface UserResponseExampleApi {
 	@EnumResponses(value = {
 			@EnumResponse(ResponseCode.OK)
 	})
-	ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamplesInGenerateView();
+	ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView();
 }

@@ -4,6 +4,7 @@ import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.List;
 
+import com.gt.genti.responseexample.dto.response.ExampleWithSquarePicture;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +35,7 @@ public class UserExampleController implements UserResponseExampleApi {
 
 	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
 	@GetMapping("/with-picture-square")
-	public ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamplesInGenerateView(){
+	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView(){
 		return success(responseExampleService.getAllResponseExamplesInGenerateView());
 	}
 

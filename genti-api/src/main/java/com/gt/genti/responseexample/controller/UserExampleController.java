@@ -31,4 +31,11 @@ public class UserExampleController implements UserResponseExampleApi {
 		return success(responseExampleService.getAllResponseExamples());
 	}
 
+
+	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
+	@GetMapping("/with-picture-square")
+	public ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamplesInGenerateView(){
+		return success(responseExampleService.getAllResponseExamplesInGenerateView());
+	}
+
 }

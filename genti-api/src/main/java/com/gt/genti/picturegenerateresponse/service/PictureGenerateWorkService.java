@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.gt.genti.picture.PictureRatio;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -296,6 +297,10 @@ public class PictureGenerateWorkService {
 		// edited at 2024-07-19
 		// author 서병렬
 
+	}
+
+	public Boolean finishPGRESByFrontend(Long userId, PictureRatio pictureRatio){
+		return true;
 	}
 
 	private User findUserById(Long userId) {

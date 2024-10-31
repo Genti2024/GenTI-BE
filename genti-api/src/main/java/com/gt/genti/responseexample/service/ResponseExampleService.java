@@ -67,4 +67,13 @@ public class ResponseExampleService {
 				.build()).toList());
 	}
 
+	public List<ExampleWithPictureFindResponseDto> getAllResponseExamplesInGenerateView() {
+		List<ExampleWithPictureFindResponseDto> examples = responseExampleRepository.findAllByPromptOnlyIsTrue()
+				.stream()
+				.map(ExampleWithPictureFindResponseDto::new)
+				.collect(Collectors.toList());
+		Collections.shuffle(examples);
+
+		return examples;
+	}
 }

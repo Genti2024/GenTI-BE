@@ -24,6 +24,8 @@ public interface PictureGenerateRequestRepository
 
 	List<PictureGenerateRequest> findAllByRequester(User requester);
 
+	Optional<PictureGenerateRequest> findTop1ByRequesterOrderByIdDesc(User requester);
+
 	Page<PictureGenerateRequest> findAllByRequester(User requester, Pageable pageable);
 
 	@Query("select pgr from PictureGenerateRequest pgr "

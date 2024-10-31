@@ -22,7 +22,6 @@ public interface FrontendPGRESApi {
             @EnumResponse(ResponseCode.OK)
     })
     ResponseEntity<GentiResponse.ApiResult<Boolean>> finishPGRESByFrontend(
-        @AuthUser Long userId,
-        @RequestParam(name = "pictureRatio") @NotNull PictureRatio pictureRatio);
+        @AuthUser Long userId);
 
 }

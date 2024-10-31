@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Profile("staging")
+@Profile({"staging", "local"})
 @RestController
 @RequestMapping("/api/v1/frontend/picture-generate-responses")
 @RequiredArgsConstructor
@@ -23,10 +23,9 @@ public class FrontendPGRESController {
 
     @PostMapping
     ResponseEntity<GentiResponse.ApiResult<Boolean>> finishPGRESByFrontend(
-        @AuthUser Long userId,
-        @RequestParam(name = "pictureRatio") @NotNull PictureRatio pictureRatio
+        @AuthUser Long userId
     ){
-        return GentiResponse.success(pictureGenerateWorkService.finishPGRESByFrontend(userId, pictureRatio));
+        return GentiResponse.success(pictureGenerateWorkService.finishPGRESByFrontend(userId));
     }
 
 }

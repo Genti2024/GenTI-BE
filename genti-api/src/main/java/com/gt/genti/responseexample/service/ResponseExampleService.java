@@ -75,6 +75,6 @@ public class ResponseExampleService {
 				.collect(Collectors.toList());
 		Collections.shuffle(examples);
 
-		return examples;
+		return examples.subList(0, 5);
 	}
 }

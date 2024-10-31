@@ -323,7 +323,7 @@ public class PictureGenerateWorkService {
 							.pictureRatio(foundpgreq.getPictureRatio())
 							.build();
 					pictureCompletedRepository.save(pictureCompleted);
-					foundpgreq.submittedByAdmin();
+					foundpgres.adminSubmit();
 					return true;
 				}
 			}

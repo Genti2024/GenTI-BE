@@ -21,6 +21,7 @@ public class SignUpEventListener {
 			event.totalUserCount(),
 			event.name(),
 			event.email(),
+			event.sex(),
 			event.socialPlatform(),
 			event.createdAt());
 	}

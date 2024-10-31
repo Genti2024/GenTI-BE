@@ -77,11 +77,11 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@JoinColumn(name = "picture_pose_id")
 	PicturePose picturePose;
 
-	@Column(name = "camera_angle", nullable = false)
+	@Column(name = "camera_angle")
 	@Convert(converter = CameraAngleConverter.class)
 	CameraAngle cameraAngle;
 
-	@Column(name = "shot_coverage", nullable = false)
+	@Column(name = "shot_coverage")
 	@Convert(converter = ShotCoverageConverter.class)
 	ShotCoverage shotCoverage;
 

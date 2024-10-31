@@ -15,18 +15,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserSignUpEventPublisher {
 
-    private final ApplicationEventPublisher eventPublisher;
+	private final ApplicationEventPublisher eventPublisher;
 
-    @Async
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void publishSignUpEvent(User user) {
-        eventPublisher.publishEvent(SignUpEvent.of(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail() == null ? "" : user.getEmail(),
-                user.getLastLoginOauthPlatform().toString(),
-                user.getCreatedAt()
-        ));
-    }
+	@Async
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void publishSignUpEvent(User user) {
+		eventPublisher.publishEvent(
+			SignUpEvent.of(user.getId(), user.getUsername(), user.getEmail() == null ? "" : user.getEmail(),
+				user.getSex().getResponse(), user.getLastLoginOauthPlatform().toString(), user.getCreatedAt()));
+	}
 
 }

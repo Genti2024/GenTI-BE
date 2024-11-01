@@ -306,7 +306,7 @@ public class PictureGenerateWorkService {
 		Optional<PictureGenerateRequest> pgreq = pictureGenerateRequestRepository.findTop1ByRequesterOrderByIdDesc(foundUser);
 		if (pgreq.isPresent()){
 			PictureGenerateRequest foundpgreq = pgreq.get();
-			if(foundpgreq.getPictureGenerateRequestStatus().equals(PictureGenerateRequestStatus.AWAIT_USER_VERIFICATION)){
+			if(foundpgreq.getPictureGenerateRequestStatus().equals(PictureGenerateRequestStatus.MATCH_TO_ADMIN)){
 				Optional<PictureGenerateResponse> pgres = pictureGenerateResponseRepository.findByRequest(pgreq.get());
 				if(pgres.isPresent()) {
 					PictureGenerateResponse foundpgres = pgres.get();

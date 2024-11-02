@@ -2,6 +2,7 @@ package com.gt.genti.responseexample.api;
 
 import java.util.List;
 
+import com.gt.genti.responseexample.dto.response.ExampleWithSquarePicture;
 import org.springframework.http.ResponseEntity;
 
 import com.gt.genti.error.ResponseCode;
@@ -24,4 +25,11 @@ public interface UserResponseExampleApi {
 		@EnumResponse(ResponseCode.OK)
 	})
 	ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamples();
+
+	@Operation(summary = "사진 생성 뷰에서의 예시 사진 조회", description = "예시 사진&프롬프트를 조회합니다." + "<br/>"
+			+ "정방형 비율의 사진입니다.")
+	@EnumResponses(value = {
+			@EnumResponse(ResponseCode.OK)
+	})
+	ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView();
 }

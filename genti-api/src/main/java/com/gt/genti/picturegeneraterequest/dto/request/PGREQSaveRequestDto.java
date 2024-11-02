@@ -25,7 +25,6 @@ public class PGREQSaveRequestDto {
 	@Schema(description = "프롬프트", example = "벚꽃길에서 벤치에 앉아있는 사진이요")
 	String prompt;
 
-	@Schema(description = "포즈 사진")
 	CommonPictureKeyUpdateRequestDto posePicture;
 
 	@NotNull
@@ -33,12 +32,10 @@ public class PGREQSaveRequestDto {
 	@Schema(description = "얼굴 사진 리스트")
 	List<@NotNull CommonPictureKeyUpdateRequestDto> facePictureList;
 
-	@NotNull
-	@Schema(description = "카메라 앵글")
 	CameraAngle cameraAngle;
-	@NotNull
-	@Schema(description = "프레임")
+
 	ShotCoverage shotCoverage;
+
 	@NotNull
 	@Schema(description = "사진 비율")
 	PictureRatio pictureRatio;
@@ -59,7 +56,7 @@ public class PGREQSaveRequestDto {
 	public PGREQSaveCommand toCommand() {
 		return PGREQSaveCommand.builder()
 			.prompt(this.prompt)
-			.posePictureKey(this.posePicture.getKey())
+			.posePictureKey(this.posePicture != null ? this.posePicture.getKey() : null)
 			.cameraAngle(this.cameraAngle)
 			.shotCoverage(this.shotCoverage)
 			.pictureRatio(this.pictureRatio)

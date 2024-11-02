@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.gt.genti.picture.PictureRatio;
+import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +53,7 @@ public class PictureGenerateWorkService {
 	private final CreatorRepository creatorRepository;
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
+	private final PictureCompletedRepository pictureCompletedRepository;
 	private final SettlementRepository settlementRepository;
 	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
@@ -296,6 +299,36 @@ public class PictureGenerateWorkService {
 		// edited at 2024-07-19
 		// author 서병렬
 
+	}
+
+	public Boolean finishPGRESByFrontend(Long userId){
+		User foundUser = findUserById(userId);
+		Optional<PictureGenerateRequest> pgreq = pictureGenerateRequestRepository.findTop1ByRequesterOrderByIdDesc(foundUser);
+		if (pgreq.isPresent()){
+			PictureGenerateRequest foundpgreq = pgreq.get();
+			if(foundpgreq.getPictureGenerateRequestStatus().equals(PictureGenerateRequestStatus.MATCH_TO_ADMIN)){
+				Optional<PictureGenerateResponse> pgres = pictureGenerateResponseRepository.findByRequest(pgreq.get());
+				if(pgres.isPresent()) {
+					PictureGenerateResponse foundpgres = pgres.get();
+					String key = switch (foundpgreq.getPictureRatio()) {
+                        case PictureRatio.RATIO_GARO -> "DEV/ADMIN_UPLOADED_IMAGE/3.png";
+                        case PictureRatio.RATIO_SERO -> "DEV/ADMIN_UPLOADED_IMAGE/1.png";
+                        default -> "";
+                    };
+                    PictureCompleted pictureCompleted = PictureCompleted.builder()
+							.key(key)
+							.pictureGenerateResponse(foundpgres)
+							.uploadedBy(foundUser)
+							.requester(foundUser)
+							.pictureRatio(foundpgreq.getPictureRatio())
+							.build();
+					pictureCompletedRepository.save(pictureCompleted);
+					foundpgres.adminSubmit();
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private User findUserById(Long userId) {

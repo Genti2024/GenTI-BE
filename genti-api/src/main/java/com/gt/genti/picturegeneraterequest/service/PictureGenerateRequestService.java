@@ -3,6 +3,7 @@ package com.gt.genti.picturegeneraterequest.service;
 import static com.gt.genti.constants.RedisConstants.LOCK_TTL_SECONDS;
 import static com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.gt.genti.picture.userverification.model.PictureUserVerification;
+import com.gt.genti.picturegeneraterequest.command.AdvancedPGREQSaveCommand;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -206,6 +208,42 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				.picturePose(picturePose)
 				.userFacePictureList(uploadedFacePictureList)
 				.build();
+
+			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
+			requestMatchService.matchNewRequest(savedPGREQ);
+
+			return savedPGREQ;
+		} finally {
+			releaseLock(lockKey);
+		}
+	}
+
+	@Override
+	public PictureGenerateRequest createAdvancedPGREQ(Long userId, AdvancedPGREQSaveCommand advancedPGREQSaveCommand) {
+		User foundUser = findUserById(userId);
+		throwIfNewPictureGenerateRequestNotAvailable(foundUser);
+
+		String lockKey = "LOCK:" + userId + ":" + "createPGREQ";
+		if (!acquireLock(lockKey)) {
+			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestAlreadyProcessed);
+		}
+		try {
+			List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(advancedPGREQSaveCommand.getFacePictureKeyList(), foundUser);
+			List<PictureUserFace> uploadedOtherFacePictureList = pictureService.updateIfNotExistsPictureUserFace(advancedPGREQSaveCommand.getOtherFacePictureKeyList(), foundUser);
+			List<PictureUserFace> mergedList = new ArrayList<>();
+			mergedList.addAll(uploadedFacePictureList);
+			mergedList.addAll(uploadedOtherFacePictureList);
+
+			String promptAdvanced = openAIService.getAdvancedPrompt(new PromptAdvancementRequestCommand(advancedPGREQSaveCommand.getPrompt()));
+			log.info(promptAdvanced);
+
+			PictureGenerateRequest createdPGREQ = PictureGenerateRequest.builder()
+					.requester(foundUser)
+					.promptAdvanced(promptAdvanced)
+					.prompt(advancedPGREQSaveCommand.getPrompt())
+					.pictureRatio(advancedPGREQSaveCommand.getPictureRatio())
+					.userFacePictureList(mergedList)
+					.build();
 
 			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
 			requestMatchService.matchNewRequest(savedPGREQ);

@@ -6,9 +6,12 @@ import com.gt.genti.picturegeneraterequest.model.CameraAngle;
 import com.gt.genti.picture.PictureRatio;
 import com.gt.genti.picturegeneraterequest.model.ShotCoverage;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class PGREQSaveCommand {
 

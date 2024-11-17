@@ -2,6 +2,7 @@ package com.gt.genti.usecase;
 
 import java.util.List;
 
+import com.gt.genti.picturegeneraterequest.command.AdvancedPGREQSaveCommand;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,6 +23,9 @@ public interface PictureGenerateRequestUseCase {
 
 	PictureGenerateRequest createPGREQ(Long userId,
 		PGREQSaveCommand pgreqSaveCommand);
+
+	PictureGenerateRequest createAdvancedPGREQ(Long userId,
+	   AdvancedPGREQSaveCommand advancedPGREQSaveCommand);
 
 	void modifyPGREQ(Long userId,
 		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto);

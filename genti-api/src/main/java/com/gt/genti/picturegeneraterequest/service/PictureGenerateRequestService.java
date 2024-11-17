@@ -246,7 +246,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 					.build();
 
 			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
-			requestMatchService.matchNewRequest(savedPGREQ);
+			requestMatchService.paidMatchNewRequest(savedPGREQ);
 
 			return savedPGREQ;
 		} finally {

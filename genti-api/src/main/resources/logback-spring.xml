@@ -7,6 +7,7 @@
               value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
     <springProperty name="BASE_URL" source="discord.webhook-url.base"/>
     <springProperty name="ADMIN_PATH" source="discord.webhook-url.admin"/>
+    <springProperty name="ADMIN_PAID_PATH" source="discord.webhook-url.admin-paid"/>
     <springProperty name="EVENT_PATH" source="discord.webhook-url.event"/>
     <springProperty name="ERROR_PATH" source="discord.webhook-url.error"/>
 

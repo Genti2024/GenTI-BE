@@ -35,6 +35,8 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 	@Value("${discord.webhook-url.base}${discord.webhook-url.admin}")
 	private String adminChannelUrl;
+	@Value("${discord.webhook-url.base}${discord.webhook-url.admin-paid}")
+	private String adminPaidChannerUrl;
 	@Value("${discord.webhook-url.base}${discord.webhook-url.event}")
 	private String eventChannelUrl;
 	@Value("${discord.webhook-url.base}${discord.webhook-url.error}")
@@ -43,6 +45,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	private String profile;
 	private String username = "Error log";
 	private String adminAvatarUrl = "https://img.icons8.com/ios-filled/50/FA5252/business.png";
+	private String adminPaidAvatarUrl = "https://github.com/user-attachments/assets/c7856e0f-5fca-4a53-8af6-ef9a0743c58b";
 	private String errorAvatarUrl = "https://img.icons8.com/ios-filled/50/22C3E6/error--v1.png";
 	private String devErrorAvatarUrl = "https://img.icons8.com/ios-filled/50/FFFFFF/error--v1.png";
 	private String eventAvatarUrl = "https://img.icons8.com/ios-filled/50/40C057/confetti.png";
@@ -179,6 +182,30 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 		try {
 			execute(discordWebhook, adminChannelUrl);
+		} catch (IOException e) {
+			throw ExpectedException.withLogging(ResponseCode.DiscordIOException, e.getMessage());
+		}
+	}
+
+	public void paidMatchResultAppend(String summary, List<String> matchingResultList) {
+//		if ("local".equals(profile)) {
+//			return;
+//		}
+		DiscordWebHook discordWebhook = new DiscordWebHook("admin", adminPaidAvatarUrl, false);
+		EmbedObject embedObject = EmbedObject.builder()
+				.title("유료 매칭 결과 알림")
+				.color(Color.CYAN)
+				.description(summary)
+				.build();
+		matchingResultList.forEach(str -> embedObject.addField(Field.builder()
+				.name("[매칭결과]")
+				.value(StringEscapeUtils.escapeJson(str.replaceAll("[\\{\\{\\}]", "").replaceAll("\n", "\\n")))
+				.inline(false)
+				.build()));
+		discordWebhook.addEmbed(embedObject);
+
+		try {
+			execute(discordWebhook, adminPaidChannerUrl);
 		} catch (IOException e) {
 			throw ExpectedException.withLogging(ResponseCode.DiscordIOException, e.getMessage());
 		}

@@ -243,6 +243,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 					.prompt(advancedPGREQSaveCommand.getPrompt())
 					.pictureRatio(advancedPGREQSaveCommand.getPictureRatio())
 					.userFacePictureList(mergedList)
+					.paid(true)
 					.build();
 
 			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);

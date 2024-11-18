@@ -92,6 +92,21 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
+	public Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatched(Pageable pageable) {
+		return pictureGenerateRequestPort.findByMatchToAdminIsAndPaidIs(true, true, pageable)
+				.map(convertPGREQToAdminMatchedResponseDto());
+	}
+
+	@Override
+	public Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatchedByRequesterEmail(String email,
+																								  Pageable pageable) {
+		User foundUser = userRepository.findByEmail(email)
+				.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		return pictureGenerateRequestPort.findAllByRequesterAndPaidIs(foundUser, true, pageable)
+				.map(convertPGREQToAdminMatchedResponseDto());
+	}
+
+	@Override
 	public Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmitted(Pageable pageable) {
 		return pictureGenerateRequestPort.findByMatchToAdminIs(false, pageable)
 			.map(convertPGREQToCreatorSubmittedResponseDto());

@@ -8,7 +8,7 @@ https://naver.github.io/hackday-conventions-java/
 
 ## commit convention
 ```
-Ex) Feat: #issue Oauth 기능 구현
+Ex) Feat: #issue Oauth 기능 구현.
 ```
 ```
 [Feat]: 새로운 기능 구현

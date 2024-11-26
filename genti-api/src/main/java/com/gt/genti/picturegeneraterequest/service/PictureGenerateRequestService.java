@@ -183,17 +183,19 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			foundUser);
 
 		if (optionalPGREQ.isEmpty()) {
-			return createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null);
+			return createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null, null);
 		}
 
 		PictureGenerateRequest foundPGREQ = optionalPGREQ.get();
 		PictureGenerateRequestStatusForUser pgreqStatusForUser = pgreqStatusToPGREQStatusForUserMapper.dbToClient(
 			foundPGREQ.getPictureGenerateRequestStatus());
 
+		Boolean paid = foundPGREQ.getPaid() != null;
+
 		return switch (pgreqStatusForUser) {
-			case CANCELED -> createPGREQStatusResponseDto(CANCELED, foundPGREQ.getId(), null);
-			case IN_PROGRESS -> createPGREQStatusResponseDto(IN_PROGRESS, foundPGREQ.getId(), null);
-			case NEW_REQUEST_AVAILABLE -> createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null);
+			case CANCELED -> createPGREQStatusResponseDto(CANCELED, foundPGREQ.getId(), null, null);
+			case IN_PROGRESS -> createPGREQStatusResponseDto(IN_PROGRESS, foundPGREQ.getId(), null, paid);
+			case NEW_REQUEST_AVAILABLE -> createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null, null);
 			case AWAIT_USER_VERIFICATION -> handleAwaitUserVerification(foundPGREQ);
 		};
 	}
@@ -346,11 +348,12 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	private PGREQStatusResponseDto createPGREQStatusResponseDto(PictureGenerateRequestStatusForUser status,
-		Long pgreqId, PGRESFindByUserResponseDto pgresDto) {
+		Long pgreqId, PGRESFindByUserResponseDto pgresDto, Boolean paid) {
 		return PGREQStatusResponseDto.builder()
 			.status(status)
 			.pictureGenerateRequestId(pgreqId)
 			.pgresFindByUserResponseDto(pgresDto)
+			.paid(paid)
 			.build();
 	}
 
@@ -395,7 +398,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				foundPGREQ.getId(), foundPGREQ.getPictureGenerateRequestStatus())));
 
 		return createPGREQStatusResponseDto(AWAIT_USER_VERIFICATION, foundPGREQ.getId(),
-			new PGRESFindByUserResponseDto(needVerifyPGRES));
+			new PGRESFindByUserResponseDto(needVerifyPGRES), null);
 	}
 
 	@NotNull

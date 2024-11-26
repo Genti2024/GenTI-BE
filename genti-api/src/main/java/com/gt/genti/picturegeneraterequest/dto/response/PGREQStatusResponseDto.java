@@ -26,11 +26,14 @@ public class PGREQStatusResponseDto {
 	@Schema(description = "사진생성응답 객체, status 값이 AWAIT_USER_VERIFICATION 가 아니면 null", nullable = true)
 	PGRESFindByUserResponseDto pictureGenerateResponse;
 
+	Boolean paid;
+
 	@Builder
 	public PGREQStatusResponseDto(Long pictureGenerateRequestId, PictureGenerateRequestStatusForUser status,
-		PGRESFindByUserResponseDto pgresFindByUserResponseDto) {
+		PGRESFindByUserResponseDto pgresFindByUserResponseDto, Boolean paid) {
 		this.pictureGenerateRequestId = pictureGenerateRequestId;
 		this.status = status;
 		this.pictureGenerateResponse = pgresFindByUserResponseDto;
+		this.paid = paid;
 	}
 }

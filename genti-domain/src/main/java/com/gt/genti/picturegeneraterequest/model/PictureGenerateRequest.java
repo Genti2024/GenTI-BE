@@ -96,8 +96,9 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Column(name = "match_to_admin", nullable = false)
 	Boolean matchToAdmin;
 
+	// Enum 타입으로 변경 예정
 	@Column(name = "paid")
-	Boolean paid;
+	int paid;
 
 	@PrePersist
 	public void prePersist() {
@@ -109,7 +110,7 @@ public class PictureGenerateRequest extends BaseTimeEntity {
 	@Builder
 	public PictureGenerateRequest(User requester, String prompt, CameraAngle cameraAngle, ShotCoverage shotCoverage,
 		PictureRatio pictureRatio,
-		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced, Boolean paid) {
+		PicturePose picturePose, List<PictureUserFace> userFacePictureList, String promptAdvanced, int paid) {
 		this.requester = requester;
 		this.prompt = prompt;
 		this.promptAdvanced = promptAdvanced;

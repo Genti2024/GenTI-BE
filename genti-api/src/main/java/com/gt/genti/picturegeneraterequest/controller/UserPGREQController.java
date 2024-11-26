@@ -76,12 +76,19 @@ public class UserPGREQController implements UserPGREQApi {
 		return GentiResponse.success(true);
 	}
 
-	@PostMapping("/advanced")
-	public ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequestTwo(
+	@PostMapping("/paid/one")
+	public ResponseEntity<ApiResult<Boolean>> createPaidPictureGenerateRequestForOne(
+			@AuthUser Long userId,
+			@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {
+		pictureGenerateRequestUseCase.createPaidPGREQForOne(userId, pgreqSaveRequestDto.toCommand());
+		return GentiResponse.success(true);
+	}
+
+	@PostMapping("/paid/two")
+	public ResponseEntity<ApiResult<Boolean>> createPaidPictureGenerateRequestForTwo(
 			@AuthUser Long userId,
 			@RequestBody @Valid AdvancedPGREQSaveRequestDto advancedPGREQSaveRequestDto) {
-		pictureGenerateRequestUseCase.createAdvancedPGREQ(userId,
-			advancedPGREQSaveRequestDto.toCommand());
+		pictureGenerateRequestUseCase.createPaidPGREQForTwo(userId, advancedPGREQSaveRequestDto.toCommand());
 		return GentiResponse.success(true);
 	}
 

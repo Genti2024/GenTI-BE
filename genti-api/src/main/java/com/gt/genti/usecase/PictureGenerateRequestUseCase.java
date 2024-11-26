@@ -24,7 +24,10 @@ public interface PictureGenerateRequestUseCase {
 	PictureGenerateRequest createPGREQ(Long userId,
 		PGREQSaveCommand pgreqSaveCommand);
 
-	PictureGenerateRequest createAdvancedPGREQ(Long userId,
+	PictureGenerateRequest createPaidPGREQForOne(Long userId,
+		 PGREQSaveCommand pgreqSaveCommand);
+
+	PictureGenerateRequest createPaidPGREQForTwo(Long userId,
 	   AdvancedPGREQSaveCommand advancedPGREQSaveCommand);
 
 	void modifyPGREQ(Long userId,

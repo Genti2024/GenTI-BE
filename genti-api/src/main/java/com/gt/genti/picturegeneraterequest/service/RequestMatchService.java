@@ -91,8 +91,9 @@ public class RequestMatchService {
 	}
 
 	@Transactional
-	public void paidMatchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
-		paidMatchSingleRequest(pictureGenerateRequest, "신규 요청 매칭 - 유료");
+	public void paidMatchNewRequest(PictureGenerateRequest pictureGenerateRequest, int num) {
+		String message = String.format("신규 요청 매칭 - %d인 -", num);
+		paidMatchSingleRequest(pictureGenerateRequest, message);
 	}
 
 	@Transactional

@@ -234,7 +234,40 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public PictureGenerateRequest createAdvancedPGREQ(Long userId, AdvancedPGREQSaveCommand advancedPGREQSaveCommand) {
+	public PictureGenerateRequest createPaidPGREQForOne(Long userId, PGREQSaveCommand pgreqSaveCommand) {
+		User foundUser = findUserById(userId);
+		throwIfNewPictureGenerateRequestNotAvailable(foundUser);
+
+		String lockKey = "LOCK:" + userId + ":" + "createPGREQ";
+		if (!acquireLock(lockKey)) {
+			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestAlreadyProcessed);
+		}
+		try {
+			List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(pgreqSaveCommand.getFacePictureKeyList(), foundUser);
+
+			String promptAdvanced = openAIService.getAdvancedPrompt(new PromptAdvancementRequestCommand(pgreqSaveCommand.getPrompt()));
+			log.info(promptAdvanced);
+
+			PictureGenerateRequest createdPGREQ = PictureGenerateRequest.builder()
+					.requester(foundUser)
+					.promptAdvanced(promptAdvanced)
+					.prompt(pgreqSaveCommand.getPrompt())
+					.pictureRatio(pgreqSaveCommand.getPictureRatio())
+					.userFacePictureList(uploadedFacePictureList)
+					.paid(1)
+					.build();
+
+			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
+			requestMatchService.paidMatchNewRequest(savedPGREQ, 1);
+
+			return savedPGREQ;
+		} finally {
+			releaseLock(lockKey);
+		}
+	}
+
+	@Override
+	public PictureGenerateRequest createPaidPGREQForTwo(Long userId, AdvancedPGREQSaveCommand advancedPGREQSaveCommand) {
 		User foundUser = findUserById(userId);
 		throwIfNewPictureGenerateRequestNotAvailable(foundUser);
 
@@ -258,11 +291,11 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 					.prompt(advancedPGREQSaveCommand.getPrompt())
 					.pictureRatio(advancedPGREQSaveCommand.getPictureRatio())
 					.userFacePictureList(mergedList)
-					.paid(true)
+					.paid(2)
 					.build();
 
 			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
-			requestMatchService.paidMatchNewRequest(savedPGREQ);
+			requestMatchService.paidMatchNewRequest(savedPGREQ, 2);
 
 			return savedPGREQ;
 		} finally {

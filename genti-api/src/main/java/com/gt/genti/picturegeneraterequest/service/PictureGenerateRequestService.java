@@ -397,8 +397,10 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				"No suitable picture generation response found for verification. Request ID: [%d], Status: [%s]",
 				foundPGREQ.getId(), foundPGREQ.getPictureGenerateRequestStatus())));
 
+		Boolean paid = foundPGREQ.getPaid() != null;
+
 		return createPGREQStatusResponseDto(AWAIT_USER_VERIFICATION, foundPGREQ.getId(),
-			new PGRESFindByUserResponseDto(needVerifyPGRES), null);
+			new PGRESFindByUserResponseDto(needVerifyPGRES), paid);
 	}
 
 	@NotNull

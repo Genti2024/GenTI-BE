@@ -28,7 +28,11 @@ public interface PictureGenerateRequestPort {
 
 	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
 
+	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIs(boolean matchToAdmin, boolean paid, Pageable pageable);
+
 	Page<PictureGenerateRequest> findAllByRequester(User foundUser, Pageable pageable);
+
+	Page<PictureGenerateRequest> findAllByRequesterAndPaidIs(User foundUser, boolean paid, Pageable pageable);
 
 	Optional<PictureGenerateRequest> findTopByRequesterOrderByCreatedAtDesc(User foundUser);
 }

@@ -3,6 +3,7 @@ package com.gt.genti.picturegeneraterequest.service;
 import static com.gt.genti.constants.RedisConstants.LOCK_TTL_SECONDS;
 import static com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.gt.genti.picture.userverification.model.PictureUserVerification;
+import com.gt.genti.picturegeneraterequest.command.AdvancedPGREQSaveCommand;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -90,6 +92,21 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
+	public Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatched(Pageable pageable) {
+		return pictureGenerateRequestPort.findByMatchToAdminIsAndPaidIs(true, true, pageable)
+				.map(convertPGREQToAdminMatchedResponseDto());
+	}
+
+	@Override
+	public Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatchedByRequesterEmail(String email,
+																								  Pageable pageable) {
+		User foundUser = userRepository.findByEmail(email)
+				.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
+		return pictureGenerateRequestPort.findAllByRequesterAndPaidIs(foundUser, true, pageable)
+				.map(convertPGREQToAdminMatchedResponseDto());
+	}
+
+	@Override
 	public Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmitted(Pageable pageable) {
 		return pictureGenerateRequestPort.findByMatchToAdminIs(false, pageable)
 			.map(convertPGREQToCreatorSubmittedResponseDto());
@@ -166,17 +183,19 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			foundUser);
 
 		if (optionalPGREQ.isEmpty()) {
-			return createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null);
+			return createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null, null);
 		}
 
 		PictureGenerateRequest foundPGREQ = optionalPGREQ.get();
 		PictureGenerateRequestStatusForUser pgreqStatusForUser = pgreqStatusToPGREQStatusForUserMapper.dbToClient(
 			foundPGREQ.getPictureGenerateRequestStatus());
 
+		Boolean paid = foundPGREQ.getPaid() != null;
+
 		return switch (pgreqStatusForUser) {
-			case CANCELED -> createPGREQStatusResponseDto(CANCELED, foundPGREQ.getId(), null);
-			case IN_PROGRESS -> createPGREQStatusResponseDto(IN_PROGRESS, foundPGREQ.getId(), null);
-			case NEW_REQUEST_AVAILABLE -> createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null);
+			case CANCELED -> createPGREQStatusResponseDto(CANCELED, foundPGREQ.getId(), null, null);
+			case IN_PROGRESS -> createPGREQStatusResponseDto(IN_PROGRESS, foundPGREQ.getId(), null, paid);
+			case NEW_REQUEST_AVAILABLE -> createPGREQStatusResponseDto(NEW_REQUEST_AVAILABLE, null, null, null);
 			case AWAIT_USER_VERIFICATION -> handleAwaitUserVerification(foundPGREQ);
 		};
 	}
@@ -209,6 +228,76 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
 			requestMatchService.matchNewRequest(savedPGREQ);
+
+			return savedPGREQ;
+		} finally {
+			releaseLock(lockKey);
+		}
+	}
+
+	@Override
+	public PictureGenerateRequest createPaidPGREQForOne(Long userId, PGREQSaveCommand pgreqSaveCommand) {
+		User foundUser = findUserById(userId);
+		throwIfNewPictureGenerateRequestNotAvailable(foundUser);
+
+		String lockKey = "LOCK:" + userId + ":" + "createPGREQ";
+		if (!acquireLock(lockKey)) {
+			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestAlreadyProcessed);
+		}
+		try {
+			List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(pgreqSaveCommand.getFacePictureKeyList(), foundUser);
+
+			String promptAdvanced = openAIService.getAdvancedPrompt(new PromptAdvancementRequestCommand(pgreqSaveCommand.getPrompt()));
+			log.info(promptAdvanced);
+
+			PictureGenerateRequest createdPGREQ = PictureGenerateRequest.builder()
+					.requester(foundUser)
+					.promptAdvanced(promptAdvanced)
+					.prompt(pgreqSaveCommand.getPrompt())
+					.pictureRatio(pgreqSaveCommand.getPictureRatio())
+					.userFacePictureList(uploadedFacePictureList)
+					.paid(1)
+					.build();
+
+			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
+			requestMatchService.paidMatchNewRequest(savedPGREQ, 1);
+
+			return savedPGREQ;
+		} finally {
+			releaseLock(lockKey);
+		}
+	}
+
+	@Override
+	public PictureGenerateRequest createPaidPGREQForTwo(Long userId, AdvancedPGREQSaveCommand advancedPGREQSaveCommand) {
+		User foundUser = findUserById(userId);
+		throwIfNewPictureGenerateRequestNotAvailable(foundUser);
+
+		String lockKey = "LOCK:" + userId + ":" + "createPGREQ";
+		if (!acquireLock(lockKey)) {
+			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestAlreadyProcessed);
+		}
+		try {
+			List<PictureUserFace> uploadedFacePictureList = pictureService.updateIfNotExistsPictureUserFace(advancedPGREQSaveCommand.getFacePictureKeyList(), foundUser);
+			List<PictureUserFace> uploadedOtherFacePictureList = pictureService.updateIfNotExistsPictureUserFace(advancedPGREQSaveCommand.getOtherFacePictureKeyList(), foundUser);
+			List<PictureUserFace> mergedList = new ArrayList<>();
+			mergedList.addAll(uploadedFacePictureList);
+			mergedList.addAll(uploadedOtherFacePictureList);
+
+			String promptAdvanced = openAIService.getAdvancedPrompt(new PromptAdvancementRequestCommand(advancedPGREQSaveCommand.getPrompt()));
+			log.info(promptAdvanced);
+
+			PictureGenerateRequest createdPGREQ = PictureGenerateRequest.builder()
+					.requester(foundUser)
+					.promptAdvanced(promptAdvanced)
+					.prompt(advancedPGREQSaveCommand.getPrompt())
+					.pictureRatio(advancedPGREQSaveCommand.getPictureRatio())
+					.userFacePictureList(mergedList)
+					.paid(2)
+					.build();
+
+			PictureGenerateRequest savedPGREQ = pictureGenerateRequestPort.save(createdPGREQ);
+			requestMatchService.paidMatchNewRequest(savedPGREQ, 2);
 
 			return savedPGREQ;
 		} finally {
@@ -259,11 +348,12 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	private PGREQStatusResponseDto createPGREQStatusResponseDto(PictureGenerateRequestStatusForUser status,
-		Long pgreqId, PGRESFindByUserResponseDto pgresDto) {
+		Long pgreqId, PGRESFindByUserResponseDto pgresDto, Boolean paid) {
 		return PGREQStatusResponseDto.builder()
 			.status(status)
 			.pictureGenerateRequestId(pgreqId)
 			.pgresFindByUserResponseDto(pgresDto)
+			.paid(paid)
 			.build();
 	}
 
@@ -308,7 +398,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				foundPGREQ.getId(), foundPGREQ.getPictureGenerateRequestStatus())));
 
 		return createPGREQStatusResponseDto(AWAIT_USER_VERIFICATION, foundPGREQ.getId(),
-			new PGRESFindByUserResponseDto(needVerifyPGRES));
+			new PGRESFindByUserResponseDto(needVerifyPGRES), null);
 	}
 
 	@NotNull

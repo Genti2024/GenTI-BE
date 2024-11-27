@@ -1,5 +1,6 @@
 package com.gt.genti.picturegeneraterequest.service;
 
+import com.gt.genti.discord.event.PaidMatchEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,4 +26,12 @@ public class MatchEventPublisher {
 		));
 	}
 
+	@Async
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void publishPaidMatchEvent(GentiMatchResult gentiMatchResult) {
+		eventPublisher.publishEvent(PaidMatchEvent.of(
+				gentiMatchResult.getSummary(),
+				gentiMatchResult.getMatchResultList()
+		));
+	}
 }

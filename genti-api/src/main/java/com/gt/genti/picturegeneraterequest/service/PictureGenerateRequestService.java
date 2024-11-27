@@ -93,7 +93,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	@Override
 	public Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatched(Pageable pageable) {
-		return pictureGenerateRequestPort.findByMatchToAdminIsAndPaidIs(true, true, pageable)
+		return pictureGenerateRequestPort.findByMatchToAdminIsAndPaidIsNotNull(true, pageable)
 				.map(convertPGREQToAdminMatchedResponseDto());
 	}
 
@@ -102,7 +102,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 																								  Pageable pageable) {
 		User foundUser = userRepository.findByEmail(email)
 				.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
-		return pictureGenerateRequestPort.findAllByRequesterAndPaidIs(foundUser, true, pageable)
+		return pictureGenerateRequestPort.findAllByRequesterAndPaidIsNotNull(foundUser, pageable)
 				.map(convertPGREQToAdminMatchedResponseDto());
 	}
 
@@ -451,6 +451,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		PictureUserVerification puv = (user != null)
 				? user.getPictureUserVerificationList().stream().findFirst().orElse(null)
 				: null;
+		String paidString = (pgreq.getPaid() == null) ? "기타" : (pgreq.getPaid() == 1 ? "1인" : (pgreq.getPaid() == 2 ? "2인" : "기타"));
 		return PGREQAdminMatchedDetailFindByAdminResponseDto.builder()
 			.posePicture(CommonPictureResponseDto.of(pgreq.getPicturePose()))
 			.pictureUserVerification(CommonPictureResponseDto.of(puv))
@@ -465,6 +466,7 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.pictureGenerateRequestId(pgreq.getId())
 			.sex(pgreq.getRequester().getSex())
 			.shotCoverage(pgreq.getShotCoverage())
+			.paid(paidString)
 			.build();
 	}
 

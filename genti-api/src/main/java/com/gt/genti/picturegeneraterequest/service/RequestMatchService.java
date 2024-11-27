@@ -69,9 +69,31 @@ public class RequestMatchService {
 		logAndPublishEvent(gentiMatchResult);
 	}
 
+	private void paidMatchRequestsWithStrategy(List<PictureGenerateRequest> requestList, List<Creator> availableCreatorList,
+										   GentiMatchResult gentiMatchResult) {
+		switch (currentStrategy) {
+			case ADMIN_ONLY -> matchAllToAdmin(requestList, gentiMatchResult);
+			case CREATOR_ADMIN -> matchToCreatorOrAdmin(requestList, availableCreatorList, gentiMatchResult);
+			case CREATOR_ONLY -> {
+				if (availableCreatorList.isEmpty()) {
+					gentiMatchResult.addSummary("%d개의 매칭 대기중인 작업 || 작업 가능한 작업자가 없음".formatted(requestList.size()));
+				} else {
+					matchToCreatorsOnly(requestList, availableCreatorList, gentiMatchResult);
+				}
+			}
+		}
+		logAndPublishEventV2(gentiMatchResult);
+	}
+
 	@Transactional
 	public void matchNewRequest(PictureGenerateRequest pictureGenerateRequest) {
 		matchSingleRequest(pictureGenerateRequest, "신규 요청 매칭");
+	}
+
+	@Transactional
+	public void paidMatchNewRequest(PictureGenerateRequest pictureGenerateRequest, int num) {
+		String message = String.format("신규 요청 매칭 - %d인 -", num);
+		paidMatchSingleRequest(pictureGenerateRequest, message);
 	}
 
 	@Transactional
@@ -155,6 +177,14 @@ public class RequestMatchService {
 		matchRequestsWithStrategy(justOneRequest, availableCreatorList, gentiMatchResult);
 	}
 
+	private void paidMatchSingleRequest(PictureGenerateRequest pictureGenerateRequest, String summary) {
+		GentiMatchResult gentiMatchResult = new GentiMatchResult(currentStrategy);
+		gentiMatchResult.addSummary(summary);
+		List<Creator> availableCreatorList = getAvailableCreators();
+		List<PictureGenerateRequest> justOneRequest = List.of(pictureGenerateRequest);
+		paidMatchRequestsWithStrategy(justOneRequest, availableCreatorList, gentiMatchResult);
+	}
+
 	private List<Creator> getAvailableCreators() {
 		List<Creator> allCreator = creatorRepository.findAllAvailableCreator();
 		Creator adminCreator = adminService.getAdminCreator();
@@ -169,6 +199,11 @@ public class RequestMatchService {
 	private void logAndPublishEvent(GentiMatchResult gentiMatchResult) {
 		log.info(gentiMatchResult.toString());
 		matchEventPublisher.publishSignUpEvent(gentiMatchResult);
+	}
+
+	private void logAndPublishEventV2(GentiMatchResult gentiMatchResult) {
+		log.info(gentiMatchResult.toString());
+		matchEventPublisher.publishPaidMatchEvent(gentiMatchResult);
 	}
 }
 

@@ -51,7 +51,8 @@ public interface AdminPGREQApi {
 		@RequestParam(name = "status", defaultValue = "ALL")
 		@ValidEnum(value = PictureGenerateResponseStatusForAdmin.class, hasAllOption = true) String status,
 		@Parameter(description = "유저의 email")
-		@RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email
+		@RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email,
+		@Parameter(description = "유료 사진생성요청 여부") @RequestParam(name = "paid", required = false) Boolean paid
 	);
 
 	@Operation(summary = "공급자->어드민(얼굴붙여야하는 요청)", description = "사진생성요청 전체를 매칭대상(어드민,공급자), 응답의 상태를 조건으로 조회하고  페이지네이션 조회합니다.")

@@ -75,6 +75,9 @@ public class ResponseExampleService {
 				.collect(Collectors.toList());
 		Collections.shuffle(examples);
 
-		return examples.subList(0, 5);
+		System.out.println("----------SubList 시작-----------");
+		List<ExampleWithSquarePicture> subList = examples.subList(0, 2);
+		System.out.println("----------SubList 종료-----------");
+		return subList;
 	}
 }

@@ -22,5 +22,4 @@ public class MatchEventListener {
 			event.matchResultList()
 		);
 	}
-
 }

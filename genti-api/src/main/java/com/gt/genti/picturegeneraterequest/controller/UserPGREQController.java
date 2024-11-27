@@ -2,6 +2,7 @@ package com.gt.genti.picturegeneraterequest.controller;
 
 import java.util.List;
 
+import com.gt.genti.picturegeneraterequest.dto.request.AdvancedPGREQSaveRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +73,22 @@ public class UserPGREQController implements UserPGREQApi {
 		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {
 		pictureGenerateRequestUseCase.createPGREQ(userId,
 			pgreqSaveRequestDto.toCommand());
+		return GentiResponse.success(true);
+	}
+
+	@PostMapping("/paid/one")
+	public ResponseEntity<ApiResult<Boolean>> createPaidPictureGenerateRequestForOne(
+			@AuthUser Long userId,
+			@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {
+		pictureGenerateRequestUseCase.createPaidPGREQForOne(userId, pgreqSaveRequestDto.toCommand());
+		return GentiResponse.success(true);
+	}
+
+	@PostMapping("/paid/two")
+	public ResponseEntity<ApiResult<Boolean>> createPaidPictureGenerateRequestForTwo(
+			@AuthUser Long userId,
+			@RequestBody @Valid AdvancedPGREQSaveRequestDto advancedPGREQSaveRequestDto) {
+		pictureGenerateRequestUseCase.createPaidPGREQForTwo(userId, advancedPGREQSaveRequestDto.toCommand());
 		return GentiResponse.success(true);
 	}
 

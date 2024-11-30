@@ -31,5 +31,5 @@ public interface UserResponseExampleApi {
 	@EnumResponses(value = {
 			@EnumResponse(ResponseCode.OK)
 	})
-	ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView();
+	ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView(String type);
 }

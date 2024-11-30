@@ -63,7 +63,7 @@ logs/
 firebase-genti.json
 
 *.pem
-
+/genti-api/src/main/resources/jsonkey/
 AuthKey_ZRZMQQX883.p8
 /genti-api/src/main/resources/static/swagger.json
 update-github-secret.sh

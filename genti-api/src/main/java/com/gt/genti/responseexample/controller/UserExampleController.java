@@ -7,6 +7,7 @@ import java.util.List;
 import com.gt.genti.responseexample.dto.response.ExampleWithSquarePicture;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,9 +35,11 @@ public class UserExampleController implements UserResponseExampleApi {
 
 
 	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
-	@GetMapping("/with-picture-square")
-	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView(){
-		return success(responseExampleService.getAllResponseExamplesInGenerateView());
+	@GetMapping("/with-picture-square/{type}")
+	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView(
+		@PathVariable(name = "type") String type
+	){
+		return success(responseExampleService.getAllResponseExamplesInGenerateView(type));
 	}
 
 }

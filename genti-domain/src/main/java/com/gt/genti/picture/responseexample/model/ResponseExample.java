@@ -31,6 +31,9 @@ public class ResponseExample extends PictureEntity implements Picture {
 	@Column(name = "prompt_only")
 	Boolean promptOnly;
 
+	@Column
+	private String type;
+
 	@Builder
 	public ResponseExample(String key, String prompt, PictureRatio pictureRatio, User uploadedBy) {
 		this.promptOnly = false;

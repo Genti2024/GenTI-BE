@@ -16,6 +16,9 @@ public class ExampleWithSquarePicture {
     @Schema(description = "에시 프롬프트", example = "벚꽃길에서 벤치에 앉아있어요")
     String prompt;
 
+    @Schema(description = "사진 유형", example = "FREE_SINGLE")
+    String type;
+
     public ExampleWithSquarePicture(ResponseExample responseExample) {
         this.url = AwsUtils.CLOUDFRONT_BASEURL + "/" + responseExample.getKey();
         this.prompt = responseExample.getExamplePrompt();

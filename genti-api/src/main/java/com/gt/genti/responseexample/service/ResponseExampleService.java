@@ -68,8 +68,8 @@ public class ResponseExampleService {
 				.build()).toList());
 	}
 
-	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateView() {
-		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByPromptOnlyIsTrue()
+	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateView(String type) {
+		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByType(type)
 				.stream()
 				.map(ExampleWithSquarePicture::new)
 				.collect(Collectors.toList());

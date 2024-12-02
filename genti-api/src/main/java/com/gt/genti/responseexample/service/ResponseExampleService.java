@@ -68,7 +68,18 @@ public class ResponseExampleService {
 				.build()).toList());
 	}
 
-	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateView(String type) {
+	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateView() {
+		final String type = "FREE_ONE";
+		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByType(type)
+				.stream()
+				.map(ExampleWithSquarePicture::new)
+				.collect(Collectors.toList());
+		Collections.shuffle(examples);
+
+		return examples.subList(0, 5);
+	}
+
+	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateViewV2(String type) {
 		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByType(type)
 				.stream()
 				.map(ExampleWithSquarePicture::new)

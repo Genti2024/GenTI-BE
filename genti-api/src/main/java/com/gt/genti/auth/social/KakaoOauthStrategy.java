@@ -112,7 +112,7 @@ public class KakaoOauthStrategy {
 				.username(userResponse.kakaoAccount().name())
 				.nickname(RandomUtil.generateRandomNickname())
 				.email(userResponse.kakaoAccount().email())
-				.phone_number(userResponse.kakaoAccount().phone_number())
+				.phoneNumber(userResponse.kakaoAccount().phone_number())
 				.build());
 			user = newUser;
 			userSignUpEventPublisher.publishSignUpEvent(newUser);

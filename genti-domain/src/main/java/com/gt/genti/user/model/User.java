@@ -143,7 +143,7 @@ public class User extends BaseTimeEntity {
 	List<PictureUserVerification> pictureUserVerificationList;
 
 	@Column(name = "phone_number")
-	String phone_number;
+	String phoneNumber;
 
 	@PrePersist
 	public void prePersist() {
@@ -167,7 +167,7 @@ public class User extends BaseTimeEntity {
 	@Builder(builderMethodName = "builderWithSignIn", builderClassName = "SignInUser")
 	public static User of(String socialId, String birthYear, OauthPlatform oauthPlatform, String username,
 		String nickname, String oauthImageUrl,
-		String email, String phone_number) {
+		String email, String phoneNumber) {
 		return base()
 			.socialId(socialId)
 			.lastLoginOauthPlatform(oauthPlatform)
@@ -177,7 +177,7 @@ public class User extends BaseTimeEntity {
 			.nickname(nickname)
 			.oauthImageUrl(oauthImageUrl)
 			.email(email)
-			.phone_number(phone_number)
+			.phoneNumber(phoneNumber)
 			.build();
 	}
 
@@ -232,6 +232,10 @@ public class User extends BaseTimeEntity {
 		this.userRole = userRole;
 	}
 
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public void login() {
 		this.lastLoginDate = LocalDateTime.now();
 	}
@@ -241,7 +245,7 @@ public class User extends BaseTimeEntity {
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
 		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate,
-		Deposit deposit, Integer requestTaskCount, String birthYear, String phone_number) {
+		Deposit deposit, Integer requestTaskCount, String birthYear, String phoneNumber) {
 		this.id = id;
 		this.socialId = socialId;
 		this.oauthImageUrl = oauthImageUrl;
@@ -264,7 +268,7 @@ public class User extends BaseTimeEntity {
 		this.deposit = deposit;
 		this.requestTaskCount = requestTaskCount;
 		this.birthYear = birthYear;
-		this.phone_number = phone_number;
+		this.phoneNumber = phoneNumber;
 	}
 
 	public void addRequestCount() {

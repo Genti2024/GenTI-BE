@@ -22,24 +22,28 @@ import com.gt.genti.responseexample.service.ResponseExampleService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/users/examples")
 @RequiredArgsConstructor
 public class UserExampleController implements UserResponseExampleApi {
 	private final ResponseExampleService responseExampleService;
 
 	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
-	@GetMapping("/with-picture")
+	@GetMapping("/api/v1/users/examples/with-picture")
 	public ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamples() {
 		return success(responseExampleService.getAllResponseExamples());
 	}
 
+	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
+	@GetMapping("/api/v1/users/examples/with-picture-square")
+	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView(){
+		return success(responseExampleService.getAllResponseExamplesInGenerateView());
+	}
 
 	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
-	@GetMapping("/with-picture-square/{type}")
-	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView(
+	@GetMapping("/api/v2/users/examples/with-picture-square/{type}")
+	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateViewV2(
 		@PathVariable(name = "type") String type
 	){
-		return success(responseExampleService.getAllResponseExamplesInGenerateView(type));
+		return success(responseExampleService.getAllResponseExamplesInGenerateViewV2(type));
 	}
 
 }

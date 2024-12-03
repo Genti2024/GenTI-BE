@@ -176,16 +176,7 @@ public enum ResponseCode {
 	 * Report
 	 */
 	ReportNotFound(ErrorConstants.ReportNotFound, NOT_FOUND, false, "해당 report 건을 찾지 못했습니다."),
-	/**
-	 * Deposit(삭제됨)
-	 */
-	NotEnoughBalance(ErrorConstants.NotEnoughBalance, NOT_ACCEPTABLE, false,
-		"해당 공급자의 출금가능 잔액이 부족하여 요청을 완료할 수 없습니다."),
-	/**
-	 * Cashout
-	 */
-	CashoutNotFound(ErrorConstants.CashoutNotFound, NOT_FOUND, false,
-		"해당 출금 요청을 찾을 수 없습니다."),
+
 	HttpMessageNotReadable(ErrorConstants.HttpMessageNotReadable, BAD_REQUEST, false, "잘못된 입력 : %s"),
 	FileTypeNotProvided(ErrorConstants.FileTypeNotProvided, BAD_REQUEST, false, "파일 형식이 주어지지 않았습니다."),
 

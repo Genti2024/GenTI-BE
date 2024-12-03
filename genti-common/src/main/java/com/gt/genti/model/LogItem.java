@@ -30,8 +30,7 @@ public enum LogItem {
 	PGRES_STAR("pgres : star"),
 	POST("post"),
 	REPORT("report"),
-	RESPONSE_EXAMPLE("response_example"),
-	CASHOUT("cashout");
+	RESPONSE_EXAMPLE("response_example");
 
 	private final String value;
 

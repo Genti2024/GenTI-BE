@@ -9,8 +9,6 @@ public class ErrorConstants {
 	private static final String REPORT = "REPORT";
 	private static final String PICTURE = "PICTURE";
 
-	private static final String CASHOUT = "CASHOUT";
-
 	private static final String UPLOAD = "UPLOAD";
 	private static final String DISCORD = "DISCORD";
 	private static final String VALIDATION = "VALIDATION";
@@ -89,9 +87,6 @@ public class ErrorConstants {
 
 	public static final String HandlerMethodValidation = CODE(VALIDATION, 1);
 	public static final String HttpMessageNotReadable = CODE(VALIDATION, 2);
-
-	public static final String CashoutNotFound = CODE(CASHOUT, 2);
-	public static final String NotEnoughBalance = CODE(CASHOUT, 3);
 
 	public static final String OauthProviderNotAllowed = CODE(OAUTH, 1);
 	public static final String AppleOauthIdTokenIncorrect = CODE(OAUTH, 2);

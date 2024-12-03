@@ -23,10 +23,10 @@ import java.security.GeneralSecurityException;
 @Service
 public class InAppPurchaseService {
 
-    @Value("{google-account.file-path}")
+    @Value("${google-account.file-path}")
     private String googleAccountFilePath;
 
-    @Value("{google-application.package-name}")
+    @Value("${google-application.package-name}")
     private String googleApplicationPackageName;
 
     public Boolean validateReceipt(Long userId, PurchaseRequestDto purchaseRequestDto) {

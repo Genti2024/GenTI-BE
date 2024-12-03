@@ -7,7 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"local", "staging", "deploy"})
+@Profile({"local", "deploy"})
 @RequiredArgsConstructor
 public class PaidMatchEventListener {
 

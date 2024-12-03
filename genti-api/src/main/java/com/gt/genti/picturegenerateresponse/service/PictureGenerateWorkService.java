@@ -37,8 +37,6 @@ import com.gt.genti.picturegenerateresponse.dto.response.PGRESUpdateAdminInCharg
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
-import com.gt.genti.settlement.model.Settlement;
-import com.gt.genti.settlement.repository.SettlementRepository;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.util.DateTimeUtil;
@@ -54,7 +52,6 @@ public class PictureGenerateWorkService {
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
-	private final SettlementRepository settlementRepository;
 	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
@@ -176,7 +173,7 @@ public class PictureGenerateWorkService {
 		}
 		Long reward = DateTimeUtil.calculateReward(elapsedDuration.toMinutes());
 
-		createSettlementAndDeposit(foundPGRES, elapsedDuration, reward, foundCreator);
+		createDeposit(foundPGRES, elapsedDuration, reward, foundCreator);
 
 		return PGRESSubmitByCreatorResponseDto.builder()
 			.elapsedTime(DateTimeUtil.getTimeString(elapsedDuration))
@@ -354,16 +351,7 @@ public class PictureGenerateWorkService {
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
 	}
 
-	private void createSettlementAndDeposit(PictureGenerateResponse foundPGRES, Duration elapsedDuration, Long reward,
-		Creator foundCreator) {
-		Settlement settlement = Settlement.builder()
-			.pictureGenerateResponse(foundPGRES)
-			.elapsedMinutes(elapsedDuration.toMinutes())
-			.reward(reward)
-			.build();
-
-		settlementRepository.save(settlement);
-
+	private void createDeposit(PictureGenerateResponse foundPGRES, Duration elapsedDuration, Long reward, Creator foundCreator) {
 		Deposit foundDeposit = depositRepository.findByCreator(foundCreator)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.DepositNotFound));
 		foundDeposit.add(reward);

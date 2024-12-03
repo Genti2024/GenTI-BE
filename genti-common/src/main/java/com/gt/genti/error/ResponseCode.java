@@ -187,11 +187,8 @@ public enum ResponseCode {
 	NotEnoughBalance(ErrorConstants.NotEnoughBalance, NOT_ACCEPTABLE, false,
 		"해당 공급자의 출금가능 잔액이 부족하여 요청을 완료할 수 없습니다."),
 	/**
-	 * Cashout && Settlement
+	 * Cashout
 	 */
-	CannotRequestCashoutDueToSettlementsNotAvailable(
-		ErrorConstants.CannotRequestCashoutDueToSettlementsNotAvailable, BAD_REQUEST, false,
-		"출금 가능한 정산 내역이 없습니다."),
 	CashoutNotFound(ErrorConstants.CashoutNotFound, NOT_FOUND, false,
 		"해당 출금 요청을 찾을 수 없습니다."),
 	HttpMessageNotReadable(ErrorConstants.HttpMessageNotReadable, BAD_REQUEST, false, "잘못된 입력 : %s"),

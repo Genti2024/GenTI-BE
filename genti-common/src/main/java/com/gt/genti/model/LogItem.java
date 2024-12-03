@@ -31,8 +31,7 @@ public enum LogItem {
 	POST("post"),
 	REPORT("report"),
 	RESPONSE_EXAMPLE("response_example"),
-	CASHOUT("cashout"),
-	SETTLEMENT("settlement");
+	CASHOUT("cashout");
 
 	private final String value;
 

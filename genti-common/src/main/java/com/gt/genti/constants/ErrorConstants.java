@@ -95,7 +95,6 @@ public class ErrorConstants {
 	public static final String HandlerMethodValidation = CODE(VALIDATION, 1);
 	public static final String HttpMessageNotReadable = CODE(VALIDATION, 2);
 
-	public static final String CannotRequestCashoutDueToSettlementsNotAvailable = CODE(CASHOUT, 1);
 	public static final String CashoutNotFound = CODE(CASHOUT, 2);
 	public static final String NotEnoughBalance = CODE(CASHOUT, 3);
 

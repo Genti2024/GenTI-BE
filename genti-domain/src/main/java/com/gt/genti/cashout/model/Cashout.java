@@ -60,11 +60,6 @@ public class Cashout extends BaseEntity {
 		this.status = CashoutStatus.IN_PROGRESS;
 	}
 
-	public void addSettlement(long amount) {
-		this.taskCount += 1;
-		this.amount += amount;
-	}
-
 	public void complete(User modifiedBy) {
 		this.setModifiedBy(modifiedBy);
 		this.status = CashoutStatus.COMPLETED;

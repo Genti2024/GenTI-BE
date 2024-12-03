@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
-import com.gt.genti.deposit.model.Deposit;
-import com.gt.genti.deposit.repository.DepositRepository;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.command.CreatePictureCompletedCommand;
@@ -52,7 +50,6 @@ public class PictureGenerateWorkService {
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
-	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
  	private final PGRESCompleteEventPublisher PGRESCompleteEventPublisher;
@@ -172,8 +169,6 @@ public class PictureGenerateWorkService {
 			throw ExpectedException.withLogging(ResponseCode.SubmitBlockedDueToPictureGenerateResponseIsExpired);
 		}
 		Long reward = DateTimeUtil.calculateReward(elapsedDuration.toMinutes());
-
-		createDeposit(foundPGRES, elapsedDuration, reward, foundCreator);
 
 		return PGRESSubmitByCreatorResponseDto.builder()
 			.elapsedTime(DateTimeUtil.getTimeString(elapsedDuration))
@@ -349,13 +344,6 @@ public class PictureGenerateWorkService {
 	private Creator findCreatorByUserId(Long userId) {
 		return creatorRepository.findByUserId(userId)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
-	}
-
-	private void createDeposit(PictureGenerateResponse foundPGRES, Duration elapsedDuration, Long reward, Creator foundCreator) {
-		Deposit foundDeposit = depositRepository.findByCreator(foundCreator)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.DepositNotFound));
-		foundDeposit.add(reward);
-		foundCreator.completeTask();
 	}
 }
 

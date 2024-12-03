@@ -9,7 +9,6 @@ public class ErrorConstants {
 	private static final String REPORT = "REPORT";
 	private static final String PICTURE = "PICTURE";
 
-	private static final String DEPOSIT = "DEPOSIT";
 	private static final String CASHOUT = "CASHOUT";
 
 	private static final String UPLOAD = "UPLOAD";
@@ -81,9 +80,6 @@ public class ErrorConstants {
 	public static final String FinalPictureNotUploadedYet = CODE(PGRES, 6);
 
 	public static final String ReportNotFound = CODE(REPORT, 1);
-
-	public static final String DepositNotFound = CODE(DEPOSIT, 1);
-	public static final String AddPointAmountCannotBeMinus = CODE(DEPOSIT, 2);
 
 	public static final String PictureNotFound = CODE(PICTURE, 1);
 	public static final String PictureUserFaceNotFound = CODE(PICTURE, 2);

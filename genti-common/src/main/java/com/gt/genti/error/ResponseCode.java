@@ -179,11 +179,8 @@ public enum ResponseCode {
 	 */
 	ReportNotFound(ErrorConstants.ReportNotFound, NOT_FOUND, false, "해당 report 건을 찾지 못했습니다."),
 	/**
-	 * Deposit
+	 * Deposit(삭제됨)
 	 */
-	DepositNotFound(ErrorConstants.DepositNotFound, NOT_FOUND, false, "사용자의 포인트 정보를 불러올 수 없습니다."),
-	AddPointAmountCannotBeMinus(ErrorConstants.AddPointAmountCannotBeMinus, BAD_REQUEST, false,
-		"적립될 포인트는 음수일 수 없습니다."),
 	NotEnoughBalance(ErrorConstants.NotEnoughBalance, NOT_ACCEPTABLE, false,
 		"해당 공급자의 출금가능 잔액이 부족하여 요청을 완료할 수 없습니다."),
 	/**

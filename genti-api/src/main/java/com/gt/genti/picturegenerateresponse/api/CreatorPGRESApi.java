@@ -47,7 +47,6 @@ public interface CreatorPGRESApi {
 		@EnumResponse(ResponseCode.PictureGenerateResponseNotFound),
 		@EnumResponse(ResponseCode.PictureGenerateRequestNotAssignedToCreator),
 		@EnumResponse(ResponseCode.SubmitBlockedDueToPictureGenerateResponseIsExpired),
-		@EnumResponse(ResponseCode.DepositNotFound)
 	})
 	ResponseEntity<GentiResponse.ApiResult<PGRESSubmitByCreatorResponseDto>> submitPictureGenerateResponse(
 		@AuthUser Long userId,

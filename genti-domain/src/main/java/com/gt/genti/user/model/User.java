@@ -14,7 +14,6 @@ import com.gt.genti.common.converter.SexConverter;
 import com.gt.genti.common.converter.UserRoleConverter;
 import com.gt.genti.common.converter.UserStatusConverter;
 import com.gt.genti.creator.model.Creator;
-import com.gt.genti.deposit.model.Deposit;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.completed.model.PictureCompleted;
@@ -113,9 +112,6 @@ public class User extends BaseTimeEntity {
 
 	@Column(name = "last_login_date", nullable = false)
 	LocalDateTime lastLoginDate;
-
-	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
-	private Deposit deposit;
 
 	@Column(name = "request_task_count", nullable = false)
 	Integer requestTaskCount;
@@ -236,8 +232,7 @@ public class User extends BaseTimeEntity {
 	private User(Long id, String socialId, String oauthImageUrl, List<PictureProfile> pictureProfileList,
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
-		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate,
-		Deposit deposit, Integer requestTaskCount, String birthYear) {
+		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate, Integer requestTaskCount, String birthYear) {
 		this.id = id;
 		this.socialId = socialId;
 		this.oauthImageUrl = oauthImageUrl;
@@ -257,7 +252,6 @@ public class User extends BaseTimeEntity {
 		this.lastLoginOauthPlatform = lastLoginOauthPlatform;
 		this.deletedAt = deletedAt;
 		this.lastLoginDate = lastLoginDate;
-		this.deposit = deposit;
 		this.requestTaskCount = requestTaskCount;
 		this.birthYear = birthYear;
 	}

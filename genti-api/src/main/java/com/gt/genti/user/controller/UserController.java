@@ -20,23 +20,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.auth.dto.request.SignUpRequestDTO;
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.response.GentiResponse;
-import com.gt.genti.swagger.EnumResponse;
-import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.api.UserApi;
-import com.gt.genti.user.dto.request.AppleAuthorizationCodeDto;
-import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.service.UserService;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -56,13 +50,6 @@ public class UserController implements UserApi {
 	public ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.getUserInfo(userId));
-	}
-
-	@PutMapping
-	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
-		@AuthUser Long userId,
-		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		return GentiResponse.success(userService.updateUserInfo(userId, userInfoUpdateRequestDto));
 	}
 
 	@PostMapping("/signup")

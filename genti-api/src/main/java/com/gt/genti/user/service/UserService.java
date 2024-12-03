@@ -27,13 +27,10 @@ import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
-import com.gt.genti.picture.profile.model.PictureProfile;
-import com.gt.genti.picture.service.PictureService;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
 import com.gt.genti.usecase.PictureGenerateRequestUseCase;
-import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
 import com.gt.genti.user.dto.response.SignUpResponseDTO;
@@ -53,7 +50,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-	private final PictureService pictureService;
 	private final UserRepository userRepository;
 	private final CreatorRepository creatorRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
@@ -67,30 +63,6 @@ public class UserService {
 	public UserFindResponseDto getUserInfo(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		return UserFindResponseDto.of(foundUser);
-	}
-
-	public UserFindResponseDto updateUserInfo(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		User foundUser = getUserByUserId(userId);
-		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
-		if (userInfoUpdateRequestDto.getProfilePicture() != null) {
-			PictureProfile foundPictureProfile = pictureService.findByKeyPictureProfile(
-				userInfoUpdateRequestDto.getProfilePicture().getKey());
-			foundUser.addProfilePicture(foundPictureProfile);
-		}
-		List<CommonPictureResponseDto> profilePictureResponseList = null;
-		if (!foundUser.getPictureProfileList().isEmpty()) {
-			profilePictureResponseList = foundUser.getPictureProfileList()
-				.stream()
-				.map(CommonPictureResponseDto::of)
-				.toList();
-		}
-
-		return UserFindResponseDto.builder()
-			.profilePictureList(profilePictureResponseList)
-			.id(foundUser.getId())
-			.nickname(foundUser.getNickname())
-			.username(foundUser.getUsername())
-			.build();
 	}
 
 	public Boolean updateUserRole(Long userId, UserRoleUpdateRequestDto userRoleUpdateRequestDto) {

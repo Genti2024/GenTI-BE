@@ -86,7 +86,6 @@ public class ErrorConstants {
 	public static final String PicturePoseNotFound = CODE(PICTURE, 3);
 	public static final String PictureCompletedNotFound = CODE(PICTURE, 4);
 	public static final String PictureCreatedByCreatorNotFound = CODE(PICTURE, 5);
-	public static final String PictureProfileNotFound = CODE(PICTURE, 6);
 
 	public static final String HandlerMethodValidation = CODE(VALIDATION, 1);
 	public static final String HttpMessageNotReadable = CODE(VALIDATION, 2);

@@ -15,7 +15,6 @@ import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.AuthorizedUser;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
-import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
 
@@ -38,16 +37,6 @@ public interface UserApi {
 	})
 	ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthUser Long userId);
-
-	@Operation(summary = "내정보 수정", description = "유저의 정보를 수정합니다.")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.UserNotFound)
-
-	})
-	ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
-		@AuthUser Long userId,
-		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto);
 
 	@Operation(summary = "최초가입 정보등록", description = "사용자에게 생년, 성별을 받아 최종 가입을 처리")
 	@EnumResponses(value = {

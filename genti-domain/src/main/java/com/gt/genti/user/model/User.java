@@ -18,7 +18,6 @@ import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.pose.model.PicturePose;
-import com.gt.genti.picture.profile.model.PictureProfile;
 import com.gt.genti.picture.userface.model.PictureUserFace;
 import com.gt.genti.picture.userverification.model.PictureUserVerification;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
@@ -31,7 +30,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
@@ -58,10 +56,6 @@ public class User extends BaseTimeEntity {
 
 	@Column(length = 512)
 	String oauthImageUrl;
-
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "profile_picture_id")
-	List<PictureProfile> pictureProfileList;
 
 	@OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureUserFace> pictureUserFaceList;
@@ -196,10 +190,6 @@ public class User extends BaseTimeEntity {
 		this.username = username;
 	}
 
-	public void addProfilePicture(PictureProfile pictureProfile) {
-		this.getPictureProfileList().add(pictureProfile);
-	}
-
 	public void softDelete() {
 		this.userStatus = UserStatus.DEACTIVATED;
 		this.deletedAt = LocalDateTime.now();
@@ -229,14 +219,13 @@ public class User extends BaseTimeEntity {
 	}
 
 	@Builder(builderMethodName = "base", builderClassName = "base")
-	private User(Long id, String socialId, String oauthImageUrl, List<PictureProfile> pictureProfileList,
+	private User(Long id, String socialId, String oauthImageUrl,
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
 		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate, Integer requestTaskCount, String birthYear) {
 		this.id = id;
 		this.socialId = socialId;
 		this.oauthImageUrl = oauthImageUrl;
-		this.pictureProfileList = pictureProfileList;
 		this.pictureUserFaceList = pictureUserFaceList;
 		this.email = email;
 		this.sex = sex;

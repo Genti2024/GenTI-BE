@@ -149,8 +149,6 @@ public enum ResponseCode {
 		"최종 완성 사진을 찾지 못했습니다."),
 	PictureCreatedByCreatorNotFound(ErrorConstants.PictureCreatedByCreatorNotFound, NOT_FOUND, false,
 		"공급자가 제출한 1차 완성 사진을 찾지 못했습니다."),
-	PictureProfileNotFound(ErrorConstants.PictureProfileNotFound, NOT_FOUND, false,
-		"해당하는 유저 프로필 사진을 찾지 못했습니다."),
 	UploadFileTypeNotAvailable(ErrorConstants.UploadFileTypeNotAvailable, NOT_ACCEPTABLE, false,
 		"업로드 가능한 파일이 아닙니다."),
 

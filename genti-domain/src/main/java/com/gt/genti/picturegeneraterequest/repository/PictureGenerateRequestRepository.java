@@ -28,6 +28,9 @@ public interface PictureGenerateRequestRepository
 
 	Page<PictureGenerateRequest> findAllByRequester(User requester, Pageable pageable);
 
+	@Query("SELECT p FROM PictureGenerateRequest p WHERE p.requester = :requester AND p.paid IS NOT NULL")
+	Page<PictureGenerateRequest> findAllByRequesterAndPaidIsNotNull(User requester, Pageable pageable);
+
 	@Query("select pgr from PictureGenerateRequest pgr "
 		+ "where pgr.pictureGenerateRequestStatus = com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus."
 		+ "IN_PROGRESS "
@@ -92,8 +95,10 @@ public interface PictureGenerateRequestRepository
 		boolean matchToAdmin,
 		Pageable pageable);
 
-
 	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
+
+	@Query("SELECT p FROM PictureGenerateRequest p WHERE p.paid IS NOT NULL")
+	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNotNull(boolean matchToAdmin, Pageable pageable);
 
 	Optional<PictureGenerateRequest> findTopByRequesterOrderByCreatedAtDesc(User requester);
 

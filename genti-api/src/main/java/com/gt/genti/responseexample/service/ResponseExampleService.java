@@ -69,7 +69,18 @@ public class ResponseExampleService {
 	}
 
 	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateView() {
-		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByPromptOnlyIsTrue()
+		final String type = "FREE_ONE";
+		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByType(type)
+				.stream()
+				.map(ExampleWithSquarePicture::new)
+				.collect(Collectors.toList());
+		Collections.shuffle(examples);
+
+		return examples.subList(0, 5);
+	}
+
+	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateViewV2(String type) {
+		List<ExampleWithSquarePicture> examples = responseExampleRepository.findAllByType(type)
 				.stream()
 				.map(ExampleWithSquarePicture::new)
 				.collect(Collectors.toList());

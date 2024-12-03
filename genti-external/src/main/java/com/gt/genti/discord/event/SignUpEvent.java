@@ -9,5 +9,4 @@ public record SignUpEvent(Long totalUserCount, String name, String email, String
 		LocalDateTime createdAt) {
 		return new SignUpEvent(totalUserCount, name, email, sex, socialPlatform, createdAt);
 	}
-
 }

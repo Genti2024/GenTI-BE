@@ -7,6 +7,7 @@ import java.util.List;
 import com.gt.genti.responseexample.dto.response.ExampleWithSquarePicture;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,22 +22,28 @@ import com.gt.genti.responseexample.service.ResponseExampleService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/users/examples")
 @RequiredArgsConstructor
 public class UserExampleController implements UserResponseExampleApi {
 	private final ResponseExampleService responseExampleService;
 
 	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
-	@GetMapping("/with-picture")
+	@GetMapping("/api/v1/users/examples/with-picture")
 	public ResponseEntity<ApiResult<List<ExampleWithPictureFindResponseDto>>> getAllResponseExamples() {
 		return success(responseExampleService.getAllResponseExamples());
 	}
 
-
 	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
-	@GetMapping("/with-picture-square")
+	@GetMapping("/api/v1/users/examples/with-picture-square")
 	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView(){
 		return success(responseExampleService.getAllResponseExamplesInGenerateView());
+	}
+
+	@Logging(item = LogItem.RESPONSE_EXAMPLE, action = LogAction.VIEW, requester = LogRequester.USER)
+	@GetMapping("/api/v2/users/examples/with-picture-square/{type}")
+	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateViewV2(
+		@PathVariable(name = "type") String type
+	){
+		return success(responseExampleService.getAllResponseExamplesInGenerateViewV2(type));
 	}
 
 }

@@ -54,12 +54,23 @@ public class AdminPGREQController implements AdminPGREQApi {
 			@ExampleObject(name = "COMPLETED", description = "작업 완료", value = "COMPLETED"),
 			@ExampleObject(name = "EXPIRED", description = "만료됨 (기존의 협의된 내용은 아니지만 어드민페이지에 필요하다고 생각했습니다. 추가 부탁드립니다.)", value = "EXPIRED"),
 			@ExampleObject(name = "ALL", description = "전체", value = "ALL")}) @RequestParam(name = "status", defaultValue = "ALL") @ValidEnum(value = PictureGenerateResponseStatusForAdmin.class, hasAllOption = true) String status,
-		@Parameter(description = "유저의 email") @RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email) {
+		@Parameter(description = "유저의 email") @RequestParam(name = "email", required = false) @Email(message = "올바른 email 형식이 아닙니다.") String email,
+		@Parameter(description = "유료 사진생성요청 여부") @RequestParam(name = "paid", required = false) Boolean paid) {
+
 		Sort.Direction sortDirection = Sort.Direction.fromString(direction);
 		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+		if (paid != null && paid){
+			if(email != null){
+				return success(pictureGenerateRequestUseCase.getAllPaidAdminMatchedByRequesterEmail(email, pageable));
+			}
+			return success(pictureGenerateRequestUseCase.getAllPaidAdminMatched(pageable));
+		}
+
 		if (email != null) {
 			return success(pictureGenerateRequestUseCase.getAllAdminMatchedByRequesterEmail(email, pageable));
 		}
+
 		if ("ALL".equalsIgnoreCase(status)) {
 			return success(pictureGenerateRequestUseCase.getAllAdminMatched(pageable));
 		} else {

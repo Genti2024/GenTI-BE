@@ -66,6 +66,14 @@ jobs:
           echo "${{ secrets.APPLICATION_STAGING }}" > ./application-staging.yml
         shell: bash
 
+      - name: Create Google key.json file
+        if: contains(github.ref, 'staging') || contains(github.ref, 'main-test')
+        run: |
+          cd ./genti-api/src/main/resources
+          mkdir -p ./jsonkey
+          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./jsonkey/key.json
+        shell: bash
+
       - name: make apple private key
         run: |
           cd ./genti-external/src/main

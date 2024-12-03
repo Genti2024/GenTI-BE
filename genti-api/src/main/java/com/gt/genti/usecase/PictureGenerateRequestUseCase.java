@@ -2,6 +2,7 @@ package com.gt.genti.usecase;
 
 import java.util.List;
 
+import com.gt.genti.picturegeneraterequest.command.AdvancedPGREQSaveCommand;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,6 +24,12 @@ public interface PictureGenerateRequestUseCase {
 	PictureGenerateRequest createPGREQ(Long userId,
 		PGREQSaveCommand pgreqSaveCommand);
 
+	PictureGenerateRequest createPaidPGREQForOne(Long userId,
+		 PGREQSaveCommand pgreqSaveCommand);
+
+	PictureGenerateRequest createPaidPGREQForTwo(Long userId,
+	   AdvancedPGREQSaveCommand advancedPGREQSaveCommand);
+
 	void modifyPGREQ(Long userId,
 		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto);
 
@@ -33,6 +40,10 @@ public interface PictureGenerateRequestUseCase {
 
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllAdminMatchedByRequesterEmail(String email,
 		Pageable pageable);
+
+	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatched(Pageable pageable);
+
+	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatchedByRequesterEmail(String email, Pageable pageable);
 
 	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmitted(Pageable pageable);
 

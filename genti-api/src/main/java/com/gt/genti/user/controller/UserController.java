@@ -4,6 +4,7 @@ import static com.gt.genti.response.GentiResponse.*;
 
 import java.util.List;
 
+import com.gt.genti.auth.dto.request.SignUpV2RequestDTO;
 import com.gt.genti.user.dto.response.SignUpResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,28 +16,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gt.genti.auth.dto.request.SignUpRequestDTO;
-import com.gt.genti.error.ResponseCode;
 import com.gt.genti.model.LogAction;
 import com.gt.genti.model.LogItem;
 import com.gt.genti.model.LogRequester;
 import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.response.GentiResponse;
-import com.gt.genti.swagger.EnumResponse;
-import com.gt.genti.swagger.EnumResponses;
 import com.gt.genti.user.api.UserApi;
-import com.gt.genti.user.dto.request.AppleAuthorizationCodeDto;
 import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.service.UserService;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -47,25 +42,24 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController implements UserApi {
 	private final UserService userService;
 
-	@GetMapping
+	@GetMapping("/api/v1/users")
 	public ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.getUserInfo(userId));
 	}
 
-	@PutMapping
+	@PutMapping("/api/v1/users")
 	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
 		@AuthUser Long userId,
 		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 		return GentiResponse.success(userService.updateUserInfo(userId, userInfoUpdateRequestDto));
 	}
 
-	@PostMapping("/signup")
+	@PostMapping("/api/v1/users/signup")
 	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SignUpResponseDTO>> signUp(
 		@AuthUser Long userId,
@@ -73,12 +67,20 @@ public class UserController implements UserApi {
 		return success(userService.signUp(userId, signUpRequestDTO));
 	}
 
-	@PostMapping("/logout")
+	@PostMapping("/api/v2/users/signup")
+	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
+	public ResponseEntity<ApiResult<SignUpResponseDTO>> signUpV2(
+			@AuthUser Long userId,
+			@RequestBody @Valid SignUpV2RequestDTO signUpV2RequestDTO) {
+		return success(userService.signUp(userId, signUpV2RequestDTO));
+	}
+
+	@PostMapping("/api/v1/users/logout")
 	public ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId) {
 		return success(userService.logout(userId));
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/api/v1/users")
 	@Logging(item = LogItem.USER, action = LogAction.DELETE, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<Boolean>> delete(
 		@AuthUser Long userId) {
@@ -86,13 +88,13 @@ public class UserController implements UserApi {
 	}
 
 	@Deprecated
-	@PutMapping("/restore")
+	@PutMapping("/api/v1/users/restore")
 	public ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.restoreSoftDeletedUser(userId));
 	}
 
-	@GetMapping("/pictures/my")
+	@GetMapping("/api/v1/users/pictures/my")
 	public ResponseEntity<ApiResult<Page<CommonPictureResponseDto>>> getAllMyGeneratedPicture(
 		@AuthUser Long userId,
 		@Parameter(description = "페이지 번호 (0-based)", example = "0", required = true)
@@ -112,7 +114,7 @@ public class UserController implements UserApi {
 		return GentiResponse.success(userService.getAllMyGeneratedPicture(userId, pageable));
 	}
 
-	@GetMapping("/pictures")
+	@GetMapping("/api/v1/users/pictures")
 	public ResponseEntity<ApiResult<List<CommonPictureResponseDto>>> getAllMyGeneratedPictureNoPage(
 			@AuthUser Long userId
 	) {

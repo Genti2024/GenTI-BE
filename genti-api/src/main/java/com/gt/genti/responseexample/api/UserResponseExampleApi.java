@@ -31,5 +31,12 @@ public interface UserResponseExampleApi {
 	@EnumResponses(value = {
 			@EnumResponse(ResponseCode.OK)
 	})
-	ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView();
+	public ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateView();
+
+	@Operation(summary = "사진 생성 뷰에서의 예시 사진 조회 V2", description = "예시 사진&프롬프트를 조회합니다." + "<br/>"
+			+ "정방형 비율의 사진입니다.")
+	@EnumResponses(value = {
+			@EnumResponse(ResponseCode.OK)
+	})
+	ResponseEntity<ApiResult<List<ExampleWithSquarePicture>>> getAllResponseExamplesInGenerateViewV2(String type);
 }

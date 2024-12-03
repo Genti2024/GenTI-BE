@@ -49,11 +49,14 @@ public class PGREQAdminMatchedDetailFindByAdminResponseDto {
 	@Schema(description = "응답 리스트(현재는 1개)")
 	List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList;
 
+	@Schema(description = "유형", example = "1인")
+	String paid;
+
 	@Builder
 	public PGREQAdminMatchedDetailFindByAdminResponseDto(Long pictureGenerateRequestId, String requesterEmail,
 		Sex sex, String prompt, PictureRatio pictureRatio, String promptAdvanced, List<CommonPictureResponseDto> facePictureList,
 		CommonPictureResponseDto posePicture, CommonPictureResponseDto pictureUserVerification,CameraAngle cameraAngle, ShotCoverage shotCoverage,
-		LocalDateTime createdAt, List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList) {
+		LocalDateTime createdAt, List<PGRESAdminMatchedDetailFindByAdminResponseDto> responseList, String paid) {
 		this.pictureGenerateRequestId = pictureGenerateRequestId;
 		this.requesterEmail = requesterEmail;
 		this.sex = sex;
@@ -67,5 +70,6 @@ public class PGREQAdminMatchedDetailFindByAdminResponseDto {
 		this.shotCoverage = shotCoverage;
 		this.createdAt = createdAt;
 		this.responseList = responseList;
+		this.paid = paid;
 	}
 }

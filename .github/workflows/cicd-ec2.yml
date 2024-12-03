@@ -71,7 +71,7 @@ jobs:
         run: |
           cd ./genti-api/src/main/resources
           mkdir -p ./google
-          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./google/key.json
+          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./jsonkey/key.json
         shell: bash
 
       - name: make apple private key

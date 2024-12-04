@@ -50,54 +50,8 @@ public class PictureGenerateWorkService {
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
-	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
  	private final PGRESCompleteEventPublisher PGRESCompleteEventPublisher;
-
-	public PGREQBriefFindByCreatorResponseDto getPictureGenerateRequestBrief(Long userId,
-		PictureGenerateRequestStatus status) {
-
-		Creator foundCreator = findCreatorByUserId(userId);
-		Optional<PictureGenerateRequest> foundPGR;
-		switch (status) {
-			case IN_PROGRESS ->
-				foundPGR = pictureGenerateRequestRepository.findByCreatorAndRequestStatusIsBeforeWorkOrderByCreatedAtAsc(
-					foundCreator);
-			case ASSIGNING ->
-				foundPGR = pictureGenerateRequestRepository.findByStatusOrderByCreatedAtDesc(foundCreator, status);
-			default -> throw ExpectedException.withLogging(ResponseCode.UnHandledException,
-				"조회불가능한 사진생성요청 상태 Status =" + status.getStringValue());
-		}
-
-		return foundPGR.map(PGREQBriefFindByCreatorResponseDto::new)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-				String.format("공급자 id : %d 사진생성요청의 진행상태 : %s", foundCreator.getId(), status.getStringValue())));
-
-	}
-
-	public PGREQBriefFindByCreatorResponseDto getPictureGenerateRequestDetail(Long userId,
-		Long pictureGenerateRequestId) {
-		Creator foundCreator = findCreatorByUserId(userId);
-		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
-		if (foundPictureGenerateRequest.getCreator() == null) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotAssignedToCreator);
-		} else if (!Objects.equals(foundPictureGenerateRequest.getCreator().getId(), foundCreator.getId())) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotAssignedToCreator);
-		}
-
-		return new PGREQBriefFindByCreatorResponseDto(foundPictureGenerateRequest);
-
-	}
-
-	public List<PGREQBriefFindByCreatorResponseDto> getPictureGenerateRequestDetailAll(Long userId) {
-		Creator foundCreator = findCreatorByUserId(userId);
-		List<PictureGenerateRequest> foundPGRList = pictureGenerateRequestRepository.findAllByCreatorIsOrderByCreatedAtDesc(
-			foundCreator);
-
-		return foundPGRList.stream().map(
-			PGREQBriefFindByCreatorResponseDto::new).toList();
-
-	}
 
 	public Boolean updatePictureCreatedByCreatorList(Long pictureGenerateResponseId,
 		List<CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList, Long userId) {
@@ -123,35 +77,6 @@ public class PictureGenerateWorkService {
 	public Boolean updateMemo(Long pictureGenerateResponseId, MemoUpdateRequestDto memoUpdateRequestDto) {
 		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
 		foundPictureGenerateResponse.updateMemo(memoUpdateRequestDto.getMemo());
-		return true;
-	}
-
-	public Boolean acceptPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
-		Creator foundCreator = findCreatorByUserId(userId);
-		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
-
-		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getId(), foundCreator.getId())) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotAssignedToCreator);
-		}
-
-		foundPictureGenerateRequest.acceptByCreator();
-		PictureGenerateResponse newPGRES = PictureGenerateResponse.createCreatorMatchedPGRES(foundCreator,
-			foundPictureGenerateRequest);
-		foundPictureGenerateRequest.addPGRES(newPGRES);
-		foundCreator.addPictureGenerateResponse(newPGRES);
-		pictureGenerateResponseRepository.save(newPGRES);
-
-		return true;
-	}
-
-	public Boolean rejectPictureGenerateRequest(Long userId, Long pictureGenerateRequestId) {
-		PictureGenerateRequest foundPictureGenerateRequest = findPGREQ(pictureGenerateRequestId);
-		if (!Objects.equals(foundPictureGenerateRequest.getCreator().getUser().getId(), userId)) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotAssignedToCreator);
-		}
-
-		foundPictureGenerateRequest.rejectByCreator();
-		requestMatchService.matchRejectedRequest(foundPictureGenerateRequest);
 		return true;
 	}
 
@@ -220,15 +145,6 @@ public class PictureGenerateWorkService {
 		return pictureService.updatePictures(commandList)
 			.stream().map(CommonPictureResponseDto::of)
 			.toList();
-	}
-
-	public List<PGREQBriefFindByCreatorResponseDto> getPictureGenerateRequestDetail3(Long userId) {
-		Creator foundCreator = findCreatorByUserId(userId);
-
-		List<PictureGenerateRequest> foundPGREQList = pictureGenerateRequestRepository.findByCreatorAndActiveStatus(
-			foundCreator, PGREQ_IN_PROGRESS_LIST, IN_PROGRESS_PGRES_FOR_CREATOR);
-
-		return foundPGREQList.stream().map(PGREQBriefFindByCreatorResponseDto::new).toList();
 	}
 
 	public Boolean verifyPGRES(Long userId, Long pgresId) {

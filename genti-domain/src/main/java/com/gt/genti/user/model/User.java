@@ -230,7 +230,8 @@ public class User extends BaseTimeEntity {
 	private User(Long id, String socialId, String oauthImageUrl,
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
-		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate, Integer requestTaskCount, String birthYear) {
+		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate,
+	    Integer requestTaskCount, String birthYear, String phoneNumber) {
 		this.id = id;
 		this.socialId = socialId;
 		this.oauthImageUrl = oauthImageUrl;

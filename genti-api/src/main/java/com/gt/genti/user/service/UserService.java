@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.gt.genti.auth.dto.request.SignUpV2RequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -210,6 +211,15 @@ public class UserService {
 		}
 		foundUser.updateBirthAndSex(signUpRequestDTO.getBirthYear(), signUpRequestDTO.getSex());
 		foundUser.updateUserRole(UserRole.USER);
+//		if(signUpRequestDTO.getClass().equals(SignUpV2RequestDTO.class) && ((SignUpV2RequestDTO) signUpRequestDTO).getPhoneNumber() != null){
+//			foundUser.updatePhoneNumber(((SignUpV2RequestDTO) signUpRequestDTO).getPhoneNumber());
+//		}
+		if (signUpRequestDTO instanceof SignUpV2RequestDTO) {
+			SignUpV2RequestDTO requestV2 = (SignUpV2RequestDTO) signUpRequestDTO;
+			if (requestV2.getPhoneNumber() != null) {
+				foundUser.updatePhoneNumber(requestV2.getPhoneNumber());
+			}
+		}
 
 		return SignUpResponseDTO.builder()
 			.email(foundUser.getEmail())

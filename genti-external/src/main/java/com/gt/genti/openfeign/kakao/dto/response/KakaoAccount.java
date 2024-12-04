@@ -8,6 +8,7 @@ public record KakaoAccount(
         KakaoUserProfile profile,
 		String name,
 		String email,
+		String phone_number,
 		String birthyear,
 		String birthday
 ) {

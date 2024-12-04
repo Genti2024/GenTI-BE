@@ -70,8 +70,8 @@ jobs:
         if: contains(github.ref, 'staging') || contains(github.ref, 'main-test')
         run: |
           cd ./genti-api/src/main/resources
-          mkdir -p ./google
-          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./google/key.json
+          mkdir -p ./jsonkey
+          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./jsonkey/key.json
         shell: bash
 
       - name: make apple private key

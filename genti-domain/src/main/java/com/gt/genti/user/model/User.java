@@ -132,6 +132,9 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<PictureUserVerification> pictureUserVerificationList;
 
+	@Column(name = "phone_number")
+	String phoneNumber;
+
 	@PrePersist
 	public void prePersist() {
 		if (this.userStatus == null) {
@@ -154,7 +157,7 @@ public class User extends BaseTimeEntity {
 	@Builder(builderMethodName = "builderWithSignIn", builderClassName = "SignInUser")
 	public static User of(String socialId, String birthYear, OauthPlatform oauthPlatform, String username,
 		String nickname, String oauthImageUrl,
-		String email) {
+		String email, String phoneNumber) {
 		return base()
 			.socialId(socialId)
 			.lastLoginOauthPlatform(oauthPlatform)
@@ -164,6 +167,7 @@ public class User extends BaseTimeEntity {
 			.nickname(nickname)
 			.oauthImageUrl(oauthImageUrl)
 			.email(email)
+			.phoneNumber(phoneNumber)
 			.build();
 	}
 
@@ -214,6 +218,10 @@ public class User extends BaseTimeEntity {
 		this.userRole = userRole;
 	}
 
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public void login() {
 		this.lastLoginDate = LocalDateTime.now();
 	}
@@ -243,6 +251,7 @@ public class User extends BaseTimeEntity {
 		this.lastLoginDate = lastLoginDate;
 		this.requestTaskCount = requestTaskCount;
 		this.birthYear = birthYear;
+		this.phoneNumber = phoneNumber;
 	}
 
 	public void addRequestCount() {

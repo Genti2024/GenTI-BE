@@ -60,18 +60,7 @@ public class InAppPurchaseService {
         builder = new AndroidPublisher.Builder(httpTransport, JSON_FACTORY, new HttpCredentialsAdapter(credentials));
 
         AndroidPublisher publisher = null;
-        try {
-            publisher = builder.setApplicationName(googleApplicationPackageName).build();
-            AndroidPublisher.Purchases.Products.Get gas = publisher.purchases()
-                    .products()
-                    .get(
-                            "packageName",
-                            "productId",
-                            "purchaseToken");
-            ProductPurchase purchase = gas.execute();
-        } catch (IOException e4) {
-            throw ExpectedException.withLogging(ResponseCode.UserDeactivated, e4);
-        }
+        publisher = builder.setApplicationName(googleApplicationPackageName).build();
 
         try {
             AndroidPublisher.Purchases.Products.Get get = publisher.purchases().products()

@@ -17,20 +17,15 @@ import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.command.CreatePictureCompletedCommand;
-import com.gt.genti.picture.command.CreatePictureCreatedByCreatorCommand;
 import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.dto.request.CommonPictureKeyUpdateRequestDto;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.picture.service.PictureService;
-import com.gt.genti.picturegeneraterequest.dto.response.PGREQBriefFindByCreatorResponseDto;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequest;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegeneraterequest.repository.PictureGenerateRequestRepository;
-import com.gt.genti.picturegeneraterequest.service.RequestMatchService;
-import com.gt.genti.picturegenerateresponse.dto.request.MemoUpdateRequestDto;
 import com.gt.genti.picturegenerateresponse.dto.request.PGRESUpdateAdminInChargeRequestDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESSubmitByAdminResponseDto;
-import com.gt.genti.picturegenerateresponse.dto.response.PGRESSubmitByCreatorResponseDto;
 import com.gt.genti.picturegenerateresponse.dto.response.PGRESUpdateAdminInChargeResponseDto;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
@@ -52,54 +47,6 @@ public class PictureGenerateWorkService {
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final UserRepository userRepository;
  	private final PGRESCompleteEventPublisher PGRESCompleteEventPublisher;
-
-	public Boolean updatePictureCreatedByCreatorList(Long pictureGenerateResponseId,
-		List<CommonPictureKeyUpdateRequestDto> commonPictureKeyUpdateRequestDtoList, Long userId) {
-		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
-		Creator foundCreator = findCreatorByUserId(userId);
-
-		if (!Objects.equals(foundPictureGenerateResponse.getCreator().getId(), foundCreator.getId())) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotAssignedToCreator);
-		}
-		List<CreatePictureCreatedByCreatorCommand> newUploadPictures = commonPictureKeyUpdateRequestDtoList.stream()
-			.map(command -> (CreatePictureCreatedByCreatorCommand)CreatePictureCreatedByCreatorCommand.builder()
-				.key(command.getKey())
-				.uploader(foundCreator.getUser())
-				.pictureGenerateResponse(foundPictureGenerateResponse)
-				.build()
-			)
-			.toList();
-
-		pictureService.updateAll(newUploadPictures);
-		return true;
-	}
-
-	public Boolean updateMemo(Long pictureGenerateResponseId, MemoUpdateRequestDto memoUpdateRequestDto) {
-		PictureGenerateResponse foundPictureGenerateResponse = findPGRES(pictureGenerateResponseId);
-		foundPictureGenerateResponse.updateMemo(memoUpdateRequestDto.getMemo());
-		return true;
-	}
-
-	public PGRESSubmitByCreatorResponseDto submitToAdmin(Long userId, Long pictureGenerateResponseId) {
-		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);
-		Creator foundCreator = findCreatorByUserId(userId);
-
-		if (!Objects.equals(foundPGRES.getCreator().getId(), foundCreator.getId())) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotAssignedToCreator);
-		}
-		pictureService.findPictureCreatedByCreatorByPictureGenerateResponse(foundPGRES);
-
-		Duration elapsedDuration = foundPGRES.creatorSubmitAndGetElapsedTime();
-		if (elapsedDuration.compareTo(Duration.ofHours(DateTimeUtil.PGRES_LIMIT_HOUR)) > 0) {
-			throw ExpectedException.withLogging(ResponseCode.SubmitBlockedDueToPictureGenerateResponseIsExpired);
-		}
-		Long reward = DateTimeUtil.calculateReward(elapsedDuration.toMinutes());
-
-		return PGRESSubmitByCreatorResponseDto.builder()
-			.elapsedTime(DateTimeUtil.getTimeString(elapsedDuration))
-			.reward(reward)
-			.build();
-	}
 
 	public PGRESSubmitByAdminResponseDto submitFinal(Long pictureGenerateResponseId) {
 		PictureGenerateResponse foundPGRES = findPGRES(pictureGenerateResponseId);

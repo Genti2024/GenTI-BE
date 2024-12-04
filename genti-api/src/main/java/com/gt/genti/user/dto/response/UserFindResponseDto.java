@@ -21,16 +21,12 @@ public class UserFindResponseDto {
 	String username;
 	@Schema(description = "유저의 닉네임", example = "부끄러운 엉덩이")
 	String nickname;
-	@Schema(description = "프로필사진 리스트", nullable = true)
-	List<CommonPictureResponseDto> profilePictureList;
 
 	@Builder
-	public UserFindResponseDto(Long id, String username, String nickname,
-		List<CommonPictureResponseDto> profilePictureList) {
+	public UserFindResponseDto(Long id, String username, String nickname) {
 		this.id = id;
 		this.username = username;
 		this.nickname = nickname;
-		this.profilePictureList = profilePictureList;
 	}
 
 	public static UserFindResponseDto of(User user) {
@@ -39,12 +35,6 @@ public class UserFindResponseDto {
 			.nickname(user.getNickname())
 			.username(user.getUsername());
 
-		if (!user.getPictureProfileList().isEmpty()) {
-			builder.profilePictureList(user.getPictureProfileList()
-				.stream()
-				.map(CommonPictureResponseDto::of)
-				.toList());
-		}
 		return builder.build();
 	}
 }

@@ -16,8 +16,6 @@ import com.gt.genti.picture.createdbycreator.model.PictureCreatedByCreator;
 import com.gt.genti.picture.createdbycreator.repository.PictureCreatedByCreatorRepository;
 import com.gt.genti.picture.pose.model.PicturePose;
 import com.gt.genti.picture.pose.repository.PicturePoseRepository;
-import com.gt.genti.picture.profile.model.PictureProfile;
-import com.gt.genti.picture.profile.repository.PictureProfileRepository;
 import com.gt.genti.picture.userface.model.PictureUserFace;
 import com.gt.genti.picture.userface.repository.PictureUserFaceRepository;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
@@ -29,7 +27,6 @@ import com.gt.genti.picture.command.CreatePictureCompletedCommand;
 import com.gt.genti.picture.command.CreatePictureCreatedByCreatorCommand;
 import com.gt.genti.picture.command.CreatePicturePoseCommand;
 import com.gt.genti.picture.command.CreatePictureUserFaceCommand;
-import com.gt.genti.picture.command.PictureProfileSaveCommand;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PictureService {
 	private final PictureCreatedByCreatorRepository pictureCreatedByCreatorRepository;
 	private final PictureUserFaceRepository pictureUserFaceRepository;
-	private final PictureProfileRepository pictureProfileRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final PicturePoseRepository picturePoseRepository;
 
@@ -65,11 +61,6 @@ public class PictureService {
 
 	public Optional<PicturePose> findByKeyPicturePose(String key) {
 		return picturePoseRepository.findByKey(key);
-	}
-
-	public PictureProfile findByKeyPictureProfile(String key) {
-		return pictureProfileRepository.findByKey(key)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureProfileNotFound));
 	}
 
 	public PictureCreatedByCreator findPictureCreatedByCreatorByPictureGenerateResponse(
@@ -108,14 +99,6 @@ public class PictureService {
 			createPictureUserFaceCommand.getUploader()
 		);
 		return pictureUserFaceRepository.save(pictureUserFace);
-	}
-
-	public Picture updatePicture(PictureProfileSaveCommand pictureProfileSaveCommand) {
-		PictureProfile pictureProfile = PictureEntityUtils.makePictureProfile(
-			pictureProfileSaveCommand.getKey(),
-			pictureProfileSaveCommand.getUploader()
-		);
-		return pictureProfileRepository.save(pictureProfile);
 	}
 
 	public PicturePose updatePicture(CreatePicturePoseCommand command) {
@@ -186,10 +169,6 @@ public class PictureService {
 				.build())
 			.toList();
 		return pictureCreatedByCreatorRepository.saveAll(uploadEntityList);
-	}
-
-	public List<PictureProfile> findAllProfilePicture(User foundUser) {
-		return pictureProfileRepository.findAllByUserOrderByCreatedAtDesc(foundUser);
 	}
 
 	public List<PictureUserFace> find3PictureUserFaceByKeyList(List<String> keyList) {

@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
-import com.gt.genti.deposit.model.Deposit;
-import com.gt.genti.deposit.repository.DepositRepository;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.picture.command.CreatePictureCompletedCommand;
@@ -37,8 +35,6 @@ import com.gt.genti.picturegenerateresponse.dto.response.PGRESUpdateAdminInCharg
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
-import com.gt.genti.settlement.model.Settlement;
-import com.gt.genti.settlement.repository.SettlementRepository;
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.util.DateTimeUtil;
@@ -54,8 +50,6 @@ public class PictureGenerateWorkService {
 	private final PictureGenerateResponseRepository pictureGenerateResponseRepository;
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
-	private final SettlementRepository settlementRepository;
-	private final DepositRepository depositRepository;
 	private final RequestMatchService requestMatchService;
 	private final UserRepository userRepository;
  	private final PGRESCompleteEventPublisher PGRESCompleteEventPublisher;
@@ -175,8 +169,6 @@ public class PictureGenerateWorkService {
 			throw ExpectedException.withLogging(ResponseCode.SubmitBlockedDueToPictureGenerateResponseIsExpired);
 		}
 		Long reward = DateTimeUtil.calculateReward(elapsedDuration.toMinutes());
-
-		createSettlementAndDeposit(foundPGRES, elapsedDuration, reward, foundCreator);
 
 		return PGRESSubmitByCreatorResponseDto.builder()
 			.elapsedTime(DateTimeUtil.getTimeString(elapsedDuration))
@@ -352,22 +344,6 @@ public class PictureGenerateWorkService {
 	private Creator findCreatorByUserId(Long userId) {
 		return creatorRepository.findByUserId(userId)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.CreatorNotFound, userId));
-	}
-
-	private void createSettlementAndDeposit(PictureGenerateResponse foundPGRES, Duration elapsedDuration, Long reward,
-		Creator foundCreator) {
-		Settlement settlement = Settlement.builder()
-			.pictureGenerateResponse(foundPGRES)
-			.elapsedMinutes(elapsedDuration.toMinutes())
-			.reward(reward)
-			.build();
-
-		settlementRepository.save(settlement);
-
-		Deposit foundDeposit = depositRepository.findByCreator(foundCreator)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.DepositNotFound));
-		foundDeposit.add(reward);
-		foundCreator.completeTask();
 	}
 }
 

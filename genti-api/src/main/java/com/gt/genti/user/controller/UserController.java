@@ -27,7 +27,6 @@ import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.user.api.UserApi;
-import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.service.UserService;

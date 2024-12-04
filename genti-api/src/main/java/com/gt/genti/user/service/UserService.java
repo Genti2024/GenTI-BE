@@ -22,20 +22,16 @@ import com.gt.genti.auth.social.AppleOauthStrategy;
 import com.gt.genti.auth.social.KakaoOauthStrategy;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
-import com.gt.genti.deposit.service.DepositService;
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
 import com.gt.genti.jwt.JwtTokenProvider;
 import com.gt.genti.picture.completed.model.PictureCompleted;
 import com.gt.genti.picture.completed.repository.PictureCompletedRepository;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
-import com.gt.genti.picture.profile.model.PictureProfile;
-import com.gt.genti.picture.service.PictureService;
 import com.gt.genti.picturegeneraterequest.model.PictureGenerateRequestStatus;
 import com.gt.genti.picturegenerateresponse.model.PictureGenerateResponse;
 import com.gt.genti.picturegenerateresponse.repository.PictureGenerateResponseRepository;
 import com.gt.genti.usecase.PictureGenerateRequestUseCase;
-import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserRoleUpdateRequestDto;
 import com.gt.genti.user.dto.request.UserStatusUpdateRequestDto;
 import com.gt.genti.user.dto.response.SignUpResponseDTO;
@@ -55,9 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-	private final PictureService pictureService;
 	private final UserRepository userRepository;
-	private final DepositService depositService;
 	private final CreatorRepository creatorRepository;
 	private final PictureCompletedRepository pictureCompletedRepository;
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
@@ -72,30 +66,6 @@ public class UserService {
 		return UserFindResponseDto.of(foundUser);
 	}
 
-	public UserFindResponseDto updateUserInfo(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		User foundUser = getUserByUserId(userId);
-		foundUser.updateName(userInfoUpdateRequestDto.getUserName());
-		if (userInfoUpdateRequestDto.getProfilePicture() != null) {
-			PictureProfile foundPictureProfile = pictureService.findByKeyPictureProfile(
-				userInfoUpdateRequestDto.getProfilePicture().getKey());
-			foundUser.addProfilePicture(foundPictureProfile);
-		}
-		List<CommonPictureResponseDto> profilePictureResponseList = null;
-		if (!foundUser.getPictureProfileList().isEmpty()) {
-			profilePictureResponseList = foundUser.getPictureProfileList()
-				.stream()
-				.map(CommonPictureResponseDto::of)
-				.toList();
-		}
-
-		return UserFindResponseDto.builder()
-			.profilePictureList(profilePictureResponseList)
-			.id(foundUser.getId())
-			.nickname(foundUser.getNickname())
-			.username(foundUser.getUsername())
-			.build();
-	}
-
 	public Boolean updateUserRole(Long userId, UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
 		User foundUser = getUserByUserId(userId);
 		UserRole userRole = userRoleUpdateRequestDto.getUserRole();
@@ -104,7 +74,6 @@ public class UserService {
 			Creator newCreator = new Creator(foundUser);
 			creatorRepository.save(newCreator);
 			foundUser.setCreator(newCreator);
-			depositService.createDeposit(foundUser);
 		} else if (userRole == UserRole.ADMIN) {
 			Creator newCreator = new Creator(foundUser);
 			foundUser.setCreator(newCreator);
@@ -206,7 +175,6 @@ public class UserService {
 			.createdAt(user.getCreatedAt())
 			.requestTaskCount(user.getRequestTaskCount())
 			.creator(user.getCreator())
-			.deposit(user.getDeposit())
 			.lastLoginDate(user.getLastLoginDate())
 			.build();
 	}
@@ -225,7 +193,6 @@ public class UserService {
 			.email(foundUser.getEmail())
 			.userRole(foundUser.getUserRole())
 			.birthYear(foundUser.getBirthYear())
-			.deposit(foundUser.getDeposit())
 			.lastLoginDate(foundUser.getLastLoginDate())
 			.userStatus(foundUser.getUserStatus())
 			.requestTaskCount(foundUser.getRequestTaskCount())

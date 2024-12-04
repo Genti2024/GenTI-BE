@@ -33,6 +33,7 @@ public class InAppPurchaseService {
 
 //        try {
             // ================= Google Credential 생성 =================
+
         JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
         AndroidPublisher.Builder builder;

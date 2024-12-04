@@ -31,28 +31,36 @@ public class InAppPurchaseService {
 
     public Boolean validateReceipt(Long userId, PurchaseRequestDto purchaseRequestDto) {
 
-//        try {
-            // ================= Google Credential 생성 =================
-
         JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
         AndroidPublisher.Builder builder;
+        HttpTransport httpTransport;
         try {
-            HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-
-            InputStream inputStream = new ClassPathResource(googleAccountFilePath).getInputStream();
-            GoogleCredentials credentials = GoogleCredentials
-                    .fromStream(inputStream)
-                    .createScoped(AndroidPublisherScopes.ANDROIDPUBLISHER);
-            builder = new AndroidPublisher.Builder(httpTransport, JSON_FACTORY, new HttpCredentialsAdapter(credentials));
-        } catch (IOException | GeneralSecurityException e){
-            throw ExpectedException.withLogging(ResponseCode.FileTypeNotProvided,
-                "---------------------------------------구매 에러 IOException, GeneralSecurityException 에러 1111111111: " + e + "-------------------------------------------------");
+            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        } catch (IOException | GeneralSecurityException e1) {
+            throw ExpectedException.withLogging(ResponseCode.HttpMessageNotReadable, e1);
         }
 
-        AndroidPublisher publisher;
+        InputStream inputStream;
         try {
-            // ======================== API 호출 ========================
+            inputStream = new ClassPathResource(googleAccountFilePath).getInputStream();
+        } catch (IOException e2) {
+            throw ExpectedException.withLogging(ResponseCode.HandlerNotFound, e2);
+        }
+
+        GoogleCredentials credentials;
+        try {
+            credentials = GoogleCredentials
+                    .fromStream(inputStream)
+                    .createScoped(AndroidPublisherScopes.ANDROIDPUBLISHER);
+        } catch (IOException e3) {
+            throw ExpectedException.withLogging(ResponseCode.AlreadyActivatedUser, e3);
+        }
+
+        builder = new AndroidPublisher.Builder(httpTransport, JSON_FACTORY, new HttpCredentialsAdapter(credentials));
+
+        AndroidPublisher publisher = null;
+        try {
             publisher = builder.setApplicationName(googleApplicationPackageName).build();
             AndroidPublisher.Purchases.Products.Get gas = publisher.purchases()
                     .products()
@@ -61,37 +69,30 @@ public class InAppPurchaseService {
                             "productId",
                             "purchaseToken");
             ProductPurchase purchase = gas.execute();
-        } catch (IOException e){
-            throw ExpectedException.withLogging(ResponseCode.HttpMessageNotReadable,
-                    "---------------------------------------구매 에러 IOException 에러 2222222222: " + e + "-------------------------------------------------");
+        } catch (IOException e4) {
+            throw ExpectedException.withLogging(ResponseCode.UserDeactivated, e4);
         }
 
-
-        try{
+        try {
             AndroidPublisher.Purchases.Products.Get get = publisher.purchases().products()
-                    .get(purchaseRequestDto.getPackageName(), purchaseRequestDto.getProductId(), purchaseRequestDto.getPurchaseToken()); //inapp 아이템의 구매 및 소모 상태 확인
+                    .get(purchaseRequestDto.getPackageName(), purchaseRequestDto.getProductId(), purchaseRequestDto.getPurchaseToken());
             ProductPurchase productPurchase = get.execute(); //검증 결과
             System.out.println(productPurchase.toPrettyString());
 
             // 인앱 상품의 소비 상태. 0 아직 소비 안됨(Yet to be consumed) / 1 소비됨(Consumed)
             Integer consumptionState = productPurchase.getConsumptionState();
 
-            // 개발자가 지정한 임의 문자열 정보
-            String developerPayload = productPurchase.getDeveloperPayload();
-
-            // 구매 상태. 0 구매완료 / 1 취소됨
-            Integer purchaseState = productPurchase.getPurchaseState();
-            if(purchaseState == 1){
-                return false;
-            }
-
             // 상품이 구매된 시각. 타임스탬프 형태
             Long purchaseTimeMillis = productPurchase.getPurchaseTimeMillis();
 
+            // 구매 상태. 0 구매완료 / 1 취소됨
+            Integer purchaseState = productPurchase.getPurchaseState();
+            if (purchaseState == 1) {
+                return false;
+            }
             return true;
-        } catch (IOException e) {
-            throw ExpectedException.withLogging(ResponseCode.FileTypeNotProvided,
-                    "---------------------------------------구매 에러 IOException 에러 333333333333: " + e + "-------------------------------------------------");
+        } catch (IOException e5) {
+            throw ExpectedException.withLogging(ResponseCode.FileTypeNotProvided, e5);
         }
     }
 }

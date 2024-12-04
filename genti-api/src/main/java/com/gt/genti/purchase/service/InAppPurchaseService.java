@@ -65,7 +65,6 @@ public class InAppPurchaseService {
             AndroidPublisher.Purchases.Products.Get get = publisher.purchases().products()
                     .get(purchaseRequestDto.getPackageName(), purchaseRequestDto.getProductId(), purchaseRequestDto.getPurchaseToken());
             ProductPurchase productPurchase = get.execute(); //검증 결과
-            System.out.println(productPurchase.toPrettyString());
 
             // 인앱 상품의 소비 상태. 0 아직 소비 안됨(Yet to be consumed) / 1 소비됨(Consumed)
             Integer consumptionState = productPurchase.getConsumptionState();

@@ -46,7 +46,7 @@ public class InAppPurchaseService {
                     .createScoped(AndroidPublisherScopes.ANDROIDPUBLISHER);
             builder = new AndroidPublisher.Builder(httpTransport, JSON_FACTORY, new HttpCredentialsAdapter(credentials));
         } catch (IOException | GeneralSecurityException e){
-            throw ExpectedException.withLogging(ResponseCode.CashoutNotFound,
+            throw ExpectedException.withLogging(ResponseCode.FileTypeNotProvided,
                 "---------------------------------------구매 에러 IOException, GeneralSecurityException 에러 1111111111: " + e + "-------------------------------------------------");
         }
 

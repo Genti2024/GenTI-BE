@@ -66,13 +66,22 @@ jobs:
           echo "${{ secrets.APPLICATION_STAGING }}" > ./application-staging.yml
         shell: bash
 
+#      아래 코드는 json이 큰따옴표 없이 저장됨
+#      - name: Create Google key.json file
+#        if: contains(github.ref, 'staging') || contains(github.ref, 'main-test')
+#        run: |
+#          cd ./genti-api/src/main/resources
+#          mkdir -p ./jsonkey
+#          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./jsonkey/key.json
+#        shell: bash
+
       - name: Create Google key.json file
         if: contains(github.ref, 'staging') || contains(github.ref, 'main-test')
-        run: |
-          cd ./genti-api/src/main/resources
-          mkdir -p ./jsonkey
-          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./jsonkey/key.json
-        shell: bash
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "./genti-api/src/main/resources/jsonkey/key.json"
+          json: ${{ secrets.GOOGLE_ACCOUNT_KEY }}
 
       - name: make apple private key
         run: |

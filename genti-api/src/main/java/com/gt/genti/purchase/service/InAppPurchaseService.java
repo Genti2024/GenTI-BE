@@ -59,8 +59,7 @@ public class InAppPurchaseService {
 
         builder = new AndroidPublisher.Builder(httpTransport, JSON_FACTORY, new HttpCredentialsAdapter(credentials));
 
-        AndroidPublisher publisher = null;
-        publisher = builder.setApplicationName(googleApplicationPackageName).build();
+        AndroidPublisher publisher = builder.setApplicationName(purchaseRequestDto.getPackageName()).build();
 
         try {
             AndroidPublisher.Purchases.Products.Get get = publisher.purchases().products()

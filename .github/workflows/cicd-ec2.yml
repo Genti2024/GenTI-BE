@@ -187,6 +187,11 @@ jobs:
           # Clean up the temporary directory
           rm -rf temp_dir
 
+      - name: Upload key.json to S3
+        if: contains(github.ref, 'staging')
+        run: |
+          aws s3 cp ./genti-api/src/main/resources/jsonkey/key.json s3://$S3_BUCKET_NAME/jsonkey/key.json
+
       - name: Upload docker-compose, appspec, afterInstall file to S3
         if: contains(github.ref, 'staging')
         run: |

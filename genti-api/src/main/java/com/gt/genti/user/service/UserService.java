@@ -144,13 +144,6 @@ public class UserService {
 			.build();
 	}
 
-	public void softDeleteUser(LocalDateTime currentDate) {
-		List<User> expiredUserList = userRepository.findIdByDeletedAtBefore(currentDate);
-		if (!expiredUserList.isEmpty()) {
-			userRepository.deleteAllInBatch(expiredUserList);
-		}
-	}
-
 	public Page<UserFindByAdminResponseDto> getUserInfoByEmail(String email) {
 		User foundUser = userRepository.findByEmail(email)
 			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));

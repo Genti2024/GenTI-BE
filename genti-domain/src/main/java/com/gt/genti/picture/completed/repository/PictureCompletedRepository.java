@@ -18,11 +18,15 @@ public interface PictureCompletedRepository extends JpaRepository<PictureComplet
 	List<PictureCompleted> findAllByPictureGenerateResponse(PictureGenerateResponse pictureGenerateResponse);
 
 	@Query("select p "
-		+ "from PictureCompleted p "
-		+ "join PictureGenerateResponse pgres "
-		+ "where pgres.request.requester = :user "
-		+ "and pgres.status = com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.COMPLETED "
-		+ "and p.pictureGenerateResponse.id = pgres.id ")
+			+ "from PictureCompleted p "
+			+ "join PictureGenerateResponse pgres "
+			+ "join PictureGenerateRequest pgreq "
+			+ "where p.pictureGenerateResponse.id = pgres.id "
+			+ "and pgres.request.id = pgreq.id "
+			+ "and pgres.request.requester = :user "
+			+ "and (pgres.status = com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.COMPLETED "
+			+ "     or (pgres.status = com.gt.genti.picturegenerateresponse.model.PictureGenerateResponseStatus.REPORTED "
+			+ "         and pgreq.paid IS NOT NULL))")
 	Page<PictureCompleted> findAllByUserPagination(@Param(value = "user") User user, Pageable pageable);
 
 	@Query("select p "

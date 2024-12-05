@@ -45,11 +45,6 @@ public interface PictureGenerateRequestUseCase {
 
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatchedByRequesterEmail(String email, Pageable pageable);
 
-	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmitted(Pageable pageable);
-
-	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByPGRESStatus(
-		PictureGenerateResponseStatusForAdmin statusForAdmin, Pageable pageable);
-
 	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByRequesterEmail(String email,
 		Pageable pageable);
 

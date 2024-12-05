@@ -66,13 +66,26 @@ jobs:
           echo "${{ secrets.APPLICATION_STAGING }}" > ./application-staging.yml
         shell: bash
 
+#      아래 코드는 json이 큰따옴표 없이 저장됨
+#      - name: Create Google key.json file
+#        if: contains(github.ref, 'staging') || contains(github.ref, 'main-test')
+#        run: |
+#          cd ./genti-api/src/main/resources
+#          mkdir -p ./jsonkey
+#          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./jsonkey/key.json
+#        shell: bash
+
+      - name: Create jsonkey directory
+        if: contains(github.ref, 'staging') || contains(github.ref, 'main-test')
+        run: mkdir -p ./genti-api/src/main/resources/jsonkey
+
       - name: Create Google key.json file
         if: contains(github.ref, 'staging') || contains(github.ref, 'main-test')
-        run: |
-          cd ./genti-api/src/main/resources
-          mkdir -p ./jsonkey
-          echo "${{ secrets.GOOGLE_ACCOUNT_KEY }}" > ./jsonkey/key.json
-        shell: bash
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "./genti-api/src/main/resources/jsonkey/key.json"
+          json: ${{ secrets.GOOGLE_ACCOUNT_KEY }}
 
       - name: make apple private key
         run: |
@@ -186,6 +199,11 @@ jobs:
           
           # Clean up the temporary directory
           rm -rf temp_dir
+
+      - name: Upload key.json to S3
+        if: contains(github.ref, 'staging')
+        run: |
+          aws s3 cp ./genti-api/src/main/resources/jsonkey/key.json s3://$S3_BUCKET_NAME/jsonkey/key.json
 
       - name: Upload docker-compose, appspec, afterInstall file to S3
         if: contains(github.ref, 'staging')

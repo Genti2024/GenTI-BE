@@ -51,13 +51,6 @@ public class UserController implements UserApi {
 		return GentiResponse.success(userService.getUserInfo(userId));
 	}
 
-	@PutMapping("/api/v1/users")
-	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
-		@AuthUser Long userId,
-		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		return GentiResponse.success(userService.updateUserInfo(userId, userInfoUpdateRequestDto));
-	}
-
 	@PostMapping("/api/v1/users/signup")
 	@Logging(item = LogItem.USER, action = LogAction.SIGNUP, requester = LogRequester.ANONYMOUS)
 	public ResponseEntity<ApiResult<SignUpResponseDTO>> signUp(

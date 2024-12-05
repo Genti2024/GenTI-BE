@@ -7,6 +7,7 @@ import com.gt.genti.user.model.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +21,7 @@ public class UserPurchaseController {
     @PostMapping("/google/receipt-validation")
     public ResponseEntity<GentiResponse.ApiResult<Boolean>> validateReceipt(
             @AuthUser Long userId,
-            PurchaseRequestDto purchaseRequestDto) {
+            @RequestBody PurchaseRequestDto purchaseRequestDto) {
         return GentiResponse.success(inAppPurchaseService.validateReceipt(userId, purchaseRequestDto));
     }
 }

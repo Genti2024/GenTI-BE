@@ -21,12 +21,12 @@ public interface PictureGenerateRequestPort {
 
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 
-	Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIs(List<PictureGenerateResponseStatus> statusList,
+	Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIsAndPaidIsNull(List<PictureGenerateResponseStatus> statusList,
 		boolean matchToAdmin, Pageable pageable);
 
 	Page<PictureGenerateRequest> findAll(Pageable pageable);
 
-	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
+	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNull(boolean matchToAdmin, Pageable pageable);
 
 	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNotNull(boolean matchToAdmin, Pageable pageable);
 

@@ -85,10 +85,6 @@ public class PictureGenerateResponse extends BaseTimeEntity {
 		return Duration.between(this.getCreatedAt(), this.getSubmittedByCreatorAt());
 	}
 
-	public void updateMemo(String memo) {
-		this.memo = memo;
-	}
-
 	public void updateInChargeAdmin(String adminInCharge) {
 		this.adminInCharge = adminInCharge;
 		this.status = ADMIN_IN_PROGRESS;

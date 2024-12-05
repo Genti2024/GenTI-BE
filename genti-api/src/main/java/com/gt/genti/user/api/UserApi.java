@@ -55,16 +55,6 @@ public interface UserApi {
 	})
 	ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId);
 
-	@Operation(summary = "회원 복구", description = "회원탈퇴 취소 처리")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.UserNotFound),
-		@EnumResponse(ResponseCode.CannotRestoreUser)
-
-	})
-	ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
-		@AuthUser Long userId);
-
 	@Operation(summary = "회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK)

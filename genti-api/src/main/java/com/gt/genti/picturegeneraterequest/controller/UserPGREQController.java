@@ -35,16 +35,6 @@ import lombok.RequiredArgsConstructor;
 public class UserPGREQController implements UserPGREQApi {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 
-	@Deprecated
-	@Logging(item = LogItem.PGREQ, action = LogAction.VIEW, requester = LogRequester.USER)
-	@GetMapping("/all")
-	public ResponseEntity<ApiResult<List<PGREQBriefFindByUserResponseDto>>> getAllUsersPictureGenerateRequest(
-		@AuthUser Long userId
-	) {
-		return GentiResponse.success(
-			pictureGenerateRequestUseCase.findAllPGREQByRequester(userId));
-	}
-
 	@Logging(item = LogItem.PGREQ_INPROGESS, action = LogAction.SEARCH, requester = LogRequester.USER)
 	@GetMapping("/pending")
 	public ResponseEntity<ApiResult<PGREQStatusResponseDto>> getPendingPGRESStatus(
@@ -89,20 +79,6 @@ public class UserPGREQController implements UserPGREQApi {
 			@AuthUser Long userId,
 			@RequestBody @Valid AdvancedPGREQSaveRequestDto advancedPGREQSaveRequestDto) {
 		pictureGenerateRequestUseCase.createPaidPGREQForTwo(userId, advancedPGREQSaveRequestDto.toCommand());
-		return GentiResponse.success(true);
-	}
-
-	@Deprecated
-	@Logging(item = LogItem.PGREQ, action = LogAction.UPDATE, requester = LogRequester.USER)
-	@PutMapping("/{pictureGenerateRequestId}")
-	public ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
-		@AuthUser Long userId,
-		@PathVariable(value = "pictureGenerateRequestId")
-		@Schema(description = "사진생성요청id", example = "1")
-		Long pictureGenerateRequestId,
-		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {
-		pictureGenerateRequestUseCase.modifyPGREQ(userId, pictureGenerateRequestId,
-			pgreqSaveRequestDto);
 		return GentiResponse.success(true);
 	}
 }

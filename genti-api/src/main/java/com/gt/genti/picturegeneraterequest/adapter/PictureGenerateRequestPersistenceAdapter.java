@@ -22,28 +22,13 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
 	@Override
-	public List<PictureGenerateRequest> findAllByRequester(User requester) {
-		return pictureGenerateRequestRepository.findAllByRequester(requester);
-	}
-
-	@Override
 	public Optional<PictureGenerateRequest> findById(Long id) {
 		return pictureGenerateRequestRepository.findById(id);
 	}
 
 	@Override
-	public Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester) {
-		return pictureGenerateRequestRepository.findByIdAndRequesterId(id, requester);
-	}
-
-	@Override
 	public PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest) {
 		return pictureGenerateRequestRepository.save(pictureGenerateRequest);
-	}
-
-	@Override
-	public Page<PictureGenerateRequest> findAll(Pageable pageable) {
-		return pictureGenerateRequestRepository.findAll(pageable);
 	}
 
 	@Override

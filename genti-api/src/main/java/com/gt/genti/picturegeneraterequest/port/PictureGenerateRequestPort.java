@@ -13,18 +13,12 @@ import com.gt.genti.user.model.User;
 
 public interface PictureGenerateRequestPort {
 
-	List<PictureGenerateRequest> findAllByRequester(User requester);
-
 	Optional<PictureGenerateRequest> findById(Long id);
-
-	Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester);
 
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 
 	Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIsAndPaidIsNull(List<PictureGenerateResponseStatus> statusList,
 		boolean matchToAdmin, Pageable pageable);
-
-	Page<PictureGenerateRequest> findAll(Pageable pageable);
 
 	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNull(boolean matchToAdmin, Pageable pageable);
 

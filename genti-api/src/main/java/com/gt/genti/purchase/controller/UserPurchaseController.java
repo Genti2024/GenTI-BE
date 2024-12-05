@@ -1,5 +1,6 @@
 package com.gt.genti.purchase.controller;
 
+import com.gt.genti.purchase.api.UserPurchaseApi;
 import com.gt.genti.purchase.dto.request.PurchaseRequestDto;
 import com.gt.genti.purchase.service.InAppPurchaseService;
 import com.gt.genti.response.GentiResponse;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users/in-app-purchases")
 @RequiredArgsConstructor
-public class UserPurchaseController {
+public class UserPurchaseController implements UserPurchaseApi {
 
     private final InAppPurchaseService inAppPurchaseService;
 

@@ -111,12 +111,6 @@ public class UserService {
 		return true;
 	}
 
-	public Boolean restoreSoftDeletedUser(Long userId) {
-		User foundUser = getUserByUserId(userId);
-		foundUser.restore();
-		return true;
-	}
-
 	public Boolean delete(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		OauthPlatform oauthPlatform = foundUser.getLastLoginOauthPlatform();

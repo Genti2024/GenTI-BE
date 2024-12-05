@@ -79,13 +79,6 @@ public class UserController implements UserApi {
 		return GentiResponse.success(userService.delete(userId));
 	}
 
-	@Deprecated
-	@PutMapping("/api/v1/users/restore")
-	public ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
-		@AuthUser Long userId) {
-		return GentiResponse.success(userService.restoreSoftDeletedUser(userId));
-	}
-
 	@GetMapping("/api/v1/users/pictures/my")
 	public ResponseEntity<ApiResult<Page<CommonPictureResponseDto>>> getAllMyGeneratedPicture(
 		@AuthUser Long userId,

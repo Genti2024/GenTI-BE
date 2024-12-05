@@ -82,35 +82,6 @@ public class UserService {
 		return true;
 	}
 
-	public Boolean deleteUserSoft(Long userId) {
-		User foundUser = getUserByUserId(userId);
-		foundUser.softDelete();
-		List<PictureGenerateResponse> deleteList = new ArrayList<>();
-		if (foundUser.getCreator() != null) {
-			Creator foundCreator = foundUser.getCreator();
-			List<PictureGenerateResponse> pgresList = foundCreator.getPictureGenerateResponseList();
-			foundCreator.getPictureGenerateRequestList()
-				.stream()
-				.filter(pgreq -> pgreq.getPictureGenerateRequestStatus().equals(
-					PictureGenerateRequestStatus.IN_PROGRESS) && (pgreq.getResponseList().isEmpty()))
-				.forEach(req -> pictureGenerateRequestUseCase.cancelRequest(req, SUPPLIER_EXIT));
-			if (pgresList.isEmpty()) {
-				return true;
-			}
-
-			pgresList.stream()
-				.filter(pgres -> CREATOR_BEFORE_WORK.equals(pgres.getStatus()))
-				.forEach(pgres -> {
-
-					pictureGenerateRequestUseCase.cancelRequest(pgres.getRequest(), SUPPLIER_EXIT);
-					pgres.clearRelationshipsWithPGREQ();
-					deleteList.add(pgres);
-				});
-			pictureGenerateResponseRepository.deleteAll(deleteList);
-		}
-		return true;
-	}
-
 	public Boolean delete(Long userId) {
 		User foundUser = getUserByUserId(userId);
 		OauthPlatform oauthPlatform = foundUser.getLastLoginOauthPlatform();

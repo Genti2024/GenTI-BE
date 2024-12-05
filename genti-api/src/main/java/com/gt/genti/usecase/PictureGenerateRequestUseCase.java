@@ -30,9 +30,6 @@ public interface PictureGenerateRequestUseCase {
 	PictureGenerateRequest createPaidPGREQForTwo(Long userId,
 	   AdvancedPGREQSaveCommand advancedPGREQSaveCommand);
 
-	void modifyPGREQ(Long userId,
-		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto);
-
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllAdminMatched(Pageable pageable);
 
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllAdminMatchedByPGRESStatus(

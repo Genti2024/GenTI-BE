@@ -343,37 +343,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 			.build();
 	}
 
-	@Override
-	public void modifyPGREQ(Long userId, Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto) {
-		User foundUser = findUserById(userId);
-		PictureGenerateRequest findPictureGenerateRequest = pictureGenerateRequestPort.findByIdAndRequester(
-				pictureGenerateRequestId, foundUser)
-			.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-				String.format("생성요청한 유저 id : %d 사진생성요청 Id : %d", foundUser.getId(), pictureGenerateRequestId)));
-
-		if (findPictureGenerateRequest.getCreator() != null) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestAlreadyInProgress);
-		}
-
-		PicturePose picturePose = findPictureGenerateRequest.getPicturePose();
-		String givenPicturePoseKey = pgreqSaveRequestDto.getPosePicture().getKey();
-		picturePose.modify(givenPicturePoseKey);
-
-		List<PictureUserFace> pictureUserFaceList = findPictureGenerateRequest.getUserFacePictureList();
-		List<String> givenPictureUserFaceKeyList = pgreqSaveRequestDto.getFacePictureList()
-			.stream()
-			.map(CommonPictureKeyUpdateRequestDto::getKey)
-			.toList();
-		for (int i = 0; i < pictureUserFaceList.size(); i++) {
-			String newKey = givenPictureUserFaceKeyList.get(i);
-			pictureUserFaceList.get(i).modify(newKey);
-		}
-
-		findPictureGenerateRequest.modify(pgreqSaveRequestDto.getPrompt(), pgreqSaveRequestDto.getCameraAngle(),
-			pgreqSaveRequestDto.getShotCoverage(), pgreqSaveRequestDto.getPictureRatio(), picturePose,
-			pictureUserFaceList);
-	}
-
 	private PGREQStatusResponseDto handleAwaitUserVerification(PictureGenerateRequest foundPGREQ) {
 		PictureGenerateResponse needVerifyPGRES = foundPGREQ.getResponseList()
 			.stream()

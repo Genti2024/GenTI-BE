@@ -63,18 +63,4 @@ public interface UserPGREQApi {
 	ResponseEntity<ApiResult<Boolean>> createPictureGenerateRequest(
 		@AuthUser Long userId,
 		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto);
-
-	@Deprecated
-	@Operation(summary = "사진생성요청 수정", description = "이전에 생성한 사진생성요청을 수정한다", deprecated = true)
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.PictureGenerateRequestNotFound),
-		@EnumResponse(ResponseCode.PictureGenerateRequestAlreadyInProgress)
-	})
-	ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
-		@AuthUser Long userId,
-		@PathVariable(value = "pictureGenerateRequestId")
-		@Schema(description = "사진생성요청id", example = "1")
-		Long pictureGenerateRequestId,
-		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto);
 }

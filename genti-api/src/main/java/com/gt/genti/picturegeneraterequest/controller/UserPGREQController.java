@@ -91,18 +91,4 @@ public class UserPGREQController implements UserPGREQApi {
 		pictureGenerateRequestUseCase.createPaidPGREQForTwo(userId, advancedPGREQSaveRequestDto.toCommand());
 		return GentiResponse.success(true);
 	}
-
-	@Deprecated
-	@Logging(item = LogItem.PGREQ, action = LogAction.UPDATE, requester = LogRequester.USER)
-	@PutMapping("/{pictureGenerateRequestId}")
-	public ResponseEntity<ApiResult<Boolean>> modifyPictureGenerateRequest(
-		@AuthUser Long userId,
-		@PathVariable(value = "pictureGenerateRequestId")
-		@Schema(description = "사진생성요청id", example = "1")
-		Long pictureGenerateRequestId,
-		@RequestBody @Valid PGREQSaveRequestDto pgreqSaveRequestDto) {
-		pictureGenerateRequestUseCase.modifyPGREQ(userId, pictureGenerateRequestId,
-			pgreqSaveRequestDto);
-		return GentiResponse.success(true);
-	}
 }

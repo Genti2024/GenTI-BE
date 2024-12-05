@@ -24,8 +24,6 @@ public interface PictureGenerateRequestPort {
 	Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIsAndPaidIsNull(List<PictureGenerateResponseStatus> statusList,
 		boolean matchToAdmin, Pageable pageable);
 
-	Page<PictureGenerateRequest> findAll(Pageable pageable);
-
 	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNull(boolean matchToAdmin, Pageable pageable);
 
 	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNotNull(boolean matchToAdmin, Pageable pageable);

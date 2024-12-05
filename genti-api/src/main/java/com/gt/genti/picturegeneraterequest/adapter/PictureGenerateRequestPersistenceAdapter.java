@@ -42,11 +42,6 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Page<PictureGenerateRequest> findAll(Pageable pageable) {
-		return pictureGenerateRequestRepository.findAll(pageable);
-	}
-
-	@Override
 	public Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIsAndPaidIsNull(
 		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable) {
 		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIsAndPaidIsNull(statusList,

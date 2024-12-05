@@ -33,7 +33,6 @@ public class InAppPurchaseService {
 
         JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-        AndroidPublisher.Builder builder;
         HttpTransport httpTransport;
         try {
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -57,27 +56,27 @@ public class InAppPurchaseService {
             throw ExpectedException.withLogging(ResponseCode.AlreadyActivatedUser, e3);
         }
 
-        builder = new AndroidPublisher.Builder(httpTransport, JSON_FACTORY, new HttpCredentialsAdapter(credentials));
+        AndroidPublisher.Builder builder = new AndroidPublisher.Builder(httpTransport, JSON_FACTORY, new HttpCredentialsAdapter(credentials));
+        AndroidPublisher publisher = builder.setApplicationName(googleApplicationPackageName).build();
 
-        AndroidPublisher publisher = builder.setApplicationName(purchaseRequestDto.getPackageName()).build();
+        AndroidPublisher.Purchases.Products.Get get = null;
+        try {
+            get = publisher.purchases().products()
+                    .get(purchaseRequestDto.getPackageName(), purchaseRequestDto.getProductId(), purchaseRequestDto.getPurchaseToken());
+        } catch (IOException e) {
+            throw ExpectedException.withLogging(ResponseCode.NotNullableEnum, e);
+        }
 
         try {
-            AndroidPublisher.Purchases.Products.Get get = publisher.purchases().products()
-                    .get(purchaseRequestDto.getPackageName(), purchaseRequestDto.getProductId(), purchaseRequestDto.getPurchaseToken());
-            ProductPurchase productPurchase = get.execute(); //검증 결과
+            ProductPurchase productPurchase = get.execute();
 
-            // 인앱 상품의 소비 상태. 0 아직 소비 안됨(Yet to be consumed) / 1 소비됨(Consumed)
-            Integer consumptionState = productPurchase.getConsumptionState();
-
-            // 상품이 구매된 시각. 타임스탬프 형태
-            Long purchaseTimeMillis = productPurchase.getPurchaseTimeMillis();
-
-            // 구매 상태. 0 구매완료 / 1 취소됨
+            // 구매 상태 -> 0 : 구매완료 / 1 : 취소됨
             Integer purchaseState = productPurchase.getPurchaseState();
-            if (purchaseState == 1) {
+            if (purchaseState != null && purchaseState == 1) {
                 return false;
             }
             return true;
+
         } catch (IOException e5) {
             throw ExpectedException.withLogging(ResponseCode.FileTypeNotProvided, e5);
         }

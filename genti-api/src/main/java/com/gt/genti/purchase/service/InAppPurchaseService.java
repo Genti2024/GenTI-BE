@@ -68,7 +68,7 @@ public class InAppPurchaseService {
         }
 
         try {
-            ProductPurchase productPurchase = get.execute();
+            ProductPurchase productPurchase = get.execute(); // Google Cloud Platform에서 Android Publisher API 사용하기 눌러야 함.
 
             // 구매 상태 -> 0 : 구매완료 / 1 : 취소됨
             Integer purchaseState = productPurchase.getPurchaseState();
@@ -78,7 +78,7 @@ public class InAppPurchaseService {
             return true;
 
         } catch (IOException e5) {
-            throw ExpectedException.withLogging(ResponseCode.FileTypeNotProvided, e5);
+            throw new RuntimeException(e5);
         }
     }
 }

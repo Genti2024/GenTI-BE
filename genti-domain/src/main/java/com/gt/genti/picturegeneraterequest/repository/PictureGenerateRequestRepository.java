@@ -26,7 +26,7 @@ public interface PictureGenerateRequestRepository
 
 	Optional<PictureGenerateRequest> findTop1ByRequesterOrderByIdDesc(User requester);
 
-	Page<PictureGenerateRequest> findAllByRequester(User requester, Pageable pageable);
+	Page<PictureGenerateRequest> findAllByRequesterAndPaidIsNull(User requester, Pageable pageable);
 
 	@Query("SELECT p FROM PictureGenerateRequest p WHERE p.requester = :requester AND p.paid IS NOT NULL")
 	Page<PictureGenerateRequest> findAllByRequesterAndPaidIsNotNull(User requester, Pageable pageable);
@@ -83,19 +83,23 @@ public interface PictureGenerateRequestRepository
 		@Param(value = "activeResponseStatusList")
 		List<PictureGenerateResponseStatus> activeResponseStatusList);
 
+	// 해당 조인은 pgreq의 paid를 사용하기 위함이다. pgres에서 paid를 참고하면 조인을 안해도 되는 방법이 있을까?
 	@Query("select pgres "
 		+ "from PictureGenerateResponse pgres "
-		+ "where pgres.request.matchToAdmin = :matchToAdmin "
+		+ "join PictureGenerateRequest pgreq "
+		+ "where pgres.request = pgreq "
+		+ "and pgres.request.matchToAdmin = :matchToAdmin "
 		+ "and pgres.status in :statusList "
+		+ "and pgreq.paid IS NULL "
 		+ "order by pgres.request.createdAt desc")
-	Page<PictureGenerateResponse> findByPictureGenerateResponseStatusInAndMatchToAdminIs(
+	Page<PictureGenerateResponse> findByPictureGenerateResponseStatusInAndMatchToAdminIsAndPaidIsNull(
 		@Param(value = "statusList")
 		List<PictureGenerateResponseStatus> statusList,
 		@Param(value = "matchToAdmin")
 		boolean matchToAdmin,
 		Pageable pageable);
 
-	Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable);
+	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNull(boolean matchToAdmin, Pageable pageable);
 
 	@Query("SELECT p FROM PictureGenerateRequest p WHERE p.paid IS NOT NULL")
 	Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNotNull(boolean matchToAdmin, Pageable pageable);

@@ -47,15 +47,15 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIs(
+	public Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIsAndPaidIsNull(
 		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable) {
-		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIs(statusList,
+		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIsAndPaidIsNull(statusList,
 			matchToAdmin, pageable);
 	}
 
 	@Override
-	public Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable) {
-		return pictureGenerateRequestRepository.findByMatchToAdminIs(matchToAdmin, pageable);
+	public Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNull(boolean matchToAdmin, Pageable pageable) {
+		return pictureGenerateRequestRepository.findByMatchToAdminIsAndPaidIsNull(matchToAdmin, pageable);
 
 	}
 
@@ -66,7 +66,7 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 
 	@Override
 	public Page<PictureGenerateRequest> findAllByRequester(User foundUser, Pageable pageable) {
-		return pictureGenerateRequestRepository.findAllByRequester(foundUser, pageable);
+		return pictureGenerateRequestRepository.findAllByRequesterAndPaidIsNull(foundUser, pageable);
 	}
 
 	@Override

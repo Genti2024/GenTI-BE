@@ -70,14 +70,14 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 
 	@Override
 	public Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllAdminMatched(Pageable pageable) {
-		return pictureGenerateRequestPort.findByMatchToAdminIs(true, pageable)
+		return pictureGenerateRequestPort.findByMatchToAdminIsAndPaidIsNull(true, pageable)
 			.map(convertPGREQToAdminMatchedResponseDto());
 	}
 
 	@Override
 	public Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllAdminMatchedByPGRESStatus(
 		PictureGenerateResponseStatusForAdmin statusForAdmin, Pageable pageable) {
-		return pictureGenerateRequestPort.findByPGRESStatusInAndMatchToAdminIs(
+		return pictureGenerateRequestPort.findByPGRESStatusInAndMatchToAdminIsAndPaidIsNull(
 				pgresStatusToPGRESStatusForAdminMapper.clientToDb(statusForAdmin), true, pageable)
 			.map(convertPGRESToAdminMatchedResponseDto());
 	}
@@ -104,20 +104,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 				.orElseThrow(() -> ExpectedException.withLogging(ResponseCode.UserNotFoundByEmail, email));
 		return pictureGenerateRequestPort.findAllByRequesterAndPaidIsNotNull(foundUser, pageable)
 				.map(convertPGREQToAdminMatchedResponseDto());
-	}
-
-	@Override
-	public Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmitted(Pageable pageable) {
-		return pictureGenerateRequestPort.findByMatchToAdminIs(false, pageable)
-			.map(convertPGREQToCreatorSubmittedResponseDto());
-	}
-
-	@Override
-	public Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByPGRESStatus(
-		PictureGenerateResponseStatusForAdmin statusForAdmin, Pageable pageable) {
-		return pictureGenerateRequestPort.findByPGRESStatusInAndMatchToAdminIs(
-				pgresStatusToPGRESStatusForAdminMapper.clientToDb(statusForAdmin), false, pageable)
-			.map(convertPGRESToCreatorSubmittedResponseDto());
 	}
 
 	@Override

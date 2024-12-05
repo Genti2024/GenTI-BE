@@ -35,16 +35,6 @@ import lombok.RequiredArgsConstructor;
 public class UserPGREQController implements UserPGREQApi {
 	private final PictureGenerateRequestUseCase pictureGenerateRequestUseCase;
 
-	@Deprecated
-	@Logging(item = LogItem.PGREQ, action = LogAction.VIEW, requester = LogRequester.USER)
-	@GetMapping("/all")
-	public ResponseEntity<ApiResult<List<PGREQBriefFindByUserResponseDto>>> getAllUsersPictureGenerateRequest(
-		@AuthUser Long userId
-	) {
-		return GentiResponse.success(
-			pictureGenerateRequestUseCase.findAllPGREQByRequester(userId));
-	}
-
 	@Logging(item = LogItem.PGREQ_INPROGESS, action = LogAction.SEARCH, requester = LogRequester.USER)
 	@GetMapping("/pending")
 	public ResponseEntity<ApiResult<PGREQStatusResponseDto>> getPendingPGRESStatus(

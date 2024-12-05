@@ -107,12 +107,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 	}
 
 	@Override
-	public Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByRequesterEmail(String email,
-		Pageable pageable) {
-		return null;
-	}
-
-	@Override
 	public boolean cancelRequestByAdmin(Long pictureGenerateRequestId) {
 		PictureGenerateRequest pictureGenerateRequest = getPictureGenerateRequestById(pictureGenerateRequestId);
 		cancelRequest(pictureGenerateRequest, PictureGenerateRequestCancellationReason.INVALID_PROMPT);
@@ -144,22 +138,6 @@ public class PictureGenerateRequestService implements PictureGenerateRequestUseC
 		}
 		pgreq.userConfirmedCancellation();
 		return true;
-	}
-
-	@Override
-	public List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(Long userId) {
-		User foundUser = findUserById(userId);
-
-		List<PGREQBriefFindByUserResponseDto> result = pictureGenerateRequestPort.findAllByRequester(foundUser)
-			.stream()
-			.map(PGREQBriefFindByUserResponseDto::new)
-			.sorted((dto1, dto2) -> dto2.getCreatedAt().compareTo(dto1.getCreatedAt()))
-			.toList();
-		if (result.isEmpty()) {
-			throw ExpectedException.withLogging(ResponseCode.PictureGenerateRequestNotFound,
-				"생성요청한 유저 id : " + foundUser.getId());
-		}
-		return result;
 	}
 
 	@Override

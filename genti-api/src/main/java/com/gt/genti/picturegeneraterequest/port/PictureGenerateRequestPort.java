@@ -13,11 +13,7 @@ import com.gt.genti.user.model.User;
 
 public interface PictureGenerateRequestPort {
 
-	List<PictureGenerateRequest> findAllByRequester(User requester);
-
 	Optional<PictureGenerateRequest> findById(Long id);
-
-	Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester);
 
 	PictureGenerateRequest save(PictureGenerateRequest pictureGenerateRequest);
 

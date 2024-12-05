@@ -26,15 +26,6 @@ import jakarta.validation.Valid;
 @Tag(name = "[UserPGREQController] 유저의 사진 생성 요청", description = "사진 생성 요청을 생성, 조회, 수정합니다.")
 public interface UserPGREQApi {
 
-	@Deprecated
-	@Operation(summary = "내 요청 전체조회", description = "내가 요청한 사진생성요청 전체 조회", deprecated = true)
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK)
-	})
-	ResponseEntity<ApiResult<List<PGREQBriefFindByUserResponseDto>>> getAllUsersPictureGenerateRequest(
-		@AuthUser Long userId
-	);
-
 	@Operation(summary = "현재 진행중인 사진생성요청의 상태 조회", description = "작업이 진행중인 사진 생성요청이 있다면 해당 상태를 조회한다.")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),

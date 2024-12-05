@@ -17,8 +17,6 @@ import com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestCancell
 import com.gt.genti.picturegenerateresponse.service.mapper.PictureGenerateResponseStatusForAdmin;
 
 public interface PictureGenerateRequestUseCase {
-	List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(Long userId);
-
 	PGREQStatusResponseDto getPendingPGREQStatusIfExists(Long userId);
 
 	PictureGenerateRequest createPGREQ(Long userId,
@@ -41,9 +39,6 @@ public interface PictureGenerateRequestUseCase {
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatched(Pageable pageable);
 
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatchedByRequesterEmail(String email, Pageable pageable);
-
-	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByRequesterEmail(String email,
-		Pageable pageable);
 
 	boolean cancelRequestByAdmin(Long pictureGenerateRequestId);
 

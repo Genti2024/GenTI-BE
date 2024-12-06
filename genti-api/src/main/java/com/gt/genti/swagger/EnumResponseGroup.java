@@ -19,13 +19,10 @@ public enum EnumResponseGroup {
 		@EnumResponse(ReportNotFound),
 		@EnumResponse(CreatorNotFound),
 		@EnumResponse(PictureNotFound),
-		@EnumResponse(DepositNotFound),
 		@EnumResponse(PictureUserFaceNotFound),
 		@EnumResponse(PicturePoseNotFound),
 		@EnumResponse(PictureCompletedNotFound),
 		@EnumResponse(PictureCreatedByCreatorNotFound),
-		@EnumResponse(PictureProfileNotFound),
-		@EnumResponse(CashoutNotFound)
 
 	})
 	NOT_FOUND,

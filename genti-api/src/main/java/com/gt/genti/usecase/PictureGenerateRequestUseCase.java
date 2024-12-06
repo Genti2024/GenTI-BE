@@ -17,8 +17,6 @@ import com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestCancell
 import com.gt.genti.picturegenerateresponse.service.mapper.PictureGenerateResponseStatusForAdmin;
 
 public interface PictureGenerateRequestUseCase {
-	List<PGREQBriefFindByUserResponseDto> findAllPGREQByRequester(Long userId);
-
 	PGREQStatusResponseDto getPendingPGREQStatusIfExists(Long userId);
 
 	PictureGenerateRequest createPGREQ(Long userId,
@@ -29,9 +27,6 @@ public interface PictureGenerateRequestUseCase {
 
 	PictureGenerateRequest createPaidPGREQForTwo(Long userId,
 	   AdvancedPGREQSaveCommand advancedPGREQSaveCommand);
-
-	void modifyPGREQ(Long userId,
-		Long pictureGenerateRequestId, PGREQSaveRequestDto pgreqSaveRequestDto);
 
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllAdminMatched(Pageable pageable);
 
@@ -44,14 +39,6 @@ public interface PictureGenerateRequestUseCase {
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatched(Pageable pageable);
 
 	Page<PGREQAdminMatchedDetailFindByAdminResponseDto> getAllPaidAdminMatchedByRequesterEmail(String email, Pageable pageable);
-
-	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmitted(Pageable pageable);
-
-	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByPGRESStatus(
-		PictureGenerateResponseStatusForAdmin statusForAdmin, Pageable pageable);
-
-	Page<PGREQCreatorSubmittedDetailFindByAdminResponseDto> getAllCreatorSubmittedByRequesterEmail(String email,
-		Pageable pageable);
 
 	boolean cancelRequestByAdmin(Long pictureGenerateRequestId);
 

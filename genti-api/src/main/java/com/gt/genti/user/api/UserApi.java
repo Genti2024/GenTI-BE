@@ -15,7 +15,6 @@ import com.gt.genti.response.GentiResponse.ApiResult;
 import com.gt.genti.swagger.AuthorizedUser;
 import com.gt.genti.swagger.EnumResponse;
 import com.gt.genti.swagger.EnumResponses;
-import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
 
@@ -39,16 +38,6 @@ public interface UserApi {
 	ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthUser Long userId);
 
-	@Operation(summary = "내정보 수정", description = "유저의 정보를 수정합니다.")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.UserNotFound)
-
-	})
-	ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
-		@AuthUser Long userId,
-		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto);
-
 	@Operation(summary = "최초가입 정보등록", description = "사용자에게 생년, 성별을 받아 최종 가입을 처리")
 	@EnumResponses(value = {
 		@EnumResponse(ResponseCode.OK),
@@ -65,16 +54,6 @@ public interface UserApi {
 		@EnumResponse(ResponseCode.REFRESH_TOKEN_NOT_EXISTS),
 	})
 	ResponseEntity<ApiResult<Boolean>> logout(@AuthUser Long userId);
-
-	@Operation(summary = "회원 복구", description = "회원탈퇴 취소 처리")
-	@EnumResponses(value = {
-		@EnumResponse(ResponseCode.OK),
-		@EnumResponse(ResponseCode.UserNotFound),
-		@EnumResponse(ResponseCode.CannotRestoreUser)
-
-	})
-	ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
-		@AuthUser Long userId);
 
 	@Operation(summary = "회원 탈퇴", description = "사용자 정보 및 관련 정보를 모두 삭제(복구 불가)")
 	@EnumResponses(value = {

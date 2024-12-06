@@ -9,9 +9,6 @@ public class ErrorConstants {
 	private static final String REPORT = "REPORT";
 	private static final String PICTURE = "PICTURE";
 
-	private static final String DEPOSIT = "DEPOSIT";
-	private static final String CASHOUT = "CASHOUT";
-
 	private static final String UPLOAD = "UPLOAD";
 	private static final String DISCORD = "DISCORD";
 	private static final String VALIDATION = "VALIDATION";
@@ -82,22 +79,14 @@ public class ErrorConstants {
 
 	public static final String ReportNotFound = CODE(REPORT, 1);
 
-	public static final String DepositNotFound = CODE(DEPOSIT, 1);
-	public static final String AddPointAmountCannotBeMinus = CODE(DEPOSIT, 2);
-
 	public static final String PictureNotFound = CODE(PICTURE, 1);
 	public static final String PictureUserFaceNotFound = CODE(PICTURE, 2);
 	public static final String PicturePoseNotFound = CODE(PICTURE, 3);
 	public static final String PictureCompletedNotFound = CODE(PICTURE, 4);
 	public static final String PictureCreatedByCreatorNotFound = CODE(PICTURE, 5);
-	public static final String PictureProfileNotFound = CODE(PICTURE, 6);
 
 	public static final String HandlerMethodValidation = CODE(VALIDATION, 1);
 	public static final String HttpMessageNotReadable = CODE(VALIDATION, 2);
-
-	public static final String CannotRequestCashoutDueToSettlementsNotAvailable = CODE(CASHOUT, 1);
-	public static final String CashoutNotFound = CODE(CASHOUT, 2);
-	public static final String NotEnoughBalance = CODE(CASHOUT, 3);
 
 	public static final String OauthProviderNotAllowed = CODE(OAUTH, 1);
 	public static final String AppleOauthIdTokenIncorrect = CODE(OAUTH, 2);

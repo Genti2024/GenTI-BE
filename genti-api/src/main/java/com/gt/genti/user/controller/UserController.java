@@ -27,7 +27,6 @@ import com.gt.genti.model.Logging;
 import com.gt.genti.picture.dto.response.CommonPictureResponseDto;
 import com.gt.genti.response.GentiResponse;
 import com.gt.genti.user.api.UserApi;
-import com.gt.genti.user.dto.request.UserInfoUpdateRequestDto;
 import com.gt.genti.user.dto.response.UserFindResponseDto;
 import com.gt.genti.user.model.AuthUser;
 import com.gt.genti.user.service.UserService;
@@ -50,13 +49,6 @@ public class UserController implements UserApi {
 	public ResponseEntity<ApiResult<UserFindResponseDto>> getUserInfo(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.getUserInfo(userId));
-	}
-
-	@PutMapping("/api/v1/users")
-	public ResponseEntity<ApiResult<UserFindResponseDto>> updateUserInfo(
-		@AuthUser Long userId,
-		@RequestBody @Valid UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-		return GentiResponse.success(userService.updateUserInfo(userId, userInfoUpdateRequestDto));
 	}
 
 	@PostMapping("/api/v1/users/signup")
@@ -85,13 +77,6 @@ public class UserController implements UserApi {
 	public ResponseEntity<ApiResult<Boolean>> delete(
 		@AuthUser Long userId) {
 		return GentiResponse.success(userService.delete(userId));
-	}
-
-	@Deprecated
-	@PutMapping("/api/v1/users/restore")
-	public ResponseEntity<ApiResult<Boolean>> restoreSoftDeletedUser(
-		@AuthUser Long userId) {
-		return GentiResponse.success(userService.restoreSoftDeletedUser(userId));
 	}
 
 	@GetMapping("/api/v1/users/pictures/my")

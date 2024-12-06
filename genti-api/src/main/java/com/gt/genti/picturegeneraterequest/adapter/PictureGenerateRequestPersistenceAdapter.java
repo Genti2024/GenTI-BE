@@ -22,18 +22,8 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	private final PictureGenerateRequestRepository pictureGenerateRequestRepository;
 
 	@Override
-	public List<PictureGenerateRequest> findAllByRequester(User requester) {
-		return pictureGenerateRequestRepository.findAllByRequester(requester);
-	}
-
-	@Override
 	public Optional<PictureGenerateRequest> findById(Long id) {
 		return pictureGenerateRequestRepository.findById(id);
-	}
-
-	@Override
-	public Optional<PictureGenerateRequest> findByIdAndRequester(Long id, User requester) {
-		return pictureGenerateRequestRepository.findByIdAndRequesterId(id, requester);
 	}
 
 	@Override
@@ -42,20 +32,15 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 	}
 
 	@Override
-	public Page<PictureGenerateRequest> findAll(Pageable pageable) {
-		return pictureGenerateRequestRepository.findAll(pageable);
-	}
-
-	@Override
-	public Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIs(
+	public Page<PictureGenerateResponse> findByPGRESStatusInAndMatchToAdminIsAndPaidIsNull(
 		List<PictureGenerateResponseStatus> statusList, boolean matchToAdmin, Pageable pageable) {
-		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIs(statusList,
+		return pictureGenerateRequestRepository.findByPictureGenerateResponseStatusInAndMatchToAdminIsAndPaidIsNull(statusList,
 			matchToAdmin, pageable);
 	}
 
 	@Override
-	public Page<PictureGenerateRequest> findByMatchToAdminIs(boolean matchToAdmin, Pageable pageable) {
-		return pictureGenerateRequestRepository.findByMatchToAdminIs(matchToAdmin, pageable);
+	public Page<PictureGenerateRequest> findByMatchToAdminIsAndPaidIsNull(boolean matchToAdmin, Pageable pageable) {
+		return pictureGenerateRequestRepository.findByMatchToAdminIsAndPaidIsNull(matchToAdmin, pageable);
 
 	}
 
@@ -66,7 +51,7 @@ public class PictureGenerateRequestPersistenceAdapter implements PictureGenerate
 
 	@Override
 	public Page<PictureGenerateRequest> findAllByRequester(User foundUser, Pageable pageable) {
-		return pictureGenerateRequestRepository.findAllByRequester(foundUser, pageable);
+		return pictureGenerateRequestRepository.findAllByRequesterAndPaidIsNull(foundUser, pageable);
 	}
 
 	@Override

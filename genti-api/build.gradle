@@ -22,9 +22,17 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    implementation "com.google.api-client:google-api-client:1.33.0"
+//    implementation "com.google.api-client:google-api-client:1.33.0"
+//    implementation 'com.google.auth:google-auth-library-oauth2-http:1.6.0'
+////    implementation 'com.google.apis:google-api-services-androidpublisher:v2-rev22-1.21.0'
+//    compileOnly('com.google.apis:google-api-services-androidpublisher:v3-rev20241016-2.0.0')
+    compileOnly "com.google.api-client:google-api-client:2.2.0"
+    implementation "com.google.api-client:google-api-client:2.2.0"
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.6.0'
-    implementation 'com.google.apis:google-api-services-androidpublisher:v2-rev22-1.21.0'
+//    compileOnly 'com.google.apis:google-api-services-androidpublisher:v3-rev20220411-1.32.1'
+    implementation 'com.google.apis:google-api-services-androidpublisher:v3-rev20241016-2.0.0'
+    implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.41.7'
+
 
     // test && test h2
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

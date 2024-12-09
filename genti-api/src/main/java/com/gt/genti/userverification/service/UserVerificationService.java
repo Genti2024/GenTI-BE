@@ -28,13 +28,25 @@ public class UserVerificationService {
     }
 
     public Boolean savePictureUserVerification(Long userId, UserVerificationRequestDto userVerificationRequestDto){
-        User foundUser = getUserByUserId(userId);
-        PictureUserVerification pictureUserVerification = new PictureUserVerification(userVerificationRequestDto.getKey(), foundUser);
-        pictureUserVerificationRepository.save(pictureUserVerification);
-        foundUser.verifyUser();
-        return true;
-    }
+        Boolean isSaved = false;
 
+        User foundUser = getUserByUserId(userId);
+        PictureUserVerification pictureUserVerification = PictureUserVerification.builder()
+                .key(userVerificationRequestDto.getKey())
+                .user(foundUser)
+                .build();
+        PictureUserVerification savePictureUserVerification = pictureUserVerificationRepository.save(pictureUserVerification);
+
+        if (savePictureUserVerification != null && savePictureUserVerification.getId() > 0){
+            foundUser.verifyUser();
+            User savedUser = userRepository.save(foundUser);
+            if (savedUser != null && savedUser.getId() > 0) {
+                isSaved = true;
+            }
+        }
+
+        return isSaved;
+    }
 
     private User getUserByUserId(Long userId) {
         return userRepository.findById(userId)

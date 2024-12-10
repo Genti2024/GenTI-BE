@@ -35,11 +35,13 @@ public class ResponseExample extends PictureEntity implements Picture {
 	private String type;
 
 	@Builder
-	public ResponseExample(String key, String prompt, PictureRatio pictureRatio, User uploadedBy) {
+	public ResponseExample(String key, String prompt, PictureRatio pictureRatio, User uploadedBy,
+						   String type) {
 		this.promptOnly = false;
 		this.key = key;
 		this.examplePrompt = prompt;
 		this.setUploadedBy(uploadedBy);
 		this.pictureRatio = pictureRatio;
+		this.type = type;
 	}
 }

@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,10 +58,10 @@ class UserVerificationServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
 
         //when
-        Boolean isVerified1 = userVerificationService.checkUserVerification(userId);
+        Boolean isVerified = userVerificationService.checkUserVerification(userId);
 
         //then
-        assertThat(isVerified1).isFalse();
+        assertThat(isVerified).isFalse();
     }
 
     @Test

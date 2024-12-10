@@ -30,11 +30,6 @@ public class ResponseExampleService {
 	private final ResponseExampleRepository responseExampleRepository;
 	private final UserRepository userRepository;
 
-	public Page<ExampleWithPictureFindResponseDto> getAllResponseExamplesPagination(Pageable pageable) {
-		return responseExampleRepository.findAllByPromptOnlyIsFalse(pageable)
-			.map(ExampleWithPictureFindResponseDto::new);
-	}
-
 	public List<ExampleWithPictureFindResponseDto> getAllResponseExamples() {
 		List<ExampleWithPictureFindResponseDto> examples = responseExampleRepository.findAllByPromptOnlyIsFalse()
 				.stream()
@@ -53,19 +48,6 @@ public class ResponseExampleService {
 		});
 
 		return examples;
-	}
-
-	public void addResponseExamples(List<ExampleSaveCommand> commandList,
-		Long userId) {
-		User foundUploader = userRepository.findById(userId).orElseThrow(() -> ExpectedException.withLogging(
-			ResponseCode.UserNotFound, userId));
-		responseExampleRepository.saveAll(
-			commandList.stream().map(command -> ResponseExample.builder()
-				.key(command.getKey())
-				.uploadedBy(foundUploader)
-				.pictureRatio(command.getPictureRatio())
-				.prompt(command.getPrompt())
-				.build()).toList());
 	}
 
 	public List<ExampleWithSquarePicture> getAllResponseExamplesInGenerateView() {

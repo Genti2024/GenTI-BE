@@ -1,4 +1,4 @@
-package com.gt.genti.service;
+package com.gt.genti.userverification.service;
 
 import com.gt.genti.error.ExpectedException;
 import com.gt.genti.error.ResponseCode;
@@ -7,11 +7,9 @@ import com.gt.genti.picture.userverification.repository.PictureUserVerificationR
 import com.gt.genti.user.model.User;
 import com.gt.genti.user.repository.UserRepository;
 import com.gt.genti.userverification.dto.request.UserVerificationRequestDto;
-import com.gt.genti.userverification.service.UserVerificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -38,7 +36,7 @@ class UserVerificationServiceTest {
     private UserVerificationService userVerificationService;
 
     @Test
-    @DisplayName("본인 인증 여부 조회 - 인증한 사용자")
+    @DisplayName("본인 인증 여부 조회 - 인증한 사용자면 True 반환")
     void checkUserVerification_userIsVerified() {
         //given
         Long userId = 1L;
@@ -53,7 +51,7 @@ class UserVerificationServiceTest {
     }
 
     @Test
-    @DisplayName("본인 인증 여부 조회 - 인증하지 않은 사용자")
+    @DisplayName("본인 인증 여부 조회 - 인증하지 않은 사용자면 False 반환")
     void checkUserVerification_userIsNotVerified() {
         //given
         Long userId = 1L;

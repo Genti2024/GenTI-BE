@@ -1,6 +1,6 @@
-package com.gt.genti;
+package com.gt.genti.config;
 
-import static com.gt.genti.TestUtils.Domain.*;
+import static com.gt.genti.config.TestUtils.Domain.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

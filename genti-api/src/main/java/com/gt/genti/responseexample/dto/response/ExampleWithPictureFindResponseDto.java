@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExampleWithPictureFindResponseDto {
 	@Schema(description = "예시 사진 응답")
-	CommonPictureResponseDto picture;
+	TempCommonPictureResponseDto picture;
 	@Schema(description = "에시 프롬프트", example = "벚꽃길에서 벤치에 앉아있어요")
 	String prompt;
 
 	public ExampleWithPictureFindResponseDto(ResponseExample responseExample) {
-		this.picture = CommonPictureResponseDto.of(responseExample);
+		this.picture = TempCommonPictureResponseDto.of(responseExample);
 		this.prompt = responseExample.getExamplePrompt();
 	}
 }

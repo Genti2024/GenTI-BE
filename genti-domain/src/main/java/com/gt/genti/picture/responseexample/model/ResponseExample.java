@@ -36,8 +36,8 @@ public class ResponseExample extends PictureEntity implements Picture {
 
 	@Builder
 	public ResponseExample(String key, String prompt, PictureRatio pictureRatio, User uploadedBy,
-						   String type) {
-		this.promptOnly = false;
+						   Boolean promptOnly, String type) {
+		this.promptOnly = promptOnly;
 		this.key = key;
 		this.examplePrompt = prompt;
 		this.setUploadedBy(uploadedBy);

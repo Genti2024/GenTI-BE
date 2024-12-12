@@ -231,7 +231,7 @@ public class User extends BaseTimeEntity {
 		List<PictureUserFace> pictureUserFaceList, String email, Sex sex, String introduction, String username,
 		String nickname, UserStatus userStatus, Boolean emailVerified, String loginId, String password, Creator creator,
 		UserRole userRole, OauthPlatform lastLoginOauthPlatform, LocalDateTime deletedAt, LocalDateTime lastLoginDate,
-	    Integer requestTaskCount, String birthYear, String phoneNumber) {
+	    Integer requestTaskCount, String birthYear, String phoneNumber, Boolean userVerified) {
 		this.id = id;
 		this.socialId = socialId;
 		this.oauthImageUrl = oauthImageUrl;
@@ -253,6 +253,7 @@ public class User extends BaseTimeEntity {
 		this.requestTaskCount = requestTaskCount;
 		this.birthYear = birthYear;
 		this.phoneNumber = phoneNumber;
+		this.userVerified = userVerified;
 	}
 
 	public void addRequestCount() {

@@ -1,4 +1,4 @@
-package com.gt.genti.picturegeneraterequest.service;
+package com.gt.genti.config.picturegeneraterequest.service;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,14 +7,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
+import com.gt.genti.picturegeneraterequest.service.PictureGenerateRequestService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gt.genti.BaseTest;
-import com.gt.genti.TestUtils;
+import com.gt.genti.config.BaseTest;
+import com.gt.genti.config.TestUtils;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.creator.repository.CreatorRepository;
 import com.gt.genti.error.ExpectedException;

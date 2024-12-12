@@ -1,7 +1,7 @@
-//package com.gt.genti;
+//package com.gt.genti.config;
 //
-//import static com.gt.genti.TestUtils.*;
-//import static com.gt.genti.TestUtils.Dto.*;
+//import static com.gt.genti.config.TestUtils.*;
+//import static com.gt.genti.config.TestUtils.Dto.*;
 //import static com.gt.genti.picturegeneraterequest.service.mapper.PictureGenerateRequestStatusForUser.*;
 //import static org.assertj.core.api.Assertions.*;
 //
@@ -17,7 +17,6 @@
 //import org.springframework.transaction.annotation.Transactional;
 //
 //import com.gt.genti.aws.FileType;
-//import com.gt.genti.config.TestConfig;
 //import com.gt.genti.matchingstrategy.model.RequestMatchStrategy;
 //import com.gt.genti.picturegeneraterequest.controller.UserPGREQController;
 //import com.gt.genti.picturegeneraterequest.dto.request.PGREQSaveRequestDto;

@@ -1,6 +1,6 @@
-package com.gt.genti;
+package com.gt.genti.config;
 
-import static com.gt.genti.TestUtils.*;
+import static com.gt.genti.config.TestUtils.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.gt.genti.common.AdminService;
-import com.gt.genti.config.TestConfig;
 import com.gt.genti.creator.model.Creator;
 import com.gt.genti.picture.PictureRatio;
 import com.gt.genti.picture.command.CreatePicturePoseCommand;

@@ -10,6 +10,5 @@ import com.gt.genti.picture.responseexample.model.ResponseExample;
 
 public interface ResponseExampleRepository extends JpaRepository<ResponseExample, Long> {
 	List<ResponseExample> findAllByPromptOnlyIsFalse();
-	Page<ResponseExample> findAllByPromptOnlyIsFalse(Pageable pageable);
 	List<ResponseExample> findAllByType(String type);
 }

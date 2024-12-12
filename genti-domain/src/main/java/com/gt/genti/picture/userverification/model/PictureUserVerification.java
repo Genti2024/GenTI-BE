@@ -4,6 +4,7 @@ import com.gt.genti.common.picture.model.PictureEntity;
 import com.gt.genti.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,9 @@ public class PictureUserVerification extends PictureEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    public PictureUserVerification(String key, User user) {
+    @Builder
+    public PictureUserVerification(Long id, String key, User user) {
+        this.id = id;
         this.key = key;
         this.setUploadedBy(user);
     }

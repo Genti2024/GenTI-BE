@@ -13,4 +13,8 @@ public class UserVerificationRequestDto {
     @Schema(description = "s3 key", example = "USER_VERIFICATION_IMAGE/image.jpg")
     String key;
 
+    public UserVerificationRequestDto(String key) {
+        this.key = key;
+    }
+
 }

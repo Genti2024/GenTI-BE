@@ -1,4 +1,4 @@
-package com.gt.genti;
+package com.gt.genti.config;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.gt.genti.TestUtils.Domain;
-import com.gt.genti.TestUtils.Dto;
-import com.gt.genti.config.TestConfig;
+import com.gt.genti.config.TestUtils.Domain;
+import com.gt.genti.config.TestUtils.Dto;
 import com.gt.genti.matchingstrategy.model.RequestMatchStrategy;
 import com.gt.genti.picturegeneraterequest.controller.UserPGREQController;
 import com.gt.genti.picturegeneraterequest.dto.request.PGREQSaveRequestDto;

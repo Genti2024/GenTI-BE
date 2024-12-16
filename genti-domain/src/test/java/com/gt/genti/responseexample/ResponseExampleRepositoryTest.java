@@ -4,6 +4,8 @@ package com.gt.genti.responseexample;
 import com.gt.genti.picture.PictureRatio;
 import com.gt.genti.picture.responseexample.model.ResponseExample;
 import com.gt.genti.picture.responseexample.repository.ResponseExampleRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,9 +16,12 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -29,15 +34,6 @@ public class ResponseExampleRepositoryTest {
     ResponseExampleRepository responseExampleRepository;
 
     private List<ResponseExample> mockResponseExamples;
-
-//    @Autowired
-//    private ApplicationContext context;
-
-//    @Test
-//    @DisplayName("등록된 빈 확인")
-//    void printLoadedBeans() {
-//        Arrays.stream(context.getBeanDefinitionNames()).sorted().forEach(System.out::println);
-//    }
 
     @BeforeEach
     void setUp() {
@@ -94,11 +90,16 @@ public class ResponseExampleRepositoryTest {
                 );
     }
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Test
     @DisplayName("피드뷰 - 조건에 맞는 예시가 없을 때 빈 리스트가 반환되는지 검증")
     void findAllFeedViewWhenNoMatchingData_Then_EmptyListReturned() {
         //given
         responseExampleRepository.deleteAll();
+        entityManager.flush();  // DB와 동기화
+        entityManager.clear();  // 영속성 컨텍스트 초기화
         responseExampleRepository.saveAll(mockResponseExamples.subList(10, mockResponseExamples.size()));
 
         //when
@@ -108,8 +109,63 @@ public class ResponseExampleRepositoryTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("생성뷰 - type으로 예시 사진들 검색 검증")
+    void findAllGenerateViewByType() {
+        //when
+        List<ResponseExample> freeOne = responseExampleRepository.findAllByType("FREE_ONE");
+        List<ResponseExample> paidOne = responseExampleRepository.findAllByType("PAID_ONE");
+        List<ResponseExample> paidTwo = responseExampleRepository.findAllByType("PAID_TWO");
 
+        //then
+        assertThat(freeOne)
+                .isNotNull()
+                .hasSize(7)
+                .extracting("type")
+                .containsOnly("FREE_ONE");
 
+        assertThat(paidOne)
+                .isNotNull()
+                .hasSize(7)
+                .extracting("type")
+                .containsOnly("PAID_ONE");
+
+        assertThat(paidTwo)
+                .isNotNull()
+                .hasSize(7)
+                .extracting("type")
+                .containsOnly("PAID_TWO");
+    }
+
+    @Test
+    @DisplayName("생성뷰 - 잘못된 type으로 검색 시 빈 리스트가 반환되는지 검증")
+    void findAllGenerateViewByWrongTypeInput() {
+        //when
+        List<ResponseExample> result = responseExampleRepository.findAllByType("WRONG_INPUT");
+
+        //then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("생성뷰 - 조건에 맞는 예시가 없을 때 빈 리스트가 반환되는지 검증")
+    void findAllGenerateViewByTypeWhenNoMatchingData_Then_EmptyListReturned() {
+        //given
+        responseExampleRepository.deleteAll();
+        entityManager.flush();  // DB와 동기화
+        entityManager.clear();  // 영속성 컨텍스트 초기화
+        responseExampleRepository.saveAll(mockResponseExamples.subList(0, 10));
+
+        //when
+        List<ResponseExample> freeOne = responseExampleRepository.findAllByType("FREE_ONE");
+        List<ResponseExample> paidOne = responseExampleRepository.findAllByType("PAID_ONE");
+        List<ResponseExample> paidTwo = responseExampleRepository.findAllByType("PAID_TWO");
+
+        //then
+        assertThat(freeOne).isEmpty();
+        assertThat(paidOne).isEmpty();
+        assertThat(paidTwo).isEmpty();
+    }
 
     private ResponseExample createExample(String prompt, PictureRatio ratio, String type, Boolean promptOnly) {
         return ResponseExample.builder()
@@ -120,6 +176,4 @@ public class ResponseExampleRepositoryTest {
                 .type(type)
                 .build();
     }
-
-
 }

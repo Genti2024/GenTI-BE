@@ -1,54 +1,66 @@
-## branch 전략, work flow
-![bracnh](https://github.com/Genti2024/GenTI-BE/assets/93697934/c4e0f87f-9574-4ab4-83a5-e6467e46e77d)
-<img width="672" alt="pr" src="https://github.com/Genti2024/GenTI-BE/assets/93697934/f45eacd9-049a-4118-a1f4-529edc5d8a6c">
+<p align="left"><img src="https://github.com/user-attachments/assets/15e61bb6-dfdc-4d56-a7ed-af05f21144b8" height=110></p>
 
-## code convention
-
-https://naver.github.io/hackday-conventions-java/
-
-## commit convention
+# Genti
 ```
-Ex) Feat: #issue Oauth 기능 구현.
-```
-```
-[Feat]: 새로운 기능 구현
-[Fix]: 버그, 오류 해결, 코드 수정
-[Add]: Feat 이외의 부수적인 코드 추가
-[Del]: 쓸모없는 코드, 주석 삭제
-[Refactor]: 전면 수정이 있을 때 사용합니다
-[Remove]: 파일 삭제
-[Rename]: 파일 이동 및 이름 수정
-[Chore]: 그 이외의 잡일/ 버전 코드 수정, 패키지 구조 변경, 파일 이동, 파일이름 변경
-[Docs]: README나 WIKI 등의 문서 개정
-[Setting]: 프로젝트 관련 세팅
+내 마음대로 표현하는, 하나뿐인 AI 사진 제작 서비스
 ```
 
-## 기술 스택
+<br>
 
-### Base
-Springboot 3.2.0 <br>
-MySQL 8.0 <br>
+## TEAM
+![image](https://github.com/user-attachments/assets/5cacbc72-47d5-41ee-94d3-a1f11cf78db7)
 
-### External
-OAuth{애플, 카카오} <br>
-Discord - 오류 및 어드민 알림용 <br>
-ChatGPT - 사진 생성 프롬프트 Upgrade <br>
-Firebase - 앱 푸시알림
 
-### CQRS
-1 Level의 CQRS 패턴을 적용 (CUD / R 분리) <br>
+<br>
 
-### 클린 아키텍쳐 적용 예정
+## PRODUCT
+![Group 8245](https://github.com/user-attachments/assets/6616126f-8be8-4011-afc8-d312145cd5e9)
 
-JPA의 더티 체킹 등 강력한 기능을 활용하기 위해
-도메인 엔티티와 JPA 엔티티를 분리하진 않았음 <br>
+<br>
 
-#### 클린 아키텍쳐 제약사항들
+## SOLUTIONS
+![Group 8250](https://github.com/user-attachments/assets/c96de744-a45f-4512-9896-cd4c6b278ecb)
+![Group 8251](https://github.com/user-attachments/assets/45c89b6e-6c74-498d-b498-aaa1bad0484f)
+![Group 8252](https://github.com/user-attachments/assets/27210a73-d53c-479c-be24-bc9fe4c5a060)
 
-1. [**UseCase**] CQRS 적용을 위해 CUD는 UseCase, R은 Query로 네이밍.
-2. [**Port**] CQRS 적용을 위해 CUD는 {Something}StatePort, R은 Load{Something}Port로 네이밍
-3. UseCase(Query) 끼리 참조해야할때는 Service에서 UseCase를 참조한다.
-4. Command와 Dto 분리 - Dto로 Command를 생성하는 것이 보통이다.
-    1. [**Dto**]외부에 응답하거나, 간단한 데이터를 전달, 혹은 Client로부터 Controller 레이어에서 값을 받아오는 경우는 Dto
-    2. [**Command**] Controller layer 에서 Service layer로 값을 전달해야 하는 경우 Command로 네이밍, 
-5. Domain/Jpa Entity는 구분하지 않고 JpaEntity만 우선 사용한다.
+<br>
+
+## PROGRESS
+![Group 8249](https://github.com/user-attachments/assets/30ab4785-68f0-4490-8bbe-a2b0a9a269e6)
+![Group 8248](https://github.com/user-attachments/assets/a78918f8-14e5-4853-b0f2-806e880d086a)
+![Group 8247](https://github.com/user-attachments/assets/cf32392b-c7f1-4966-9439-ffe150bdc4d0)
+
+<br>
+
+## ACHIEVEMENT
+- 2024 정주영 창업경진대회 (아산나눔재단) 사업실행팀 선발 및 본상 수상
+- 2024 고려대 KU 창업동아리 아이디어 트랙 선정
+- 2024 동국대 아이디어 사업화 지원사업 선발
+- 2024 KUCT 딥테크 스타트업 프론티어 선발전 도전상 수상
+- 2024 K-Digital Challenge AI 스타트업 창업 경진대회 장려상 수상
+
+<br>
+
+## TECH STACK
+- **Development**
+    - *Spring Boot 3.2.0*
+    - *Java 17*
+
+- **AWS Infra**
+    - *VPC*
+    - *Route53 & ELB(ALB)*
+    - *EC2 & EC2 Auto Scaling*
+    - *S3*
+    - *RDS(MySQL)*
+    - *ElastiCache(Redis)*
+    - *CodeDeploy*
+    - *ECR*
+    - *Cloudfront*
+    - *NAT Gateway*
+      
+- **External**
+    - *Firebase Cloud Messaging*
+    - *Discord Webhook*
+    - *OAuth2 (Kakao, Apple)*
+    - *OpenAI API*
+  

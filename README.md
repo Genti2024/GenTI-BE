@@ -4,12 +4,14 @@
 ```
 내 마음대로 표현하는, 하나뿐인 AI 사진 제작 서비스
 ```
+[Google Play(Android) 링크](https://play.google.com/store/apps/details?id=kr.genti.android&hl=ko)
+
+[App Store(iOS) 링크](https://apps.apple.com/us/app/젠티-genti-내-마음대로-만드는-ai-사진/id6596739805)
 
 <br>
 
 ## TEAM
 ![image](https://github.com/user-attachments/assets/5cacbc72-47d5-41ee-94d3-a1f11cf78db7)
-
 
 <br>
 

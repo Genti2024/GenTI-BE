@@ -20,17 +20,17 @@
 
 <br>
 
-## SOLUTIONS
-![Group 8250](https://github.com/user-attachments/assets/c96de744-a45f-4512-9896-cd4c6b278ecb)
-![Group 8251](https://github.com/user-attachments/assets/45c89b6e-6c74-498d-b498-aaa1bad0484f)
-![Group 8252](https://github.com/user-attachments/assets/27210a73-d53c-479c-be24-bc9fe4c5a060)
+## TECH STACK
+<img src="https://github.com/user-attachments/assets/dd6da925-673f-4170-be36-a1ba5cd98ad3" width="630" height="110">
 
 <br>
+<br>
 
-## PROGRESS
-![Group 8249](https://github.com/user-attachments/assets/30ab4785-68f0-4490-8bbe-a2b0a9a269e6)
-![Group 8248](https://github.com/user-attachments/assets/a78918f8-14e5-4853-b0f2-806e880d086a)
-![Group 8247](https://github.com/user-attachments/assets/cf32392b-c7f1-4966-9439-ffe150bdc4d0)
+## Module Configuration
+> **Multi-Module Project**
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/60f29d17-29b3-4c2d-b903-7f0c67193f00" width="560" height="280">
+</div>
 
 <br>
 
@@ -43,26 +43,14 @@
 
 <br>
 
-## TECH STACK
-- **Development**
-    - *Spring Boot 3.2.0*
-    - *Java 17*
+## SOLUTIONS
+![Group 8250](https://github.com/user-attachments/assets/c96de744-a45f-4512-9896-cd4c6b278ecb)
+![Group 8251](https://github.com/user-attachments/assets/45c89b6e-6c74-498d-b498-aaa1bad0484f)
+![Group 8252](https://github.com/user-attachments/assets/27210a73-d53c-479c-be24-bc9fe4c5a060)
 
-- **AWS Infra**
-    - *VPC*
-    - *Route53 & ELB(ALB)*
-    - *EC2 & EC2 Auto Scaling*
-    - *S3*
-    - *RDS(MySQL)*
-    - *ElastiCache(Redis)*
-    - *CodeDeploy*
-    - *ECR*
-    - *Cloudfront*
-    - *NAT Gateway*
-      
-- **External**
-    - *Firebase Cloud Messaging*
-    - *Discord Webhook*
-    - *OAuth2 (Kakao, Apple)*
-    - *OpenAI API*
-  
+<br>
+
+## PROGRESS
+![Group 8249](https://github.com/user-attachments/assets/30ab4785-68f0-4490-8bbe-a2b0a9a269e6)
+![Group 8248](https://github.com/user-attachments/assets/a78918f8-14e5-4853-b0f2-806e880d086a)
+![Group 8247](https://github.com/user-attachments/assets/cf32392b-c7f1-4966-9439-ffe150bdc4d0)
